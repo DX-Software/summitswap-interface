@@ -12,10 +12,11 @@ const Card = styled.div<any>`
 export default Card
 
 export const LightCard = styled(Card)`
-  border: 1px solid ${({ theme }) => theme.colors.menuItemBackground};
+  // border: 1px solid ${({ theme }) => theme.colors.menuItemBackground};
   background-color: ${({ theme }) => theme.colors.menuItemBackground};
 `
 
 export const GreyCard = styled(Card)`
-  background-color: ${({ theme }) => theme.colors.tertiary};
+  border: 1px solid ${({ theme }) => theme.colors.menuItemBackground};
+  background-color: ${({ theme }) => theme.colors.menuItemBackground};
 `

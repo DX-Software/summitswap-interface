@@ -2957,7 +2957,7 @@
 
 "@summitswap-libs@git+https://github.com/summitswapdex/sdk.git":
   version "1.0.0"
-  resolved "git+https://github.com/summitswapdex/sdk.git#266e659bf1b8bdfa573705b64a0e383d3407e73b"
+  resolved "git+https://github.com/summitswapdex/sdk.git#19b8cb81bead184e78fdba0fcd225fcf51b72022"
   dependencies:
     "@pancakeswap-libs/pancake-swap-core" "^0.1.0"
     big.js "^5.2.2"
@@ -2969,7 +2969,7 @@
 
 "@summitswap-uikit@git+https://github.com/summitswapdex/uikit.git":
   version "0.0.1"
-  resolved "git+https://github.com/summitswapdex/uikit.git#455ca1884f35e85845dd7332c202d27b14072a4c"
+  resolved "git+https://github.com/summitswapdex/uikit.git#a22caa65e05c79c2b748370c5b2c0ea57476531a"
   dependencies:
     "@types/lodash" "^4.14.162"
     "@types/styled-system" "^5.1.10"
@@ -3524,9 +3524,9 @@
   integrity sha512-oVfRvqHV/V6D1yifJbVRU3TMp8OT6o6BG+U9MkwuJ3U8/CsDHvalRpsxBqivn71ztOFZBTfJMvETbqHiaNSj7Q==
 
 "@types/lodash@^4.14.162":
-  version "4.14.173"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.173.tgz#9d3b674c67a26cf673756f6aca7b429f237f91ed"
-  integrity sha512-vv0CAYoaEjCw/mLy96GBTnRoZrSxkGE0BKzKimdR8P3OzrNYNvBgtW7p055A+E8C31vXNUhWKoFCbhq7gbyhFg==
+  version "4.14.174"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.174.tgz#b4b06b6eced9850eed6b6a8f1abdd0f5192803c1"
+  integrity sha512-KMBLT6+g9qrGXpDt7ohjWPUD34WA/jasrtjTEHStF0NPdEwJ1N9SZ+4GaMVDeuk/y0+X5j9xFm6mNiXS7UoaLQ==
 
 "@types/long@^4.0.0":
   version "4.0.1"

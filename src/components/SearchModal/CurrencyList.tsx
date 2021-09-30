@@ -2,7 +2,7 @@ import { Currency, CurrencyAmount, currencyEquals, ETHER, Token } from '@summits
 import React, { CSSProperties, MutableRefObject, useCallback, useMemo } from 'react'
 import { FixedSizeList } from 'react-window'
 import styled from 'styled-components'
-import { Text } from '@summitswap-uikit'
+import { Flex, Text, Box } from '@summitswap-uikit'
 import { useActiveWeb3React } from '../../hooks'
 import { useSelectedTokenList, WrappedTokenInfo } from '../../state/lists/hooks'
 import { useAddUserToken, useRemoveUserAddedToken } from '../../state/user/hooks'
@@ -126,44 +126,48 @@ function CurrencyRow({
       disabled={isSelected}
       selected={otherSelected}
     >
-      <LogoContainer>
-        <CurrencyLogo currency={currency} size="24px" />
-      </LogoContainer>
-      <Column style={{ marginLeft: 16 }}>
-        <Text title={currency.name} color='sidebarColor' fontSize='16px' fontWeight='600'>{currency.symbol}</Text>
-        <FadedSpan>
-          {!isOnSelectedList && customAdded && !(currency instanceof WrappedTokenInfo) ? (
-            <Text>
-              Added by user
-              <LinkStyledButton
-                onClick={(event) => {
-                  event.stopPropagation()
-                  if (chainId && currency instanceof Token) removeToken(chainId, currency.address)
-                }}
-              >
-                (Remove)
-              </LinkStyledButton>
-            </Text>
-          ) : null}
-          {!isOnSelectedList && !customAdded && !(currency instanceof WrappedTokenInfo) ? (
-            <Text>
-              Found by address
-              <LinkStyledButton
-                onClick={(event) => {
-                  event.stopPropagation()
-                  if (currency instanceof Token) addToken(currency)
-                }}
-              >
-                (Add)
-              </LinkStyledButton>
-            </Text>
-          ) : null}
-        </FadedSpan>
-      </Column>
-      <TokenTags currency={currency} />
-      <RowFixed style={{ justifySelf: 'flex-end' }}>
-        {balance ? <Balance balance={balance} /> : account ? <Loader /> : null}
-      </RowFixed>
+      <Flex justifyContent='space-between' width='100%'>
+        <LogoContainer>
+          <CurrencyLogo currency={currency} size="24px" />
+        </LogoContainer>
+        <Flex justifyContent='space-between' alignItems='center' width='100%'>
+          <Column style={{ marginLeft: 16 }}>
+            <Text title={currency.name} color='sidebarColor' fontSize='16px' fontWeight='600'>{currency.symbol}</Text>
+            <FadedSpan>
+              {!isOnSelectedList && customAdded && !(currency instanceof WrappedTokenInfo) ? (
+                <Text>
+                  Added by user
+                  <LinkStyledButton
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      if (chainId && currency instanceof Token) removeToken(chainId, currency.address)
+                    }}
+                  >
+                    (Remove)
+                  </LinkStyledButton>
+                </Text>
+              ) : null}
+              {!isOnSelectedList && !customAdded && !(currency instanceof WrappedTokenInfo) ? (
+                <Text>
+                  Found by address
+                  <LinkStyledButton
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      if (currency instanceof Token) addToken(currency)
+                    }}
+                  >
+                    (Add)
+                  </LinkStyledButton>
+                </Text>
+              ) : null}
+            </FadedSpan>
+          </Column>
+          <TokenTags currency={currency} />
+          <RowFixed style={{ justifySelf: 'flex-end', marginRight: 8 }}>
+            {balance ? <Balance balance={balance} /> : account ? <Loader /> : null}
+          </RowFixed>
+        </Flex>
+      </Flex>
     </MenuItem>
   )
 }

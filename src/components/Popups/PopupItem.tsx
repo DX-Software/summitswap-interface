@@ -21,12 +21,14 @@ export const Popup = styled.div`
   display: inline-block;
   width: 100%;
   padding: 1em;
-  background-color: ${({ theme }) => theme.colors.invertedContrast};
+  background-color: ${({ theme }) => theme.colors.menuItemBackground};
+  color: ${({ theme }) => theme.colors.text};
   position: relative;
   border-radius: 10px;
   padding: 20px;
   padding-right: 35px;
   overflow: hidden;
+  z-index: 99;
 
   ${({ theme }) => theme.mediaQueries.sm} {
     min-width: 290px;

@@ -194,34 +194,8 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
   const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade)
 
   const handleSwap = useCallback(() => {
-    if (priceImpactWithoutFee && !confirmPriceImpactWithoutFee(priceImpactWithoutFee)) {
-      return
-    }
-    if (!swapCallback) {
-      return
-    }
-    setSwapState((prevState) => ({ ...prevState, attemptingTxn: true, swapErrorMessage: undefined, txHash: undefined }))
-    swapCallback()
-      .then((hash) => {
-        setSwapState((prevState) => ({
-          ...prevState,
-          attemptingTxn: false,
-          swapErrorMessage: undefined,
-          txHash: hash,
-        }))
-      })
-      .catch((error) => {
-        setSwapState((prevState) => ({
-          ...prevState,
-          attemptingTxn: false,
-          swapErrorMessage: error.message,
-          txHash: undefined,
-        }))
-      })
-  }, [priceImpactWithoutFee, swapCallback, setSwapState])
-
-  // errors
-  const [showInverted, setShowInverted] = useState<boolean>(false)
+    return "handleSwap";
+  }, [])
 
   // warnings on slippage
   const priceImpactSeverity = warningSeverity(priceImpactWithoutFee)
@@ -312,7 +286,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
             txHash={txHash}
             recipient={recipient}
             allowedSlippage={allowedSlippage}
-            onConfirm={handleSwap}
+            onConfirm={handleSwap}            
             swapErrorMessage={swapErrorMessage}
             onDismiss={handleConfirmDismiss}
           />
@@ -392,7 +366,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
                   </Button>
                 ) : noRoute && userHasSpecifiedInputOutput ? (
                   <GreyCard style={{ textAlign: 'center' }}>
-                    <Text mb="4px">Insufficient liquidity for this trade.</Text>
+                    <Text mb="4px" color='text'>Insufficient liquidity for this trade.</Text>
                   </GreyCard>
                 ) : showApproveFlow ? (
                   <RowBetween>

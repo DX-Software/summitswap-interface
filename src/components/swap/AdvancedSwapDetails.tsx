@@ -21,7 +21,7 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
       <CardBody>
         <RowBetween>
           <RowFixed>
-            <Text fontSize="14px" color="#363936" style={{ fontFamily: 'Raleway' }}>
+            <Text fontSize="14px" color="text" style={{ fontFamily: 'Raleway' }}>
               Slippage Tolerance
             </Text>
             <QuestionHelper
@@ -29,14 +29,14 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
               text="This is a setting for the limit of price slippage you are willing to accept."
             />
           </RowFixed>
-          <Text fontSize="14px" style={{ fontFamily: 'Oswald' }} color="#131413">
+          <Text fontSize="14px" style={{ fontFamily: 'Oswald' }} color="text">
             {allowedSlippage / 100}
           </Text>
         </RowBetween>
 
         <RowBetween>
           <RowFixed>
-            <Text fontSize="14px" color="#363936" style={{ fontFamily: 'Raleway' }}>
+            <Text fontSize="14px" color="text" style={{ fontFamily: 'Raleway' }}>
               {isExactIn ? 'Minimum received' : 'Maximum sold'}
             </Text>
             <QuestionHelper
@@ -45,7 +45,7 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
             />
           </RowFixed>
           <RowFixed>
-            <Text fontSize="14px" style={{ fontFamily: 'Oswald' }} color="#131413">
+            <Text fontSize="14px" style={{ fontFamily: 'Oswald' }} color="text">
               {isExactIn
                 ? `${slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(4)} ${trade.outputAmount.currency.symbol}` ??
                   '-'
@@ -57,7 +57,7 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
 
         <RowBetween>
           <RowFixed>
-            <Text fontSize="14px" color="#363936" style={{ fontFamily: 'Raleway' }}>
+            <Text fontSize="14px" color="text" style={{ fontFamily: 'Raleway' }}>
               Liquidity Provider Fee
             </Text>
             <QuestionHelper
@@ -65,7 +65,7 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
               text="For each trade a 0.2% fee is paid. 0.17% goes to liquidity providers and 0.03% goes to the Summitswap treasury."
             />
           </RowFixed>
-          <Text fontSize="14px" style={{ fontFamily: 'Oswald' }} color="#131413">
+          <Text fontSize="14px" style={{ fontFamily: 'Oswald' }} color="text">
             {realizedLPFee ? `${realizedLPFee.toSignificant(4)} ${trade.inputAmount.currency.symbol}` : '-'}
           </Text>
         </RowBetween>

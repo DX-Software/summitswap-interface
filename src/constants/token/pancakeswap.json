@@ -11,13 +11,6 @@
   "keywords": ["pancake", "default"],
   "tokens": [
     {
-      "name": "FastToken",
-      "symbol": "FAST",
-      "address": "0xfEA6218871B7851748881a4aF6bCA63Af1B769a8",
-      "chainId": 97,
-      "decimals": 18
-    },
-    {
       "name": "WBNB Token",
       "symbol": "WBNB",
       "address": "0xae13d989dac2f0debff460ac112a837c89baa7cd",
@@ -43,7 +36,7 @@
     {
       "name": "BUSD Token",
       "symbol": "BUSD",
-      "address": "0x615446C0Fd5eA8A5FD7fb763f3FC2C58774474F3",
+      "address": "0x78867bbeef44f2326bf8ddd1941a4439382ef2a7",
       "chainId": 97,
       "decimals": 18,
       "logoURI": "/images/coins/BTC.png"

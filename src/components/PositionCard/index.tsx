@@ -23,10 +23,11 @@ export const FixedHeightRow = styled(RowBetween)`
 `
 
 export const HoverCard = styled(Card)`
-  border: 1px solid ${({ theme }) => theme.colors.invertedContrast};
-  :hover {
-    border: 1px solid ${({ theme }) => darken(0.06, theme.colors.invertedContrast)};
-  }
+  // border: 1px solid ${({ theme }) => theme.colors.invertedContrast};
+  box-shadow: 2px 2px 10px .5px ${({ theme }) => theme.colors.sidebarBackground};
+  // :hover {
+  //   border: 1px solid ${({ theme }) => darken(0.06, theme.colors.invertedContrast)};
+  // }
 `
 
 interface PositionCardProps {
