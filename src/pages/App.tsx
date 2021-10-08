@@ -10,6 +10,7 @@ import Pool from './Pool'
 import PoolFinder from './PoolFinder'
 import RemoveLiquidity from './RemoveLiquidity'
 import Swap from './Swap'
+import SummitCheck from './SummitCheck'
 import { RedirectPathToSwapOnly } from './Swap/redirects'
 import { EN, allLanguages } from '../constants/localisation/languageCodes'
 import { LanguageContext } from '../hooks/LanguageContext'
@@ -119,6 +120,7 @@ export default function App() {
                       <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
                       <Route exact path="/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
                       <Route exact strict path="/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
+                      <Route exact path="/summitcheck" component={SummitCheck} />
 
                       <Route component={RedirectPathToSwapOnly} />
                     </BodyWrapper>

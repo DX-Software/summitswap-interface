@@ -15,6 +15,7 @@ const AppHeader: React.FC = () => {
         {location.pathname === '/pool' && 'Liquidity'}
         {location.pathname.search('/add') !== -1 && 'Liquidity'}
         {location.pathname === '/find' && 'Liquidity'}
+        {location.pathname === '/summitcheck' && 'Summit Check'}
       </Box>
       <TopLogo src={TopLogoIcon} alt='' />
     </StyledContainer>

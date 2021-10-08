@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import { Text } from '@summitswap-uikit'
 import { Spinner } from '../Shared'
@@ -7,7 +7,7 @@ import { Wrapper, Section, ConfirmedIcon, ContentHeader } from './helpers'
 
 type ConfirmationPendingContentProps = { onDismiss: () => void; pendingText: string }
 
-const CustomLightSpinner = styled(Spinner)<{ size: string }>`
+const CustomLightSpinner = styled(Spinner) <{ size: string }>`
   height: ${({ size }) => size};
   width: ${({ size }) => size};
 `

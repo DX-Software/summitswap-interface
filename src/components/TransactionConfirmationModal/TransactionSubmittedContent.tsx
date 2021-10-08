@@ -1,11 +1,13 @@
 import { ChainId } from '@summitswap-libs'
-import React, { useContext } from 'react'
+import React, { useEffect, useContext } from 'react'
+import { useSelector } from 'react-redux'
 import { ThemeContext } from 'styled-components'
 import { Button, LinkExternal } from '@summitswap-uikit'
 import { ArrowUpCircle } from 'react-feather'
 import { AutoColumn } from '../Column'
 import { getBscScanLink } from '../../utils'
 import { Wrapper, Section, ConfirmedIcon, ContentHeader } from './helpers'
+import { AppState } from '../../state'
 
 type TransactionSubmittedContentProps = {
   onDismiss: () => void
@@ -15,6 +17,16 @@ type TransactionSubmittedContentProps = {
 
 const TransactionSubmittedContent = ({ onDismiss, chainId, hash }: TransactionSubmittedContentProps) => {
   const theme = useContext(ThemeContext)
+  const audioPlay = useSelector<AppState, AppState['user']['audioPlay']>((state) => state.user.audioPlay)
+
+  useEffect(() => {
+    if (audioPlay) {
+      const audio = document.getElementById('swapSuccessMusic') as HTMLAudioElement
+      if (audio) {
+        audio.play()
+      }
+    }
+  }, [audioPlay])
 
   return (
     <Wrapper>

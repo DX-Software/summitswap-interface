@@ -1,3 +1,4 @@
+import { useSelector } from 'react-redux'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 import { JSBI, Percent, Router, SwapParameters, Trade, TradeType } from '@summitswap-libs'
@@ -8,8 +9,9 @@ import { calculateGasMargin, getRouterContract, isAddress, shortenAddress } from
 import isZero from '../utils/isZero'
 import { useActiveWeb3React } from './index'
 import useENS from './useENS'
+import { AppState } from '../state'
 
- enum SwapCallbackState {
+enum SwapCallbackState {
   INVALID,
   LOADING,
   VALID,
@@ -86,6 +88,15 @@ function useSwapCallArguments(
   }, [account, allowedSlippage, chainId, deadline, library, recipient, trade])
 }
 
+const playFailMusic = (audioPlay) => {
+  if (audioPlay) {
+    const audio = document.getElementById('swapFailMusic') as HTMLAudioElement
+    if (audio) {
+      audio.play()
+    }
+  }
+}
+
 // returns a function that will execute a swap, if the parameters are all valid
 // and the user has approved the slippage adjusted input amount for the trade
 export function useSwapCallback(
@@ -102,6 +113,7 @@ export function useSwapCallback(
 
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
+  const audioPlay = useSelector<AppState, AppState['user']['audioPlay']>((state) => state.user.audioPlay)
 
   return useMemo(() => {
     if (!trade || !library || !account || !chainId) {
@@ -134,7 +146,7 @@ export function useSwapCallback(
               })
               .catch((gasError) => {
                 console.info('Gas estimate failed, trying eth_call to extract error', call)
-
+                playFailMusic(audioPlay)                    
                 return contract.callStatic[methodName](...args, options)
                   .then((result) => {
                     console.info('Unexpected successful call after failed estimate gas', call, gasError, result)
@@ -165,6 +177,7 @@ export function useSwapCallback(
         )
 
         if (!successfulEstimation) {
+          playFailMusic(audioPlay)                    
           const errorCalls = estimatedCalls.filter((call): call is FailedCall => 'error' in call)
           if (errorCalls.length > 0) throw errorCalls[errorCalls.length - 1].error
           throw new Error('Unexpected error. Please contact support: none of the calls threw an error')
@@ -192,11 +205,10 @@ export function useSwapCallback(
             const withRecipient =
               recipient === account
                 ? base
-                : `${base} to ${
-                    recipientAddressOrName && isAddress(recipientAddressOrName)
-                      ? shortenAddress(recipientAddressOrName)
-                      : recipientAddressOrName
-                  }`
+                : `${base} to ${recipientAddressOrName && isAddress(recipientAddressOrName)
+                  ? shortenAddress(recipientAddressOrName)
+                  : recipientAddressOrName
+                }`
 
             addTransaction(response, {
               summary: withRecipient,
@@ -206,6 +218,7 @@ export function useSwapCallback(
           })
           .catch((error: any) => {
             // if the user rejected the tx, pass this along
+            playFailMusic(audioPlay)                    
             if (error?.code === 4001) {
               throw new Error('Transaction rejected.')
             } else {
@@ -217,7 +230,7 @@ export function useSwapCallback(
       },
       error: null,
     }
-  }, [trade, library, account, chainId, recipient, recipientAddressOrName, swapCalls, addTransaction])
+  }, [trade, library, account, chainId, recipient, recipientAddressOrName, swapCalls, addTransaction, audioPlay])
 }
 
 export default useSwapCallback
