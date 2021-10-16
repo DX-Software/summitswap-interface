@@ -48,8 +48,8 @@ export default function SyrupWarningModal({
               </Text>
               <Text color="failure">
                 {transactionType === 'Buying'
-                  ? 'You will not receive fastToken rewards for holding purchased SYRUP.'
-                  : 'You will need to buy back the same amount of SYRUP to be able to convert back to fastToken.'}
+                  ? 'You will not receive KODA Token rewards for holding purchased SYRUP.'
+                  : 'You will need to buy back the same amount of SYRUP to be able to convert back to KODA Token.'}
               </Text>
             </>
           )}

@@ -74,11 +74,16 @@ export function CurrencySearch({
 
   const filteredSortedTokens: Token[] = useMemo(() => {
     if (searchToken) return [searchToken]
-    const sorted = filteredTokens.sort(tokenComparator)
+    let sorted = filteredTokens.sort(tokenComparator)
     const symbolMatch = searchQuery
       .toLowerCase()
       .split(/\s+/)
       .filter((s) => s.length > 0)
+
+    const koda = sorted.filter(e => e.symbol === 'KODA')
+    sorted.splice(sorted.findIndex(e => e.symbol === 'PSG'), 1)
+    sorted = koda.concat(sorted)
+
     if (symbolMatch.length > 1) return sorted
 
     return [

@@ -11,6 +11,13 @@
   "keywords": ["pancake", "default"],
   "tokens": [
     {
+      "name": "KODA Token",
+      "symbol": "KODA",
+      "address": "0x8094e772fa4a60bdeb1dfec56ab040e17dd608d5",
+      "chainId": 56,
+      "decimals": 9
+    },
+    {
       "name": "WBNB Token",
       "symbol": "WBNB",
       "address": "0xae13d989dac2f0debff460ac112a837c89baa7cd",

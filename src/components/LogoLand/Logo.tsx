@@ -15,6 +15,6 @@ const Image = styled.img`
   `}
 `
 
-const Logo: React.FC<IProps> = ({ height, width }) => <Image src={logo} alt="Fast logo" width={width} height={height} />
+const Logo: React.FC<IProps> = ({ height, width }) => <Image src={logo} alt="Koda logo" width={width} height={height} />
 
 export default Logo
