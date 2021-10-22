@@ -66,7 +66,7 @@ export function getNetworkLibrary(): Web3Provider {
 }
 
 export const injected = new InjectedConnector({
-  supportedChainIds: [56, 97],
+  supportedChainIds: [parseInt(process.env.REACT_APP_CHAIN_ID as string, 10)],
 })
 
 export const bsc = new BscConnector({ supportedChainIds: [56] })
