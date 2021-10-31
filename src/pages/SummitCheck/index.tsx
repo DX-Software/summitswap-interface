@@ -15,6 +15,8 @@ export default function SummitCheck() {
                 <CardNav activeIndex={2} />
                 <Flex justifyContent='center'>
                 <Text color='text' fontSize='20px'>Coming soon...</Text>
+                </Flex>
+                <Flex justifyContent='center'>
                 <Form />
                 </Flex>
             </AppBody>
