@@ -180,6 +180,7 @@ export default function CurrencyList({
   otherCurrency,
   fixedListRef,
   showETH,
+  spotlightCurrencyCount
 }: {
   height: number
   currencies: Currency[]
@@ -188,8 +189,16 @@ export default function CurrencyList({
   otherCurrency?: Currency | null
   fixedListRef?: MutableRefObject<FixedSizeList | undefined>
   showETH: boolean
+  spotlightCurrencyCount?: number
 }) {
-  const itemData = useMemo(() => (showETH ? [Currency.ETHER, ...currencies] : [...currencies]), [currencies, showETH])
+
+  const itemData = useMemo(() => {
+    const result = [...currencies];
+    if (showETH) {
+      result.splice(spotlightCurrencyCount ?? 0, 0, Currency.ETHER);
+    }
+    return result;
+  }, [currencies, showETH, spotlightCurrencyCount])
 
   const Row = useCallback(
     ({ data, index, style }) => {

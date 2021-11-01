@@ -72,8 +72,13 @@ export function CurrencySearch({
     return filterTokens(Object.values(allTokens), searchQuery)
   }, [isAddressSearch, searchToken, allTokens, searchQuery])
 
-  const filteredSortedTokens: Token[] = useMemo(() => {
-    if (searchToken) return [searchToken]
+  const { filteredSortedTokens, spotlightTokenCount } = useMemo(() => {
+    if (searchToken) {
+      return {
+        filteredSortedTokens: [searchToken],
+        spotlightTokenCount: 0
+      };
+    }
     let sorted = filteredTokens.sort(tokenComparator)
     const symbolMatch = searchQuery
       .toLowerCase()
@@ -84,14 +89,21 @@ export function CurrencySearch({
     sorted.splice(sorted.findIndex(e => e.symbol === 'PSG'), 1)
     sorted = koda.concat(sorted)
 
-    if (symbolMatch.length > 1) return sorted
+    if (symbolMatch.length > 1) {
+      return {
+        filteredSortedTokens: sorted,
+        spotlightTokenCount: koda.length > 0 ? 1 : 0
+      };
+    }
 
-    return [
+    const resultSortedRes = [
       ...(searchToken ? [searchToken] : []),
       // sort any exact symbol matches first
       ...sorted.filter((token) => token.symbol?.toLowerCase() === symbolMatch[0]),
       ...sorted.filter((token) => token.symbol?.toLowerCase() !== symbolMatch[0]),
     ]
+
+    return { filteredSortedTokens: resultSortedRes, spotlightTokenCount: koda.length > 0 ? 1 : 0 }
   }, [filteredTokens, searchQuery, searchToken, tokenComparator])
 
   const handleCurrencySelect = useCallback(
@@ -184,6 +196,7 @@ export function CurrencySearch({
             <CurrencyList
               height={height}
               showETH={showETH}
+              spotlightCurrencyCount={spotlightTokenCount}
               currencies={filteredSortedTokens}
               onCurrencySelect={handleCurrencySelect}
               otherCurrency={otherSelectedCurrency}
