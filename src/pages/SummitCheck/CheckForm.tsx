@@ -4,7 +4,7 @@ import axios from "axios";
 
 const CheckForm: React.FunctionComponent = () => {
   const [term, setTerm] = useState('');
-  const [paraText, setParaText] = useState({ total_supply: '', holders: 0, owner_address: '', top_holders: [{TokenHolderAddress: '', TokenHolderQuantity: ''}], burned_tokens: 0 });
+  const [paraText, setParaText] = useState({ token_name: '', total_supply: '', holders: 0, owner_address: '', owner_address_balance: '', top_holders: [{TokenHolderAddress: '', TokenHolderQuantity: ''}], burned_tokens: 0 });
 
   const submitForm = (event: React.FormEvent<HTMLFormElement>) => {
     // Preventing the page from reloading
@@ -32,7 +32,7 @@ const CheckForm: React.FunctionComponent = () => {
         return console.log(value);
       });&& paraText.length>0 && paraText.map((item)=><p>{item}</p>)
       */
-     setParaText({total_supply: data.total_supply, holders: data.holders, owner_address: data.owner_address, top_holders: data.top_holders, burned_tokens: data.burned_tokens});
+     setParaText({token_name: data.token_name, total_supply: data.total_supply, holders: data.holders, owner_address: data.owner_address, owner_address_balance: data.owner_address_balance, top_holders: data.top_holders, burned_tokens: data.burned_tokens});
       setTerm('');
     });
     
@@ -53,15 +53,19 @@ const CheckForm: React.FunctionComponent = () => {
         </form>
         <br />
         <div id="result">
+          <p>Token Name: { paraText.token_name }</p>
+          <br />
           <p>Total Supply: { paraText.total_supply }</p>
           <br />
           <p>Holders: { paraText.holders }</p>
           <br />
           <p>Owner Address: { paraText.owner_address }</p>
           <br />
+          <p>Owner Address Balance: { paraText.owner_address_balance }</p>
+          <br />
           <p>Burned Tokens: { paraText.burned_tokens }</p>
           <br />
-          <div>Top Holders: {paraText.top_holders.map(holder => <div><p>Holder Address: {holder.TokenHolderAddress}</p><p>Holder Quantity: {holder.TokenHolderQuantity}</p></div>)}</div>
+          <div>Top Holders: {paraText.top_holders.map(holder => <div><br/><p>Holder Address: {holder.TokenHolderAddress}</p><p>Holder Quantity: {holder.TokenHolderQuantity}</p></div>)}</div>
         </div>
       </div>
   );
