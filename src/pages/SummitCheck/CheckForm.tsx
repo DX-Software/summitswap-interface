@@ -4,7 +4,7 @@ import axios from "axios";
 
 const CheckForm: React.FunctionComponent = () => {
   const [term, setTerm] = useState('');
-  const [paraText, setParaText] = useState({ token_name: '', total_supply: '', holders: 0, owner_address: '', owner_address_balance: '', top_holders: [{TokenHolderAddress: '', TokenHolderQuantity: ''}], burned_tokens: 0 });
+  const [paraText, setParaText] = useState({ token_name: '', total_supply: '', holders: 0, owner_address: '', owner_address_balance: '', top_holders: [{TokenHolderAddress: '', TokenHolderQuantity: '', Percentage: 0}], burned_tokens: 0 });
 
   const submitForm = (event: React.FormEvent<HTMLFormElement>) => {
     // Preventing the page from reloading
@@ -65,7 +65,7 @@ const CheckForm: React.FunctionComponent = () => {
           <br />
           <p>Burned Tokens: { paraText.burned_tokens }</p>
           <br />
-          <div>Top Holders: {paraText.top_holders.map(holder => <div><br/><p>Holder Address: {holder.TokenHolderAddress}</p><p>Holder Quantity: {holder.TokenHolderQuantity}</p></div>)}</div>
+          <div>Top Holders: {paraText.top_holders.map(holder => <div><br/><p>Holder Address: {holder.TokenHolderAddress}</p><p>Holder Quantity: {holder.TokenHolderQuantity}</p><p>Percentage: {holder.Percentage}%</p></div>)}</div>
         </div>
       </div>
   );
