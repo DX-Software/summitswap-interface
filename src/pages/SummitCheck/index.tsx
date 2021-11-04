@@ -14,7 +14,7 @@ export default function SummitCheck() {
                 <PageHeader title="Swap" />
                 <CardNav activeIndex={2} />
                 <Flex justifyContent='center'>
-                <Text color='text' fontSize='20px'>Coming soon...</Text>
+                {/* <Text color='text' fontSize='20px'>Coming soon...</Text> */}
                 </Flex>
                 <Flex justifyContent='center'>
                 <Form />
