@@ -7,7 +7,7 @@ import { Button } from '@summitswap-uikit'
 
 const CheckForm: React.FunctionComponent = () => {
   const [term, setTerm] = useState('');
-  const [paraText, setParaText] = useState({ token_name: '', total_supply: '', holders: 0, owner_address: '', owner_address_balance: '', top_holders: [{ TokenHolderAddress: '', TokenHolderQuantity: '', Percentage: 0 }], burned_tokens: 0 });
+  const [paraText, setParaText] = useState({ token_name: '', total_supply: '', holders_count: 0, owner_address: '', owner_address_balance: '', top_holders: [{ tokenHolderAddress: '', tokenHolderQuantity: '', percentage: 0 }], burned_tokens: 0 });
   const [dataFetched, setDataFetched] = useState(false);
   const [loading, setLoading] = useState(false)
 
@@ -39,7 +39,7 @@ const CheckForm: React.FunctionComponent = () => {
             return console.log(value);
           });&& paraText.length>0 && paraText.map((item)=><p>{item}</p>)
           */
-          setParaText({ token_name: data.token_name, total_supply: data.total_supply, holders: data.holders, owner_address: data.owner_address, owner_address_balance: data.owner_address_balance, top_holders: data.top_holders, burned_tokens: data.burned_tokens });
+          setParaText({ token_name: data.token_name, total_supply: data.total_supply, holders_count: data.holders_count, owner_address: data.owner_address, owner_address_balance: data.owner_address_balance, top_holders: data.top_holders, burned_tokens: data.burned_tokens });
           setDataFetched(true);
           setLoading(false);
           setTerm('');
@@ -139,7 +139,7 @@ const CheckForm: React.FunctionComponent = () => {
             </p>
             <p>
               <span>Holders:</span>
-              <span className='value'>{paraText.holders}</span>
+              <span className='value'>{paraText.holders_count}</span>
             </p>
             <p>
               <span>Owner Address:</span>
@@ -160,16 +160,17 @@ const CheckForm: React.FunctionComponent = () => {
             {paraText.top_holders.map(holder => <div>
               <p>
                 <span>Holder Address:</span>
-                <span className='value'>{holder.TokenHolderAddress}</span>
+                <span className='value'>{holder.tokenHolderAddress}</span>
               </p>
               <p>
                 <span>Holder Quantity:</span>
-                <span className='value'>{holder.TokenHolderQuantity}</span>
+                <span className='value'>{holder.tokenHolderQuantity}</span>
               </p>
               <p>
                 <span>Percentage:</span>
-                <span className='value'>{holder.Percentage}%</span>
+                <span className='value'>{holder.percentage}%</span>
               </p>
+              <hr />
             </div>)}
           </ResultsBox>
         </div>
