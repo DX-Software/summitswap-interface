@@ -7,7 +7,7 @@ import { Button } from '@summitswap-uikit'
 
 const CheckForm: React.FunctionComponent = () => {
   const [term, setTerm] = useState('');
-  const [paraText, setParaText] = useState({ token_name: '', total_supply: '', holders: 0, owner_address: '', owner_address_balance: '', top_holders: [{TokenHolderAddress: '', TokenHolderQuantity: '', Percentage: 0}], burned_tokens: 0 });
+  const [paraText, setParaText] = useState({ token_name: '', total_supply: '', holders: 0, owner_address: '', owner_address_balance: '', top_holders: [{ TokenHolderAddress: '', TokenHolderQuantity: '', Percentage: 0 }], burned_tokens: 0 });
   const [dataFetched, setDataFetched] = useState(false);
   const [loading, setLoading] = useState(false)
 
@@ -19,43 +19,42 @@ const CheckForm: React.FunctionComponent = () => {
     if (term.trim()) {
       setLoading(true);
 
-      fetch("http://localhost:3000/summit-check-token", {
-          method: "POST",
-          body: JSON.stringify(term),
-          headers: {
-              "Content-Type": "application/json"
-          }
+      fetch(`http://localhost:3000/summit-check-token/${term}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        }
       })
-      .then(res => res.json())
-      .then(data => {
-        console.log(data);
-        /*
-        let textPara = "";
-        Object.entries(data).map(([key, value]) => {
-          // Pretty straightforward - use key for the key and value for the value.
-          // Just to clarify: unlike object destructuring, the parameter names don't matter here.
-          
-            textPara += `${key}: ${value}`;
-          
-          return console.log(value);
-        });&& paraText.length>0 && paraText.map((item)=><p>{item}</p>)
-        */
-      setParaText({token_name: data.token_name, total_supply: data.total_supply, holders: data.holders, owner_address: data.owner_address, owner_address_balance: data.owner_address_balance, top_holders: data.top_holders, burned_tokens: data.burned_tokens});
-      setDataFetched(true); 
-      setLoading(false);
-      setTerm('');
-      });
+        .then(res => res.json())
+        .then(data => {
+          console.log(data);
+          /*
+          let textPara = "";
+          Object.entries(data).map(([key, value]) => {
+            // Pretty straightforward - use key for the key and value for the value.
+            // Just to clarify: unlike object destructuring, the parameter names don't matter here.
+            
+              textPara += `${key}: ${value}`;
+            
+            return console.log(value);
+          });&& paraText.length>0 && paraText.map((item)=><p>{item}</p>)
+          */
+          setParaText({ token_name: data.token_name, total_supply: data.total_supply, holders: data.holders, owner_address: data.owner_address, owner_address_balance: data.owner_address_balance, top_holders: data.top_holders, burned_tokens: data.burned_tokens });
+          setDataFetched(true);
+          setLoading(false);
+          setTerm('');
+        });
     }
 
   }
 
-const Container = styled.div`
+  const Container = styled.div`
   width: 100%;
 `
-const Form = styled.form`
+  const Form = styled.form`
   display: flex;
 `
-const SearchInput = styled.input`
+  const SearchInput = styled.input`
   position: relative;
   display: flex;
   padding: 10px 20px;
@@ -82,7 +81,7 @@ const SearchInput = styled.input`
     outline: none;
   }
 `
-const ResultsBox = styled.div`
+  const ResultsBox = styled.div`
   border-radius: 16px;
   background: #011724;
   box-shadow: inset 0px 2px 2px -1px rgb(74 74 104 / 10%);
@@ -111,72 +110,72 @@ const ResultsBox = styled.div`
 `
 
   return (
-      <Container>
-        <Form onSubmit={submitForm}>
-          <SearchInput
-            value={term}
-            onChange={(e) => setTerm(e.target.value)}
-            type="text"
-            placeholder="Enter address"
-            className="input"
-            name="token_address"
-          />
-          <Button style={{ borderRadius:"0 33px 33px 0" }} type="submit" className="btn" disabled={ loading }>
-            {loading ? 'Loading...' : 'Submit'}
-          </Button>
-        </Form>
-        <br />
+    <Container>
+      <Form onSubmit={submitForm}>
+        <SearchInput
+          value={term}
+          onChange={(e) => setTerm(e.target.value)}
+          type="text"
+          placeholder="Enter address"
+          className="input"
+          name="token_address"
+        />
+        <Button style={{ borderRadius: "0 33px 33px 0" }} type="submit" className="btn" disabled={loading}>
+          {loading ? 'Loading...' : 'Submit'}
+        </Button>
+      </Form>
+      <br />
 
-        {dataFetched &&
-          <div id="result">
-              <ResultsBox>
-              <p>
-                <span>Token Name:</span> 
-                <span className='value'>{ paraText.token_name }</span>
-              </p>
-              <p>
-                <span>Total Supply:</span> 
-                <span className='value'>{ paraText.total_supply }</span>
-              </p>
-              <p>
-                <span>Holders:</span> 
-                <span className='value'>{ paraText.holders }</span>
-              </p>
-              <p>
-                <span>Owner Address:</span> 
-                <span className='value'>{ paraText.owner_address }</span>
-              </p>
-              <p>
-                <span>Owner Address Balance:</span> 
-                <span className='value'>{ paraText.owner_address_balance }</span>
-              </p>
-              <p>
-                <span>Burned Tokens:</span> 
-                <span className='value'>{ paraText.burned_tokens }</span>
-              </p>
-            </ResultsBox>
+      {dataFetched &&
+        <div id="result">
+          <ResultsBox>
+            <p>
+              <span>Token Name:</span>
+              <span className='value'>{paraText.token_name}</span>
+            </p>
+            <p>
+              <span>Total Supply:</span>
+              <span className='value'>{paraText.total_supply}</span>
+            </p>
+            <p>
+              <span>Holders:</span>
+              <span className='value'>{paraText.holders}</span>
+            </p>
+            <p>
+              <span>Owner Address:</span>
+              <span className='value'>{paraText.owner_address}</span>
+            </p>
+            <p>
+              <span>Owner Address Balance:</span>
+              <span className='value'>{paraText.owner_address_balance}</span>
+            </p>
+            <p>
+              <span>Burned Tokens:</span>
+              <span className='value'>{paraText.burned_tokens}</span>
+            </p>
+          </ResultsBox>
 
-            <ResultsBox>
-                <h4>Top Holders</h4>
-              {paraText.top_holders.map(holder => <div>
-                  <p>
-                    <span>Holder Address:</span> 
-                    <span className='value'>{holder.TokenHolderAddress}</span>
-                  </p>
-                  <p>
-                    <span>Holder Quantity:</span> 
-                    <span className='value'>{holder.TokenHolderQuantity}</span>
-                  </p>
-                  <p>
-                    <span>Percentage:</span> 
-                    <span className='value'>{holder.Percentage}%</span>
-                  </p>
-                </div>)}
-            </ResultsBox>
-          </div>
-        }
-          
-      </Container>
+          <ResultsBox>
+            <h4>Top Holders</h4>
+            {paraText.top_holders.map(holder => <div>
+              <p>
+                <span>Holder Address:</span>
+                <span className='value'>{holder.TokenHolderAddress}</span>
+              </p>
+              <p>
+                <span>Holder Quantity:</span>
+                <span className='value'>{holder.TokenHolderQuantity}</span>
+              </p>
+              <p>
+                <span>Percentage:</span>
+                <span className='value'>{holder.Percentage}%</span>
+              </p>
+            </div>)}
+          </ResultsBox>
+        </div>
+      }
+
+    </Container>
   );
 };
 
