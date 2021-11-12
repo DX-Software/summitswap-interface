@@ -21,7 +21,7 @@ window.addEventListener('error', () => {
 
 ReactDOM.render(
   <StrictMode>
-    <Providers>
+    {/* <Providers>
       <>
         <ListsUpdater />
         <ApplicationUpdater />
@@ -31,7 +31,7 @@ ReactDOM.render(
       <ResetCSS />
       <GlobalStyle />
       <App />
-    </Providers>
+    </Providers> */}
   </StrictMode>,
   document.getElementById('root')
 )
