@@ -91,9 +91,9 @@ export function CurrencySearch({
       // sort any exact symbol matches first
       ...sorted.filter((token) => token.symbol?.toLowerCase() === symbolMatch[0]),
       ...sorted.filter((token) => token.symbol?.toLowerCase() !== symbolMatch[0]),
-    ].sort((a,b) => 
-      ((a as any).tokenInfo.priority ?? 0) > ((b as any).tokenInfo.priority ?? 0) ? 1 : -1
-    ).reverse()
+    ].sort((a, b) => 
+      b.priority - a.priority
+    )
   }, [filteredTokens, searchQuery, searchToken, tokenComparator])
 
   const handleCurrencySelect = useCallback(
