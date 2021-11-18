@@ -2,52 +2,10 @@ import { Web3Provider } from '@ethersproject/providers'
 import { InjectedConnector } from '@web3-react/injected-connector'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
-import { ChainId } from '@summitswap-libs'
 import { NetworkConnector } from './NetworkConnector'
 import { BscConnector } from './bsc/bscConnector'
 
 const NETWORK_URL = process.env.REACT_APP_NETWORK_URL
-
-export const nodes = [process.env.REACT_APP_NODE_1, process.env.REACT_APP_NODE_2, process.env.REACT_APP_NODE_3]
-
-export const BASE_BSC_SCAN_URLS = {
-  [ChainId.MAINNET]: 'https://bscscan.com',
-  [ChainId.BSCTESTNET]: 'https://testnet.bscscan.com',
-}
-
-export const BASE_BSC_SCAN_URL = BASE_BSC_SCAN_URLS[process.env.REACT_APP_CHAIN_ID as string]
-
-export const setupNetwork = async () => {
-  const provider = window.ethereum
-  if (provider) {
-    const chainId = parseInt(process.env.REACT_APP_CHAIN_ID as string, 10)
-    try {
-      await (provider as any).request({
-        method: 'wallet_addEthereumChain',
-        params: [
-          {
-            chainId: `0x${chainId.toString(16)}`,
-            chainName: `Binance Smart Chain ${process.env.REACT_APP_CHAIN_ID === "56" ? "Mainnet" : "Testnet"}`,
-            nativeCurrency: {
-              name: 'BNB',
-              symbol: 'bnb',
-              decimals: 18,
-            },
-            rpcUrls: nodes,
-            blockExplorerUrls: [`${BASE_BSC_SCAN_URL}/`],
-          },
-        ],
-      })
-      return true
-    } catch (error) {
-      console.error('Failed to setup the network in Metamask:', error)
-      return false
-    }
-  } else {
-    console.error("Can't setup the BSC network on metamask because window.ethereum is undefined")
-    return false
-  }
-}
 
 export const NETWORK_CHAIN_ID: number = parseInt(process.env.REACT_APP_CHAIN_ID ?? '56')
 
@@ -66,7 +24,7 @@ export function getNetworkLibrary(): Web3Provider {
 }
 
 export const injected = new InjectedConnector({
-  supportedChainIds: [parseInt(process.env.REACT_APP_CHAIN_ID as string, 10)],
+  supportedChainIds: [56, 97],
 })
 
 export const bsc = new BscConnector({ supportedChainIds: [56] })
