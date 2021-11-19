@@ -31,7 +31,7 @@ const Menu: React.FC = (props) => {
         return activate(injected)
       }}
       logout={deactivate}
-      isDark={isDark}
+      isDark
       toggleTheme={toggleTheme}
       currentLang={selectedLanguage?.code || ''}
       langs={allLanguages}

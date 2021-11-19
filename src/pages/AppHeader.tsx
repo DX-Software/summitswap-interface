@@ -11,11 +11,12 @@ const AppHeader: React.FC = () => {
   return (
     <StyledContainer>
       <Box>
-        {location.pathname === '/swap' && 'Exchange'}
+        {location.pathname.search('/swap') !== -1 && 'Exchange'}
         {location.pathname === '/pool' && 'Liquidity'}
         {location.pathname.search('/add') !== -1 && 'Liquidity'}
         {location.pathname === '/find' && 'Liquidity'}
         {location.pathname === '/summitcheck' && 'Summit Check'}
+        {location.pathname === '/referral' && 'Summit Referral'}
       </Box>
       <TopLogo src={TopLogoIcon} alt='' />
     </StyledContainer>

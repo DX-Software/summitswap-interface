@@ -11,6 +11,11 @@ const config: MenuEntry[] = [
     icon: "TradeIcon",
     href: "/swap",
   },
+  {
+    label: "Referral",
+    icon: "FarmIcon",
+    href: "/referral",
+  },
   // {
   //   label: "Farms",
   //   icon: "FarmIcon",

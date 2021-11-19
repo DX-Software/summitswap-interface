@@ -1,10 +1,13 @@
-import React, { useMemo } from 'react'
-import { CheckmarkCircleIcon, ErrorIcon, Flex, LinkExternal, Text, Modal, Button } from '@summitswap-uikit'
+import React, { useEffect, useMemo, useState } from 'react'
+import { CheckmarkCircleIcon, ErrorIcon, Flex, LinkExternal, Text, Modal, Button, Box } from '@summitswap-uikit'
 import { useActiveWeb3React } from 'hooks'
 import { getBscScanLink } from 'utils'
-import { isTransactionRecent, useAllTransactions } from 'state/transactions/hooks'
+import { isTransactionRecent, useAllSwapList, useAllTransactions } from 'state/transactions/hooks'
 import { TransactionDetails } from 'state/transactions/reducer'
 import Loader from 'components/Loader'
+import _ from 'lodash'
+import { useToken } from 'hooks/Tokens'
+import ReferralTransactionRow from './ReferralTransactionRow'
 
 type RecentTransactionsModalProps = {
   onDismiss?: () => void
@@ -38,6 +41,7 @@ const RecentTransactionsModal = ({ onDismiss = defaultOnDismiss }: RecentTransac
     const txs = Object.values(allTransactions)
     return txs.filter(isTransactionRecent).sort(newTransactionsFirst)
   }, [allTransactions])
+
 
   return (
     <Modal title="Recent Transactions" onDismiss={onDismiss}>
@@ -78,7 +82,7 @@ const RecentTransactionsModal = ({ onDismiss = defaultOnDismiss }: RecentTransac
             </>
           )
         })}
-    </Modal>
+    </Modal >
   )
 }
 
