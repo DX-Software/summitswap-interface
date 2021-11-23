@@ -13,7 +13,7 @@ const cheerio = require("cheerio");
 // bsc squid scam 0x440Fc7DA66e34e01af5201BdF5815739B0Ae743f
 // bsc koda v2 0x8094e772fA4A60bdEb1DfEC56AB040e17DD608D5
 
-const TokenAddress = "0x8076c74c5e3f5852037f31ff0093eeb8c8add8d3";
+const TokenAddress = "0x31d9bb2d2e971f0f2832b32f942828e1f5d82bf9";
 const network = "b";
 
 async function main() {
@@ -83,6 +83,15 @@ async function main() {
   $(".js-sourcecopyarea.editor", html).each(function () {
     const text = $(this).text();
     script = text;
+  });
+
+  let noIcon = false;
+  $(".row.align-items-center > .col-md-8 > img", html).each(function () {
+    const text = $(this).attr("src");
+
+    if(text === "/images/main/empty-token.png"){
+      noIcon = true;
+    }
   });
 
   //////////////// get total txs number ////////////////////////
@@ -164,7 +173,10 @@ async function main() {
     lastIn100transferFails /
     (transactions.length - non_trans > 0 ? transactions.length - non_trans : 1);
 
-  console.log("fail per transfer in last 100 = ", transferFailsRatio.toFixed(4));
+  console.log(
+    "fail per transfer in last 100 = ",
+    transferFailsRatio.toFixed(4)
+  );
 
   ////// calculating from address -likelihood
   let exc = {};
@@ -216,9 +228,14 @@ async function main() {
     scamScore += 10;
   }
 
+  if(noIcon){
+    scamScore += 30;
+  }
+
+
   if (Ntxs < 500 && transferFailsRatio < 0.1) {
     console.log("probably a new non-scam token");
-    scamScore -= (20*(1-transferFailsRatio));
+    scamScore -= 20 * (1 - transferFailsRatio);
   }
   //   console.log("scamScore: ", scamScore);
   if (scamScore >= 50) {
