@@ -2955,9 +2955,9 @@
     "@styled-system/core" "^5.1.2"
     "@styled-system/css" "^5.1.5"
 
-"@summitswap-libs@git+https://github.com/Koda-Finance/summitswap-sdk.git":
+"@summitswap-libs@git+https://github.com/Koda-Finance/summitswap-sdk.git#main":
   version "1.0.0"
-  resolved "git+https://github.com/Koda-Finance/summitswap-sdk.git#8d1f5f01729144ff0139fc7850bdbe4b204a3317"
+  resolved "git+https://github.com/Koda-Finance/summitswap-sdk.git#88c1d9dd5ae787350242620bc75356ced563a7c6"
   dependencies:
     "@pancakeswap-libs/pancake-swap-core" "^0.1.0"
     big.js "^5.2.2"
@@ -2967,7 +2967,7 @@
     tiny-warning "^1.0.3"
     toformat "^2.0.0"
 
-"@summitswap-uikit@git+https://github.com/Koda-Finance/summitswap-uikit.git":
+"@summitswap-uikit@git+https://github.com/Koda-Finance/summitswap-uikit.git#main":
   version "0.0.1"
   resolved "git+https://github.com/Koda-Finance/summitswap-uikit.git#59fbeaf72067723e1d85a5313463e4b3506223f5"
   dependencies:
