@@ -99,6 +99,7 @@ export function useDerivedMintInfo(
 
   const price = useMemo(() => {
     if (noLiquidity) {
+      alert('no')
       const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = parsedAmounts
       if (currencyAAmount && currencyBAmount) {
         return new Price(currencyAAmount.currency, currencyBAmount.currency, currencyAAmount.raw, currencyBAmount.raw)
@@ -106,6 +107,7 @@ export function useDerivedMintInfo(
       return undefined
     }
     const wrappedCurrencyA = wrappedCurrency(currencyA, chainId)
+    console.log(pair)
     return pair && wrappedCurrencyA ? pair.priceOf(wrappedCurrencyA) : undefined
   }, [chainId, currencyA, noLiquidity, pair, parsedAmounts])
 

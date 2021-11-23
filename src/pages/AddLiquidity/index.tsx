@@ -404,7 +404,7 @@ export default function AddLiquidity({
                       </RowBetween>
                     )}
                   <Button
-                    style={{ fontFamily: 'Poppins'}}
+                    style={{ fontFamily: 'Poppins' }}
                     onClick={() => {
                       if (expertMode) {
                         onAdd()

@@ -10,6 +10,7 @@ import Pool from './Pool'
 import PoolFinder from './PoolFinder'
 import RemoveLiquidity from './RemoveLiquidity'
 import Swap from './Swap'
+import Referral from './Referral'
 import SummitCheck from './SummitCheck'
 import { RedirectPathToSwapOnly } from './Swap/redirects'
 import { EN, allLanguages } from '../constants/localisation/languageCodes'
@@ -110,7 +111,9 @@ export default function App() {
                   <Menu>
                     <BodyWrapper>
                       <AppHeader />
-                      <Route exact strict path="/swap" component={Swap} />
+                      <Route exact path="/swap" component={Swap} />
+                      <Route exact path="/swap?ref=:ref" component={Referral} />
+                      <Route exact path="/referral" component={Referral} />
                       <Route exact strict path="/find" component={PoolFinder} />
                       <Route exact strict path="/pool" component={Pool} />
                       <Route exact path="/add" component={AddLiquidity} />
@@ -122,7 +125,7 @@ export default function App() {
                       <Route exact strict path="/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
                       <Route exact path="/summitcheck" component={SummitCheck} />
 
-                      <Route component={RedirectPathToSwapOnly} />
+                      {/* <Route component={RedirectPathToSwapOnly} /> */}
                     </BodyWrapper>
                   </Menu>
                 </Switch>

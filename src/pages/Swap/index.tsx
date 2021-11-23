@@ -1,7 +1,8 @@
 import { CurrencyAmount, JSBI, Token, Trade } from '@summitswap-libs'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown } from 'react-feather'
-import { CardBody, Button, IconButton, Text } from '@summitswap-uikit'
+import { useLocation } from 'react-router-dom'
+import { CardBody, Button, IconButton, Text, useWalletModal } from '@summitswap-uikit'
 import { ThemeContext } from 'styled-components'
 import AddressInputPanel from 'components/AddressInputPanel'
 import Card, { GreyCard } from 'components/Card'
@@ -17,9 +18,10 @@ import TradePrice from 'components/swap/TradePrice'
 import TokenWarningModal from 'components/TokenWarningModal'
 import SyrupWarningModal from 'components/SyrupWarningModal'
 import ProgressSteps from 'components/ProgressSteps'
+import { useReferralContract } from 'hooks/useContract'
+import { useWeb3React } from '@web3-react/core'
+import { injected, walletconnect } from 'connectors'
 
-import { INITIAL_ALLOWED_SLIPPAGE } from 'constants/index'
-import { useActiveWeb3React } from 'hooks'
 import { useCurrency } from 'hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from 'hooks/useApproveCallback'
 import { useSwapCallback } from 'hooks/useSwapCallback'
@@ -31,9 +33,7 @@ import { LinkStyledButton } from 'components/Shared'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from 'utils/prices'
 import Loader from 'components/Loader'
-import { TranslateString } from 'utils/translateTextHelpers'
 import PageHeader from 'components/PageHeader'
-import ConnectWalletButton from 'components/ConnectWalletButton'
 import ConnectWalletButtonSwap from 'components/ConnectWalletButtonSwap'
 import expandMore from 'img/expandMore.svg'
 import useGetTokenData from 'hooks/useGetTokenData'
@@ -42,11 +42,59 @@ import AppBody from '../AppBody'
 
 interface IProps {
   isLanding?: boolean
+  match?: any
 }
 
 const Swap: React.FC<IProps> = ({ isLanding }) => {
-  const loadedUrlParams = useDefaultsFromURLSearch()
+  const location = useLocation()
+  const [checked, setChecked] = useState(false)
+  const [curRef, setReferral] = useState('')
+  const handleLogin = (connectorId: string) => {
+    if (connectorId === 'walletconnect') {
+      return activate(walletconnect)
+    }
+    return activate(injected)
+  }
+  const { account, activate, deactivate, chainId } = useWeb3React()
+  const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
 
+  const contract = useReferralContract('0xF8f1E88E55b409d40Ab92A48c7E09faf6F731fd7', true)
+  useEffect(() => {
+    const tmp = new URLSearchParams(location.search)
+    setReferral(tmp.get('ref') ?? '')
+  }, [location, account])
+
+  useEffect(() => {
+    const handleCheck = async () => {
+      contract?.getReferrer(curRef).then(res => {
+        if (!account) onPresentConnectModal()
+        setChecked(true)
+      })
+        .catch(err =>
+          console.log('Not available Referral')
+        )
+    }
+    if (!checked) handleCheck()
+  }, [account, curRef, checked, setChecked, contract, onPresentConnectModal])
+
+  useEffect(() => {
+    if (account && curRef) {
+      contract?.getReferrer(account).then(r1 => {
+        if (r1 !== '0x0000000000000000000000000000000000000000' || curRef === account)
+          console.log('exists or ref is same as account')
+        else {
+          contract?.recordReferral(account, curRef).then(r2 => {
+            console.log(r2)
+          })
+            .catch(err => console.log(err))
+        }
+      })
+        .catch(err =>
+          console.log('Not available Referral')
+        )
+    }
+  }, [account, checked, setChecked, contract, curRef])
+  const loadedUrlParams = useDefaultsFromURLSearch()
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
     useCurrency(loadedUrlParams?.inputCurrencyId),
@@ -68,7 +116,6 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
     setSyrupTransactionType('')
   }, [])
 
-  const { account } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
 
   const [isExpertMode] = useExpertModeManager()
@@ -97,7 +144,6 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
       [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
       [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
     }
-
   const ethPrice = useGetEthPrice()
   const output = useGetTokenData()
 
