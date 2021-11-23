@@ -85,6 +85,8 @@ async function main() {
       const text = bs$(this).text();
       bscTransactions.push(text);
     });
+
+    
     //   logger.write(html);
     //   logger.write($(".u-label .u-label--xs .u-label--info", html));
 
@@ -139,6 +141,16 @@ async function main() {
       script = text;
     });
 
+    let noIcon = false;
+    $(".row.align-items-center > .col-md-8 > img", html).each(function () {
+      const text = $(this).attr("src");
+  
+      if(text === "/images/main/empty-token.png"){
+        noIcon = true;
+      }
+    });
+    
+
     //////////////// get total txs number ////////////////////////
     let Ntxs = "";
 
@@ -183,6 +195,8 @@ async function main() {
     //   fails++;
     // });
     // logger.write(fails);
+
+
 
     // transfer fails
     let failedIndexs = [];
@@ -281,6 +295,10 @@ async function main() {
       //   logger.write("here" + '\n');
       scamScore += 10;
     }
+
+    if(noIcon){
+        scamScore += 30;
+      }
 
     if (Ntxs < 500 && transferFailsRatio < 0.1) {
       //   logger.write("probably a new non-scam token" + '\n');
