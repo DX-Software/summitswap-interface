@@ -163,7 +163,7 @@ export default function AddLiquidity({
       ]
       value = null
     }
-    console.log(args)
+
     setAttemptingTxn(true)
     await estimate(...args, value ? { value } : {})
       .then((estimatedGasLimit) => method(...args, {
@@ -404,7 +404,7 @@ export default function AddLiquidity({
                       </RowBetween>
                     )}
                   <Button
-                    style={{ fontFamily: 'Poppins'}}
+                    style={{ fontFamily: 'Poppins' }}
                     onClick={() => {
                       if (expertMode) {
                         onAdd()
