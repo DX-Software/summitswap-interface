@@ -80,18 +80,19 @@ export function CurrencySearch({
       .split(/\s+/)
       .filter((s) => s.length > 0)
 
-    sorted.splice(sorted.findIndex(e => e.symbol === 'PSG'), 1)
+    const koda = sorted.filter(e => e.symbol === 'KODA')
+    sorted = koda.concat(sorted)
 
     if (symbolMatch.length > 1) return sorted
-
     return [
       ...(searchToken ? [searchToken] : []),
       // sort any exact symbol matches first
       ...sorted.filter((token) => token.symbol?.toLowerCase() === symbolMatch[0]),
       ...sorted.filter((token) => token.symbol?.toLowerCase() !== symbolMatch[0]),
-    ]
+    ].sort((a, b) =>
+      b.priority - a.priority
+    )
   }, [filteredTokens, searchQuery, searchToken, tokenComparator])
-
   const handleCurrencySelect = useCallback(
     (currency: Currency) => {
       onCurrencySelect(currency)
