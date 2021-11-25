@@ -2,7 +2,7 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 
 
-async function main(TokenAddress, network, Tokens, TestResults) {
+async function tokenAnalyzer(TokenAddress, network, Tokens, TestResults) {
     let observation = {};
     observation.address = TokenAddress;
     observation.reality = Tokens[TokenAddress];
@@ -199,5 +199,5 @@ async function main(TokenAddress, network, Tokens, TestResults) {
 
   }
 
-  module.exports = main;
+  module.exports = tokenAnalyzer;
 
