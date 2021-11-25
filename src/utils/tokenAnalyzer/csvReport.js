@@ -40,7 +40,7 @@ const Tokens = {
 };
 const TestResults = {};
 const network = "b";
-async function repgen() {
+async function generate_report() {
   console.log(
     "Analyzing " +
       Object.keys(Tokens).length +
@@ -49,46 +49,46 @@ async function repgen() {
   );
 
   console.log("0%");
-  let per = 0;
+  let percentage = 0;
   for (let TokenAddress of Object.keys(Tokens)) {
-    per++;
+    percentage++;
     let obj = await tokenAnalyzer(TokenAddress, network, Tokens, TestResults);
     tocsv.push(obj);
-    console.log(((per * 100) / Object.keys(Tokens).length).toFixed(2) + "%");
+    console.log(((percentage * 100) / Object.keys(Tokens).length).toFixed(2) + "%");
   }
 
   let observationResult = {};
 
-  let sum = 0;
+  let true_results = 0;
   for (let i of Object.values(TestResults)) {
-    sum += i;
+    true_results += i;
   }
   observationResult.accuracy =
-    (sum / Object.values(TestResults).length).toFixed(2) * 100 + "%";
+    (true_results / Object.values(TestResults).length).toFixed(2) * 100 + "%";
 
-  let fpos = 0;
-  let fneg = 0;
-  let pos = 0;
-  let neg = 0;
-  for (let tok of Object.keys(Tokens)) {
-    if (TestResults[tok] === 0) {
-      if (Tokens[tok] === "scam") {
-        fneg++;
-        neg++;
+  let false_positive_count = 0;
+  let false_nagative_count = 0;
+  let positive_count = 0;
+  let negative_count = 0;
+  for (let token of Object.keys(Tokens)) {
+    if (TestResults[token] === 0) {
+      if (Tokens[token] === "scam") {
+        false_nagative_count++;
+        negative_count++;
       } else {
-        fpos++;
-        pos++;
+        false_positive_count++;
+        positive_count++;
       }
     } else {
-      if (Tokens[tok] === "scam") {
-        pos++;
+      if (Tokens[token] === "scam") {
+        positive_count++;
       } else {
-        neg++;
+        negative_count++;
       }
     }
   }
-  observationResult.falsepos = (fpos / pos).toFixed(2) * 100 + "%";
-  observationResult.falseneg = (fneg / neg).toFixed(2) * 100 + "%";
+  observationResult.falsepos = (false_positive_count / positive_count).toFixed(2) * 100 + "%";
+  observationResult.falseneg = (false_nagative_count / negative_count).toFixed(2) * 100 + "%";
 
   tocsv.push(observationResult);
 
@@ -97,4 +97,4 @@ async function repgen() {
     .then(() => console.log("The CSV file was written successfully"));
 }
 
-repgen();
+generate_report();
