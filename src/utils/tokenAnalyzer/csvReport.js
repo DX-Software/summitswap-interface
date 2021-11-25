@@ -1,4 +1,4 @@
-const main = require('./main.js');
+const tokenAnalyzer = require('./tokenAnalyzer.js');
 
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 
@@ -52,7 +52,7 @@ async function repgen() {
   let per = 0;
   for (let TokenAddress of Object.keys(Tokens)) {
     per++;
-    let obj = await main(TokenAddress, network, Tokens, TestResults);
+    let obj = await tokenAnalyzer(TokenAddress, network, Tokens, TestResults);
     tocsv.push(obj);
     console.log(((per * 100) / Object.keys(Tokens).length).toFixed(2) + "%");
   }
