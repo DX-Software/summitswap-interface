@@ -1,9 +1,11 @@
 import { currencyEquals, Trade } from '@summitswap-libs'
-import React, { useCallback, useMemo } from 'react'
+import { useModal, Button } from '@summitswap-uikit'
+import React, { useCallback, useMemo} from 'react'
 import TransactionConfirmationModal, {
   ConfirmationModalContent,
-  TransactionErrorContent
+  TransactionErrorContent,
 } from '../TransactionConfirmationModal'
+import MoonpayModal from './MoonpayModal'
 import SwapModalFooter from './SwapModalFooter'
 import SwapModalHeader from './SwapModalHeader'
 
@@ -96,14 +98,25 @@ export default function ConfirmSwapModal({
     [onDismiss, modalBottom, modalHeader, swapErrorMessage]
   )
 
+  const [onMoonpayClick] = useModal(<MoonpayModal title="Buy BNB with Moonpay" />)
+
   return (
-    <TransactionConfirmationModal
-      isOpen={isOpen}
-      onDismiss={onDismiss}
-      attemptingTxn={attemptingTxn}
-      hash={txHash}
-      content={confirmationContent}
-      pendingText={pendingText}
-    />
+    <>
+      <Button width="100%" variant="primary" onClick={onMoonpayClick}>
+        Buy BNB with card on Moonpay
+      </Button>
+
+      <br />
+      <br />
+
+      <TransactionConfirmationModal
+        isOpen={isOpen}
+        onDismiss={onDismiss}
+        attemptingTxn={attemptingTxn}
+        hash={txHash}
+        content={confirmationContent}
+        pendingText={pendingText}
+      />
+    </>
   )
 }
