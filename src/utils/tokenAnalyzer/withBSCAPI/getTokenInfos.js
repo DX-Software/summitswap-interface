@@ -77,13 +77,13 @@ async function getTokenInfos(TokenAddress, apikey) {
     if (tx.isError === "1") {
       infos.NumberOfFailedTransactions++;
     }
-    if (tx.from === 42 && tx.from.substring(0, 2) === "0x") {
+    if (tx.from.length === 42 && tx.from.substring(0, 2) === "0x") {
       if (!exc[tx.from]) {
         exc[tx.from] = 1;
       } else exc[tx.from]++;
     }
 
-    if (tx.to === 42 && tx.to.substring(0, 2) === "0x") {
+    if (tx.to.length === 42 && tx.to.substring(0, 2) === "0x") {
       if (!exc[tx.to]) {
         exc[tx.to] = 1;
       } else exc[tx.to]++;
@@ -107,11 +107,16 @@ async function getTokenInfos(TokenAddress, apikey) {
     if (exc[add] >= 3) infos.revLikelihood += exc[add] - 2;
   }
 
+  infos.revLikelihood = infos.revLikelihood / Object.keys(exc).length;
+
   // console.log(exc);
   console.log("reverse Likelihood = ", infos.revLikelihood);
 
   const millis = Date.now() - start;
   console.log(`operation time = ${Math.floor(millis / 1000)} Seconds`);
+  infos.failRatio = infos.NumberOfFailedTransactions / infos.Ntxs;
+  infos.non_transfers_ratio = infos.non_transfersCount / infos.Ntxs;
+  delete infos.bscTransactions;
   return infos;
 }
 
