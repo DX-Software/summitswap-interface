@@ -1,33 +1,41 @@
 // Kindacode.com
 import React, { useState } from 'react';
-import axios from "axios";
-import styled from 'styled-components'
-import { Button } from '@summitswap-uikit'
-
+import axios from 'axios';
+import styled from 'styled-components';
+import { Button } from '@summitswap-uikit';
+import analyzeToken from './analyzeToken';
 
 const CheckForm: React.FunctionComponent = () => {
-  const [term, setTerm] = useState('');
-  const [paraText, setParaText] = useState({ token_name: '', total_supply: '', holders_count: 0, owner_address: '', owner_address_balance: '', top_holders: [{ tokenHolderAddress: '', tokenHolderQuantity: '', percentage: 0 }], burned_tokens: 0 });
-  const [dataFetched, setDataFetched] = useState(false);
+  const [term, setTerm] = useState('')
+  const [paraText, setParaText] = useState({
+    token_name: '',
+    total_supply: '',
+    holders_count: 0,
+    owner_address: '',
+    owner_address_balance: '',
+    top_holders: [{ tokenHolderAddress: '', tokenHolderQuantity: '', percentage: 0 }],
+    burned_tokens: 0,
+  })
+  const [dataFetched, setDataFetched] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const submitForm = (event: React.FormEvent<HTMLFormElement>) => {
     // Preventing the page from reloading
-    event.preventDefault();
-    console.log(term);
+    event.preventDefault()
+    console.log(term)
 
     if (term.trim()) {
-      setLoading(true);
+      setLoading(true)
 
       fetch(`http://localhost:3000/summit-check-token/${term}`, {
-        method: "GET",
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json"
-        }
+          'Content-Type': 'application/json',
+        },
       })
-        .then(res => res.json())
-        .then(data => {
-          console.log(data);
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data)
           /*
           let textPara = "";
           Object.entries(data).map(([key, value]) => {
@@ -39,21 +47,28 @@ const CheckForm: React.FunctionComponent = () => {
             return console.log(value);
           });&& paraText.length>0 && paraText.map((item)=><p>{item}</p>)
           */
-          setParaText({ token_name: data.token_name, total_supply: data.total_supply, holders_count: data.holders_count, owner_address: data.owner_address, owner_address_balance: data.owner_address_balance, top_holders: data.top_holders, burned_tokens: data.burned_tokens });
-          setDataFetched(true);
-          setLoading(false);
-          setTerm('');
-        });
+          setParaText({
+            token_name: data.token_name,
+            total_supply: data.total_supply,
+            holders_count: data.holders_count,
+            owner_address: data.owner_address,
+            owner_address_balance: data.owner_address_balance,
+            top_holders: data.top_holders,
+            burned_tokens: data.burned_tokens,
+          })
+          setDataFetched(true)
+          setLoading(false)
+          setTerm('')
+        })
     }
-
   }
 
   const Container = styled.div`
-  width: 100%;
-`
+    width: 100%;
+  `
   const Form = styled.form`
-  display: flex;
-`
+    display: flex;
+  `
   const SearchInput = styled.input`
   position: relative;
   display: flex;
@@ -109,6 +124,17 @@ const CheckForm: React.FunctionComponent = () => {
   }
 `
 
+  const [result, setResult] = useState<any>({})
+  const [gotResult, setGotResult] = useState(false)
+  const anaLyzeAddress = async () => {
+    setLoading(true);
+    const res = await analyzeToken(term)
+    setLoading(false)
+    setResult(res)
+    setGotResult(true);
+    console.log(res);
+  }
+
   return (
     <Container>
       <Form onSubmit={submitForm}>
@@ -120,64 +146,116 @@ const CheckForm: React.FunctionComponent = () => {
           className="input"
           name="token_address"
         />
-        <Button style={{ borderRadius: "0 33px 33px 0" }} type="submit" className="btn" disabled={loading}>
+        {/* <Button
+          onClick={anaLyzeAddress}
+          style={{ borderRadius: '0 33px 33px 0' }}
+          type="submit"
+          className="btn"
+          disabled={loading}
+        > */}
+         <Button
+          onClick={anaLyzeAddress}
+          style={{ borderRadius: '0 33px 33px 0' }}
+          type="submit"
+          className="btn"
+          disabled={loading}
+        >
           {loading ? 'Loading...' : 'Submit'}
         </Button>
       </Form>
       <br />
 
-      {dataFetched &&
+      {gotResult&& (
+        <div id="result">
+          <ResultsBox style={{fontSize:"0.9rem"}}>
+            <p>
+              <span>Token Address:</span>
+              <span className="value">{term}</span>
+            </p>
+            <p>
+              <span>Non Transfer ratio:</span>
+              <span className="value">{result.non_transfers_ratio.toFixed(3)}</span>
+            </p>
+            <p>
+              <span>Fail Ratio:</span>
+              <span className="value">{result.failRatio.toFixed(3)}</span>
+            </p>
+            <p>
+              <span>Non Transfer Ratio mean deviation:</span>
+              <span className="value">{result.non_transfers_mean_deviation.toFixed(3)}</span>
+            </p>
+            <p>
+              <span  style={{maxWidth:"80%"}}>Reverse Likelihood (Token being used by Addresses more than other normal addresses):</span>
+              <span className="value">{result.revLikelihood.toFixed(3)}</span>
+            </p>
+            <p>
+              <span>Script verified:</span>
+              <span className="value">{result.script === "1" ? "true" : "false"}</span>
+            </p>
+
+            <p>
+              <span>Scam Score:</span>
+              <span className="value">{result.scamScore}</span>
+            </p>
+            <p>
+              <span>Result:</span>
+              <span className="value">{result.conclusion}</span>
+            </p>
+          </ResultsBox>
+          </div>)}
+      {dataFetched && (
         <div id="result">
           <ResultsBox>
             <p>
               <span>Token Name:</span>
-              <span className='value'>{paraText.token_name}</span>
+              <span className="value">{paraText.token_name}</span>
             </p>
             <p>
               <span>Total Supply:</span>
-              <span className='value'>{paraText.total_supply}</span>
+              <span className="value">{paraText.total_supply}</span>
             </p>
             <p>
               <span>Holders:</span>
-              <span className='value'>{paraText.holders_count}</span>
+              <span className="value">{paraText.holders_count}</span>
             </p>
             <p>
               <span>Owner Address:</span>
-              <span className='value'>{paraText.owner_address}</span>
+              <span className="value">{paraText.owner_address}</span>
             </p>
             <p>
               <span>Owner Address Balance:</span>
-              <span className='value'>{paraText.owner_address_balance}</span>
+              <span className="value">{paraText.owner_address_balance}</span>
             </p>
             <p>
               <span>Burned Tokens:</span>
-              <span className='value'>{paraText.burned_tokens}</span>
+              <span className="value">{paraText.burned_tokens}</span>
             </p>
           </ResultsBox>
 
           <ResultsBox>
             <h4>Top Holders</h4>
-            {paraText.top_holders.map(holder => <div>
-              <p>
-                <span>Holder Address:</span>
-                <span className='value'>{holder.tokenHolderAddress}</span>
-              </p>
-              <p>
-                <span>Holder Quantity:</span>
-                <span className='value'>{holder.tokenHolderQuantity}</span>
-              </p>
-              <p>
-                <span>Percentage:</span>
-                <span className='value'>{holder.percentage}%</span>
-              </p>
-              <hr />
-            </div>)}
+            {paraText.top_holders.map((holder) => (
+              <div>
+                <p>
+                  <span>Holder Address:</span>
+                  <span className="value">{holder.tokenHolderAddress}</span>
+                </p>
+                <p>
+                  <span>Holder Quantity:</span>
+                  <span className="value">{holder.tokenHolderQuantity}</span>
+                </p>
+                <p>
+                  <span>Percentage:</span>
+                  <span className="value">{holder.percentage}%</span>
+                </p>
+                <hr />
+              </div>
+            ))}
           </ResultsBox>
         </div>
-      }
-
+      )}
     </Container>
-  );
-};
+  )
+}
 
-export default CheckForm;
+export default CheckForm

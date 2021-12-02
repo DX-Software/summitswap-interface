@@ -36,7 +36,7 @@ function decide(infos) {
       console.log("scamScore = 99% ----> Probably a scam");
     } else {
       console.log(
-        "scamScore = " + scamScore.toFixed(1) + "% >= 50 ----> Probably a scam"
+        `scamScore = ${scamScore.toFixed(1)} % >= 50 ----> Probably a scam`
       );
     }
   } else {
@@ -47,9 +47,7 @@ function decide(infos) {
       console.log("scamScore = 1% ----> Probably not a scam");
     } else
       console.log(
-        "scamScore  = " +
-          scamScore.toFixed(1) +
-          "% < 50 ----> Probably not a scam"
+        `scamScore  = ${scamScore.toFixed(1)} % < 50 ----> Probably not a scam`
       );
   }
   return scamScore;
