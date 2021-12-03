@@ -129,7 +129,7 @@ const CheckForm: React.FunctionComponent = () => {
   const [serverBusy, setServerBusy] = useState(false)
   const anaLyzeAddress = async () => {
     setLoading(true)
-    const res = await axios(`http://summtokenanalyzerapi.herokuapp.com/?address=${term}`)
+    const res = await axios(`https://summtokenanalyzerapi.herokuapp.com/?address=${term}`)
     if (res.data === 'our servers are a little busy please retry again later ;)') {
       setServerBusy(true)
     } else {
