@@ -1,9 +1,8 @@
 // Kindacode.com
-import React, { useState } from 'react';
-import axios from 'axios';
-import styled from 'styled-components';
-import { Button } from '@summitswap-uikit';
-import analyzeToken from './analyzeToken';
+import React, { useState } from 'react'
+import axios from 'axios'
+import styled from 'styled-components'
+import { Button } from '@summitswap-uikit'
 
 const CheckForm: React.FunctionComponent = () => {
   const [term, setTerm] = useState('')
@@ -70,69 +69,76 @@ const CheckForm: React.FunctionComponent = () => {
     display: flex;
   `
   const SearchInput = styled.input`
-  position: relative;
-  display: flex;
-  padding: 10px 20px;
-  align-items: center;
-  width: 100%;
-  white-space: nowrap;
-  background: none;
-  border: none;
-  outline: none;
-  border-radius: 30px 0 0 30px;
-  color: ${({ theme }) => theme.colors.inputColor};
-  background: ${({ theme }) => theme.colors.menuItemBackground};
-  -webkit-appearance: none;
-  font-size: 16px;
-  font-weight: 400;
-  ::placeholder {
-    color: rgba(255, 255, 255, .4);
+    position: relative;
+    display: flex;
+    padding: 10px 20px;
+    align-items: center;
+    width: 100%;
+    white-space: nowrap;
+    background: none;
+    border: none;
+    outline: none;
+    border-radius: 30px 0 0 30px;
+    color: ${({ theme }) => theme.colors.inputColor};
+    background: ${({ theme }) => theme.colors.menuItemBackground};
+    -webkit-appearance: none;
     font-size: 16px;
     font-weight: 400;
-  }
-  transition: border 100ms;
-  :focus {
-    // border: 1px solid ${({ theme }) => theme.colors.primary};
-    outline: none;
-  }
-`
-  const ResultsBox = styled.div`
-  border-radius: 16px;
-  background: #011724;
-  box-shadow: inset 0px 2px 2px -1px rgb(74 74 104 / 10%);
-  padding: 40px;
-  font-weight: 600;
-  font-size: 16px;
-  margin: 15px 0;
-  line-height: 16px;
-  > p, > div > p {
-    margin-bottom: 15px;
-    line-height: 26px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    > span.value {
-      background: #00121d;
-      padding: 5px;
-      word-break: break-all;
-      margin-left: auto;
+    ::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 16px;
+      font-weight: 400;
     }
-  }
-  > h4 {
-    color: #2BA55D;
-    margin-bottom: 15px;
-  }
-`
+    transition: border 100ms;
+    :focus {
+      // border: 1px solid ${({ theme }) => theme.colors.primary};
+      outline: none;
+    }
+  `
+  const ResultsBox = styled.div`
+    border-radius: 16px;
+    background: #011724;
+    box-shadow: inset 0px 2px 2px -1px rgb(74 74 104 / 10%);
+    padding: 40px;
+    font-weight: 600;
+    font-size: 16px;
+    margin: 15px 0;
+    line-height: 16px;
+    > p,
+    > div > p {
+      margin-bottom: 15px;
+      line-height: 26px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      > span.value {
+        background: #00121d;
+        padding: 5px;
+        word-break: break-all;
+        margin-left: auto;
+      }
+    }
+    > h4 {
+      color: #2ba55d;
+      margin-bottom: 15px;
+    }
+  `
 
   const [result, setResult] = useState<any>({})
   const [gotResult, setGotResult] = useState(false)
+  const [serverBusy, setServerBusy] = useState(false)
   const anaLyzeAddress = async () => {
-    setLoading(true);
-    const res = await analyzeToken(term)
+    setLoading(true)
+    const res = await axios(`http://summtokenanalyzerapi.herokuapp.com/?address=${term}`)
+    if (res.data === 'our servers are a little busy please retry again later ;)') {
+      setServerBusy(true)
+    } else {
+      setServerBusy(false)
+    }
     setLoading(false)
-    setResult(res)
+    console.log(res.data)
+    setResult(res.data)
     setGotResult(true);
-    console.log(res);
   }
 
   return (
@@ -153,7 +159,7 @@ const CheckForm: React.FunctionComponent = () => {
           className="btn"
           disabled={loading}
         > */}
-         <Button
+        <Button
           onClick={anaLyzeAddress}
           style={{ borderRadius: '0 33px 33px 0' }}
           type="submit"
@@ -165,9 +171,9 @@ const CheckForm: React.FunctionComponent = () => {
       </Form>
       <br />
 
-      {gotResult&& (
+      {gotResult && !serverBusy &&(
         <div id="result">
-          <ResultsBox style={{fontSize:"0.9rem"}}>
+          <ResultsBox style={{ fontSize: '0.9rem' }}>
             <p>
               <span>Token Address:</span>
               <span className="value">{term}</span>
@@ -185,12 +191,14 @@ const CheckForm: React.FunctionComponent = () => {
               <span className="value">{result.non_transfers_mean_deviation.toFixed(3)}</span>
             </p>
             <p>
-              <span  style={{maxWidth:"80%"}}>Reverse Likelihood (Token being used by Addresses more than other normal addresses):</span>
+              <span style={{ maxWidth: '80%' }}>
+                Reverse Likelihood (Token being used by Addresses more than other normal addresses):
+              </span>
               <span className="value">{result.revLikelihood.toFixed(3)}</span>
             </p>
             <p>
               <span>Script verified:</span>
-              <span className="value">{result.script === "1" ? "true" : "false"}</span>
+              <span className="value">{result.script === '1' ? 'true' : 'false'}</span>
             </p>
 
             <p>
@@ -202,7 +210,18 @@ const CheckForm: React.FunctionComponent = () => {
               <span className="value">{result.conclusion}</span>
             </p>
           </ResultsBox>
-          </div>)}
+        </div>
+      )}
+
+{gotResult && serverBusy &&(
+        <div id="result">
+          <ResultsBox style={{ fontSize: '0.9rem' }}>
+            <p>
+            our servers are a little busy please retry again later ;)
+            </p>
+          </ResultsBox>
+        </div>
+      )}
       {dataFetched && (
         <div id="result">
           <ResultsBox>
