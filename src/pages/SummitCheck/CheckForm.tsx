@@ -21,7 +21,6 @@ const CheckForm: React.FunctionComponent = () => {
   const submitForm = (event: React.FormEvent<HTMLFormElement>) => {
     // Preventing the page from reloading
     event.preventDefault()
-    console.log(term)
 
     if (term.trim()) {
       setLoading(true)
@@ -34,7 +33,6 @@ const CheckForm: React.FunctionComponent = () => {
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log(data)
           /*
           let textPara = "";
           Object.entries(data).map(([key, value]) => {
@@ -136,7 +134,6 @@ const CheckForm: React.FunctionComponent = () => {
       setServerBusy(false)
     }
     setLoading(false)
-    console.log(res.data)
     setResult(res.data)
     setGotResult(true);
   }
