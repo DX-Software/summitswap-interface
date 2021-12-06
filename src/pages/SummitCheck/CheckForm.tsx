@@ -4,6 +4,7 @@ import axios from 'axios'
 import styled from 'styled-components'
 import { Button } from '@summitswap-uikit'
 
+
 const CheckForm: React.FunctionComponent = () => {
   const [term, setTerm] = useState('')
   const [paraText, setParaText] = useState({
@@ -21,6 +22,7 @@ const CheckForm: React.FunctionComponent = () => {
   const submitForm = (event: React.FormEvent<HTMLFormElement>) => {
     // Preventing the page from reloading
     event.preventDefault()
+    console.log(term)
 
     if (term.trim()) {
       setLoading(true)
@@ -33,6 +35,7 @@ const CheckForm: React.FunctionComponent = () => {
       })
         .then((res) => res.json())
         .then((data) => {
+          console.log(data)
           /*
           let textPara = "";
           Object.entries(data).map(([key, value]) => {
@@ -127,15 +130,16 @@ const CheckForm: React.FunctionComponent = () => {
   const [serverBusy, setServerBusy] = useState(false)
   const anaLyzeAddress = async () => {
     setLoading(true)
-    const res = await axios(`https://summtokenanalyzerapi.herokuapp.com/?address=${term}`)
+    const res = await axios(`${process.env.REACT_APP_BSC_SUMMITCHECK_TOKEN_ANALYZER_API}${term}`)
     if (res.data === 'our servers are a little busy please retry again later ;)') {
       setServerBusy(true)
     } else {
       setServerBusy(false)
     }
     setLoading(false)
+    // console.log(res.data)
     setResult(res.data)
-    setGotResult(true);
+    setGotResult(true)
   }
 
   return (
@@ -168,7 +172,7 @@ const CheckForm: React.FunctionComponent = () => {
       </Form>
       <br />
 
-      {gotResult && !serverBusy &&(
+      {gotResult && !serverBusy && (
         <div id="result">
           <ResultsBox style={{ fontSize: '0.9rem' }}>
             <p>
@@ -210,12 +214,10 @@ const CheckForm: React.FunctionComponent = () => {
         </div>
       )}
 
-{gotResult && serverBusy &&(
+      {gotResult && serverBusy && (
         <div id="result">
           <ResultsBox style={{ fontSize: '0.9rem' }}>
-            <p>
-            our servers are a little busy please retry again later ;)
-            </p>
+            <p>our servers are a little busy please retry again later ;)</p>
           </ResultsBox>
         </div>
       )}
