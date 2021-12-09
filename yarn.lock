@@ -2992,9 +2992,9 @@
     tiny-warning "^1.0.3"
     toformat "^2.0.0"
 
-"@summitswap-uikit@git+https://github.com/Koda-Finance/summitswap-uikit.git#main":
+"@summitswap-uikit@git+https://github.com/Koda-Finance/summitswap-uikit.git#feat/add-cross-chain-icon":
   version "0.0.1"
-  resolved "git+https://github.com/Koda-Finance/summitswap-uikit.git#59fbeaf72067723e1d85a5313463e4b3506223f5"
+  resolved "git+https://github.com/Koda-Finance/summitswap-uikit.git#8450fa13468e657a42e6edc2904f677992497a89"
   dependencies:
     "@types/lodash" "^4.14.162"
     "@types/styled-system" "^5.1.10"
