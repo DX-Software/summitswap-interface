@@ -18,7 +18,7 @@ const config: MenuEntry[] = [
   },
   {
     label: "Cross Chain Swap",
-    icon: "MoreIcon",
+    icon: "RubicIcon",
     href: "/cross-chain-swap",
   },
   // {
