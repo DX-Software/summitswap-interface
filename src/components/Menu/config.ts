@@ -17,7 +17,7 @@ const config: MenuEntry[] = [
     href: "/referral",
   },
   {
-    label: "Cross Chain Swap",
+    label: "Cross-Chain",
     icon: "RubicIcon",
     href: "/cross-chain-swap",
   },
