@@ -10,9 +10,9 @@ import Pool from './Pool'
 import PoolFinder from './PoolFinder'
 import RemoveLiquidity from './RemoveLiquidity'
 import Swap from './Swap'
+import CrossChainSwap from './CrossChainSwap'
 import Referral from './Referral'
 import SummitCheck from './SummitCheck'
-import { RedirectPathToSwapOnly } from './Swap/redirects'
 import { EN, allLanguages } from '../constants/localisation/languageCodes'
 import { LanguageContext } from '../hooks/LanguageContext'
 import { TranslationsContext } from '../hooks/TranslationsContext'
@@ -112,6 +112,7 @@ export default function App() {
                     <BodyWrapper>
                       <AppHeader />
                       <Route exact path="/swap" component={Swap} />
+                      <Route exact path="/cross-chain-swap" component={CrossChainSwap} />
                       <Route exact path="/swap?ref=:ref" component={Referral} />
                       <Route exact path="/referral" component={Referral} />
                       <Route exact strict path="/find" component={PoolFinder} />
