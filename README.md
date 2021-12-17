@@ -6,7 +6,7 @@ Mainnet:
 
 [`main` Mainnet](main.d3cj974y5wyhbr.amplifyapp.com)
 
-[`staging` Mainnet](testnet.d3cj974y5wyhbr.amplifyapp.com)
+[`staging` Mainnet](staging.d3cj974y5wyhbr.amplifyapp.com)
 
 Testnet:
 
