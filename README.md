@@ -1,13 +1,21 @@
 # summitswap-interface
 
-For the developers we have deployed summitswap's 2 branches on 2 seperate networks.
+For the developers we have deployed summitswap's branches on these seperate networks.
 
-[main Mainnet](main.d3cj974y5wyhbr.amplifyapp.com)
-[staging Mainnet](testnet.d3cj974y5wyhbr.amplifyapp.com)
+Mainnet:
 
-[main Testnet](main.d1apfotwvb2yrn.amplifyapp.com)
-[staging Testnet](staging.d1apfotwvb2yrn.amplifyapp.com)
-[develop Testnet](develop.d1apfotwvb2yrn.amplifyapp.com)
+[`main` Mainnet](main.d3cj974y5wyhbr.amplifyapp.com)
+
+[`staging` Mainnet](testnet.d3cj974y5wyhbr.amplifyapp.com)
+
+Testnet:
+
+[`main` Testnet](main.d1apfotwvb2yrn.amplifyapp.com)
+
+[`staging` Testnet](staging.d1apfotwvb2yrn.amplifyapp.com)
+
+[`develop` Testnet](develop.d1apfotwvb2yrn.amplifyapp.com)
+
 
 # Deploy
 Just make a commit to `main` or `develop` and changes will get automatically deployed on both `BSC` and `BSC testnet` network.
