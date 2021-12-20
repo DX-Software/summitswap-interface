@@ -21,7 +21,14 @@
 4. In summitswap Interface package.json > make sure you change	`"@summitswap-libs": "git+https://github.com/Koda-Finance/summitswap-sdk.git# **YOUR_BRANCH_NAME"**`
     
 
-## Setup automated Deployment one time, for admins
+# Deploy on AWS
+
+Any commit to `main` or `staging` will get changes automatically deployed on both `BSC` and `BSC testnet` network.
+
+Commits to `develop` and other branches are deployed as well, but only on `BSC testnet`
+
+
+## Setup automated Deployment (one time, admin only)
 
 Here are the steps on how to deploy your React app from scrach on `AWS Amplify`:
 
@@ -55,10 +62,3 @@ Here are the steps on how to deploy your React app from scrach on `AWS Amplify`:
 Note: 
   On our repo we use private github dependencies, so to give `Amplify` access to that, we had to make custom docker environment in which Gitub bot would be signed in with access to those repos.
   This environment first made as a docker image, then pushed to `ECR` and then specified on `Amplify` in Build settings
-
-
-# Deploy on aws
-
-Just make a commit to `main` or `develop` and changes will get automatically deployed on both `BSC` and `BSC testnet` network.
-
-PRs to `develop` are deployed as well, but only on `BSC testnet`
