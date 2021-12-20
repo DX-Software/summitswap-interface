@@ -1,13 +1,38 @@
 # summitswap-interface
 
-For the developers we have deployed summitswap's 2 branches on 2 seperate networks.
+## Setup local app
+1. Make sure you are connected to `github` on terminal using Personal access tokens
+2. Install [node lts](https://tecadmin.net/install-nvm-macos-with-homebrew/) 
+3. Run `nvm install --lts`
+4. Run `nvm use --lts`
+5. Run `yarn install`
+6. Run `yarn start`
 
-# Deploy
+## Summitswap-uikit
+1. Create a new branche
+2. Build project
+3. Push changes
+4. In summitswap Interface package.json > make sure you change	`"@summitswap-uikit": "git+https://github.com/Koda-Finance/summitswap-uikit.git#  ** YOUR_BRANCH_NAME** `
+
+## Summitswap-SDK
+1. Create a new branche
+2. Build project
+3. Push changes
+4. In summitswap Interface package.json > make sure you change	`"@summitswap-libs": "git+https://github.com/Koda-Finance/summitswap-sdk.git# **YOUR_BRANCH_NAME"**`
+
+## Summitswap interface
+1. Run yarn install
+2. Run yarn start
+    
+
+## Setup automated Deployment ony do by admins
+
 Just make a commit to `main` or `develop` and changes will get automatically deployed on both `BSC` and `BSC testnet` network.
 
 PRs to `develop` are deployed as well, but only on `BSC testnet`
 
 # Setup
+
 Here are the steps on how to deploy your React app from scrach on `AWS Amplify`:
 
 1. Go to Amplify Console
@@ -42,26 +67,3 @@ Note:
   This environment first made as a docker image, then pushed to `ECR` and then specified on `Amplify` in Build settings
 
 
-##Run localy
-1. Make sure you are connected to `github` on terminal using Personal access tokens
-2. Install [node lts](https://tecadmin.net/install-nvm-macos-with-homebrew/) 
-3. Run `nvm install --lts`
-4. Run `nvm use --lts`
-5. Run `yarn install`
-6. Run `yarn start`
-
-## Summitswap-uikit
-1. Create a new branche
-2. Build project
-3. Push changes
-4. In summitswap Interface package.json > make sure you change	`"@summitswap-uikit": "git+https://github.com/Koda-Finance/summitswap-uikit.git#  ** YOUR_BRANCH_NAME** `
-
-## Summitswap-SDK
-1. Create a new branche
-2. Build project
-3. Push changes
-4. In summitswap Interface package.json > make sure you change	`"@summitswap-libs": "git+https://github.com/Koda-Finance/summitswap-sdk.git# **YOUR_BRANCH_NAME"**`
-
-## Summitswap interface
-1. Run yarn install
-2. Run yarn start
