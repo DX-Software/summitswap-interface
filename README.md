@@ -40,3 +40,12 @@ Here are the steps on how to deploy your React app from scrach on `AWS Amplify`:
 Note: 
   On our repo we use private github dependencies, so to give `Amplify` access to that, we had to make custom docker environment in which Gitub bot would be signed in with access to those repos.
   This environment first made as a docker image, then pushed to `ECR` and then specified on `Amplify` in Build settings
+
+
+##Run localy
+1. Make sure you are connected to `github` on terminal using Personal access tokens
+2. Install [node lts](https://tecadmin.net/install-nvm-macos-with-homebrew/) 
+3. Run `nvm install --lts`
+4. Run `nvm use --lts`
+5. Run `yarn install`
+6. Run `yarn start`
