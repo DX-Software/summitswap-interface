@@ -28,7 +28,7 @@ Any commit to `main` or `staging` will get changes automatically deployed on bot
 Commits to `develop` and other branches are deployed as well, but only on `BSC testnet`
 
 
-## Setup automated Deployment (one time, admin only)
+# Setup automated Deployment (one time, admin only)
 
 Here are the steps on how to deploy your React app from scrach on `AWS Amplify`:
 
