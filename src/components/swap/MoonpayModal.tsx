@@ -10,7 +10,7 @@ const MoonpayModal: React.FC<CustomModalProps> = ({ title, onDismiss }) => (
     <iframe
       allow="accelerometer; autoplay; camera; gyroscope; payment"
       frameBorder="0"
-      height="500px"
+      height="725px"
       src="https://buy-staging.moonpay.io?apiKey=pk_test_8Bcd681qwwNHY7tgDwZbiYWlA89EEl&currencyCode=eth&colorCode=%232ba55d"
       width="400px"
       title="moonpay"
