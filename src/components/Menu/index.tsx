@@ -49,9 +49,6 @@ const Menu: React.FC = (props) => {
       logout={deactivate}
       isDark
       toggleTheme={toggleTheme}
-      currentLang={selectedLanguage?.code || ''}
-      langs={allLanguages}
-      setLang={setSelectedLanguage}
       cakePriceUsd={cakePriceUsd}
       {...props}
     />
