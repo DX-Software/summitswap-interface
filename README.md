@@ -81,3 +81,11 @@ Here are the steps on how to deploy your React app from scrach on `AWS Amplify`:
 Note: 
   On our repo we use private github dependencies, so to give `Amplify` access to that, we had to make custom docker environment in which Gitub bot would be signed in with access to those repos.
   This environment first made as a docker image, then pushed to `ECR` and then specified on `Amplify` in Build settings
+
+
+## Troubleshooting
+
+### What if the modifications from the summitswampuikit are not taken into account by summitswapinterface
+
+1. Run `yarn build`
+2. Commit (In order to make modifications of the new created branch visible to the `summmitswap-interface` project (or any other project) one has to make sure that after the build is done the modifications are the same in both `src` folder and `dist` folder of `summitswap-uikit` project. Check that `summitswap-uikit/dist/index.cjs.js` and `summitswap-uikit/dist/index.esm.js` are also updated).
