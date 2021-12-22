@@ -5,6 +5,25 @@ import { Box } from '@summitswap-uikit'
 import TopLogoIcon from 'img/top_logo.png'
 import { useLocation } from 'react-router-dom'
 
+const AppHeader: React.FC = () => {
+  const location = useLocation()
+
+  return (
+    <StyledContainer>
+      <Box>
+        {location.pathname.search('/swap') !== -1 && 'Exchange'}
+        {location.pathname === '/pool' && 'Liquidity'}
+        {location.pathname.search('/add') !== -1 && 'Liquidity'}
+        {location.pathname === '/find' && 'Liquidity'}
+        {location.pathname === '/summitcheck' && 'Summit Check'}
+        {location.pathname === '/referral' && 'Summit Referral'}
+        {location.pathname === '/cross-chain-swap' && 'Cross-Chain Swap'}
+      </Box>
+      <TopLogo src={TopLogoIcon} alt='' />
+    </StyledContainer>
+  )
+}
+
 const TopLogo = styled.img`
   position: absolute;
   right: 40px;

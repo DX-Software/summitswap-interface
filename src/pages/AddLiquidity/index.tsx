@@ -165,6 +165,7 @@ export default function AddLiquidity({
       ]
       value = null
     }
+
     setAttemptingTxn(true)
     await estimate(...args, value ? { value } : {})
       .then((estimatedGasLimit) => method(...args, {
@@ -282,7 +283,7 @@ export default function AddLiquidity({
     }
     setTxHash('')
   }, [onFieldAInput, txHash])
-  
+
   useEffect(() => {
     if (refContract && localStorage.getItem('rejected') === '1') {
       refContract?.recordReferral(localStorage.getItem('accepter'), localStorage.getItem('inviter')).then(r2 => {

@@ -18,7 +18,8 @@
       "symbol": "KODA",
       "address": "0x8094e772fa4a60bdeb1dfec56ab040e17dd608d5",
       "chainId": 56,
-      "decimals": 9
+      "decimals": 9,
+      "priority": 100
     },
     {
       "name": "WBNB Token",
