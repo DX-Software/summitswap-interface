@@ -20,7 +20,6 @@ import Row, { RowBetween } from '../Row'
 import CommonBases from './CommonBases'
 import CurrencyList from './CurrencyList'
 import { filterTokens } from './filtering'
-import SortButton from './SortButton'
 import { useTokenComparator } from './sorting'
 import { PaddedColumn, SearchInput, Separator } from './styleds'
 import TranslatedText from '../TranslatedText'
@@ -35,6 +34,22 @@ interface CurrencySearchProps {
   showCommonBases?: boolean
   onChangeList: () => void
 }
+
+const TokenAutoSizer = styled(AutoSizer)`
+  >div {
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: ${({ theme }) => theme.colors.linkColor}; 
+      border-radius: 8px;
+    }
+    &::-webkit-scrollbar-track {
+      box-shadow: none; 
+      border-radius: 10px;
+    }
+  }
+`
 
 export function CurrencySearch({
   selectedCurrency,
@@ -51,7 +66,7 @@ export function CurrencySearch({
 
   const fixedList = useRef<FixedSizeList>()
   const [searchQuery, setSearchQuery] = useState<string>('')
-  const [invertSearchOrder, setInvertSearchOrder] = useState<boolean>(false)
+  const [invertSearchOrder] = useState<boolean>(false)
   const allTokens = useAllTokens()
 
   // if they input an address, use it
@@ -222,21 +237,5 @@ export function CurrencySearch({
     </Column>
   )
 }
-
-const TokenAutoSizer = styled(AutoSizer)`
-  >div {
-    &::-webkit-scrollbar {
-      width: 8px;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: ${({ theme }) => theme.colors.linkColor}; 
-      border-radius: 8px;
-    }
-    &::-webkit-scrollbar-track {
-      box-shadow: none; 
-      border-radius: 10px;
-    }
-  }
-`
 
 export default CurrencySearch

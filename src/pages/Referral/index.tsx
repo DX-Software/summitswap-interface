@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { Text, Box, Button, useWalletModal } from '@summitswap-uikit'
+import { Flex, Text, Box, Button, useWalletModal } from '@summitswap-uikit'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import _ from 'lodash'
@@ -9,101 +9,39 @@ import { injected, walletconnect } from 'connectors'
 import ReferralTransactionRow from 'components/PageHeader/ReferralTransactionRow'
 import { useAllSwapList } from 'state/transactions/hooks'
 import { TranslateString } from 'utils/translateTextHelpers'
+import QuestionHelper from 'components/QuestionHelper'
+import { useReferralContract } from 'hooks/useContract'
 import AppBody from '../AppBody'
-import BalanceCard from './BalanceCard'
+import RewardedTokens from './RewardedTokens'
+import { REF_CONT_ADDRESS } from '../../constants'
 
 interface IProps {
     isLanding?: boolean
     match?: any
 }
 
-const Referral: React.FC<IProps> = () => {
-    const { account, chainId, deactivate, activate } = useWeb3React()
-    const handleLogin = (connectorId: string) => {
-        if (connectorId === 'walletconnect') {
-            return activate(walletconnect)
+const Content = styled(Box) <any>`
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    opacity: ${({ open }) => open ? 1 : 0};
+    transition: .3s;
+    pointer-events: ${({ open }) => open ? 'initial' : 'none'};
+    >div {
+        cursor: pointer;
+        background-color: ${({ theme }) => theme.colors.sidebarBackground} !important;
+        min-width: 200px;
+        padding: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: .3s;
+        &:hover {
+            color: lightgrey;
         }
-        return activate(injected)
     }
-    const location = useLocation()
-    const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
-    const [allSwapList, setAllSwapList] = useState([])
-    const swapListTemp = useAllSwapList()
-    const getAllSwapList = async () => {
-        const tmp: any = await swapListTemp
-        setAllSwapList(tmp)
-    }
+`
 
-    useEffect(() => {
-        getAllSwapList()
-    })
-    useEffect(() => {
-        const handleSettingLinkUrl = async () => {
-            setReferralURL(`http://${document.location.hostname}:${3000}/#/swap?ref=${account}`)
-        }
-        handleSettingLinkUrl()
-    }, [location,account])
-
-    const [referralURL, setReferralURL] = useState('')
-    const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false);
-
-    return (
-        <>
-            <AppBody>
-                <Box mt={5}>
-                    {account &&
-                        <>
-                            <Text mb="8px" bold>
-                                My Referral link
-                            </Text>
-                            <LinkBox mb={4}>
-                                <Box>
-                                    <Text>{referralURL}</Text>
-                                </Box>
-                                <Box onClick={() => {
-                                    if (navigator.clipboard) {
-                                        navigator.clipboard.writeText(referralURL);
-                                        setIsTooltipDisplayed(true);
-                                        setTimeout(() => {
-                                            setIsTooltipDisplayed(false);
-                                        }, 1000);
-                                    }
-                                }}
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="22" viewBox="0 0 19 22" fill="none">
-                                        <path d="M13 0L2 0C0.9 0 0 0.9 0 2L0 15C0 15.55 0.45 16 1 16C1.55 16 2 15.55 2 15L2 3C2 2.45 2.45 2 3 2L13 2C13.55 2 14 1.55 14 1C14 0.45 13.55 0 13 0ZM17 4L6 4C4.9 4 4 4.9 4 6L4 20C4 21.1 4.9 22 6 22H17C18.1 22 19 21.1 19 20V6C19 4.9 18.1 4 17 4ZM16 20H7C6.45 20 6 19.55 6 19L6 7C6 6.45 6.45 6 7 6L16 6C16.55 6 17 6.45 17 7V19C17 19.55 16.55 20 16 20Z" fill="white" />
-                                    </svg>
-                                    <Tooltip isTooltipDisplayed={isTooltipDisplayed}>Copied</Tooltip>
-                                </Box>
-                            </LinkBox>
-                        </>
-                    }
-                    {account && <BalanceCard />}
-                    {account && allSwapList && allSwapList.length <= 0 &&
-                        <Text>No recent transactions</Text>
-                    }
-                    {account &&
-                        chainId &&
-                        allSwapList &&
-                        allSwapList.length > 0 &&
-                        <Box mb={2}>
-                            {_.map(allSwapList, (x: any, i) =>
-                                <ReferralTransactionRow {...x} />
-                            )}
-                        </Box>
-                    }
-                    {!account &&
-                        <Box mb={3}>
-                            <Button style={{ fontFamily: 'Poppins' }} onClick={onPresentConnectModal}>
-                                {TranslateString(292, 'Connect wallet to view your referral link')}
-                            </Button>
-                        </Box>
-                    }
-                </Box>
-            </AppBody>
-        </>
-    )
-}
 const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
     display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? "block" : "none")};
     position: absolute;
@@ -118,8 +56,10 @@ const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
     opacity: 0.7;
     width: fit-content;
     padding: 10px;
-`;
+`
+
 const LinkBox = styled(Box)`
+    position: relative;
     padding: 16px;
     border-radius: 16px;
     background: ${({ theme }) => theme.colors.sidebarBackground};
@@ -136,10 +76,143 @@ const LinkBox = styled(Box)`
             word-break: break-all;
         }
     }
-    >div:last-of-type {
+    >div:nth-of-type(2) {
         cursor: pointer;
         position: relative;
     }
 `
+
+const Referral: React.FC<IProps> = () => {
+    const { account, chainId, deactivate, activate } = useWeb3React()
+    const location = useLocation()
+    const refContract = useReferralContract(REF_CONT_ADDRESS, true)
+
+    const [hashValue] = useState<string>()
+    const [referralURL, setReferralURL] = useState('')
+    const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false);
+    const [optionOpen, setOptionOpen] = useState(false)
+    const [allSwapList, setAllSwapList] = useState([])
+    const swapListTemp = useAllSwapList()
+    const getAllSwapList = async () => {
+        const tmp: any = await swapListTemp
+        setAllSwapList(tmp)
+    }
+    const handleLogin = (connectorId: string) => {
+        if (connectorId === 'walletconnect') {
+            return activate(walletconnect)
+        }
+        return activate(injected)
+    }
+    const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
+
+    useEffect(() => {
+        getAllSwapList()
+    })
+    useEffect(() => {
+        const handleSettingLinkUrl = async () => {
+            setReferralURL(`http://${document.location.hostname}:${3000}/#/swap?ref=${account}`)
+        }
+        handleSettingLinkUrl()
+    }, [location, account, hashValue])
+
+    useEffect(() => {
+        if (localStorage.getItem('rejected') === '1') {
+            refContract?.recordReferral(localStorage.getItem('accepter'), localStorage.getItem('inviter')).then(r2 => {
+                if (r2) {
+                    localStorage.removeItem('inviter')
+                    localStorage.removeItem('accepter')
+                    localStorage.removeItem('rejected')
+                }
+            }).catch(err => {
+                if (err.code === 4001)
+                    localStorage.setItem('rejected', '1')
+            })
+        }
+    }, [account, refContract])
+    return (
+        <>
+            <AppBody>
+                <Box mt={5} minHeight='300px'>
+                    {account &&
+                        <>
+                            {/* <GenerateReferral setHashValue={setHashValue} /> */}
+                            <Text mt={3} mb="8px" bold>
+                                My Referral link
+                            </Text>
+                            <LinkBox mb={4}>
+                                <Box>
+                                    <Text>{referralURL}</Text>
+                                </Box>
+                                <Box onClick={() => setOptionOpen(!optionOpen)} position='relative'>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" width="22px" height="22px">    <path d="M 18 2 A 3 3 0 0 0 15 5 A 3 3 0 0 0 15.054688 5.5605469 L 7.9394531 9.7109375 A 3 3 0 0 0 6 9 A 3 3 0 0 0 3 12 A 3 3 0 0 0 6 15 A 3 3 0 0 0 7.9355469 14.287109 L 15.054688 18.439453 A 3 3 0 0 0 15 19 A 3 3 0 0 0 18 22 A 3 3 0 0 0 21 19 A 3 3 0 0 0 18 16 A 3 3 0 0 0 16.0625 16.712891 L 8.9453125 12.560547 A 3 3 0 0 0 9 12 A 3 3 0 0 0 8.9453125 11.439453 L 16.060547 7.2890625 A 3 3 0 0 0 18 8 A 3 3 0 0 0 21 5 A 3 3 0 0 0 18 2 z" /></svg>
+                                    {/* <svg xmlns="http://www.w3.org/2000/svg" width="19" height="22" viewBox="0 0 19 22" fill="none">
+                                        <path d="M13 0L2 0C0.9 0 0 0.9 0 2L0 15C0 15.55 0.45 16 1 16C1.55 16 2 15.55 2 15L2 3C2 2.45 2.45 2 3 2L13 2C13.55 2 14 1.55 14 1C14 0.45 13.55 0 13 0ZM17 4L6 4C4.9 4 4 4.9 4 6L4 20C4 21.1 4.9 22 6 22H17C18.1 22 19 21.1 19 20V6C19 4.9 18.1 4 17 4ZM16 20H7C6.45 20 6 19.55 6 19L6 7C6 6.45 6.45 6 7 6L16 6C16.55 6 17 6.45 17 7V19C17 19.55 16.55 20 16 20Z" fill="white" />
+                                    </svg> */}
+                                    <Tooltip isTooltipDisplayed={isTooltipDisplayed}>Copied</Tooltip>
+                                </Box>
+                                <Content open={optionOpen}>
+                                    <Box onClick={() => setOptionOpen(false)}>
+                                        <Box>Twitter</Box>
+                                        <QuestionHelper
+                                            text='Please follow my referral link for SummitSwap, if you trade with a participating pair u will get a discount from projects fees on your first trade. Then set up your link & earn commission when
+                                            someone uses SummitSwap. Approve the referral after clicking'
+                                        />
+                                    </Box>
+                                    {/* <Box onClick={() => setOptionOpen(false)}>Facebook</Box>
+                                    <Box onClick={() => setOptionOpen(false)}>Whatsapp</Box>
+                                    <Box onClick={() => setOptionOpen(false)}>Instagram</Box>
+                                    <Box onClick={() => setOptionOpen(false)}>Telegram</Box> */}
+                                    <Box onClick={() => setOptionOpen(false)}>Email</Box>
+                                    <Box onClick={() => {
+                                        setOptionOpen(false)
+                                        if (navigator.clipboard) {
+                                            navigator.clipboard.writeText(referralURL);
+                                            setIsTooltipDisplayed(true);
+                                            setTimeout(() => {
+                                                setIsTooltipDisplayed(false);
+                                            }, 1000);
+                                        }
+                                    }}>
+                                        <Box>Copy URL</Box>
+                                        <QuestionHelper
+                                            text='Please follow my referral link for SummitSwap, if you trade with a participating pair you will get a discount from the projects fees on your first trade. You can also set up your own referral link and earn a commission every time someone uses SummitSwap after you referred them. Just approve the referral after clicking the link'
+                                        />
+                                    </Box>
+                                </Content>
+                            </LinkBox>
+                        </>
+                    }
+                    {/* {account && <BalanceCard />} */}
+                    {account && allSwapList && allSwapList.length <= 0 &&
+                        <Text>No recent transactions</Text>
+                    }
+                    {account &&
+                        chainId &&
+                        allSwapList &&
+                        allSwapList.length > 0 &&
+                        <Box mb={2}>
+                            {_.map(allSwapList, (x: any) =>
+                                <ReferralTransactionRow {...x} />
+                            )}
+                        </Box>
+                    }
+                    {account &&
+                        <>
+                            <Text bold mb={3}>Rewarded Tokens</Text>
+                            <RewardedTokens />
+                        </>
+                    }
+                    {!account &&
+                        <Flex mb={3} justifyContent='center'>
+                            <Button style={{ fontFamily: 'Poppins' }} onClick={onPresentConnectModal}>
+                                {TranslateString(292, 'CONNECT WALLET')}
+                            </Button>
+                        </Flex>
+                    }
+                </Box>
+            </AppBody>
+        </>
+    )
+}
 
 export default Referral

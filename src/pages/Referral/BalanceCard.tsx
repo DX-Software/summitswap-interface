@@ -1,28 +1,31 @@
+import { Box, Button } from '@summitswap-uikit'
 import { useReferralContract } from 'hooks/useContract'
 import React, { useEffect, useState } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import styled from 'styled-components'
 import web3 from 'web3'
-import { Box, Button } from '@summitswap-uikit'
 import { useAddPopup } from 'state/application/hooks'
+import { REF_CONT_ADDRESS } from '../../constants'
 
 const BalanceCard: React.FC = () => {
     const { account } = useWeb3React()
     const addPopup = useAddPopup()
     const [balance, setBalance] = useState<string>()
     const [claiming, setClaiming] = useState(false)
-    const contract = useReferralContract('0xF8f1E88E55b409d40Ab92A48c7E09faf6F731fd7', true)
+    const refContract = useReferralContract(REF_CONT_ADDRESS, true)
     useEffect(() => {
-        const handleGetBalance = async () => {
-            const tmp: any = await contract?.rewardBalance(account)
-            setBalance(parseFloat(web3.utils.fromWei(tmp.toString(), 'ether')).toFixed(3))
+        if (account) {
+            const handleGetBalance = async () => {
+                const tmp: any = await refContract?.rewardBalance(account)
+                setBalance(parseFloat(web3.utils.fromWei(tmp.toString(), 'ether')).toFixed(3))
+            }
+            handleGetBalance()
         }
-        handleGetBalance()
-    }, [account, contract])
+    }, [account, refContract])
     const handleClaim = async () => {
         if (!claiming) {
             setClaiming(true)
-            contract?.claim().then(res => {
+            refContract?.claim().then(res => {
                 setBalance('0.000')
                 setClaiming(false)
                 addPopup(

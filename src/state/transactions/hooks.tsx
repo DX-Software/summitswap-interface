@@ -9,6 +9,8 @@ import { AppDispatch, AppState } from '../index'
 import { addTransaction } from './actions'
 import { TransactionDetails } from './reducer'
 
+import { REF_CONT_ADDRESS } from '../../constants'
+
 // helper that can take a ethers library transaction response and add it to the list of transactions
 export function useTransactionAdder(): (
   response: TransactionResponse,
@@ -50,10 +52,12 @@ export async function useAllSwapList() {
 
   // new referral contract: 0xF8f1E88E55b409d40Ab92A48c7E09faf6F731fd7
   const { account } = useActiveWeb3React()
-  const contract = useReferralContract('0xF8f1E88E55b409d40Ab92A48c7E09faf6F731fd7', true)
-  if (account) {
+  const contract = useReferralContract(REF_CONT_ADDRESS, true)
+  if (account && contract) {
     const tmp = await contract?.getSwapList(account)
-    return _.orderBy(tmp, ['timestamp'], ['desc'])
+    if (tmp && tmp.length > 0)
+      return _.orderBy(tmp, ['timestamp'], ['desc'])
+    return null
   }
   return null
 }

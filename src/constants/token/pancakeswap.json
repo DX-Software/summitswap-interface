@@ -8,7 +8,10 @@
   },
   "tags": {},
   "logoURI": "/images/coins/wbnb.png",
-  "keywords": ["pancake", "default"],
+  "keywords": [
+    "pancake",
+    "default"
+  ],
   "tokens": [
     {
       "name": "KODA Token",
@@ -456,6 +459,13 @@
       "name": "Paris Saint-Germain",
       "symbol": "PSG",
       "address": "0xbc5609612b7c44bef426de600b5fd1379db2ecf1",
+      "chainId": 56,
+      "decimals": 2
+    },
+    {
+      "name": "ABC",
+      "symbol": "ABC",
+      "address": "0x41951a72655b3823cb4AFacBd220f1A2B95d2ABC",
       "chainId": 56,
       "decimals": 2
     },

@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom'
 import { CardBody, Button, IconButton, Text, useWalletModal } from '@summitswap-uikit'
 import { ThemeContext } from 'styled-components'
 import AddressInputPanel from 'components/AddressInputPanel'
-import Card, { GreyCard } from 'components/Card'
+import { GreyCard } from 'components/Card'
 import { AutoColumn } from 'components/Column'
 import ConfirmSwapModal from 'components/swap/ConfirmSwapModal'
 import CurrencyInputPanel from 'components/CurrencyInputPanel'
@@ -14,7 +14,6 @@ import { AutoRow, RowBetween } from 'components/Row'
 import AdvancedSwapDetailsDropdown from 'components/swap/AdvancedSwapDetailsDropdown'
 import confirmPriceImpactWithoutFee from 'components/swap/confirmPriceImpactWithoutFee'
 import { ArrowWrapper, BottomGrouping, SwapCallbackError, Wrapper } from 'components/swap/styleds'
-import TradePrice from 'components/swap/TradePrice'
 import TokenWarningModal from 'components/TokenWarningModal'
 import SyrupWarningModal from 'components/SyrupWarningModal'
 import ProgressSteps from 'components/ProgressSteps'
@@ -40,6 +39,8 @@ import useGetTokenData from 'hooks/useGetTokenData'
 import useGetEthPrice from 'hooks/useGetEthPrice'
 import AppBody from '../AppBody'
 
+import { REF_CONT_ADDRESS } from '../../constants'
+
 interface IProps {
   isLanding?: boolean
   match?: any
@@ -49,51 +50,72 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
   const location = useLocation()
   const [checked, setChecked] = useState(false)
   const [curRef, setReferral] = useState('')
+  const refContract = useReferralContract(REF_CONT_ADDRESS, true)
+  const { account, activate, deactivate } = useWeb3React()
   const handleLogin = (connectorId: string) => {
     if (connectorId === 'walletconnect') {
       return activate(walletconnect)
     }
     return activate(injected)
   }
-  const { account, activate, deactivate, chainId } = useWeb3React()
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
 
-  const contract = useReferralContract('0xF8f1E88E55b409d40Ab92A48c7E09faf6F731fd7', true)
   useEffect(() => {
     const tmp = new URLSearchParams(location.search)
+    if (account && tmp.get('ref') !== null) {
+      localStorage.setItem('inviter', tmp.get('ref') as string)
+      localStorage.setItem('accepter', account)
+    }
     setReferral(tmp.get('ref') ?? '')
   }, [location, account])
 
   useEffect(() => {
     const handleCheck = async () => {
-      contract?.getReferrer(curRef).then(res => {
-        if (!account) onPresentConnectModal()
-        setChecked(true)
-      })
-        .catch(err =>
-          console.log('Not available Referral')
-        )
+      if (curRef !== '') {
+        refContract?.getReferrer(curRef).then(res => {
+          if (res) {
+            if (!account) onPresentConnectModal()
+            setChecked(true)
+          }
+        })
+          .catch(err => err)
+      }
     }
     if (!checked) handleCheck()
-  }, [account, curRef, checked, setChecked, contract, onPresentConnectModal])
+  }, [account, curRef, checked, setChecked, refContract, onPresentConnectModal])
 
   useEffect(() => {
-    if (account && curRef) {
-      contract?.getReferrer(account).then(r1 => {
-        if (r1 !== '0x0000000000000000000000000000000000000000' || curRef === account)
-          console.log('exists or ref is same as account')
-        else {
-          contract?.recordReferral(account, curRef).then(r2 => {
-            console.log(r2)
+    if (account && curRef && localStorage.getItem('rejected') !== '1') {
+      refContract?.getReferrer(account).then(r1 => {
+        if (r1 === '0x0000000000000000000000000000000000000000' && curRef !== account)
+          refContract?.recordReferral(account, curRef).then(r2 => {
+            if (r2) {
+              localStorage.removeItem('inviter')
+              localStorage.removeItem('rejected')
+            }
+          }).catch(err => {
+            if (err.code === 4001)
+              localStorage.setItem('rejected', '1')
           })
-            .catch(err => console.log(err))
-        }
-      })
-        .catch(err =>
-          console.log('Not available Referral')
-        )
+      }).catch(err => err)
     }
-  }, [account, checked, setChecked, contract, curRef])
+  }, [account, checked, setChecked, refContract, curRef])
+
+  useEffect(() => {
+    if (refContract && localStorage.getItem('rejected') === '1') {
+      refContract?.recordReferral(localStorage.getItem('accepter'), localStorage.getItem('inviter')).then(r2 => {
+        if (r2) {
+          localStorage.removeItem('inviter')
+          localStorage.removeItem('accepter')
+          localStorage.removeItem('rejected')
+        }
+      }).catch(err => {
+        if (err.code === 4001)
+          localStorage.setItem('rejected', '1')
+      })
+    }
+  }, [refContract])
+
   const loadedUrlParams = useDefaultsFromURLSearch()
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
@@ -227,7 +249,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
   }, [approval, approvalSubmitted])
 
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT])
-  const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
+  // const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
 
   // the callback to execute the swap
   const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(
@@ -267,7 +289,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
   }, [priceImpactWithoutFee, swapCallback, setSwapState])
 
   // errors
-  const [showInverted, setShowInverted] = useState<boolean>(false)
+  // const [showInverted, setShowInverted] = useState<boolean>(false)
 
   // warnings on slippage
   const priceImpactSeverity = warningSeverity(priceImpactWithoutFee)
@@ -346,7 +368,9 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
         onConfirm={handleConfirmSyrupWarning}
       />
       <AppBody>
-        <PageHeader title="Swap" />
+        <PageHeader
+        // title="Swap"
+        />
         {isLanding ? '' : <CardNav />}
         <Wrapper id="swap-page">
           <ConfirmSwapModal
@@ -367,7 +391,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
               <CurrencyInputPanel
                 label={`From ${parsedAmounts.INPUT ? parsedAmounts.INPUT.currency.name : ''}`}
                 value={formattedAmounts[Field.INPUT]}
-                showMaxButton={!atMaxAmountInput}
+                // showMaxButton={!atMaxAmountInput}
                 currency={currencies[Field.INPUT]}
                 onUserInput={handleTypeInput}
                 onMax={handleMaxInput}
@@ -403,7 +427,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
                 value={formattedAmounts[Field.OUTPUT]}
                 onUserInput={handleTypeOutput}
                 label={`To ${parsedAmounts.OUTPUT ? parsedAmounts.OUTPUT?.currency.name : ''}`}
-                showMaxButton={false}
+                // showMaxButton={false}
                 currency={currencies[Field.OUTPUT]}
                 onCurrencySelect={handleOutputSelect}
                 otherCurrency={currencies[Field.INPUT]}

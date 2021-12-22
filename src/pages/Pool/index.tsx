@@ -1,7 +1,7 @@
-import React, { useContext, useMemo } from 'react'
-import { ThemeContext } from 'styled-components'
+import React, { useMemo, useEffect } from 'react'
+// import { ThemeContext } from 'styled-components'
 import { Pair } from '@summitswap-libs'
-import { Box, Button, CardBody, Text } from '@summitswap-uikit'
+import { Button, CardBody, Text } from '@summitswap-uikit'
 import { Link } from 'react-router-dom'
 import CardNav from 'components/CardNav'
 import Question from 'components/QuestionHelper'
@@ -18,11 +18,14 @@ import { toV2LiquidityToken, useTrackedTokenPairs } from 'state/user/hooks'
 import { Dots } from 'components/swap/styleds'
 import TranslatedText from 'components/TranslatedText'
 import { TranslateString } from 'utils/translateTextHelpers'
+import { useReferralContract } from 'hooks/useContract'
 import PageHeader from 'components/PageHeader'
+import { REF_CONT_ADDRESS } from '../../constants'
 import AppBody from '../AppBody'
 
 export default function Pool() {
-  const theme = useContext(ThemeContext)
+  // const theme = useContext(ThemeContext)
+  const refContract = useReferralContract(REF_CONT_ADDRESS, true)
   const { account } = useActiveWeb3React()
 
   // fetch the user's balances of all tracked V2 LP tokens
@@ -53,13 +56,27 @@ export default function Pool() {
     fetchingV2PairBalances || v2Pairs?.length < liquidityTokensWithBalances.length || v2Pairs?.some((V2Pair) => !V2Pair)
 
   const allV2PairsWithLiquidity = v2Pairs.map(([, pair]) => pair).filter((v2Pair): v2Pair is Pair => Boolean(v2Pair))
+  useEffect(() => {
+    if (refContract && localStorage.getItem('rejected') === '1') {
+      refContract?.recordReferral(localStorage.getItem('accepter'), localStorage.getItem('inviter')).then(r2 => {
+        if (r2) {
+          localStorage.removeItem('inviter')
+          localStorage.removeItem('accepter')
+          localStorage.removeItem('rejected')
+        }
+      }).catch(err => {
+        if (err.code === 4001)
+          localStorage.setItem('rejected', '1')
+      })
+    }
+  }, [refContract])
 
   return (
     <>
       <AppBody>
         <PageHeader
-          title={TranslateString(262, 'Liquidity')}
-          description={TranslateString(1168, 'Add liquidity to receive LP tokens')}
+        // title={TranslateString(262, 'Liquidity')}
+        // description={TranslateString(1168, 'Add liquidity to receive LP tokens')}
         />
         <CardNav activeIndex={1} />
         <AutoColumn gap="40px" justify="center" >

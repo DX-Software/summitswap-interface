@@ -12,13 +12,11 @@ import RemoveLiquidity from './RemoveLiquidity'
 import Swap from './Swap'
 import Referral from './Referral'
 import SummitCheck from './SummitCheck'
-import { RedirectPathToSwapOnly } from './Swap/redirects'
 import { EN, allLanguages } from '../constants/localisation/languageCodes'
 import { LanguageContext } from '../hooks/LanguageContext'
 import { TranslationsContext } from '../hooks/TranslationsContext'
 import langSrc from '../constants/localisation/translate/index'
 import AppHeader from './AppHeader'
-
 import Menu from '../components/Menu'
 
 const AppWrapper = styled.div`
