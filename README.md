@@ -88,5 +88,4 @@ Note:
 ### What if the modifications from the summitswampuikit are not taken into account by summitswapinterface
 
 1. Run `yarn build`
-2. In order to make modifications of the new created branch visible to the `summmitswap-interface` project (or any other project) one has to make sure that after the build is done the modifications are the same in both `src` folder and `dist` folder of `summitswap-uikit` project.
-3. Check that `summitswap-uikit/dist/index.cjs.js` and `summitswap-uikit/dist/index.esm.js` are also updated .
+2. In order to make modifications of the new created branch visible to the `summmitswap-interface` project (or any other project) one has to make sure that after the build is done the modifications are the same in both `src` folder and `dist` folder of `summitswap-uikit` project. Check that `summitswap-uikit/dist/index.cjs.js` and `summitswap-uikit/dist/index.esm.js` are also updated .
