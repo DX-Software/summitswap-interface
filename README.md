@@ -4,17 +4,17 @@ For the developers we have deployed summitswap's branches on these seperate netw
 
 Mainnet:
 
-[`main` Mainnet](main.d3cj974y5wyhbr.amplifyapp.com)
+[`main` Mainnet](https://main.d3cj974y5wyhbr.amplifyapp.com)
 
-[`staging` Mainnet](staging.d3cj974y5wyhbr.amplifyapp.com)
+[`staging` Mainnet](https://staging.d3cj974y5wyhbr.amplifyapp.com)
 
 Testnet:
 
-[`main` Testnet](main.d1apfotwvb2yrn.amplifyapp.com)
+[`main` Testnet](https://main.d1apfotwvb2yrn.amplifyapp.com)
 
-[`staging` Testnet](staging.d1apfotwvb2yrn.amplifyapp.com)
+[`staging` Testnet](https://staging.d1apfotwvb2yrn.amplifyapp.com)
 
-[`develop` Testnet](develop.d1apfotwvb2yrn.amplifyapp.com)
+[`develop` Testnet](https://develop.d1apfotwvb2yrn.amplifyapp.com)
 
 # Setup local app
 1. Make sure you are connected to `github` on terminal using Personal access tokens
