@@ -1,5 +1,21 @@
 ## Summitswap Interface
 
+For the developers we have deployed summitswap's branches on these seperate networks.
+
+Mainnet:
+
+[`main` Mainnet](https://main.d3cj974y5wyhbr.amplifyapp.com)
+
+[`staging` Mainnet](https://staging.d3cj974y5wyhbr.amplifyapp.com)
+
+Testnet:
+
+[`main` Testnet](https://main.d1apfotwvb2yrn.amplifyapp.com)
+
+[`staging` Testnet](https://staging.d1apfotwvb2yrn.amplifyapp.com)
+
+[`develop` Testnet](https://develop.d1apfotwvb2yrn.amplifyapp.com)
+
 # Setup local app
 1. Make sure you are connected to `github` on terminal using Personal access tokens
 2. Install [node lts](https://tecadmin.net/install-nvm-macos-with-homebrew/) 
