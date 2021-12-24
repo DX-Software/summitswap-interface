@@ -4,7 +4,6 @@ import axios from 'axios'
 import styled from 'styled-components'
 import { Button } from '@summitswap-uikit'
 
-
 const CheckForm: React.FunctionComponent = () => {
   const [term, setTerm] = useState('')
   const [paraText, setParaText] = useState({
@@ -199,7 +198,7 @@ const CheckForm: React.FunctionComponent = () => {
             </p>
             <p>
               <span>Script verified:</span>
-              <span className="value">{result.script === '1' ? 'true' : 'false'}</span>
+              <span className="value">{result.verified === '1' ? 'true' : 'false'}</span>
             </p>
 
             <p>
