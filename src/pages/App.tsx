@@ -23,7 +23,7 @@ import { TranslationsContext } from '../hooks/TranslationsContext'
 import langSrc from '../constants/localisation/translate/index'
 import AppHeader from './AppHeader'
 import Menu from '../components/Menu'
-import { REF_CONT_ADDRESS } from '../constants'
+import { NULL_ADDRESS, REF_CONT_ADDRESS } from '../constants'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -66,10 +66,9 @@ export default function App() {
   const [selectedLanguage, setSelectedLanguage] = useState<any>(undefined)
   const [translatedLanguage, setTranslatedLanguage] = useState<any>(undefined)
   const [translations, setTranslations] = useState<Array<any>>([])
-  const [checked, setChecked] = useState(false)
-  const [curRef, setReferral] = useState('')
+  const [referrerAddress, setReferrerAddress] = useState<string | null>(null)
 
-  const refContract = useReferralContract(REF_CONT_ADDRESS, true)
+  const referralContract = useReferralContract(REF_CONT_ADDRESS, true)
   const location = useLocation()
 
   const handleLogin = (connectorId: string) => {
@@ -114,64 +113,49 @@ export default function App() {
   }, [selectedLanguage])
 
   useEffect(() => {
-    const urlSearchParams = new URLSearchParams(location.search)
-    if (account && urlSearchParams.get('ref') !== null) {
-      localStorage.setItem('inviter', urlSearchParams.get('ref') as string)
+    const referralParam = new URLSearchParams(location.search).get('ref')
+
+    if (referralParam) {
+      localStorage.setItem('referrer', referralParam)
+      setReferrerAddress(referralParam)
+    } else {
+      setReferrerAddress(localStorage.getItem('referrer'))
     }
-    setReferral(urlSearchParams.get('ref') ?? '')
-  }, [location, account])
+  }, [location])
 
   useEffect(() => {
-    if (!checked && curRef !== '') {
-      refContract
-        ?.getReferrer(curRef)
-        .then((res) => {
-          if (res) {
-            if (!account) onPresentConnectModal()
-            setChecked(true)
+    if (referrerAddress && localStorage.getItem('rejected') !== '1') {
+      onPresentConnectModal()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [referrerAddress])
+
+  useEffect(() => {
+    async function recordReferral() {
+      if (
+        account &&
+        referrerAddress &&
+        referralContract &&
+        referrerAddress !== account &&
+        localStorage.getItem('rejected') !== '1'
+      ) {
+        const referrer = await referralContract.getReferrer(account)
+
+        if (referrer === NULL_ADDRESS) {
+          try {
+            await referralContract.recordReferral(account, referrerAddress)
+
+            localStorage.removeItem('referrer')
+            localStorage.removeItem('rejected')
+          } catch (err: any) {
+            if (err.code === 4001) localStorage.setItem('rejected', '1')
           }
-        })
-        .catch((err) => err)
+        }
+      }
     }
-  }, [account, curRef, checked, refContract, onPresentConnectModal])
 
-  useEffect(() => {
-    if (account && localStorage.getItem('rejected') !== '1' && localStorage.getItem('inviter')) {
-      refContract
-        ?.getReferrer(account)
-        .then((r1) => {
-          if (r1 === '0x0000000000000000000000000000000000000000' && localStorage.getItem('inviter') !== account)
-            refContract
-              ?.recordReferral(account, localStorage.getItem('inviter'))
-              .then((r2) => {
-                if (r2) {
-                  localStorage.removeItem('inviter')
-                  localStorage.removeItem('rejected')
-                }
-              })
-              .catch((err) => {
-                if (err.code === 4001) localStorage.setItem('rejected', '1')
-              })
-        })
-        .catch((err) => err)
-    }
-  }, [account, refContract])
-
-  // useEffect(() => {
-  //   if (refContract && localStorage.getItem('rejected') === '1') {
-  //     refContract
-  //       ?.recordReferral(localStorage.getItem('accepter'), localStorage.getItem('inviter'))
-  //       .then((r2) => {
-  //         if (r2) {
-  //           localStorage.removeItem('inviter')
-  //           localStorage.removeItem('rejected')
-  //         }
-  //       })
-  //       .catch((err) => {
-  //         if (err.code === 4001) localStorage.setItem('rejected', '1')
-  //       })
-  //   }
-  // }, [refContract])
+    recordReferral()
+  }, [account, referrerAddress, referralContract])
 
   return (
     <Suspense fallback={null}>

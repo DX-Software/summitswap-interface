@@ -3,6 +3,8 @@ import { ChainId, JSBI, Percent, Token, WETH } from '@summitswap-libs'
 export const ROUTER_ADDRESS = `${process.env.REACT_APP_ROUTER_ADDRESS}`
 export const REF_CONT_ADDRESS = '0x12216848c994201bAa6d85A6FcF8fCD5749B6E4B'
 
+export const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
+
 // a list of tokens by chain
 type ChainTokenList = {
   readonly [chainId in ChainId]: Token[]
