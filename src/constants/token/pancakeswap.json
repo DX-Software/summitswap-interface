@@ -464,13 +464,6 @@
       "decimals": 2
     },
     {
-      "name": "ABC",
-      "symbol": "ABC",
-      "address": "0x41951a72655b3823cb4AFacBd220f1A2B95d2ABC",
-      "chainId": 56,
-      "decimals": 2
-    },
-    {
       "name": "Ditto",
       "symbol": "DITTO",
       "address": "0x233d91A0713155003fc4DcE0AFa871b508B3B715",
