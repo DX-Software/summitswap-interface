@@ -23,7 +23,7 @@ import { TranslationsContext } from '../hooks/TranslationsContext'
 import langSrc from '../constants/localisation/translate/index'
 import AppHeader from './AppHeader'
 import Menu from '../components/Menu'
-import { NULL_ADDRESS, REF_CONT_ADDRESS } from '../constants'
+import { NULL_ADDRESS, REFERRAL_ADDRESS } from '../constants'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -68,7 +68,7 @@ export default function App() {
   const [translations, setTranslations] = useState<Array<any>>([])
   const [referrerAddress, setReferrerAddress] = useState<string | null>(null)
 
-  const referralContract = useReferralContract(REF_CONT_ADDRESS, true)
+  const referralContract = useReferralContract(REFERRAL_ADDRESS, true)
   const location = useLocation()
 
   const handleLogin = (connectorId: string) => {

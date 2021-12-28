@@ -12,9 +12,9 @@ export default function SummitCheck() {
   return (
     <>
       <AppBody>
-        <PageHeader 
+        <PageHeader
         // title="Swap"
-         />
+        />
         <CardNav activeIndex={2} />
 
         <Flex justifyContent="center">{/* <Text color='text' fontSize='20px'>Coming soon...</Text> */}</Flex>
