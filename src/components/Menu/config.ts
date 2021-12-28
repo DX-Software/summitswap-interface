@@ -20,6 +20,7 @@ const config: MenuEntry[] = [
     label: "Cross-Chain",
     icon: "RubicIcon",
     href: "/cross-chain-swap",
+    isConnectButtonShown: false,
   },
   // {
   //   label: "Farms",
