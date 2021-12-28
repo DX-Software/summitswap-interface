@@ -31,8 +31,7 @@ import { currencyId } from 'utils/currencyId'
 import PageHeader from 'components/PageHeader'
 import Pane from 'components/Pane'
 import ConnectWalletButton from 'components/ConnectWalletButton'
-import { useReferralContract } from 'hooks/useContract'
-import { REF_CONT_ADDRESS, ROUTER_ADDRESS } from '../../constants'
+import { ROUTER_ADDRESS } from '../../constants'
 import AppBody from '../AppBody'
 import { Dots, Wrapper } from '../Pool/styleds'
 import { ConfirmAddModalBottom } from './ConfirmAddModalBottom'
@@ -47,7 +46,6 @@ export default function AddLiquidity({
   const { account, chainId, library } = useActiveWeb3React()
   const currencyA = useCurrency(currencyIdA)
   const currencyB = useCurrency(currencyIdB)
-  const refContract = useReferralContract(REF_CONT_ADDRESS, true)
 
   const oneCurrencyIsWETH = Boolean(
     chainId &&
@@ -283,21 +281,7 @@ export default function AddLiquidity({
     }
     setTxHash('')
   }, [onFieldAInput, txHash])
-  
-  useEffect(() => {
-    if (refContract && localStorage.getItem('rejected') === '1') {
-      refContract?.recordReferral(localStorage.getItem('accepter'), localStorage.getItem('inviter')).then(r2 => {
-        if (r2) {
-          localStorage.removeItem('inviter')
-          localStorage.removeItem('accepter')
-          localStorage.removeItem('rejected')
-        }
-      }).catch(err => {
-        if (err.code === 4001)
-          localStorage.setItem('rejected', '1')
-      })
-    }
-  }, [refContract])
+
   return (
     <>
       <AppBody>

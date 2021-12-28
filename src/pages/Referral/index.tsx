@@ -11,9 +11,9 @@ import { useAllSwapList } from 'state/transactions/hooks'
 import { TranslateString } from 'utils/translateTextHelpers'
 import QuestionHelper from 'components/QuestionHelper'
 import { useReferralContract } from 'hooks/useContract'
+import { REF_CONT_ADDRESS } from '../../constants'
 import AppBody from '../AppBody'
 import RewardedTokens from './RewardedTokens'
-import { REF_CONT_ADDRESS } from '../../constants'
 
 interface IProps {
     isLanding?: boolean
@@ -84,30 +84,32 @@ const LinkBox = styled(Box)`
 
 const Referral: React.FC<IProps> = () => {
     const { account, chainId, deactivate, activate } = useWeb3React()
-    const location = useLocation()
-    const refContract = useReferralContract(REF_CONT_ADDRESS, true)
-
     const [hashValue] = useState<string>()
     const [referralURL, setReferralURL] = useState('')
     const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false);
     const [optionOpen, setOptionOpen] = useState(false)
     const [allSwapList, setAllSwapList] = useState([])
     const swapListTemp = useAllSwapList()
+    const location = useLocation()
+
     const getAllSwapList = async () => {
         const tmp: any = await swapListTemp
         setAllSwapList(tmp)
     }
+    
     const handleLogin = (connectorId: string) => {
         if (connectorId === 'walletconnect') {
-            return activate(walletconnect)
+          return activate(walletconnect)
         }
         return activate(injected)
     }
+
     const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
 
     useEffect(() => {
         getAllSwapList()
     })
+
     useEffect(() => {
         const handleSettingLinkUrl = async () => {
             setReferralURL(`http://${document.location.hostname}:${3000}/#/swap?ref=${account}`)
@@ -115,20 +117,6 @@ const Referral: React.FC<IProps> = () => {
         handleSettingLinkUrl()
     }, [location, account, hashValue])
 
-    useEffect(() => {
-        if (localStorage.getItem('rejected') === '1') {
-            refContract?.recordReferral(localStorage.getItem('accepter'), localStorage.getItem('inviter')).then(r2 => {
-                if (r2) {
-                    localStorage.removeItem('inviter')
-                    localStorage.removeItem('accepter')
-                    localStorage.removeItem('rejected')
-                }
-            }).catch(err => {
-                if (err.code === 4001)
-                    localStorage.setItem('rejected', '1')
-            })
-        }
-    }, [account, refContract])
     return (
         <>
             <AppBody>

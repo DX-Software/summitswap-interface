@@ -1,8 +1,7 @@
 import { CurrencyAmount, JSBI, Token, Trade } from '@summitswap-libs'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown } from 'react-feather'
-import { useLocation } from 'react-router-dom'
-import { CardBody, Button, IconButton, Text, useWalletModal } from '@summitswap-uikit'
+import { CardBody, Button, IconButton, Text } from '@summitswap-uikit'
 import { ThemeContext } from 'styled-components'
 import AddressInputPanel from 'components/AddressInputPanel'
 import { GreyCard } from 'components/Card'
@@ -17,10 +16,7 @@ import { ArrowWrapper, BottomGrouping, SwapCallbackError, Wrapper } from 'compon
 import TokenWarningModal from 'components/TokenWarningModal'
 import SyrupWarningModal from 'components/SyrupWarningModal'
 import ProgressSteps from 'components/ProgressSteps'
-import { useReferralContract } from 'hooks/useContract'
 import { useWeb3React } from '@web3-react/core'
-import { injected, walletconnect } from 'connectors'
-
 import { useCurrency } from 'hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from 'hooks/useApproveCallback'
 import { useSwapCallback } from 'hooks/useSwapCallback'
@@ -39,82 +35,13 @@ import useGetTokenData from 'hooks/useGetTokenData'
 import useGetEthPrice from 'hooks/useGetEthPrice'
 import AppBody from '../AppBody'
 
-import { REF_CONT_ADDRESS } from '../../constants'
-
 interface IProps {
   isLanding?: boolean
   match?: any
 }
 
 const Swap: React.FC<IProps> = ({ isLanding }) => {
-  const location = useLocation()
-  const [checked, setChecked] = useState(false)
-  const [curRef, setReferral] = useState('')
-  const refContract = useReferralContract(REF_CONT_ADDRESS, true)
-  const { account, activate, deactivate } = useWeb3React()
-  const handleLogin = (connectorId: string) => {
-    if (connectorId === 'walletconnect') {
-      return activate(walletconnect)
-    }
-    return activate(injected)
-  }
-  const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
-
-  useEffect(() => {
-    const tmp = new URLSearchParams(location.search)
-    if (account && tmp.get('ref') !== null) {
-      localStorage.setItem('inviter', tmp.get('ref') as string)
-      localStorage.setItem('accepter', account)
-    }
-    setReferral(tmp.get('ref') ?? '')
-  }, [location, account])
-
-  useEffect(() => {
-    const handleCheck = async () => {
-      if (curRef !== '') {
-        refContract?.getReferrer(curRef).then(res => {
-          if (res) {
-            if (!account) onPresentConnectModal()
-            setChecked(true)
-          }
-        })
-          .catch(err => err)
-      }
-    }
-    if (!checked) handleCheck()
-  }, [account, curRef, checked, setChecked, refContract, onPresentConnectModal])
-
-  useEffect(() => {
-    if (account && curRef && localStorage.getItem('rejected') !== '1') {
-      refContract?.getReferrer(account).then(r1 => {
-        if (r1 === '0x0000000000000000000000000000000000000000' && curRef !== account)
-          refContract?.recordReferral(account, curRef).then(r2 => {
-            if (r2) {
-              localStorage.removeItem('inviter')
-              localStorage.removeItem('rejected')
-            }
-          }).catch(err => {
-            if (err.code === 4001)
-              localStorage.setItem('rejected', '1')
-          })
-      }).catch(err => err)
-    }
-  }, [account, checked, setChecked, refContract, curRef])
-
-  useEffect(() => {
-    if (refContract && localStorage.getItem('rejected') === '1') {
-      refContract?.recordReferral(localStorage.getItem('accepter'), localStorage.getItem('inviter')).then(r2 => {
-        if (r2) {
-          localStorage.removeItem('inviter')
-          localStorage.removeItem('accepter')
-          localStorage.removeItem('rejected')
-        }
-      }).catch(err => {
-        if (err.code === 4001)
-          localStorage.setItem('rejected', '1')
-      })
-    }
-  }, [refContract])
+  const { account } = useWeb3React()
 
   const loadedUrlParams = useDefaultsFromURLSearch()
   // token warning stuff
@@ -159,13 +86,13 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
 
   const parsedAmounts = showWrap
     ? {
-      [Field.INPUT]: parsedAmount,
-      [Field.OUTPUT]: parsedAmount,
-    }
+        [Field.INPUT]: parsedAmount,
+        [Field.OUTPUT]: parsedAmount,
+      }
     : {
-      [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-      [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
-    }
+        [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
+        [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
+      }
   const ethPrice = useGetEthPrice()
   const output = useGetTokenData()
 
@@ -462,7 +389,9 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
                   </Button>
                 ) : noRoute && userHasSpecifiedInputOutput ? (
                   <GreyCard style={{ textAlign: 'center' }}>
-                    <Text mb="4px" color='text'>Insufficient liquidity for this trade.</Text>
+                    <Text mb="4px" color="text">
+                      Insufficient liquidity for this trade.
+                    </Text>
                   </GreyCard>
                 ) : showApproveFlow ? (
                   <RowBetween>
