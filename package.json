@@ -11,7 +11,7 @@
     "@reach/portal": "^0.10.3",
     "@reduxjs/toolkit": "^1.3.5",
     "@summitswap-libs": "git+https://github.com/Koda-Finance/summitswap-sdk.git#main",
-    "@summitswap-uikit": "git+https://github.com/Koda-Finance/summitswap-uikit.git#337b95540723eb5273f9d62a849900f21fb4b5ba",
+    "@summitswap-uikit": "git+https://github.com/Koda-Finance/summitswap-uikit.git#5b35c642e0c190b928eaba9cc2e56725f8a96920",
     "@types/lodash.flatmap": "^4.5.6",
     "@types/multicodec": "^1.0.0",
     "@types/node": "^14.14.16",
