@@ -124,11 +124,11 @@ export default function App() {
   }, [location])
 
   useEffect(() => {
-    if (referrerAddress && localStorage.getItem('rejected') !== '1') {
+    if (!account && referrerAddress && localStorage.getItem('rejected') !== '1') {
       onPresentConnectModal()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [referrerAddress])
+  }, [account, referrerAddress])
 
   useEffect(() => {
     async function recordReferral() {
