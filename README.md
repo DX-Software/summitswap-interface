@@ -1,5 +1,7 @@
 ## Summitswap Interface
 
+- project description
+
 For the developers we have deployed summitswap's branches on these seperate networks.
 
 Mainnet:
@@ -82,10 +84,26 @@ Note:
   On our repo we use private github dependencies, so to give `Amplify` access to that, we had to make custom docker environment in which Gitub bot would be signed in with access to those repos.
   This environment first made as a docker image, then pushed to `ECR` and then specified on `Amplify` in Build settings
 
+## Running tests
+
+### Add Liquidity
+
+1. Deploy 2 tokens on `binance smatchain testnet`
+2. Mint some ballance of the 2 tokens
+  - Or you can ask Ahmed to give you some ballance of DXT1 and DXT2 tokens.
+    - DXT1 - `0xaa618B9347794845d17a168dd02C9078906AC2Ff`
+    - DXT2 - `0x0F17BD856D147730E58c0fb63cfBcf4116E539Ae`
+
 
 ## Troubleshooting
 
 ### What if the modifications from the summitswampuikit are not taken into account by summitswapinterface
 
 1. Run `yarn build`
-2. Commit (In order to make modifications of the new created branch visible to the `summmitswap-interface` project (or any other project) one has to make sure that after the build is done the modifications are the same in both `src` folder and `dist` folder of `summitswap-uikit` project. Check that `summitswap-uikit/dist/index.cjs.js` and `summitswap-uikit/dist/index.esm.js` are also updated).
+2. Commit (In order to make modifications of the new created branch visible to the `summmitswap-interface` project (or any other project) one has to make sure that after the build is done the modifications are the same in both `src` folder and `dist` folder of `summitswap-uikit` project. Check that `summitswap-uikit/dist/index.cjs.js` and `summitswap-uikit/dist/index.esm.js` are also updated). 
+
+### Update uikit
+
+If summitswap-uikit main branch has updated after you first ran the app you need to run `yarn upgrade @summitswap-uikit`
+
+
