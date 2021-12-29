@@ -2994,7 +2994,7 @@
 
 "@summitswap-uikit@git+https://github.com/Koda-Finance/summitswap-uikit.git#main":
   version "0.0.1"
-  resolved "git+https://github.com/Koda-Finance/summitswap-uikit.git#81f9502c3bd0e1a84260ae55ae287e7050579b43"
+  resolved "git+https://github.com/Koda-Finance/summitswap-uikit.git#55c7ce463be1f0077c427903a866bb25b690320e"
   dependencies:
     "@types/lodash" "^4.14.162"
     "@types/styled-system" "^5.1.10"

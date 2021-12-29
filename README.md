@@ -31,13 +31,16 @@ Testnet:
 2. Build project
 3. Push changes
 4. In summitswap Interface package.json > make sure you change	`"@summitswap-uikit": "git+https://github.com/Koda-Finance/summitswap-uikit.git#  ** YOUR_BRANCH_NAME** `
+5. `yarn install`
+6. Run on every change in UIKIT `yarn upgrade @summitswap-uikit && yarn install`
 
 # Setup [Summitswap-SDK](https://github.com/Koda-Finance/summitswap-sdk)
 1. Create a new branche
 2. Build project
 3. Push changes
 4. In summitswap Interface package.json > make sure you change	`"@summitswap-libs": "git+https://github.com/Koda-Finance/summitswap-sdk.git# **YOUR_BRANCH_NAME"**`
-    
+5. `yarn install`
+6. Run on every change in SDK `yarn upgrade @summitswap-sdk && yarn install`
 
 # Deploy on AWS
 
