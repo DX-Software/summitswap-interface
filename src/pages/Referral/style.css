@@ -1,0 +1,146 @@
+* {
+  border: 0;
+  outline: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+/* body {
+	width: 100%;
+	text-align: center;
+	margin: 0 auto;
+	position: static !important;
+	padding: 50px 0;
+} */
+.main-content {
+  margin: 50px auto;
+  text-align: left;
+  max-width: 85%;
+  width: 940px;
+  font-family: 'Poppins', sans-serif;
+  background: #011d2c;
+}
+p {
+  color: #fff;
+  font-size: 16px;
+  line-height: 22px;
+}
+h2 {
+  color: #fff;
+  font-weight: 900;
+  font-size: 30px;
+  line-height: 34px;
+}
+h2.float-title {
+  float: left;
+  width: 45%;
+  padding-top: 6px;
+  margin: 0;
+}
+h3 {
+  color: #fff;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 30px;
+  margin: 12px 0 6px 0;
+}
+.reward-section {
+  border-top: 1px solid #0e2937;
+  border-bottom: 1px solid #0e2937;
+  padding: 25px 10px;
+  margin: 25px 0;
+}
+.reward-section p {
+  margin: 0;
+}
+
+.inviter-box {
+  float: right;
+  width: 55%;
+  max-width: 310px;
+  padding: 15px 20px 15px 48px;
+  color: #00d4a4;
+  font-size: 14px;
+  line-height: 18px;
+  border-radius: 20px;
+  font-weight: 600;
+  background: #011724 url(../../img/help-icon.png) 18px center no-repeat;
+}
+.white-text {
+  color: #fff;
+}
+.yellow-ball {
+  text-align: center;
+  padding: 4px 15px;
+  background: #ffdb1c;
+  border-radius: 20px;
+  color: #011724;
+  margin-left: 0;
+}
+
+.invite-friends-area {
+  padding: 10px 0;
+}
+.friends-box {
+  background: #011724;
+  border-radius: 20px;
+  padding: 25px 28px;
+  float: left;
+  width: 32%;
+  margin-right: 2%;
+  margin-top: 30px;
+  position: relative;
+}
+.friends-box p {
+  margin: 0;
+  font-weight: 300;
+}
+.friends-box img {
+  text-align: center;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+.clear {
+  height: 0;
+  clear: both;
+}
+.no-margin-right {
+  margin-right: 0;
+}
+.align-center {
+  text-align: center;
+}
+.number-circle {
+  border-radius: 100px;
+  background: #00111b;
+  text-align: center;
+  font-size: 26px;
+  line-height: 50px;
+  height: 50px;
+  width: 50px;
+  display: block;
+  position: absolute;
+  top: 15px;
+  left: 20px;
+  color: #00d4a4;
+  font-weight: bold;
+}
+
+@media only screen and (max-width: 680px) {
+  .friends-box {
+    padding: 20px 25px;
+    float: none;
+    width: 100%;
+    margin-right: 0;
+  }
+  h2.float-title {
+    float: none;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  .inviter-box {
+    float: none;
+    width: 100%;
+  }
+}
