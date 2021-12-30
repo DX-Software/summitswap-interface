@@ -119,7 +119,7 @@ const Referral: React.FC<IProps> = () => {
 
                   <h3>Get Referral Link</h3>
                     
-                    <p>Connect your wallet to generate your referral link above</p>
+                    <p className='max-width-90'>Connect your wallet to generate your referral link above</p>
                 </div>
 
                 <div className="friends-box">

@@ -121,6 +121,7 @@ h3 {
 
 .friends-box h3 {
     font-size: 22px;
+    margin-top: 10px;
 }
 
 .clear {
@@ -139,6 +140,10 @@ h3 {
 .font-15 {
     font-size: 15.5px;
     margin-top: 15px;
+}
+
+.max-width-90 {
+    max-width: 90%;
 }
 
 .number-circle {
