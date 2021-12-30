@@ -2992,9 +2992,9 @@
     tiny-warning "^1.0.3"
     toformat "^2.0.0"
 
-"@summitswap-uikit@git+https://github.com/Koda-Finance/summitswap-uikit.git#main":
+"@summitswap-uikit@git+https://github.com/Koda-Finance/summitswap-uikit.git#fix/wallet-modal-use-walletconnect-for-trust-&-safepal":
   version "0.0.1"
-  resolved "git+https://github.com/Koda-Finance/summitswap-uikit.git#55c7ce463be1f0077c427903a866bb25b690320e"
+  resolved "git+https://github.com/Koda-Finance/summitswap-uikit.git#d9b5fc395b7e226c99dda8758d35a14ed97d4eb6"
   dependencies:
     "@types/lodash" "^4.14.162"
     "@types/styled-system" "^5.1.10"
