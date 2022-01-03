@@ -2980,9 +2980,9 @@
     "@styled-system/core" "^5.1.2"
     "@styled-system/css" "^5.1.5"
 
-"@summitswap-libs@git+https://github.com/Koda-Finance/summitswap-sdk.git#main":
+"@summitswap-libs@git+https://github.com/Koda-Finance/summitswap-sdk.git#bba1c3a697c9f9e4a36e4dd60157a1914fe6200b":
   version "1.0.0"
-  resolved "git+https://github.com/Koda-Finance/summitswap-sdk.git#88c1d9dd5ae787350242620bc75356ced563a7c6"
+  resolved "git+https://github.com/Koda-Finance/summitswap-sdk.git#bba1c3a697c9f9e4a36e4dd60157a1914fe6200b"
   dependencies:
     "@pancakeswap-libs/pancake-swap-core" "^0.1.0"
     big.js "^5.2.2"
