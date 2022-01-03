@@ -97,6 +97,11 @@ Note:
     - DXT1 - `0xaa618B9347794845d17a168dd02C9078906AC2Ff`
     - DXT2 - `0x0F17BD856D147730E58c0fb63cfBcf4116E539Ae`
 
+## Contracts
+
+1. [DXT1](https://testnet.bscscan.com/address/0xaa618B9347794845d17a168dd02C9078906AC2Ff)
+2. [DXT2](https://testnet.bscscan.com/address/0x0F17BD856D147730E58c0fb63cfBcf4116E539Ae)
+3. [Router](https://testnet.bscscan.com/address/0xfF2dD86bc6016F3e666ac4733C65B36f5acff10a)
 
 ## Troubleshooting
 
