@@ -117,7 +117,7 @@ export default function App() {
 
     if (referralParam) {
       localStorage.setItem('referrer', referralParam)
-      localStorage.removeItem('rejected');
+      localStorage.removeItem('rejected')
       setReferrerAddress(referralParam)
     } else {
       setReferrerAddress(localStorage.getItem('referrer'))
