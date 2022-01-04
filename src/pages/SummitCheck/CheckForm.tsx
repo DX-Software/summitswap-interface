@@ -17,6 +17,7 @@ const CheckForm: React.FunctionComponent = () => {
   })
   const [dataFetched, setDataFetched] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [token, setToken] = useState('')
 
   const submitForm = (event: React.FormEvent<HTMLFormElement>) => {
     // Preventing the page from reloading
@@ -79,7 +80,7 @@ const CheckForm: React.FunctionComponent = () => {
     border: none;
     outline: none;
     border-radius: 30px 0 0 30px;
-    color: ${({ theme }) => theme.colors.inputColor};
+    color: ${({ theme }) => theme.colors.text};
     background: ${({ theme }) => theme.colors.menuItemBackground};
     -webkit-appearance: none;
     font-size: 16px;
@@ -134,6 +135,7 @@ const CheckForm: React.FunctionComponent = () => {
       setServerBusy(true)
     } else {
       setServerBusy(false)
+      setToken(term)
     }
     setLoading(false)
     // console.log(res.data)
@@ -151,6 +153,7 @@ const CheckForm: React.FunctionComponent = () => {
           placeholder="Enter address"
           className="input"
           name="token_address"
+          autoFocus
         />
         {/* <Button
           onClick={anaLyzeAddress}
@@ -176,7 +179,7 @@ const CheckForm: React.FunctionComponent = () => {
           <ResultsBox style={{ fontSize: '0.9rem' }}>
             <p>
               <span>Token Address:</span>
-              <span className="value">{term}</span>
+              <span className="value">{token}</span>
             </p>
             <p>
               <span>Non Transfer ratio:</span>
