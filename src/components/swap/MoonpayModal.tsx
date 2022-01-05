@@ -10,11 +10,10 @@ const MoonpayModal: React.FC<CustomModalProps> = ({ title, onDismiss }) => (
     <iframe
       allow="accelerometer; autoplay; camera; gyroscope; payment"
       frameBorder="0"
-      height="725px"
+      height="500px"
       src="https://buy.moonpay.io?apiKey=pk_live_iPAKlFahWageWmf0LL4MjAWONzg55u&currencyCode=bnb_bsc&colorCode=%232ba55d"
-      width="400px"
       title="moonpay"
-      style={{ borderRadius: "20px" }}
+      style={{ borderRadius: "20px"}}
     >
       <p>Your browser does not support iframes.</p>
     </iframe>
