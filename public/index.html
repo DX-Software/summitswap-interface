@@ -1,19 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8" />
     <!-- GTAG -->
     <script>
-      ;(function(w, d, s, l, i) {
-        w[l] = w[l] || []
-        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' })
-        var f = d.getElementsByTagName(s)[0],
-          j = d.createElement(s),
-          dl = l != 'dataLayer' ? '&l=' + l : ''
-        j.async = true
-        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl
-        f.parentNode.insertBefore(j, f)
-      })(window, document, 'script', 'dataLayer', '%REACT_APP_GTAG%')
+        ;
+        (function(w, d, s, l, i) {
+            w[l] = w[l] || []
+            w[l].push({
+                'gtm.start': new Date().getTime(),
+                event: 'gtm.js'
+            })
+            var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s),
+                dl = l != 'dataLayer' ? '&l=' + l : ''
+            j.async = true
+            j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl
+            f.parentNode.insertBefore(j, f)
+        })(window, document, 'script', 'dataLayer', '%REACT_APP_GTAG%')
     </script>
     <!-- Links -->
     <link rel="preconnect" href="https://fonts.gstatic.com" />
@@ -23,11 +28,7 @@
     <link rel="apple-touch-icon" sizes="512x512" href="%PUBLIC_URL%/images/512x512_App_Icon.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <link href="https://fonts.googleapis.com/css?family=Kanit:400,500,900" rel="stylesheet" />
-    <link
-      link
-      href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500&family=Raleway:ital,wght@0,400;1,500&display=swap"
-      rel="stylesheet"
-    />
+    <link link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500&family=Raleway:ital,wght@0,400;1,500&display=swap" rel="stylesheet" />
     <!-- Meta -->
     <title>Summitswap</title>
     <meta
@@ -38,13 +39,24 @@
     <meta name="fortmatic-site-verification" content="j93LgcVZk79qcgyo" />
     <meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no" />
     <meta name="twitter:image" content="https://pancakeswap.finance/hero.png" />
-    <meta name="twitter:description" content="Farm the native coin of Summitswap with Summitswap FLP Token" />
+    <meta name="twitter:description" content="Refer your friends, become an influencer and trade trusted tokens." />
     <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="Summitswap - A next evolution DeFi exchange on Binance Smart Chan (BSC)" />
+    <meta name="twitter:title" content="Summitswap - The next evolution DeFi exchange on Binance Smart Chan (BSC)" />
+
+    <!-- og meta tags -->
+    <meta name="title" property="og:title" content="Summitswap" />
+    <meta name="type" property="og:type" content="Cryptocurrency Exchange" />
+    <meta name="url" property="og:url" content="https://summitswap.finance/" />
+    <meta name="image" property="og:image" content="https://pancakeswap.finance/hero.png" />
+    
+    <meta name="description" property="og:description" content="SummitSwap - The next evolution DeFi exchange on Binance Smart Chain (BSC) - Refer your friends, become an influencer and trade trusted tokens." />
+    
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  </head>
-  <body>
+</head>
+
+<body>
     <!-- GTAG (noscript) -->
     <noscript>
       <iframe
@@ -65,5 +77,6 @@
       <source src="swapsuccess.mp3" type="audio/mp3" />
     </audio>
     <div id="root"></div>
-  </body>
+</body>
+
 </html>
