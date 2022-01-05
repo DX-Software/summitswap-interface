@@ -98,9 +98,11 @@ const Referral: React.FC<IProps> = () => {
                 }
                 {!account &&
                   <Box mb={3}>
+                    <div className='connect-btn-div'>
                       <Button style={{ fontFamily: 'Poppins' }}  onClick={onPresentConnectModal}>
                           {TranslateString(292, 'Connect wallet to view your referral link')}
                       </Button>
+                    </div>
                   </Box>
                 }
             </Box>
