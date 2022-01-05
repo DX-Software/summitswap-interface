@@ -3,9 +3,11 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import styled from 'styled-components'
 import { Button } from '@summitswap-uikit'
+import web3 from 'web3';
 
 const CheckForm: React.FunctionComponent = () => {
   const [term, setTerm] = useState('')
+  const [tokenError, setTokenError] = useState(false)
   const [paraText, setParaText] = useState({
     token_name: '',
     total_supply: '',
@@ -25,7 +27,9 @@ const CheckForm: React.FunctionComponent = () => {
     console.log(term)
 
     if (term.trim()) {
-      setLoading(true)
+      if (tokenError) {
+        setLoading(false)
+      }
 
       fetch(`http://localhost:3000/summit-check-token/${term}`, {
         method: 'GET',
@@ -36,6 +40,7 @@ const CheckForm: React.FunctionComponent = () => {
         .then((res) => res.json())
         .then((data) => {
           console.log(data)
+          setLoading(false)
           /*
           let textPara = "";
           Object.entries(data).map(([key, value]) => {
@@ -130,6 +135,15 @@ const CheckForm: React.FunctionComponent = () => {
   const [serverBusy, setServerBusy] = useState(false)
   const anaLyzeAddress = async () => {
     setLoading(true)
+    try {
+      await web3.utils.toChecksumAddress(term)
+      setTokenError(false)
+    } catch (error) {
+      setLoading(false)
+      setGotResult(false)
+      setTokenError(true)
+      return
+    }
     const res = await axios(`${process.env.REACT_APP_BSC_SUMMITCHECK_TOKEN_ANALYZER_API}${term}`)
     if (res.data === 'our servers are a little busy please retry again later ;)') {
       setServerBusy(true)
@@ -172,6 +186,9 @@ const CheckForm: React.FunctionComponent = () => {
           {loading ? 'Loading...' : 'Submit'}
         </Button>
       </Form>
+      <p style={tokenError ? { display:'block', color: 'red', marginLeft: '10px'} : {}}> 
+        {tokenError ? 'Invalid Address' : ''}
+      </p>
       <br />
 
       {gotResult && !serverBusy && (
