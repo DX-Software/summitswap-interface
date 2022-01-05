@@ -92,8 +92,8 @@ Note:
 ### Add Liquidity
 
 1. Deploy 2 tokens on `binance smatchain testnet`
-2. Mint some ballance of the 2 tokens to creat a pair
-  - Or you can ask Ahmed to give you some ballance of DXT1 and DXT2 tokens.
+2. Mint some ballance of the 2 tokens to create a pair
+  - Or you can ask a developer to give you some ballance of DXT1 and DXT2 tokens.
     - DXT1 - `0xaa618B9347794845d17a168dd02C9078906AC2Ff`
     - DXT2 - `0x0F17BD856D147730E58c0fb63cfBcf4116E539Ae`
 
