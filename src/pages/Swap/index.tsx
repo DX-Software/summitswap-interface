@@ -49,13 +49,13 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
   const location = useLocation()
   const [checked, setChecked] = useState(false)
   const [curRef, setReferral] = useState('')
+  const { account, activate, deactivate } = useWeb3React()
   const handleLogin = (connectorId: string) => {
     if (connectorId === 'walletconnect') {
-      return activate(walletconnect)
+      return activate(walletconnect())
     }
     return activate(injected)
   }
-  const { account, activate, deactivate, chainId } = useWeb3React()
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
 
   const contract = useReferralContract('0xF8f1E88E55b409d40Ab92A48c7E09faf6F731fd7', true)

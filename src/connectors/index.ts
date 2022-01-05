@@ -72,7 +72,7 @@ export const injected = new InjectedConnector({
 export const bsc = new BscConnector({ supportedChainIds: [56] })
 
 // mainnet only
-export const walletconnect = new WalletConnectConnector({
+export const walletconnect = () => new WalletConnectConnector({
   rpc: { [NETWORK_CHAIN_ID]: NETWORK_URL },
 })
 
