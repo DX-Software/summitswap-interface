@@ -9,7 +9,6 @@ import { injected, walletconnect } from 'connectors'
 import ReferralTransactionRow from 'components/PageHeader/ReferralTransactionRow'
 import { useAllSwapList } from 'state/transactions/hooks'
 import { TranslateString } from 'utils/translateTextHelpers'
-import AppBody from '../AppBody'
 import BalanceCard from './BalanceCard'
 import ReferalLinkImage from '../../img/referral-link.png';
 import InviteImage from '../../img/invite.png'
