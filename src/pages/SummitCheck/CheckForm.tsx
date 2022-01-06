@@ -118,8 +118,9 @@ const CheckForm: React.FunctionComponent = () => {
       flex-wrap: wrap;
       justify-content: space-between;
       > span.value {
-        background: #00121d;
+        text-transform:capitalize;
         padding: 5px;
+        font-weight: bold;
         word-break: break-all;
         margin-left: auto;
       }
