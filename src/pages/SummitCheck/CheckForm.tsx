@@ -1,4 +1,3 @@
-// Kindacode.com
 import React, { useState } from 'react'
 import axios from 'axios'
 import styled from 'styled-components'
@@ -73,9 +72,11 @@ const CheckForm: React.FunctionComponent = () => {
 
   const anaLyzeAddress = async () => {
     setLoading(true)
+    setError(undefined)
+    setResult(undefined)
+
     try {
       await web3.utils.toChecksumAddress(term)
-      setError(undefined)
     } catch (err) {
       setLoading(false)
       setError('Invalid address')
@@ -92,7 +93,7 @@ const CheckForm: React.FunctionComponent = () => {
       })
 
       if (res.data === 'our servers are a little busy please retry again later ;)') {
-        setError('our servers are a little busy please retry again later ;)')
+        setError('Something went wrong')
       } else {
         setToken(term)
         setResult(res.data)
@@ -113,7 +114,6 @@ const CheckForm: React.FunctionComponent = () => {
           type="text"
           placeholder="Enter address"
           className="input"
-          name="token_address"
           autoFocus
         />
         <Button
@@ -127,7 +127,7 @@ const CheckForm: React.FunctionComponent = () => {
         </Button>
       </Form>
 
-      {result && (
+      {!!result && (
         <div id="result">
           <ResultsBox style={{ fontSize: '0.9rem' }}>
             <p>
