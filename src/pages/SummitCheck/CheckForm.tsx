@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import styled from 'styled-components'
 import { Button } from '@summitswap-uikit'
-import web3 from 'web3';
+import web3 from 'web3'
 
 const CheckForm: React.FunctionComponent = () => {
   const [term, setTerm] = useState('')
@@ -118,7 +118,7 @@ const CheckForm: React.FunctionComponent = () => {
       flex-wrap: wrap;
       justify-content: space-between;
       > span.value {
-        text-transform:capitalize;
+        text-transform: capitalize;
         padding: 5px;
         font-weight: bold;
         word-break: break-all;
@@ -187,9 +187,7 @@ const CheckForm: React.FunctionComponent = () => {
           {loading ? 'Loading...' : 'Submit'}
         </Button>
       </Form>
-      <p style={tokenError ? { display:'block', color: 'red', marginLeft: '10px'} : {}}> 
-        {tokenError ? 'Invalid Address' : ''}
-      </p>
+      {!!tokenError && <p style={{ display: 'block', color: 'red', margin: '10px' }}>Invalid Address</p>}
       <br />
 
       {gotResult && !serverBusy && (
