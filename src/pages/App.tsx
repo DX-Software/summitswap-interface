@@ -80,7 +80,7 @@ export default function App() {
 
   const handleLogin = (connectorId: string) => {
     if (connectorId === 'walletconnect') {
-      return activate(walletconnect)
+      return activate(walletconnect())
     }
     return activate(injected)
   }
