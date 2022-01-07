@@ -24,7 +24,7 @@ const Referral: React.FC<IProps> = () => {
     const { account, chainId, deactivate, activate } = useWeb3React()
     const handleLogin = (connectorId: string) => {
         if (connectorId === 'walletconnect') {
-            return activate(walletconnect)
+            return activate(walletconnect())
         }
         return activate(injected)
     }
