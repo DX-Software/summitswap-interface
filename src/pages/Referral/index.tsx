@@ -100,7 +100,7 @@ const Referral: React.FC<IProps> = () => {
 
   const handleLogin = (connectorId: string) => {
     if (connectorId === 'walletconnect') {
-      return activate(walletconnect)
+      return activate(walletconnect())
     }
     return activate(injected)
   }
@@ -195,8 +195,11 @@ const Referral: React.FC<IProps> = () => {
 
         {referrerAddress !== NULL_ADDRESS && (
           <div className="inviter-box">
-            My Inviter: &nbsp; <span className="white-text">{`${referrerAddress?.substring(0, 5)}...${referrerAddress?.substring(38)}`}</span> &nbsp;{' '}
-            <span className="yellow-ball">10%</span>
+            My Inviter: &nbsp;{' '}
+            <span className="white-text">{`${referrerAddress?.substring(0, 5)}...${referrerAddress?.substring(
+              38
+            )}`}</span>{' '}
+            &nbsp; <span className="yellow-ball">10%</span>
           </div>
         )}
 

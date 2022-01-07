@@ -26,7 +26,7 @@ const Menu: React.FC = (props) => {
       account={account as string}
       login={async (connectorId: string) => {
         if (connectorId === 'walletconnect') {
-          await activate(walletconnect)
+          await activate(walletconnect())
         }
         else if (connectorId === 'bsc') {
           await activate(bsc)

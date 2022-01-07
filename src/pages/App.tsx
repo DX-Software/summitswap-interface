@@ -2,9 +2,9 @@ import React, { Suspense, useEffect, useState } from 'react'
 import { Route, Switch, Redirect, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { useReferralContract } from 'hooks/useContract'
-import { useWeb3React } from '@web3-react/core'
 import { injected, walletconnect } from 'connectors'
 import { useWalletModal } from '@summitswap-uikit'
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import Popups from '../components/Popups'
 import Web3ReactManager from '../components/Web3ReactManager'
 import { RedirectDuplicateTokenIds, RedirectOldAddLiquidityPathStructure } from './AddLiquidity/redirects'
@@ -62,7 +62,14 @@ const Marginer = styled.div`
 `
 
 export default function App() {
-  const { account, deactivate, activate } = useWeb3React()
+  const { account, deactivate, activate, error } = useWeb3React()
+
+  useEffect(() => {
+    if (error instanceof UnsupportedChainIdError) {
+      localStorage.removeItem('walletconnect')
+    }
+  }, [error])
+
   const [selectedLanguage, setSelectedLanguage] = useState<any>(undefined)
   const [translatedLanguage, setTranslatedLanguage] = useState<any>(undefined)
   const [translations, setTranslations] = useState<Array<any>>([])
