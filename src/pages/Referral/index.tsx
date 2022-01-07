@@ -5,12 +5,11 @@ import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import _ from 'lodash'
 import { injected, walletconnect } from 'connectors'
-
 import ReferralTransactionRow from 'components/PageHeader/ReferralTransactionRow'
 import { useAllSwapList } from 'state/transactions/hooks'
 import { TranslateString } from 'utils/translateTextHelpers'
-import QuestionHelper from 'components/QuestionHelper'
-import BalanceCard from './BalanceCard'
+import { useReferralContract } from 'hooks/useContract'
+import { REFERRAL_ADDRESS, NULL_ADDRESS } from '../../constants'
 import ReferalLinkImage from '../../img/referral-link.png'
 import InviteImage from '../../img/invite.png'
 import CoinStackImage from '../../img/coinstack.png'
@@ -85,13 +84,14 @@ interface IProps {
 
 const Referral: React.FC<IProps> = () => {
   const { account, chainId, deactivate, activate } = useWeb3React()
-  const [hashValue] = useState<string>()
   const [referralURL, setReferralURL] = useState('')
   const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
-  const [optionOpen, setOptionOpen] = useState(false)
   const [allSwapList, setAllSwapList] = useState([])
+  const [referrerAddress, setReferrerAddress] = useState<string | null>(null)
   const swapListTemp = useAllSwapList()
   const location = useLocation()
+
+  const referralContract = useReferralContract(REFERRAL_ADDRESS, true)
 
   const getAllSwapList = async () => {
     const tmp: any = await swapListTemp
@@ -110,12 +110,25 @@ const Referral: React.FC<IProps> = () => {
   useEffect(() => {
     getAllSwapList()
   })
+
   useEffect(() => {
     const handleSettingLinkUrl = async () => {
       setReferralURL(`http://${document.location.hostname}:${3000}/#/swap?ref=${account}`)
     }
     handleSettingLinkUrl()
   }, [location, account])
+
+  useEffect(() => {
+    async function getReferral() {
+      if (account && referralContract) {
+        const referrer = await referralContract.getReferrer(account)
+
+        setReferrerAddress(referrer)
+      }
+    }
+
+    getReferral()
+  }, [referralContract, account])
 
   return (
     <div className="main-content">
@@ -180,10 +193,12 @@ const Referral: React.FC<IProps> = () => {
       <div className="invite-friends-area">
         <h2 className="float-title">How to invite friends</h2>
 
-        <div className="inviter-box">
-          My Inviter: &nbsp; <span className="white-text">78asd...dfiud</span> &nbsp;{' '}
-          <span className="yellow-ball">10%</span>
-        </div>
+        {referrerAddress !== NULL_ADDRESS && (
+          <div className="inviter-box">
+            My Inviter: &nbsp; <span className="white-text">{`${referrerAddress?.substring(0, 5)}...${referrerAddress?.substring(38)}`}</span> &nbsp;{' '}
+            <span className="yellow-ball">10%</span>
+          </div>
+        )}
 
         <div className="clear" />
 
