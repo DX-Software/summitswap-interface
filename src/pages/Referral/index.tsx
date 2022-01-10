@@ -193,7 +193,7 @@ const Referral: React.FC<IProps> = () => {
       <div className="invite-friends-area">
         <h2 className="float-title">How to invite friends</h2>
 
-        {referrerAddress !== NULL_ADDRESS && (
+        {!!referrerAddress && referrerAddress !== NULL_ADDRESS && (
           <div className="inviter-box">
             My Inviter: &nbsp;{' '}
             <span className="white-text">{`${referrerAddress?.substring(0, 5)}...${referrerAddress?.substring(
