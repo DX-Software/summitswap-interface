@@ -112,10 +112,11 @@ const Referral: React.FC<IProps> = () => {
   })
 
   useEffect(() => {
-    const handleSettingLinkUrl = async () => {
-      setReferralURL(`http://${document.location.hostname}:${document.location.port}/#/swap?ref=${account}`)
-    }
-    handleSettingLinkUrl()
+    setReferralURL(
+      `http://${document.location.hostname}${
+        document.location.port ? `:${document.location.port}` : ''
+      }/#/swap?ref=${account}`
+    )
   }, [location, account])
 
   useEffect(() => {
