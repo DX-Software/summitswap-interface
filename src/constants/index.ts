@@ -1,6 +1,9 @@
 import { ChainId, JSBI, Percent, Token, WETH } from '@summitswap-libs'
 
 export const ROUTER_ADDRESS = `${process.env.REACT_APP_ROUTER_ADDRESS}`
+export const REFERRAL_ADDRESS = `${process.env.REACT_APP_REFERRAL_ADDRESS}`
+
+export const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 export const SUMMITCHECK_API = `${process.env.REACT_APP_SUMMITCHECK_API}`
 
 // a list of tokens by chain

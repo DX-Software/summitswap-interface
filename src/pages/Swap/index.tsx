@@ -1,11 +1,10 @@
 import { CurrencyAmount, JSBI, Token, Trade } from '@summitswap-libs'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown } from 'react-feather'
-import { useLocation } from 'react-router-dom'
-import { CardBody, Button, IconButton, Text, useWalletModal } from '@summitswap-uikit'
+import { CardBody, Button, IconButton, Text } from '@summitswap-uikit'
 import { ThemeContext } from 'styled-components'
 import AddressInputPanel from 'components/AddressInputPanel'
-import Card, { GreyCard } from 'components/Card'
+import { GreyCard } from 'components/Card'
 import { AutoColumn } from 'components/Column'
 import ConfirmSwapModal from 'components/swap/ConfirmSwapModal'
 import CurrencyInputPanel from 'components/CurrencyInputPanel'
@@ -14,14 +13,10 @@ import { AutoRow, RowBetween } from 'components/Row'
 import AdvancedSwapDetailsDropdown from 'components/swap/AdvancedSwapDetailsDropdown'
 import confirmPriceImpactWithoutFee from 'components/swap/confirmPriceImpactWithoutFee'
 import { ArrowWrapper, BottomGrouping, SwapCallbackError, Wrapper } from 'components/swap/styleds'
-import TradePrice from 'components/swap/TradePrice'
 import TokenWarningModal from 'components/TokenWarningModal'
 import SyrupWarningModal from 'components/SyrupWarningModal'
 import ProgressSteps from 'components/ProgressSteps'
-import { useReferralContract } from 'hooks/useContract'
 import { useWeb3React } from '@web3-react/core'
-import { injected, walletconnect } from 'connectors'
-
 import { useCurrency } from 'hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from 'hooks/useApproveCallback'
 import { useSwapCallback } from 'hooks/useSwapCallback'
@@ -46,54 +41,8 @@ interface IProps {
 }
 
 const Swap: React.FC<IProps> = ({ isLanding }) => {
-  const location = useLocation()
-  const [checked, setChecked] = useState(false)
-  const [curRef, setReferral] = useState('')
-  const { account, activate, deactivate } = useWeb3React()
-  const handleLogin = (connectorId: string) => {
-    if (connectorId === 'walletconnect') {
-      return activate(walletconnect())
-    }
-    return activate(injected)
-  }
-  const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
+  const { account } = useWeb3React()
 
-  const contract = useReferralContract('0xF8f1E88E55b409d40Ab92A48c7E09faf6F731fd7', true)
-  useEffect(() => {
-    const tmp = new URLSearchParams(location.search)
-    setReferral(tmp.get('ref') ?? '')
-  }, [location, account])
-
-  useEffect(() => {
-    const handleCheck = async () => {
-      contract?.getReferrer(curRef).then(res => {
-        if (!account) onPresentConnectModal()
-        setChecked(true)
-      })
-        .catch(err =>
-          console.log('Not available Referral')
-        )
-    }
-    if (!checked) handleCheck()
-  }, [account, curRef, checked, setChecked, contract, onPresentConnectModal])
-
-  useEffect(() => {
-    if (account && curRef) {
-      contract?.getReferrer(account).then(r1 => {
-        if (r1 !== '0x0000000000000000000000000000000000000000' || curRef === account)
-          console.log('exists or ref is same as account')
-        else {
-          contract?.recordReferral(account, curRef).then(r2 => {
-            console.log(r2)
-          })
-            .catch(err => console.log(err))
-        }
-      })
-        .catch(err =>
-          console.log('Not available Referral')
-        )
-    }
-  }, [account, checked, setChecked, contract, curRef])
   const loadedUrlParams = useDefaultsFromURLSearch()
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
@@ -137,13 +86,13 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
 
   const parsedAmounts = showWrap
     ? {
-      [Field.INPUT]: parsedAmount,
-      [Field.OUTPUT]: parsedAmount,
-    }
+        [Field.INPUT]: parsedAmount,
+        [Field.OUTPUT]: parsedAmount,
+      }
     : {
-      [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-      [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
-    }
+        [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
+        [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
+      }
   const ethPrice = useGetEthPrice()
   const output = useGetTokenData()
 
@@ -227,7 +176,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
   }, [approval, approvalSubmitted])
 
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT])
-  const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
+  // const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
 
   // the callback to execute the swap
   const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(
@@ -267,7 +216,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
   }, [priceImpactWithoutFee, swapCallback, setSwapState])
 
   // errors
-  const [showInverted, setShowInverted] = useState<boolean>(false)
+  // const [showInverted, setShowInverted] = useState<boolean>(false)
 
   // warnings on slippage
   const priceImpactSeverity = warningSeverity(priceImpactWithoutFee)
@@ -346,7 +295,9 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
         onConfirm={handleConfirmSyrupWarning}
       />
       <AppBody>
-        <PageHeader title="Swap" />
+        <PageHeader
+        // title="Swap"
+        />
         {isLanding ? '' : <CardNav />}
         <Wrapper id="swap-page">
           <ConfirmSwapModal
@@ -367,7 +318,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
               <CurrencyInputPanel
                 label={`From ${parsedAmounts.INPUT ? parsedAmounts.INPUT.currency.name : ''}`}
                 value={formattedAmounts[Field.INPUT]}
-                showMaxButton={!atMaxAmountInput}
+                // showMaxButton={!atMaxAmountInput}
                 currency={currencies[Field.INPUT]}
                 onUserInput={handleTypeInput}
                 onMax={handleMaxInput}
@@ -403,7 +354,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
                 value={formattedAmounts[Field.OUTPUT]}
                 onUserInput={handleTypeOutput}
                 label={`To ${parsedAmounts.OUTPUT ? parsedAmounts.OUTPUT?.currency.name : ''}`}
-                showMaxButton={false}
+                // showMaxButton={false}
                 currency={currencies[Field.OUTPUT]}
                 onCurrencySelect={handleOutputSelect}
                 otherCurrency={currencies[Field.INPUT]}
@@ -438,7 +389,9 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
                   </Button>
                 ) : noRoute && userHasSpecifiedInputOutput ? (
                   <GreyCard style={{ textAlign: 'center' }}>
-                    <Text mb="4px" color='text'>Insufficient liquidity for this trade.</Text>
+                    <Text mb="4px" color="text">
+                      Insufficient liquidity for this trade.
+                    </Text>
                   </GreyCard>
                 ) : showApproveFlow ? (
                   <RowBetween>

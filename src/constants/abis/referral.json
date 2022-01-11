@@ -1,12 +1,6 @@
 [
     {
-        "inputs": [
-            {
-                "internalType": "contract IERC20",
-                "name": "_koda",
-                "type": "address"
-            }
-        ],
+        "inputs": [],
         "stateMutability": "nonpayable",
         "type": "constructor"
     },
@@ -49,10 +43,88 @@
         "type": "event"
     },
     {
-        "inputs": [],
-        "name": "claim",
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_inf",
+                "type": "address"
+            }
+        ],
+        "name": "addLeadInfluencer",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_inf",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_myFee",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_infFee",
+                "type": "uint256"
+            }
+        ],
+        "name": "addSubInfluencer",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_inf",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_myFee",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_infFee",
+                "type": "uint256"
+            }
+        ],
+        "name": "changeSubInfluencer",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "token",
+                "type": "address"
+            }
+        ],
+        "name": "claimReward",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "feeDenominator",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -69,6 +141,19 @@
                 "internalType": "address",
                 "name": "",
                 "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getRewardTokens",
+        "outputs": [
+            {
+                "internalType": "address[]",
+                "name": "result",
+                "type": "address[]"
             }
         ],
         "stateMutability": "view",
@@ -102,6 +187,11 @@
                         "type": "address"
                     },
                     {
+                        "internalType": "address",
+                        "name": "tokenR",
+                        "type": "address"
+                    },
+                    {
                         "internalType": "uint256",
                         "name": "amountA",
                         "type": "uint256"
@@ -115,11 +205,45 @@
                         "internalType": "uint256",
                         "name": "amountR",
                         "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "amountD",
+                        "type": "uint256"
                     }
                 ],
                 "internalType": "struct SummitReferral.SwapInfo[]",
                 "name": "result",
                 "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "influencers",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "leadAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "refFee",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "leadFee",
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -145,13 +269,19 @@
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "koda",
-        "outputs": [
+        "inputs": [
             {
-                "internalType": "contract IERC20",
+                "internalType": "address",
                 "name": "",
                 "type": "address"
+            }
+        ],
+        "name": "leadInfluencers",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
             }
         ],
         "stateMutability": "view",
@@ -178,8 +308,13 @@
                 "type": "address"
             }
         ],
-        "name": "pairFeeList",
+        "name": "pairInfo",
         "outputs": [
+            {
+                "internalType": "address",
+                "name": "tokenR",
+                "type": "address"
+            },
             {
                 "internalType": "uint256",
                 "name": "refFee",
@@ -210,55 +345,6 @@
         "name": "recordReferral",
         "outputs": [],
         "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "name": "refList",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "timestamp",
-                "type": "uint256"
-            },
-            {
-                "internalType": "address",
-                "name": "tokenA",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "tokenB",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "amountA",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "amountB",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "amountR",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -300,6 +386,19 @@
         "type": "function"
     },
     {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_inf",
+                "type": "address"
+            }
+        ],
+        "name": "removeLeadInfluencer",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
         "inputs": [],
         "name": "renounceOwnership",
         "outputs": [],
@@ -310,7 +409,12 @@
         "inputs": [
             {
                 "internalType": "address",
-                "name": "account",
+                "name": "user",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "token",
                 "type": "address"
             }
         ],
@@ -359,6 +463,11 @@
                 "type": "address"
             },
             {
+                "internalType": "address",
+                "name": "_rewardToken",
+                "type": "address"
+            },
+            {
                 "internalType": "uint256",
                 "name": "_refFee",
                 "type": "uint256"
@@ -370,19 +479,6 @@
             }
         ],
         "name": "setFeeInfo",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "contract IERC20",
-                "name": "_koda",
-                "type": "address"
-            }
-        ],
-        "name": "setKoda",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
