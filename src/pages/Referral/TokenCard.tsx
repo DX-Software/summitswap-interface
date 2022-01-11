@@ -28,7 +28,7 @@ const TokenCard: React.FC<Props> = ({ addr, isProcessing, setProcessing }) => {
   const [balance, setBalance] = useState(0.0)
   const [tokenSymbol, setTokenSymbol] = useState('')
   const [tokenName, setTokenName] = useState('')
-  const [isError, setIsError] = useState(false)
+  const [isNotEnoughLiquidity, setIsNotEnoughLiquidity] = useState(false)
 
   const tokenContract = useTokenContract(addr, true)
   const refContract = useReferralContract(REFERRAL_ADDRESS)
@@ -40,6 +40,10 @@ const TokenCard: React.FC<Props> = ({ addr, isProcessing, setProcessing }) => {
       const testBalance = await refContract?.rewardBalance(account, addr)
       setTokenSymbol(testTokenSymbol)
       setTokenName(testTokenName)
+      const referralAddressBalance = await tokenContract?.balanceOf(REFERRAL_ADDRESS)
+      if (!referralAddressBalance.gte(web3.utils.hexToNumberString(testBalance._hex))) {
+        setIsNotEnoughLiquidity(true)
+      }
       setBalance(parseFloat(web3.utils.fromWei(web3.utils.hexToNumberString(testBalance._hex))))
     }
     handleGetBasicInfo()
@@ -59,8 +63,12 @@ const TokenCard: React.FC<Props> = ({ addr, isProcessing, setProcessing }) => {
         }
       }, 20000)
     } catch {
-      setIsError(true)
       setProcessing(false)
+      const referralAddressBalance = await tokenContract?.balanceOf(REFERRAL_ADDRESS)
+      const testBalance = await refContract?.rewardBalance(account, addr)
+      if (!referralAddressBalance.gte(web3.utils.hexToNumberString(testBalance._hex))) {
+        setIsNotEnoughLiquidity(true)
+      }
     }
   }
   return (
@@ -71,11 +79,11 @@ const TokenCard: React.FC<Props> = ({ addr, isProcessing, setProcessing }) => {
             <Text>
               {balance.toFixed(5)} {tokenSymbol}
             </Text>
-            <Button onClick={handleClaim} disabled={isProcessing || balance === 0}>
+            <Button onClick={handleClaim} disabled={isProcessing || balance === 0 || isNotEnoughLiquidity}>
               CLAIM
             </Button>
           </StyledContainer>
-          {isError && (
+          {isNotEnoughLiquidity && (
             <Text color='primary' fontSize='14px'>
               Not enough liquidity for Claim, please contact the owners of {tokenName}
             </Text>
