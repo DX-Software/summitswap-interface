@@ -164,10 +164,11 @@ export function useSwapCallback(
                     } else if (callError.message) {
                       callErrorMessage = callError.message
                     }
-
-                    switch (callError.reason) {
-                      case 'UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT':
-                      case 'UniswapV2Router: EXCESSIVE_INPUT_AMOUNT':
+                    switch (callErrorMessage) {
+                      case 'SummitswapRouter02: INSUFFICIENT_OUTPUT_AMOUNT':
+                      case 'SummitswapRouter02: EXCESSIVE_INPUT_AMOUNT':
+                      case 'execution reverted: SummitswapRouter02: INSUFFICIENT_OUTPUT_AMOUNT':
+                      case 'execution reverted: SummitswapRouter02: EXCESSIVE_INPUT_AMOUNT':
                         errorMessage =
                           'This transaction will not succeed either due to price movement or fee on transfer. Try increasing your slippage tolerance.'
                         break
