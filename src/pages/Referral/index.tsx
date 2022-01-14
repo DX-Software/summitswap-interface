@@ -1,18 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Text, Box, Button, useWalletModal, Flex } from '@summitswap-uikit'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import _ from 'lodash'
 import { injected, walletconnect } from 'connectors'
+import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import ReferralTransactionRow from 'components/PageHeader/ReferralTransactionRow'
 import { useAllSwapList } from 'state/transactions/hooks'
 import { TranslateString } from 'utils/translateTextHelpers'
 import { useReferralContract } from 'hooks/useContract'
+import { useAllTokens } from 'hooks/Tokens'
 import { REFERRAL_ADDRESS, NULL_ADDRESS } from '../../constants'
 import ReferalLinkImage from '../../img/referral-link.png'
 import InviteImage from '../../img/invite.png'
 import CoinStackImage from '../../img/coinstack.png'
+import expandMore from '../../img/expandMore.svg'
 import RewardedTokens from './RewardedTokens'
 
 import './style.css'
@@ -55,6 +58,26 @@ const LinkBox = styled(Box)`
   }
 `
 
+const OutputCoinBox = styled(Box)`
+  padding: 16px;
+  border-radius: 16px;
+  background: ${({ theme }) => theme.colors.sidebarBackground};
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  > div:first-of-type {
+    flex: 1;
+    overflow: hidden;
+    > div {
+      overflow: hidden;
+      max-width: calc(100% - 20px);
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      word-break: break-all;
+    }
+  }
+`
+
 const Content = styled(Box)<any>`
   position: absolute;
   top: calc(100% + 8px);
@@ -84,12 +107,22 @@ interface IProps {
 
 const Referral: React.FC<IProps> = () => {
   const { account, chainId, deactivate, activate } = useWeb3React()
+  const [modalOpen, setModalOpen] = useState(false)
+  const [selectedOutputCoin, setSelectedOutputCoin]: any = useState(null)
   const [referralURL, setReferralURL] = useState('')
   const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
   const [allSwapList, setAllSwapList] = useState([])
   const [referrerAddress, setReferrerAddress] = useState<string | null>(null)
   const swapListTemp = useAllSwapList()
+  const allTokens = useAllTokens()
   const location = useLocation()
+
+  useEffect(() => {
+    if (!selectedOutputCoin) {
+      const _allTokens = Object.values(allTokens)
+      setSelectedOutputCoin(_allTokens[0])
+    }
+  }, [selectedOutputCoin, allTokens])
 
   const referralContract = useReferralContract(REFERRAL_ADDRESS, true)
 
@@ -115,9 +148,9 @@ const Referral: React.FC<IProps> = () => {
     setReferralURL(
       `http://${document.location.hostname}${
         document.location.port ? `:${document.location.port}` : ''
-      }/#/swap?ref=${account}`
+      }/#/swap?output=${selectedOutputCoin && selectedOutputCoin.address}&ref=${account}`
     )
-  }, [location, account])
+  }, [location, account, selectedOutputCoin])
 
   useEffect(() => {
     async function getReferral() {
@@ -131,11 +164,28 @@ const Referral: React.FC<IProps> = () => {
     getReferral()
   }, [referralContract, account])
 
+  const handleTokenSelect = useCallback((inputCurrency) => {
+    setSelectedOutputCoin(inputCurrency)
+  }, []);
+
+  const handleDismissSearch = useCallback(() => {
+    setModalOpen(false)
+  }, [setModalOpen])
+
   return (
     <div className="main-content">
       <Box>
         {account && (
           <>
+            <Text mb="8px" bold>
+              Output Coin - {selectedOutputCoin && selectedOutputCoin.name}
+            </Text>
+            <OutputCoinBox mb={4} onClick={() => setModalOpen(true)}>
+              <Box>
+                <Text>{selectedOutputCoin ? selectedOutputCoin.address : ""}</Text>
+              </Box>
+              <img src={expandMore} alt="" width={24} height={24} style={{ marginLeft: '10px' }} />
+            </OutputCoinBox>
             <Text mb="8px" bold>
               My Referral link
             </Text>
@@ -306,6 +356,14 @@ const Referral: React.FC<IProps> = () => {
         that every project will have their own set up and may chose to keep the transactions with fees included. You can
         find out this information on their whitelisting project profile through SummitCheck.
       </p>
+      <CurrencySearchModal
+        isOpen={modalOpen}
+        onDismiss={handleDismissSearch}
+        onCurrencySelect={handleTokenSelect}
+        selectedCurrency={selectedOutputCoin}
+        otherSelectedCurrency={null}
+        showETH={false}
+      />
     </div>
   )
 }
