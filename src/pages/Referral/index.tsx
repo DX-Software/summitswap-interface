@@ -12,6 +12,7 @@ import { useAllSwapList } from 'state/transactions/hooks'
 import { TranslateString } from 'utils/translateTextHelpers'
 import { useReferralContract } from 'hooks/useContract'
 import { useAllTokens } from 'hooks/Tokens'
+import CurrencyLogo from 'components/CurrencyLogo'
 import { REFERRAL_ADDRESS, NULL_ADDRESS } from '../../constants'
 import ReferalLinkImage from '../../img/referral-link.png'
 import InviteImage from '../../img/invite.png'
@@ -37,6 +38,7 @@ const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
   padding: 10px;
 `
 const LinkBox = styled(Box)`
+  color: ${({ theme }) => theme.colors.invertedContrast};
   padding: 16px;
   border-radius: 16px;
   background: ${({ theme }) => theme.colors.sidebarBackground};
@@ -141,11 +143,12 @@ const Referral: React.FC<IProps> = () => {
         {account && (
           <>
             <Text mb="8px" bold>
-              Output Coin - {selectedOutputCoin && selectedOutputCoin.name}
+              Output Coin
             </Text>
             <LinkBox mb={4} onClick={() => setModalOpen(true)} style={{ cursor: 'pointer' }}>
+              <CurrencyLogo currency={selectedOutputCoin} size="24px" style={{ marginRight: '8px' }} />
               <Box>
-                <Text>{selectedOutputCoin ? selectedOutputCoin.address : ''}</Text>
+                <Text>{`${selectedOutputCoin?.symbol} - ${selectedOutputCoin?.address}`}</Text>
               </Box>
               <img src={expandMore} alt="" width={24} height={24} style={{ marginLeft: '10px' }} />
             </LinkBox>
