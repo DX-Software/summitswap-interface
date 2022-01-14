@@ -154,28 +154,23 @@ export function useSwapCallback(
                   })
                   .catch((callError) => {
                     console.info('Call threw error', call, callError)
-                    let errorMessage: string
+                    let errorMessageToShow: string
 
-                    let callErrorMessage;
-                    if (callError.reason) {
-                      callErrorMessage = callError.reason
-                    } else if (callError.data && callError.data.message) {
-                      callErrorMessage = callError.data.message
-                    } else if (callError.message) {
-                      callErrorMessage = callError.message
-                    }
+                    const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message;
+
                     switch (callErrorMessage) {
                       case 'SummitswapRouter02: INSUFFICIENT_OUTPUT_AMOUNT':
                       case 'SummitswapRouter02: EXCESSIVE_INPUT_AMOUNT':
                       case 'execution reverted: SummitswapRouter02: INSUFFICIENT_OUTPUT_AMOUNT':
                       case 'execution reverted: SummitswapRouter02: EXCESSIVE_INPUT_AMOUNT':
-                        errorMessage =
+                        errorMessageToShow =
                           'This transaction will not succeed either due to price movement or fee on transfer. Try increasing your slippage tolerance.'
                         break
                       default:
-                        errorMessage = `The transaction cannot succeed due to error: ${callErrorMessage}. This is probably an issue with one of the tokens you are swapping.`
+                        errorMessageToShow = `The transaction cannot succeed due to error: ${callErrorMessage}. This is probably an issue with one of the tokens you are swapping.`
                     }
-                    return { call, error: new Error(errorMessage) }
+                    
+                    return { call, error: new Error(errorMessageToShow) }
                   })
               })
           })
