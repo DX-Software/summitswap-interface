@@ -146,7 +146,7 @@ export function useSwapCallback(
               })
               .catch((gasError) => {
                 console.info('Gas estimate failed, trying eth_call to extract error', call)
-                playFailMusic(audioPlay)                    
+                playFailMusic(audioPlay)
                 return contract.callStatic[methodName](...args, options)
                   .then((result) => {
                     console.info('Unexpected successful call after failed estimate gas', call, gasError, result)
@@ -154,17 +154,23 @@ export function useSwapCallback(
                   })
                   .catch((callError) => {
                     console.info('Call threw error', call, callError)
-                    let errorMessage: string
-                    switch (callError.reason) {
-                      case 'UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT':
-                      case 'UniswapV2Router: EXCESSIVE_INPUT_AMOUNT':
-                        errorMessage =
+                    let errorMessageToShow: string
+
+                    const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message;
+
+                    switch (callErrorMessage) {
+                      case 'SummitswapRouter02: INSUFFICIENT_OUTPUT_AMOUNT':
+                      case 'SummitswapRouter02: EXCESSIVE_INPUT_AMOUNT':
+                      case 'execution reverted: SummitswapRouter02: INSUFFICIENT_OUTPUT_AMOUNT':
+                      case 'execution reverted: SummitswapRouter02: EXCESSIVE_INPUT_AMOUNT':
+                        errorMessageToShow =
                           'This transaction will not succeed either due to price movement or fee on transfer. Try increasing your slippage tolerance.'
                         break
                       default:
-                        errorMessage = `The transaction cannot succeed due to error: ${callError.reason}. This is probably an issue with one of the tokens you are swapping.`
+                        errorMessageToShow = `The transaction cannot succeed due to error: ${callErrorMessage}. This is probably an issue with one of the tokens you are swapping.`
                     }
-                    return { call, error: new Error(errorMessage) }
+                    
+                    return { call, error: new Error(errorMessageToShow) }
                   })
               })
           })
@@ -177,7 +183,7 @@ export function useSwapCallback(
         )
 
         if (!successfulEstimation) {
-          playFailMusic(audioPlay)                    
+          playFailMusic(audioPlay)
           const errorCalls = estimatedCalls.filter((call): call is FailedCall => 'error' in call)
           if (errorCalls.length > 0) throw errorCalls[errorCalls.length - 1].error
           throw new Error('Unexpected error. Please contact support: none of the calls threw an error')
@@ -218,7 +224,7 @@ export function useSwapCallback(
           })
           .catch((error: any) => {
             // if the user rejected the tx, pass this along
-            playFailMusic(audioPlay)                    
+            playFailMusic(audioPlay)
             if (error?.code === 4001) {
               throw new Error('Transaction rejected.')
             } else {
