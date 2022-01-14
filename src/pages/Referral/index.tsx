@@ -169,9 +169,10 @@ const Referral: React.FC<IProps> = () => {
         {account && allSwapList && allSwapList.length <= 0 && <Text>No recent transactions</Text>}
         {account && chainId && allSwapList && allSwapList.length > 0 && (
           <Box mb={2}>
-            {_.map(allSwapList, (x: any) => (
-              <ReferralTransactionRow {...x} />
-            ))}
+            {_.map(allSwapList, (x: any, index) => (
+                <ReferralTransactionRow {...x} index={allSwapList.length - index} />
+              )
+            )}
           </Box>
         )}
         {account && (
