@@ -62,6 +62,16 @@ export async function useAllSwapList() {
   return null
 }
 
+export async function useClaimedRewardIndex(rewardTokenAddress: string) {
+  const { account } = useActiveWeb3React()
+  const contract = useReferralContract(REFERRAL_ADDRESS, true)
+  if (account && contract) {
+    const tmp = await contract?.claimedRewardIndex(account, rewardTokenAddress)
+    return tmp
+  }
+  return null
+}
+
 export function useIsTransactionPending(transactionHash?: string): boolean {
   const transactions = useAllTransactions()
 
