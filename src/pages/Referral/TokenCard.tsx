@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Box, Text, Button } from '@summitswap-uikit'
 import { useTokenContract, useReferralContract } from 'hooks/useContract'
@@ -33,21 +33,24 @@ const TokenCard: React.FC<Props> = ({ addr, isProcessing, setProcessing }) => {
   const tokenContract = useTokenContract(addr, true)
   const refContract = useReferralContract(REFERRAL_ADDRESS)
 
+  const getIsLiquidityNotEnough = useCallback(async (claimBalance) => {
+    const referralAddressBalance = await tokenContract?.balanceOf(REFERRAL_ADDRESS)
+    return !referralAddressBalance.gte(web3.utils.hexToNumberString(claimBalance._hex))
+  }, [tokenContract])
+
   useEffect(() => {
     const handleGetBasicInfo = async () => {
       const testTokenSymbol = await tokenContract?.symbol()
       const testTokenName = await tokenContract?.name()
-      const testBalance = await refContract?.rewardBalance(account, addr)
       setTokenSymbol(testTokenSymbol)
       setTokenName(testTokenName)
-      const referralAddressBalance = await tokenContract?.balanceOf(REFERRAL_ADDRESS)
-      if (!referralAddressBalance.gte(web3.utils.hexToNumberString(testBalance._hex))) {
-        setIsNotEnoughLiquidity(true)
-      }
+      const testBalance = await refContract?.rewardBalance(account, addr)
+      const isLiquidityNotEnough = await getIsLiquidityNotEnough(testBalance)
+      setIsNotEnoughLiquidity(isLiquidityNotEnough)
       setBalance(parseFloat(web3.utils.fromWei(web3.utils.hexToNumberString(testBalance._hex))))
     }
     handleGetBasicInfo()
-  }, [tokenContract, refContract, addr, account])
+  }, [tokenContract, refContract, addr, account, getIsLiquidityNotEnough])
 
   const handleClaim = async () => {
     try {
@@ -64,13 +67,12 @@ const TokenCard: React.FC<Props> = ({ addr, isProcessing, setProcessing }) => {
       }, 20000)
     } catch {
       setProcessing(false)
-      const referralAddressBalance = await tokenContract?.balanceOf(REFERRAL_ADDRESS)
       const testBalance = await refContract?.rewardBalance(account, addr)
-      if (!referralAddressBalance.gte(web3.utils.hexToNumberString(testBalance._hex))) {
-        setIsNotEnoughLiquidity(true)
-      }
+      const isLiquidityNotEnough = await getIsLiquidityNotEnough(testBalance)
+      setIsNotEnoughLiquidity(isLiquidityNotEnough)
     }
   }
+
   return (
     <>
       {balance !== 0 && (
