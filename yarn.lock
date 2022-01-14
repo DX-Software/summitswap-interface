@@ -2948,9 +2948,9 @@
     "@styled-system/core" "^5.1.2"
     "@styled-system/css" "^5.1.5"
 
-"@summitswap-libs@git+https://github.com/Koda-Finance/summitswap-sdk.git#main":
+"@summitswap-libs@git+https://github.com/Koda-Finance/summitswap-sdk.git#update/tokens-referral-enabled":
   version "1.0.0"
-  resolved "git+https://github.com/Koda-Finance/summitswap-sdk.git#4f0feb97691b59eaac28adc5b77b823a58b237b0"
+  resolved "git+https://github.com/Koda-Finance/summitswap-sdk.git#d477347f42460ccd5091e833ddd362ddc7505191"
   dependencies:
     "@pancakeswap-libs/pancake-swap-core" "^0.1.0"
     big.js "^5.2.2"
