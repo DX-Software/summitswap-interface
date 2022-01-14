@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
+import { Token } from '@summitswap-libs'
 import { Text, Box, Button, useWalletModal, Flex } from '@summitswap-uikit'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
@@ -108,8 +109,8 @@ interface IProps {
 const Referral: React.FC<IProps> = () => {
   const { account, chainId, deactivate, activate } = useWeb3React()
   const [modalOpen, setModalOpen] = useState(false)
-  const [selectedOutputCoin, setSelectedOutputCoin]: any = useState()
-  const [allTokens, setAllTokens]: any = useState([])
+  const [selectedOutputCoin, setSelectedOutputCoin] = useState<Token | undefined>()
+  const [allTokens, setAllTokens] = useState<Array<Token>>([])
   const [referralURL, setReferralURL] = useState('')
   const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
   const [allSwapList, setAllSwapList] = useState([])
@@ -367,7 +368,7 @@ const Referral: React.FC<IProps> = () => {
         selectedCurrency={selectedOutputCoin}
         otherSelectedCurrency={null}
         showETH={false}
-        defaultTokens={allTokens.filter((token) => token.tokenInfo.enableForReferral)}
+        tokens={allTokens.filter((token) => token.referralEnabled)}
       />
     </div>
   )
