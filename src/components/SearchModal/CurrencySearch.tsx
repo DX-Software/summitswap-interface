@@ -32,6 +32,7 @@ interface CurrencySearchProps {
   onCurrencySelect: (currency: Currency) => void
   otherSelectedCurrency?: Currency | null
   showCommonBases?: boolean
+  showETH?: boolean
   onChangeList: () => void
 }
 
@@ -56,6 +57,7 @@ export function CurrencySearch({
   onCurrencySelect,
   otherSelectedCurrency,
   showCommonBases,
+  showETH,
   onDismiss,
   isOpen,
   onChangeList,
@@ -73,10 +75,11 @@ export function CurrencySearch({
   const isAddressSearch = isAddress(searchQuery)
   const searchToken = useToken(searchQuery)
 
-  const showETH: boolean = useMemo(() => {
+  const isShowETH: boolean = useMemo(() => {
+    if (showETH === false) return showETH
     const s = searchQuery.toLowerCase().trim()
     return s === '' || s === 'e' || s === 'et' || s === 'eth'
-  }, [searchQuery])
+  }, [searchQuery, showETH])
 
   const tokenComparator = useTokenComparator(invertSearchOrder)
 
@@ -196,7 +199,7 @@ export function CurrencySearch({
           {({ height }) => (
             <CurrencyList
               height={height}
-              showETH={showETH}
+              showETH={isShowETH}
               currencies={filteredSortedTokens}
               onCurrencySelect={handleCurrencySelect}
               otherCurrency={otherSelectedCurrency}
