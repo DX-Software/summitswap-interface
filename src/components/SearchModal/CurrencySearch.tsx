@@ -33,6 +33,7 @@ interface CurrencySearchProps {
   otherSelectedCurrency?: Currency | null
   showCommonBases?: boolean
   showETH?: boolean
+  defaultTokens?: Array<any>
   onChangeList: () => void
 }
 
@@ -58,6 +59,7 @@ export function CurrencySearch({
   otherSelectedCurrency,
   showCommonBases,
   showETH,
+  defaultTokens,
   onDismiss,
   isOpen,
   onChangeList,
@@ -87,8 +89,9 @@ export function CurrencySearch({
 
   const filteredTokens: Token[] = useMemo(() => {
     if (isAddressSearch) return searchToken ? [searchToken] : []
-    return filterTokens(Object.values(allTokens), searchQuery)
-  }, [isAddressSearch, searchToken, allTokens, searchQuery])
+    const tokens = defaultTokens ?? Object.values(allTokens)
+    return filterTokens(tokens, searchQuery)
+  }, [isAddressSearch, searchToken, allTokens, searchQuery, defaultTokens])
 
   const filteredSortedTokens: Token[] = useMemo(() => {
     if (searchToken) return [searchToken]
