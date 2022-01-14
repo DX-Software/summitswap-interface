@@ -32,6 +32,8 @@ interface CurrencySearchProps {
   onCurrencySelect: (currency: Currency) => void
   otherSelectedCurrency?: Currency | null
   showCommonBases?: boolean
+  showETH?: boolean
+  tokens?: Array<Token>
   onChangeList: () => void
 }
 
@@ -56,6 +58,8 @@ export function CurrencySearch({
   onCurrencySelect,
   otherSelectedCurrency,
   showCommonBases,
+  showETH,
+  tokens,
   onDismiss,
   isOpen,
   onChangeList,
@@ -73,10 +77,11 @@ export function CurrencySearch({
   const isAddressSearch = isAddress(searchQuery)
   const searchToken = useToken(searchQuery)
 
-  const showETH: boolean = useMemo(() => {
+  const isShowETH: boolean = useMemo(() => {
+    if (showETH === false) return showETH
     const s = searchQuery.toLowerCase().trim()
     return s === '' || s === 'e' || s === 'et' || s === 'eth'
-  }, [searchQuery])
+  }, [searchQuery, showETH])
 
   const tokenComparator = useTokenComparator(invertSearchOrder)
 
@@ -84,8 +89,9 @@ export function CurrencySearch({
 
   const filteredTokens: Token[] = useMemo(() => {
     if (isAddressSearch) return searchToken ? [searchToken] : []
-    return filterTokens(Object.values(allTokens), searchQuery)
-  }, [isAddressSearch, searchToken, allTokens, searchQuery])
+    const _tokens = tokens ?? Object.values(allTokens)
+    return filterTokens(_tokens, searchQuery)
+  }, [isAddressSearch, searchToken, allTokens, searchQuery, tokens])
 
   const filteredSortedTokens: Token[] = useMemo(() => {
     if (searchToken) return [searchToken]
@@ -196,7 +202,7 @@ export function CurrencySearch({
           {({ height }) => (
             <CurrencyList
               height={height}
-              showETH={showETH}
+              showETH={isShowETH}
               currencies={filteredSortedTokens}
               onCurrencySelect={handleCurrencySelect}
               otherCurrency={otherSelectedCurrency}

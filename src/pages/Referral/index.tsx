@@ -1,18 +1,23 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
+import { Token } from '@summitswap-libs'
 import { Text, Box, Button, useWalletModal, Flex } from '@summitswap-uikit'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import _ from 'lodash'
 import { injected, walletconnect } from 'connectors'
+import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import ReferralTransactionRow from 'components/PageHeader/ReferralTransactionRow'
 import { useAllSwapList } from 'state/transactions/hooks'
 import { TranslateString } from 'utils/translateTextHelpers'
 import { useReferralContract } from 'hooks/useContract'
+import { useAllTokens } from 'hooks/Tokens'
+import CurrencyLogo from 'components/CurrencyLogo'
 import { REFERRAL_ADDRESS, NULL_ADDRESS } from '../../constants'
 import ReferalLinkImage from '../../img/referral-link.png'
 import InviteImage from '../../img/invite.png'
 import CoinStackImage from '../../img/coinstack.png'
+import expandMore from '../../img/expandMore.svg'
 import RewardedTokens from './RewardedTokens'
 
 import './style.css'
@@ -33,6 +38,7 @@ const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
   padding: 10px;
 `
 const LinkBox = styled(Box)`
+  color: ${({ theme }) => theme.colors.invertedContrast};
   padding: 16px;
   border-radius: 16px;
   background: ${({ theme }) => theme.colors.sidebarBackground};
@@ -55,28 +61,6 @@ const LinkBox = styled(Box)`
   }
 `
 
-const Content = styled(Box)<any>`
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  opacity: ${({ open }) => (open ? 1 : 0)};
-  transition: 0.3s;
-  pointer-events: ${({ open }) => (open ? 'initial' : 'none')};
-  > div {
-    cursor: pointer;
-    background-color: ${({ theme }) => theme.colors.sidebarBackground} !important;
-    min-width: 200px;
-    padding: 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: 0.3s;
-    &:hover {
-      color: lightgrey;
-    }
-  }
-`
-
 interface IProps {
   isLanding?: boolean
   match?: any
@@ -84,12 +68,26 @@ interface IProps {
 
 const Referral: React.FC<IProps> = () => {
   const { account, chainId, deactivate, activate } = useWeb3React()
+  const [modalOpen, setModalOpen] = useState(false)
+  const [selectedOutputCoin, setSelectedOutputCoin] = useState<Token | undefined>()
+  const [allTokens, setAllTokens] = useState<Array<Token>>([])
   const [referralURL, setReferralURL] = useState('')
   const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
   const [allSwapList, setAllSwapList] = useState([])
   const [referrerAddress, setReferrerAddress] = useState<string | null>(null)
   const swapListTemp = useAllSwapList()
+  const allTokensTemp = useAllTokens()
   const location = useLocation()
+
+  useEffect(() => {
+    setAllTokens(Object.values(allTokensTemp))
+  }, [allTokensTemp])
+
+  useEffect(() => {
+    if (!selectedOutputCoin) {
+      setSelectedOutputCoin(allTokens.find((token) => token.symbol === 'KODA'))
+    }
+  }, [selectedOutputCoin, allTokens])
 
   const referralContract = useReferralContract(REFERRAL_ADDRESS, true)
 
@@ -115,9 +113,9 @@ const Referral: React.FC<IProps> = () => {
     setReferralURL(
       `http://${document.location.hostname}${
         document.location.port ? `:${document.location.port}` : ''
-      }/#/swap?ref=${account}`
+      }/#/swap?output=${selectedOutputCoin && selectedOutputCoin.address}&ref=${account}`
     )
-  }, [location, account])
+  }, [location, account, selectedOutputCoin])
 
   useEffect(() => {
     async function getReferral() {
@@ -131,11 +129,29 @@ const Referral: React.FC<IProps> = () => {
     getReferral()
   }, [referralContract, account])
 
+  const handleTokenSelect = useCallback((inputCurrency) => {
+    setSelectedOutputCoin(inputCurrency)
+  }, [])
+
+  const handleDismissSearch = useCallback(() => {
+    setModalOpen(false)
+  }, [setModalOpen])
+
   return (
     <div className="main-content">
       <Box>
         {account && (
           <>
+            <Text mb="8px" bold>
+              Output Coin
+            </Text>
+            <LinkBox mb={4} onClick={() => setModalOpen(true)} style={{ cursor: 'pointer' }}>
+              <CurrencyLogo currency={selectedOutputCoin} size="24px" style={{ marginRight: '8px' }} />
+              <Box>
+                <Text>{`${selectedOutputCoin?.symbol} - ${selectedOutputCoin?.address}`}</Text>
+              </Box>
+              <img src={expandMore} alt="" width={24} height={24} style={{ marginLeft: '10px' }} />
+            </LinkBox>
             <Text mb="8px" bold>
               My Referral link
             </Text>
@@ -306,6 +322,15 @@ const Referral: React.FC<IProps> = () => {
         that every project will have their own set up and may chose to keep the transactions with fees included. You can
         find out this information on their whitelisting project profile through SummitCheck.
       </p>
+      <CurrencySearchModal
+        isOpen={modalOpen}
+        onDismiss={handleDismissSearch}
+        onCurrencySelect={handleTokenSelect}
+        selectedCurrency={selectedOutputCoin}
+        otherSelectedCurrency={null}
+        showETH={false}
+        tokens={allTokens.filter((token) => token.referralEnabled)}
+      />
     </div>
   )
 }
