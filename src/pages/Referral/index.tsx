@@ -108,19 +108,23 @@ interface IProps {
 const Referral: React.FC<IProps> = () => {
   const { account, chainId, deactivate, activate } = useWeb3React()
   const [modalOpen, setModalOpen] = useState(false)
-  const [selectedOutputCoin, setSelectedOutputCoin]: any = useState(null)
+  const [selectedOutputCoin, setSelectedOutputCoin]: any = useState()
+  const [allTokens, setAllTokens]: any = useState([])
   const [referralURL, setReferralURL] = useState('')
   const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
   const [allSwapList, setAllSwapList] = useState([])
   const [referrerAddress, setReferrerAddress] = useState<string | null>(null)
   const swapListTemp = useAllSwapList()
-  const allTokens = useAllTokens()
+  const allTokensTemp = useAllTokens()
   const location = useLocation()
 
   useEffect(() => {
+    setAllTokens(Object.values(allTokensTemp))
+  }, [allTokensTemp]);
+
+  useEffect(() => {
     if (!selectedOutputCoin) {
-      const _allTokens = Object.values(allTokens)
-      setSelectedOutputCoin(_allTokens.find((token) => token.symbol === 'KODA'))
+      setSelectedOutputCoin(allTokens.find((token) => token.symbol === 'KODA'))
     }
   }, [selectedOutputCoin, allTokens])
 
@@ -363,6 +367,7 @@ const Referral: React.FC<IProps> = () => {
         selectedCurrency={selectedOutputCoin}
         otherSelectedCurrency={null}
         showETH={false}
+        defaultTokens={allTokens.filter((token) => token.tokenInfo.enableForReferral)}
       />
     </div>
   )

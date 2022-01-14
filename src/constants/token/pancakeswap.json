@@ -55,7 +55,7 @@
       "chainId": 97,
       "decimals": 18,
       "logoURI": "/images/coins/ETH.png",
-      "enableForReferral": false
+      "enableForReferral": true
     },
     {
       "name": "BUSD Token",
