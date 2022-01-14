@@ -58,48 +58,6 @@ const LinkBox = styled(Box)`
   }
 `
 
-const OutputCoinBox = styled(Box)`
-  padding: 16px;
-  border-radius: 16px;
-  background: ${({ theme }) => theme.colors.sidebarBackground};
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  > div:first-of-type {
-    flex: 1;
-    overflow: hidden;
-    > div {
-      overflow: hidden;
-      max-width: calc(100% - 20px);
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      word-break: break-all;
-    }
-  }
-`
-
-const Content = styled(Box)<any>`
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  opacity: ${({ open }) => (open ? 1 : 0)};
-  transition: 0.3s;
-  pointer-events: ${({ open }) => (open ? 'initial' : 'none')};
-  > div {
-    cursor: pointer;
-    background-color: ${({ theme }) => theme.colors.sidebarBackground} !important;
-    min-width: 200px;
-    padding: 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: 0.3s;
-    &:hover {
-      color: lightgrey;
-    }
-  }
-`
-
 interface IProps {
   isLanding?: boolean
   match?: any
@@ -120,7 +78,7 @@ const Referral: React.FC<IProps> = () => {
 
   useEffect(() => {
     setAllTokens(Object.values(allTokensTemp))
-  }, [allTokensTemp]);
+  }, [allTokensTemp])
 
   useEffect(() => {
     if (!selectedOutputCoin) {
@@ -170,7 +128,7 @@ const Referral: React.FC<IProps> = () => {
 
   const handleTokenSelect = useCallback((inputCurrency) => {
     setSelectedOutputCoin(inputCurrency)
-  }, []);
+  }, [])
 
   const handleDismissSearch = useCallback(() => {
     setModalOpen(false)
@@ -184,12 +142,12 @@ const Referral: React.FC<IProps> = () => {
             <Text mb="8px" bold>
               Output Coin - {selectedOutputCoin && selectedOutputCoin.name}
             </Text>
-            <OutputCoinBox mb={4} onClick={() => setModalOpen(true)}>
+            <LinkBox mb={4} onClick={() => setModalOpen(true)} style={{ cursor: 'pointer' }}>
               <Box>
-                <Text>{selectedOutputCoin ? selectedOutputCoin.address : ""}</Text>
+                <Text>{selectedOutputCoin ? selectedOutputCoin.address : ''}</Text>
               </Box>
               <img src={expandMore} alt="" width={24} height={24} style={{ marginLeft: '10px' }} />
-            </OutputCoinBox>
+            </LinkBox>
             <Text mb="8px" bold>
               My Referral link
             </Text>
