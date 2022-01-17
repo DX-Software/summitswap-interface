@@ -1,6 +1,7 @@
 import React, { StrictMode } from 'react'
 import ReactDOM from 'react-dom'
 import { ResetCSS } from '@summitswap-uikit'
+import { HashRouter } from 'react-router-dom'
 import GlobalStyle from './style/Global'
 import App from './pages/App'
 import ApplicationUpdater from './state/application/updater'
@@ -30,7 +31,9 @@ ReactDOM.render(
       </>
       <ResetCSS />
       <GlobalStyle />
-      <App />
+      <HashRouter>
+        <App />
+      </HashRouter>
     </Providers>
   </StrictMode>,
   document.getElementById('root')

@@ -1,4 +1,4 @@
-import { Currency } from '@summitswap-libs'
+import { Currency, Token } from '@summitswap-libs'
 import React, { useCallback, useEffect, useState } from 'react'
 import useLast from '../../hooks/useLast'
 import { useSelectedListUrl } from '../../state/lists/hooks'
@@ -14,6 +14,8 @@ interface CurrencySearchModalProps {
   otherSelectedCurrency?: Currency | null
   // eslint-disable-next-line react/no-unused-prop-types
   showCommonBases?: boolean
+  showETH?: boolean
+  tokens?: Array<Token>
 }
 
 export default function CurrencySearchModal({
@@ -22,6 +24,8 @@ export default function CurrencySearchModal({
   onCurrencySelect,
   selectedCurrency,
   otherSelectedCurrency,
+  showETH,
+  tokens,
 }: CurrencySearchModalProps) {
   const [listView, setListView] = useState<boolean>(false)
   const lastOpen = useLast(isOpen)
@@ -63,6 +67,8 @@ export default function CurrencySearchModal({
           selectedCurrency={selectedCurrency}
           otherSelectedCurrency={otherSelectedCurrency}
           showCommonBases={false}
+          showETH={showETH}
+          tokens={tokens}
         />
       ) : (
         <CurrencySearch
@@ -73,6 +79,8 @@ export default function CurrencySearchModal({
           selectedCurrency={selectedCurrency}
           otherSelectedCurrency={otherSelectedCurrency}
           showCommonBases={false}
+          showETH={showETH}
+          tokens={tokens}
         />
       )}
     </Modal>
