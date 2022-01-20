@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { FixedSizeList } from 'react-window'
 import styled, { ThemeContext } from 'styled-components'
 import AutoSizer from 'react-virtualized-auto-sizer'
+import LoadingModal from 'components/LoadingModal'
 import { useActiveWeb3React } from '../../hooks'
 import { AppState } from '../../state'
 import { useAllTokens, useToken } from '../../hooks/Tokens'
@@ -71,6 +72,7 @@ export function CurrencySearch({
   const fixedList = useRef<FixedSizeList>()
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [invertSearchOrder] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const allTokens = useAllTokens()
 
   // if they input an address, use it
@@ -132,11 +134,19 @@ export function CurrencySearch({
     if (isOpen) setSearchQuery('')
   }, [isOpen])
 
+  useEffect(() => {
+    if (isAddressSearch && filteredTokens.length > 0) {
+      setIsLoading(false)
+    }
+  }, [filteredTokens, isAddressSearch]);
+
   // manage focus on modal show
   const inputRef = useRef<HTMLInputElement>()
   const handleInput = useCallback((event) => {
     const input = event.target.value
     const checksummedInput = isAddress(input)
+
+    if (checksummedInput) setIsLoading(true)
     setSearchQuery(checksummedInput || input)
     fixedList.current?.scrollTo(0)
   }, [])
@@ -160,10 +170,21 @@ export function CurrencySearch({
     [filteredSortedTokens, handleCurrencySelect, searchQuery]
   )
 
+  const handleDismissLoading = useCallback(() => {
+    setIsLoading(false)
+  }, [])
+
   const selectedListInfo = useSelectedListInfo()
 
   return (
     <Column style={{ width: '100%', flex: '1 1' }}>
+      <LoadingModal
+        isOpen={isLoading}
+        onDismiss={handleDismissLoading}
+        title="Load Token"
+        subtitle="Searching for token"
+        description={undefined}
+      />
       <PaddedColumn gap="14px">
         <RowBetween style={{ borderBottom: '1px solid #0d1b24', paddingBottom: 10 }}>
           <Text fontWeight='800' fontSize='26px' color='sidebarColor'>
