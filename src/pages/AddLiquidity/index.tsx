@@ -215,7 +215,7 @@ export default function AddLiquidity({
     ) : (
       <AutoColumn gap="20px">
         <RowFlatCenter style={{ marginTop: '20px' }}>
-          <UIKitText fontSize="40px" mr="8px">
+          <UIKitText fontSize="48px" mr="8px">
             {liquidityMinted?.toSignificant(6)}
           </UIKitText>
           <DoubleCurrencyLogo
