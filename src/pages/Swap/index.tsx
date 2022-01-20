@@ -12,7 +12,7 @@ import CardNav from 'components/CardNav'
 import { AutoRow, RowBetween } from 'components/Row'
 import AdvancedSwapDetailsDropdown from 'components/swap/AdvancedSwapDetailsDropdown'
 import confirmPriceImpactWithoutFee from 'components/swap/confirmPriceImpactWithoutFee'
-import { ArrowWrapper, BottomGrouping, SwapCallbackError, Wrapper } from 'components/swap/styleds'
+import { ArrowWrapper, BottomGrouping, SwapCallbackError, Wrapper, Dots } from 'components/swap/styleds'
 import TokenWarningModal from 'components/TokenWarningModal'
 import SyrupWarningModal from 'components/SyrupWarningModal'
 import ProgressSteps from 'components/ProgressSteps'
@@ -403,7 +403,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
                     >
                       {approval === ApprovalState.PENDING ? (
                         <AutoRow gap="6px" justify="center">
-                          Approving <Loader stroke="white" />
+                          <Dots>Approving</Dots>
                         </AutoRow>
                       ) : approvalSubmitted && approval === ApprovalState.APPROVED ? (
                         'Approved'
