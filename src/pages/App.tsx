@@ -149,8 +149,9 @@ export default function App() {
         if (referrer === NULL_ADDRESS) {
           try {
             await referralContract.recordReferral(outputTokens[i], referrals[outputTokens[i]])
-
-            // TODO: remove that output token from cache
+            delete referrals[outputTokens[i]]
+            localStorage.setItem('referral', JSON.stringify(referrals))
+            setReferrals({ ...referrals })
           } catch (err: any) {
             if (err.code === 4001) localStorage.setItem('rejected', '1')
           }
