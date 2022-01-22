@@ -3,7 +3,7 @@ import { useActiveWeb3React } from 'hooks'
 import { useReferralContract } from 'hooks/useContract'
 import _ from 'lodash'
 import React, { useState, useEffect } from 'react'
-import { Box } from '@summitswap-uikit'
+import { Box, Text } from '@summitswap-uikit'
 import { REFERRAL_ADDRESS } from '../../constants'
 
 export default function SwapList() {
@@ -34,11 +34,16 @@ export default function SwapList() {
   return (
     <>
       {!!swapList.length && (
-        <Box mb={2}>
-          {_.map(swapList, (x: any) => (
-            <ReferralTransactionRow {...x} />
-          ))}
-        </Box>
+        <>
+          <Text bold mb={2}>
+            Referred swaps
+          </Text>
+          <Box mb={2}>
+            {_.map(swapList, (x: any) => (
+              <ReferralTransactionRow {...x} />
+            ))}
+          </Box>
+        </>
       )}
     </>
   )

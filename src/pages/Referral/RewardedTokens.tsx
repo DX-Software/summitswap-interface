@@ -16,7 +16,10 @@ const StyledContainer = styled(Box)`
 const RewardedTokens: React.FC = () => {
   const { account } = useWeb3React()
 
+  const [hasClaimedAll, setHasClaimedAll] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [rewardTokens, setRewardTokens] = useState<string[]>([])
+  const [canClaimAll, setCanClaimAll] = useState(true)
 
   const refContract = useReferralContract(REFERRAL_ADDRESS, true)
 
@@ -41,20 +44,54 @@ const RewardedTokens: React.FC = () => {
     fetchRewardTokens()
   }, [account, refContract])
 
+  async function handleClaimAll() {
+    if (!refContract) return
+
+    setIsLoading(true)
+
+    try {
+      await refContract.claimAllRewards()
+      setHasClaimedAll(true)
+    } catch {
+      setRewardTokens([...rewardTokens])
+    }
+
+    setIsLoading(false)
+  }
+
   return (
     <>
-      {!rewardTokens.length && <Text bold mt={4}>Invite people to see your rewards here</Text>}
+      {!rewardTokens.length && (
+        <Text bold mt={4}>
+          Invite people to see your rewards here
+        </Text>
+      )}
 
       {!!rewardTokens.length && (
         <>
-          <Text bold mt={3} mb={3}>
+          <Text bold mt={3} mb={2}>
             Rewarded Tokens
           </Text>
           <StyledContainer>
             {rewardTokens.map((x) => (
-              <TokenCard key={x} tokenAddress={x} />
+              <TokenCard
+                key={x}
+                tokenAddress={x}
+                hasClaimedAll={hasClaimedAll}
+                isLoading={isLoading}
+                setIsLoading={setIsLoading}
+                setCanClaimAll={setCanClaimAll}
+              />
             ))}
           </StyledContainer>
+          <Button
+            style={{ float: 'right' }}
+            mt={3}
+            onClick={handleClaimAll}
+            disabled={hasClaimedAll || isLoading || !canClaimAll}
+          >
+            {hasClaimedAll ? 'CLAIMED ALL' : 'CLAIM ALL'}
+          </Button>
         </>
       )}
     </>

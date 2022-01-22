@@ -134,7 +134,7 @@ const Referral: React.FC<IProps> = () => {
             <Text mb="8px" bold>
               My Referral link
             </Text>
-            <LinkBox mb={4}>
+            <LinkBox mb={3}>
               <Box>
                 <Text>{referralURL}</Text>
               </Box>
