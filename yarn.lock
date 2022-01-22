@@ -2950,7 +2950,7 @@
 
 "@summitswap-libs@git+https://github.com/Koda-Finance/summitswap-sdk.git#feat/multiple-router":
   version "1.0.0"
-  resolved "git+https://github.com/Koda-Finance/summitswap-sdk.git#edaa2d026f8eb3b7b43bae69ab46891324441975"
+  resolved "git+https://github.com/Koda-Finance/summitswap-sdk.git#e9ad8bde55da3be1a87c2a544dbbd8923fce0d8e"
   dependencies:
     "@pancakeswap-libs/pancake-swap-core" "^0.1.0"
     big.js "^5.2.2"
