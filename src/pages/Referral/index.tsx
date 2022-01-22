@@ -8,12 +8,9 @@ import _ from 'lodash'
 import { injected, walletconnect } from 'connectors'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import ReferralTransactionRow from 'components/PageHeader/ReferralTransactionRow'
-import { useAllSwapList } from 'state/transactions/hooks'
 import { TranslateString } from 'utils/translateTextHelpers'
-import { useReferralContract } from 'hooks/useContract'
 import { useAllTokens } from 'hooks/Tokens'
 import CurrencyLogo from 'components/CurrencyLogo'
-import { REFERRAL_ADDRESS, NULL_ADDRESS } from '../../constants'
 import ReferalLinkImage from '../../img/referral-link.png'
 import InviteImage from '../../img/invite.png'
 import CoinStackImage from '../../img/coinstack.png'
@@ -21,6 +18,7 @@ import expandMore from '../../img/expandMore.svg'
 import RewardedTokens from './RewardedTokens'
 
 import './style.css'
+import SwapList from './SwapList'
 
 const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
   display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'block' : 'none')};
@@ -73,9 +71,6 @@ const Referral: React.FC<IProps> = () => {
   const [allTokens, setAllTokens] = useState<Array<Token>>([])
   const [referralURL, setReferralURL] = useState('')
   const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
-  const [allSwapList, setAllSwapList] = useState([])
-  const [referrerAddress, setReferrerAddress] = useState<string | null>(null)
-  const swapListTemp = useAllSwapList()
   const allTokensTemp = useAllTokens()
   const location = useLocation()
 
@@ -89,13 +84,6 @@ const Referral: React.FC<IProps> = () => {
     }
   }, [selectedOutputCoin, allTokens])
 
-  const referralContract = useReferralContract(REFERRAL_ADDRESS, true)
-
-  const getAllSwapList = async () => {
-    const tmp: any = await swapListTemp
-    setAllSwapList(tmp)
-  }
-
   const handleLogin = (connectorId: string) => {
     if (connectorId === 'walletconnect') {
       return activate(walletconnect())
@@ -106,28 +94,12 @@ const Referral: React.FC<IProps> = () => {
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
 
   useEffect(() => {
-    getAllSwapList()
-  })
-
-  useEffect(() => {
     setReferralURL(
       `http://${document.location.hostname}${
         document.location.port ? `:${document.location.port}` : ''
       }/#/swap?output=${selectedOutputCoin && selectedOutputCoin.address}&ref=${account}`
     )
   }, [location, account, selectedOutputCoin])
-
-  useEffect(() => {
-    async function getReferral() {
-      if (account && referralContract) {
-        const referrer = await referralContract.getReferrer(account)
-
-        setReferrerAddress(referrer)
-      }
-    }
-
-    getReferral()
-  }, [referralContract, account])
 
   const handleTokenSelect = useCallback((inputCurrency) => {
     setSelectedOutputCoin(inputCurrency)
@@ -140,6 +112,13 @@ const Referral: React.FC<IProps> = () => {
   return (
     <div className="main-content">
       <Box>
+        {!account && (
+          <Flex mb={3} justifyContent="center">
+            <Button style={{ fontFamily: 'Poppins' }} onClick={onPresentConnectModal}>
+              {TranslateString(292, 'CONNECT WALLET')}
+            </Button>
+          </Flex>
+        )}
         {account && (
           <>
             <Text mb="8px" bold>
@@ -181,44 +160,12 @@ const Referral: React.FC<IProps> = () => {
             </LinkBox>
           </>
         )}
-        {/* {account && <BalanceCard />} */}
-        {account && allSwapList && allSwapList.length <= 0 && <Text>No recent transactions</Text>}
-        {account && chainId && allSwapList && allSwapList.length > 0 && (
-          <Box mb={2}>
-            {_.map(allSwapList, (x: any) => (
-              <ReferralTransactionRow {...x} />
-            ))}
-          </Box>
-        )}
-        {account && (
-          <>
-            <Text bold mb={3}>
-              Rewarded Tokens
-            </Text>
-            <RewardedTokens />
-          </>
-        )}
-        {!account && (
-          <Flex mb={3} justifyContent="center">
-            <Button style={{ fontFamily: 'Poppins' }} onClick={onPresentConnectModal}>
-              {TranslateString(292, 'CONNECT WALLET')}
-            </Button>
-          </Flex>
-        )}
+        <SwapList />
+        <RewardedTokens />
       </Box>
 
       <div className="invite-friends-area">
         <h2 className="float-title">How to invite friends</h2>
-
-        {!!referrerAddress && referrerAddress !== NULL_ADDRESS && (
-          <div className="inviter-box">
-            My Inviter: &nbsp;{' '}
-            <span className="white-text">{`${referrerAddress?.substring(0, 5)}...${referrerAddress?.substring(
-              38
-            )}`}</span>{' '}
-            &nbsp; <span className="yellow-ball">10%</span>
-          </div>
-        )}
 
         <div className="clear" />
 
@@ -262,15 +209,12 @@ const Referral: React.FC<IProps> = () => {
       </div>
 
       <div className="reward-section font-15">
+        <p>Reward options - Recieve your rewards in:</p>
         <p>
-          Reward options-
           <br />
-          Recieve your rewards in
-        </p>
-        <p>
-          A, The projects token, <br />
-          B, Auto-Convert it to KAPEX without fee or <br />
-          C, Convert it to BNB or BUSD subject to fee.
+          A) The projects token <br />
+          B) Auto-Convert it to KAPEX without fee <br />
+          C) Convert it to BNB or BUSD subject to fee
         </p>
       </div>
 

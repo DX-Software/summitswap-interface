@@ -73,7 +73,7 @@ export default function App() {
   const [selectedLanguage, setSelectedLanguage] = useState<any>(undefined)
   const [translatedLanguage, setTranslatedLanguage] = useState<any>(undefined)
   const [translations, setTranslations] = useState<Array<any>>([])
-  const [referrerAddress, setReferrerAddress] = useState<string | null>(null)
+  const [referrals, setReferrals] = useState<Record<string, string>>({}) // Output token => Referrer
 
   const referralContract = useReferralContract(REFERRAL_ADDRESS, true)
   const location = useLocation()
@@ -120,41 +120,37 @@ export default function App() {
   }, [selectedLanguage])
 
   useEffect(() => {
-    const referralParam = new URLSearchParams(location.search).get('ref')
+    const referrerParam = new URLSearchParams(location.search).get('ref')
+    const outputParam = new URLSearchParams(location.search).get('output')
 
-    if (referralParam) {
-      localStorage.setItem('referrer', referralParam)
-      localStorage.removeItem('rejected')
-      setReferrerAddress(referralParam)
+    if (referrerParam && outputParam) {
+      const referralCached: Record<string, string> = JSON.parse(localStorage.getItem('referral') ?? '{}')
+      referralCached[outputParam] = referrerParam
+      localStorage.setItem('referral', JSON.stringify(referralCached))
+      setReferrals(referralCached)
+      onPresentConnectModal()
     } else {
-      setReferrerAddress(localStorage.getItem('referrer'))
+      setReferrals(JSON.parse(localStorage.getItem('referral') ?? '{}'))
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
 
   useEffect(() => {
-    if (!account && referrerAddress && localStorage.getItem('rejected') !== '1') {
-      onPresentConnectModal()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, referrerAddress])
-
-  useEffect(() => {
     async function recordReferral() {
-      if (
-        account &&
-        referrerAddress &&
-        referralContract &&
-        referrerAddress !== account &&
-        localStorage.getItem('rejected') !== '1'
-      ) {
-        const referrer = await referralContract.getReferrer(account)
+      if (!account) return
+      if (!referralContract) return
+      if (localStorage.getItem('rejected') === '1') return
 
+      const outputTokens = Object.keys(referrals)
+      for (let i = 0; i < outputTokens.length; i++) {
+        if (account === referrals[outputTokens[i]]) return
+
+        const referrer = await referralContract.referrers(outputTokens[i], account)
         if (referrer === NULL_ADDRESS) {
           try {
-            await referralContract.recordReferral(account, referrerAddress)
+            await referralContract.recordReferral(outputTokens[i], referrals[outputTokens[i]])
 
-            localStorage.removeItem('referrer')
-            localStorage.removeItem('rejected')
+            // TODO: remove that output token from cache
           } catch (err: any) {
             if (err.code === 4001) localStorage.setItem('rejected', '1')
           }
@@ -163,7 +159,7 @@ export default function App() {
     }
 
     recordReferral()
-  }, [account, referrerAddress, referralContract])
+  }, [account, referrals, referralContract])
 
   return (
     <Suspense fallback={null}>
