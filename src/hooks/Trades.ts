@@ -2,13 +2,13 @@ import { Currency, CurrencyAmount, Pair, Token, Trade } from '@summitswap-libs'
 import flatMap from 'lodash.flatmap'
 import { useMemo } from 'react'
 
-import { BASES_TO_CHECK_TRADES_AGAINST, CUSTOM_BASES } from '../constants'
+import { BASES_TO_CHECK_TRADES_AGAINST, CUSTOM_BASES, FACTORY_ADDRESS, INIT_CODE_HASH } from '../constants'
 import { PairState, usePairs } from '../data/Reserves'
 import { wrappedCurrency } from '../utils/wrappedCurrency'
 
 import { useActiveWeb3React } from './index'
 
-function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
+function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency, factoryAddress: string = FACTORY_ADDRESS, initCodeHash = INIT_CODE_HASH): Pair[] {
   const { chainId } = useActiveWeb3React()
 
   // Base tokens for building intermediary trading routes
@@ -62,7 +62,7 @@ function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
     [tokenA, tokenB, bases, basePairs, chainId]
   )
 
-  const allPairs = usePairs(allPairCombinations)
+  const allPairs = usePairs(allPairCombinations, factoryAddress, initCodeHash)
 
   // only pass along valid pairs, non-duplicated pairs
   return useMemo(
@@ -84,8 +84,13 @@ function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
 /**
  * Returns the best trade for the exact amount of tokens in to the given token out
  */
-export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?: Currency): Trade | null {
-  const allowedPairs = useAllCommonPairs(currencyAmountIn?.currency, currencyOut)
+export function useTradeExactIn(
+  currencyAmountIn?: CurrencyAmount,
+  currencyOut?: Currency,
+  factoryAddress: string = FACTORY_ADDRESS,
+  initCodeHash: string = INIT_CODE_HASH
+): Trade | null {
+  const allowedPairs = useAllCommonPairs(currencyAmountIn?.currency, currencyOut, factoryAddress, initCodeHash)
 
   return useMemo(() => {
     if (currencyAmountIn && currencyOut && allowedPairs.length > 0) {
@@ -100,8 +105,13 @@ export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?:
 /**
  * Returns the best trade for the token in to the exact amount of token out
  */
-export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: CurrencyAmount): Trade | null {
-  const allowedPairs = useAllCommonPairs(currencyIn, currencyAmountOut?.currency)
+export function useTradeExactOut(
+  currencyIn?: Currency,
+  currencyAmountOut?: CurrencyAmount,
+  factoryAddress: string = FACTORY_ADDRESS,
+  initCodeHash: string = INIT_CODE_HASH
+): Trade | null {
+  const allowedPairs = useAllCommonPairs(currencyIn, currencyAmountOut?.currency, factoryAddress, initCodeHash)
 
   return useMemo(() => {
     if (currencyIn && currencyAmountOut && allowedPairs.length > 0) {
