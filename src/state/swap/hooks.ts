@@ -16,6 +16,7 @@ import { SwapState } from './reducer'
 
 import { useUserSlippageTolerance } from '../user/hooks'
 import { computeSlippageAdjustedAmounts } from '../../utils/prices'
+import { ADDITIONAL_FACTORY_ADDRESS, ADDITIONAL_INIT_CODE_HASH, ADDITIONAL_ROUTER_ADDRESS, FACTORY_ADDRESS, INIT_CODE_HASH, ROUTER_ADDRESS } from '../../constants'
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>((state) => state.swap)
@@ -111,6 +112,7 @@ export function useDerivedSwapInfo(): {
   parsedAmount: CurrencyAmount | undefined
   v2Trade: Trade | undefined
   inputError?: string
+  routerAddress: string
 } {
   const { account } = useActiveWeb3React()
 
@@ -135,10 +137,18 @@ export function useDerivedSwapInfo(): {
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
 
-  const bestTradeExactIn = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
-  const bestTradeExactOut = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined)
+  const summitswapBestTradeExactIn: Trade | null = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, FACTORY_ADDRESS, INIT_CODE_HASH)
+  const summitswapBestTradeExactOut: Trade | null = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined, FACTORY_ADDRESS, INIT_CODE_HASH)
+  const summitSwapv2Trade = isExactIn ? summitswapBestTradeExactIn : summitswapBestTradeExactOut
 
-  const v2Trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
+  const additionalBestTradeExactIn: Trade | null = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, ADDITIONAL_FACTORY_ADDRESS, ADDITIONAL_INIT_CODE_HASH)
+  const additionalBestTradeExactOut: Trade | null = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined, ADDITIONAL_FACTORY_ADDRESS, ADDITIONAL_INIT_CODE_HASH)
+  const additionalv2Trade = isExactIn ? additionalBestTradeExactIn : additionalBestTradeExactOut
+
+  const v2Trade = summitSwapv2Trade !== null ? summitSwapv2Trade : additionalv2Trade
+  const routerAddress = summitSwapv2Trade !== null ? ROUTER_ADDRESS : ADDITIONAL_ROUTER_ADDRESS
+  const bestTradeExactIn = summitSwapv2Trade !== null ? summitswapBestTradeExactIn : additionalBestTradeExactIn
+  const bestTradeExactOut = summitSwapv2Trade !== null ? summitswapBestTradeExactOut : additionalBestTradeExactOut
 
   const currencyBalances = {
     [Field.INPUT]: relevantTokenBalances[0],
@@ -194,6 +204,7 @@ export function useDerivedSwapInfo(): {
     parsedAmount,
     v2Trade: v2Trade ?? undefined,
     inputError,
+    routerAddress
   }
 }
 
