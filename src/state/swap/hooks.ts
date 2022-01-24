@@ -16,7 +16,7 @@ import { SwapState } from './reducer'
 
 import { useUserSlippageTolerance } from '../user/hooks'
 import { computeSlippageAdjustedAmounts } from '../../utils/prices'
-import { ADDITIONAL_FACTORY_ADDRESS, ADDITIONAL_INIT_CODE_HASH, ADDITIONAL_ROUTER_ADDRESS, FACTORY_ADDRESS, INIT_CODE_HASH, ROUTER_ADDRESS } from '../../constants'
+import { ADDITIONAL_FACTORY_ADDRESSES, ADDITIONAL_INIT_CODE_HASHES, ADDITIONAL_ROUTER_ADDRESSES, FACTORY_ADDRESS, INIT_CODE_HASH, ROUTER_ADDRESS } from '../../constants'
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>((state) => state.swap)
@@ -140,27 +140,31 @@ export function useDerivedSwapInfo(): {
   const [factory, setFactory] = useState(FACTORY_ADDRESS)
   const [initCodeHash, setInitCodeHash] = useState(INIT_CODE_HASH)
   const [routerAddress, setRouterAddress] = useState(ROUTER_ADDRESS)
+  const [additionalIndex, setAdditionalIndex] = useState(0)
 
   const bestTradeExactIn: Trade | null = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, factory, initCodeHash)
   const bestTradeExactOut: Trade | null = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined, factory, initCodeHash)
   const v2Trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
 
   useEffect(() => {
-    if (v2Trade === null && factory !== ADDITIONAL_FACTORY_ADDRESS && parsedAmount !== undefined) {
-      setFactory(ADDITIONAL_FACTORY_ADDRESS)
-      setInitCodeHash(ADDITIONAL_INIT_CODE_HASH)
-      setRouterAddress(ADDITIONAL_ROUTER_ADDRESS)
-    } else if (parsedAmount === undefined) {
+    if (parsedAmount === undefined) {
       setFactory(FACTORY_ADDRESS)
       setInitCodeHash(INIT_CODE_HASH)
       setRouterAddress(ROUTER_ADDRESS)
+      setAdditionalIndex(0)
+    } else if (v2Trade === null && ADDITIONAL_FACTORY_ADDRESSES.length > 0 && additionalIndex !== ADDITIONAL_FACTORY_ADDRESSES.length) {
+      setFactory(ADDITIONAL_FACTORY_ADDRESSES[additionalIndex])
+      setInitCodeHash(ADDITIONAL_INIT_CODE_HASHES[additionalIndex])
+      setRouterAddress(ADDITIONAL_ROUTER_ADDRESSES[additionalIndex])
+      setAdditionalIndex((prevState) => prevState + 1)
     }
-  }, [v2Trade, factory, parsedAmount])
+  }, [v2Trade, factory, parsedAmount, additionalIndex])
 
   useEffect(() => {
     setFactory(FACTORY_ADDRESS)
     setInitCodeHash(INIT_CODE_HASH)
     setRouterAddress(ROUTER_ADDRESS)
+    setAdditionalIndex(0)
   }, [inputCurrency, outputCurrency])
 
   const currencyBalances = {
