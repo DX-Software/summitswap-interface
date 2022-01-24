@@ -127,6 +127,7 @@ export default function App() {
       const referralCached: Record<string, string> = JSON.parse(localStorage.getItem('referral') ?? '{}')
       referralCached[outputParam] = referrerParam
       localStorage.setItem('referral', JSON.stringify(referralCached))
+      localStorage.removeItem('rejected')
       setReferrals(referralCached)
       onPresentConnectModal()
     } else {
