@@ -137,18 +137,31 @@ export function useDerivedSwapInfo(): {
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
 
-  const summitswapBestTradeExactIn: Trade | null = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, FACTORY_ADDRESS, INIT_CODE_HASH)
-  const summitswapBestTradeExactOut: Trade | null = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined, FACTORY_ADDRESS, INIT_CODE_HASH)
-  const summitSwapv2Trade = isExactIn ? summitswapBestTradeExactIn : summitswapBestTradeExactOut
+  const [factory, setFactory] = useState(FACTORY_ADDRESS)
+  const [initCodeHash, setInitCodeHash] = useState(INIT_CODE_HASH)
+  const [routerAddress, setRouterAddress] = useState(ROUTER_ADDRESS)
 
-  const additionalBestTradeExactIn: Trade | null = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, ADDITIONAL_FACTORY_ADDRESS, ADDITIONAL_INIT_CODE_HASH)
-  const additionalBestTradeExactOut: Trade | null = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined, ADDITIONAL_FACTORY_ADDRESS, ADDITIONAL_INIT_CODE_HASH)
-  const additionalv2Trade = isExactIn ? additionalBestTradeExactIn : additionalBestTradeExactOut
+  const bestTradeExactIn: Trade | null = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, factory, initCodeHash)
+  const bestTradeExactOut: Trade | null = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined, factory, initCodeHash)
+  const v2Trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
 
-  const v2Trade = summitSwapv2Trade !== null ? summitSwapv2Trade : additionalv2Trade
-  const routerAddress = summitSwapv2Trade !== null ? ROUTER_ADDRESS : ADDITIONAL_ROUTER_ADDRESS
-  const bestTradeExactIn = summitSwapv2Trade !== null ? summitswapBestTradeExactIn : additionalBestTradeExactIn
-  const bestTradeExactOut = summitSwapv2Trade !== null ? summitswapBestTradeExactOut : additionalBestTradeExactOut
+  useEffect(() => {
+    if (v2Trade === null && factory !== ADDITIONAL_FACTORY_ADDRESS && parsedAmount !== undefined) {
+      setFactory(ADDITIONAL_FACTORY_ADDRESS)
+      setInitCodeHash(ADDITIONAL_INIT_CODE_HASH)
+      setRouterAddress(ADDITIONAL_ROUTER_ADDRESS)
+    } else if (parsedAmount === undefined) {
+      setFactory(FACTORY_ADDRESS)
+      setInitCodeHash(INIT_CODE_HASH)
+      setRouterAddress(ROUTER_ADDRESS)
+    }
+  }, [v2Trade, factory, parsedAmount])
+
+  useEffect(() => {
+    setFactory(FACTORY_ADDRESS)
+    setInitCodeHash(INIT_CODE_HASH)
+    setRouterAddress(ROUTER_ADDRESS)
+  }, [inputCurrency, outputCurrency])
 
   const currencyBalances = {
     [Field.INPUT]: relevantTokenBalances[0],
