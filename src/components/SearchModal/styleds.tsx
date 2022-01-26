@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { AutoColumn } from '../Column'
-import { RowBetween, RowFixed } from '../Row'
+import { RowFixed } from '../Row'
 
 export const FadedSpan = styled(RowFixed)`
   color: ${({ theme }) => theme.colors.primary};

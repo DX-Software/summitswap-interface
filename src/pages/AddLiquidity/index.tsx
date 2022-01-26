@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionResponse } from '@ethersproject/providers'
 import { Currency, currencyEquals, ETHER, TokenAmount, WETH } from '@summitswap-libs'
@@ -31,11 +31,11 @@ import { currencyId } from 'utils/currencyId'
 import PageHeader from 'components/PageHeader'
 import Pane from 'components/Pane'
 import ConnectWalletButton from 'components/ConnectWalletButton'
+import { ROUTER_ADDRESS } from '../../constants'
 import AppBody from '../AppBody'
 import { Dots, Wrapper } from '../Pool/styleds'
 import { ConfirmAddModalBottom } from './ConfirmAddModalBottom'
 import { PoolPriceBar } from './PoolPriceBar'
-import { ROUTER_ADDRESS } from '../../constants'
 
 export default function AddLiquidity({
   match: {
@@ -99,15 +99,15 @@ export default function AddLiquidity({
     {}
   )
 
-  const atMaxAmounts: { [field in Field]?: TokenAmount } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce(
-    (accumulator, field) => {
-      return {
-        ...accumulator,
-        [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? '0'),
-      }
-    },
-    {}
-  )
+  // const atMaxAmounts: { [field in Field]?: TokenAmount } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce(
+  //   (accumulator, field) => {
+  //     return {
+  //       ...accumulator,
+  //       [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? '0'),
+  //     }
+  //   },
+  //   {}
+  // )
 
   // check whether the user has approved the router on the tokens
   const [approvalA, approveACallback] = useApproveCallback(parsedAmounts[Field.CURRENCY_A], ROUTER_ADDRESS)
@@ -285,7 +285,9 @@ export default function AddLiquidity({
   return (
     <>
       <AppBody>
-        <PageHeader title="Swap" />
+        <PageHeader
+        // title="Swap"
+        />
         <CardNav activeIndex={1} />
         <AddRemoveTabs adding />
         <Wrapper>
@@ -324,7 +326,7 @@ export default function AddLiquidity({
                   onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toExact() ?? '')
                 }}
                 onCurrencySelect={handleCurrencyASelect}
-                showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
+                // showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
                 currency={currencies[Field.CURRENCY_A]}
                 id="add-liquidity-input-tokena"
                 showCommonBases={false}
@@ -339,7 +341,7 @@ export default function AddLiquidity({
                 onMax={() => {
                   onFieldBInput(maxAmounts[Field.CURRENCY_B]?.toExact() ?? '')
                 }}
-                showMaxButton={!atMaxAmounts[Field.CURRENCY_B]}
+                // showMaxButton={!atMaxAmounts[Field.CURRENCY_B]}
                 currency={currencies[Field.CURRENCY_B]}
                 id="add-liquidity-input-tokenb"
                 showCommonBases={false}

@@ -79,7 +79,9 @@ export default function PoolFinder() {
   return (
     <>
       <AppBody>
-        <PageHeader title="poolfiner" />
+        <PageHeader
+          // title="poolfiner"
+        />
         <CardNav activeIndex={1} />
         <FindPoolTabs />
         <CardBody>

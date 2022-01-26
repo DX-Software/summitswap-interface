@@ -20,7 +20,6 @@ import Row, { RowBetween } from '../Row'
 import CommonBases from './CommonBases'
 import CurrencyList from './CurrencyList'
 import { filterTokens } from './filtering'
-import SortButton from './SortButton'
 import { useTokenComparator } from './sorting'
 import { PaddedColumn, SearchInput, Separator } from './styleds'
 import TranslatedText from '../TranslatedText'
@@ -33,14 +32,34 @@ interface CurrencySearchProps {
   onCurrencySelect: (currency: Currency) => void
   otherSelectedCurrency?: Currency | null
   showCommonBases?: boolean
+  showETH?: boolean
+  tokens?: Array<Token>
   onChangeList: () => void
 }
+
+const TokenAutoSizer = styled(AutoSizer)`
+  >div {
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: ${({ theme }) => theme.colors.linkColor}; 
+      border-radius: 8px;
+    }
+    &::-webkit-scrollbar-track {
+      box-shadow: none; 
+      border-radius: 10px;
+    }
+  }
+`
 
 export function CurrencySearch({
   selectedCurrency,
   onCurrencySelect,
   otherSelectedCurrency,
   showCommonBases,
+  showETH,
+  tokens,
   onDismiss,
   isOpen,
   onChangeList,
@@ -51,17 +70,18 @@ export function CurrencySearch({
 
   const fixedList = useRef<FixedSizeList>()
   const [searchQuery, setSearchQuery] = useState<string>('')
-  const [invertSearchOrder, setInvertSearchOrder] = useState<boolean>(false)
+  const [invertSearchOrder] = useState<boolean>(false)
   const allTokens = useAllTokens()
 
   // if they input an address, use it
   const isAddressSearch = isAddress(searchQuery)
   const searchToken = useToken(searchQuery)
 
-  const showETH: boolean = useMemo(() => {
+  const isShowETH: boolean = useMemo(() => {
+    if (showETH === false) return showETH
     const s = searchQuery.toLowerCase().trim()
     return s === '' || s === 'e' || s === 'et' || s === 'eth'
-  }, [searchQuery])
+  }, [searchQuery, showETH])
 
   const tokenComparator = useTokenComparator(invertSearchOrder)
 
@@ -69,8 +89,9 @@ export function CurrencySearch({
 
   const filteredTokens: Token[] = useMemo(() => {
     if (isAddressSearch) return searchToken ? [searchToken] : []
-    return filterTokens(Object.values(allTokens), searchQuery)
-  }, [isAddressSearch, searchToken, allTokens, searchQuery])
+    const _tokens = tokens ?? Object.values(allTokens)
+    return filterTokens(_tokens, searchQuery)
+  }, [isAddressSearch, searchToken, allTokens, searchQuery, tokens])
 
   const filteredSortedTokens: Token[] = useMemo(() => {
     if (searchToken) return [searchToken]
@@ -181,7 +202,7 @@ export function CurrencySearch({
           {({ height }) => (
             <CurrencyList
               height={height}
-              showETH={showETH}
+              showETH={isShowETH}
               currencies={filteredSortedTokens}
               onCurrencySelect={handleCurrencySelect}
               otherCurrency={otherSelectedCurrency}
@@ -223,21 +244,5 @@ export function CurrencySearch({
     </Column>
   )
 }
-
-const TokenAutoSizer = styled(AutoSizer)`
-  >div {
-    &::-webkit-scrollbar {
-      width: 8px;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: ${({ theme }) => theme.colors.linkColor}; 
-      border-radius: 8px;
-    }
-    &::-webkit-scrollbar-track {
-      box-shadow: none; 
-      border-radius: 10px;
-    }
-  }
-`
 
 export default CurrencySearch
