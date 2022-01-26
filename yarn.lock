@@ -2960,9 +2960,9 @@
     tiny-warning "^1.0.3"
     toformat "^2.0.0"
 
-"@summitswap-uikit@git+https://github.com/Koda-Finance/summitswap-uikit.git#update/logout-button-color":
+"@summitswap-uikit@git+https://github.com/Koda-Finance/summitswap-uikit.git#main":
   version "0.0.1"
-  resolved "git+https://github.com/Koda-Finance/summitswap-uikit.git#265c8d386e6ff866e970db56d9f983589f12d997"
+  resolved "git+https://github.com/Koda-Finance/summitswap-uikit.git#db8d14390e48ee678f1cabbc1f27633cb907ea43"
   dependencies:
     "@types/lodash" "^4.14.162"
     "@types/styled-system" "^5.1.10"
