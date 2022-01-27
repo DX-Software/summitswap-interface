@@ -1,21 +1,24 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Box, Text, Button } from '@summitswap-uikit'
 import { useTokenContract, useReferralContract } from 'hooks/useContract'
-import web3 from 'web3'
 import { useWeb3React } from '@web3-react/core'
+import { BigNumber, ethers } from 'ethers'
 import { REFERRAL_ADDRESS } from '../../constants'
 
 interface Props {
-  addr: string
-  isProcessing: boolean
-  setProcessing: any
+  tokenAddress: string
+  hasClaimedAll: boolean
+  isLoading: boolean
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+  setCanClaimAll: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const StyledContainer = styled(Box)`
   padding: 16px;
   background: ${({ theme }) => theme.colors.menuItemBackground};
   display: flex;
+  border-radius: 20px;
   justify-content: space-between;
   align-items: center;
   > div:first-of-type {
@@ -23,71 +26,77 @@ const StyledContainer = styled(Box)`
   }
 `
 
-const TokenCard: React.FC<Props> = ({ addr, isProcessing, setProcessing }) => {
+const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, setIsLoading, setCanClaimAll }) => {
   const { account } = useWeb3React()
-  const [balance, setBalance] = useState(0.0)
+
+  const [balance, setBalance] = useState<BigNumber | undefined>(undefined)
   const [tokenSymbol, setTokenSymbol] = useState('')
-  const [tokenName, setTokenName] = useState('')
-  const [isNotEnoughLiquidity, setIsNotEnoughLiquidity] = useState(false)
+  const [hasReferralEnough, setHasReferralEnough] = useState(true)
+  const [claimed, setClaimed] = useState(false)
 
-  const tokenContract = useTokenContract(addr, true)
-  const refContract = useReferralContract(REFERRAL_ADDRESS)
-
-  const getIsLiquidityNotEnough = useCallback(async (claimBalance) => {
-    const referralAddressBalance = await tokenContract?.balanceOf(REFERRAL_ADDRESS)
-    return !referralAddressBalance.gte(web3.utils.hexToNumberString(claimBalance._hex))
-  }, [tokenContract])
+  const tokenContract = useTokenContract(tokenAddress, true)
+  const refContract = useReferralContract(REFERRAL_ADDRESS, true)
 
   useEffect(() => {
     const handleGetBasicInfo = async () => {
-      const newTokenSymbol = await tokenContract?.symbol()
-      const newTokenName = await tokenContract?.name()
-      setTokenSymbol(newTokenSymbol)
-      setTokenName(newTokenName)
-      const newBalance = await refContract?.rewardBalance(account, addr)
-      const isLiquidityNotEnough = await getIsLiquidityNotEnough(newBalance)
-      setIsNotEnoughLiquidity(isLiquidityNotEnough)
-      setBalance(parseFloat(web3.utils.fromWei(web3.utils.hexToNumberString(newBalance._hex))))
+      if (!tokenContract) return
+      if (!refContract) return
+
+      const newBalance = (await refContract.balances(tokenAddress, account)) as BigNumber
+      const referralAddressBalance = await tokenContract.balanceOf(REFERRAL_ADDRESS)
+      const hasReferralEnoughBalance = referralAddressBalance.gte(newBalance)
+
+      setTokenSymbol(await tokenContract.symbol())
+      setBalance(newBalance)
+      setHasReferralEnough(hasReferralEnoughBalance)
+
+      
+      if (!hasReferralEnoughBalance) {
+        setCanClaimAll(false)
+      }
+
+      setIsLoading(false)
     }
+
     handleGetBasicInfo()
-  }, [tokenContract, refContract, addr, account, getIsLiquidityNotEnough])
+  }, [tokenContract, refContract, tokenAddress, account, setIsLoading, setCanClaimAll])
 
   const handleClaim = async () => {
+    if (!tokenContract) return
+    if (!refContract) return
+
+    setIsLoading(true)
+
     try {
-      setProcessing(true)
-      await refContract?.claimReward(addr)
-      setTimeout(async () => {
-        try {
-          const newBalance = await refContract?.rewardBalance(account, addr)
-          setBalance(parseFloat(web3.utils.fromWei(web3.utils.hexToNumberString(newBalance._hex))))
-          setProcessing(false)
-        } catch {
-          setProcessing(false)
-        }
-      }, 20000)
-    } catch {
-      setProcessing(false)
-      const newBalance = await refContract?.rewardBalance(account, addr)
-      const isLiquidityNotEnough = await getIsLiquidityNotEnough(newBalance)
-      setIsNotEnoughLiquidity(isLiquidityNotEnough)
+      await refContract?.claimReward(tokenAddress)
+      setClaimed(true)
+    } catch (err) {
+      const newBalance = (await refContract.balances(tokenAddress, account)) as BigNumber
+      const referralAddressBalance = await tokenContract.balanceOf(REFERRAL_ADDRESS)
+
+      setBalance(newBalance)
+      setHasReferralEnough(referralAddressBalance.gte(newBalance))
     }
+
+    setIsLoading(false)
   }
 
   return (
     <>
-      {balance !== 0 && (
+      {tokenSymbol && balance && (
         <>
           <StyledContainer>
             <Text>
-              {balance.toFixed(5)} {tokenSymbol}
+              {tokenSymbol} {ethers.utils.formatEther(balance)}
             </Text>
-            <Button onClick={handleClaim} disabled={isProcessing || balance === 0 || isNotEnoughLiquidity}>
-              CLAIM
+            <Button onClick={handleClaim} disabled={isLoading || !hasReferralEnough || claimed || hasClaimedAll}>
+              {claimed || hasClaimedAll ? 'CLAIMED' : 'CLAIM'}
             </Button>
           </StyledContainer>
-          {isNotEnoughLiquidity && (
-            <Text color='primary' fontSize='14px'>
-              Not enough liquidity for Claim, please contact the owners of {tokenName}
+
+          {!hasReferralEnough && (
+            <Text color="primary" fontSize="14px">
+              Doesn&apos;t have enough reward tokens in pool, please contact the project owners
             </Text>
           )}
         </>
