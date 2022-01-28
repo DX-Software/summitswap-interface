@@ -149,7 +149,7 @@ function CurrencyRow({
                   </LinkStyledButton>
                 </Text>
               ) : null}
-              {!isOnSelectedList && !customAdded && !(currency instanceof WrappedTokenInfo) ? (
+              {isAddedByUserOn && !isOnSelectedList && !customAdded && !(currency instanceof WrappedTokenInfo) ? (
                 <Text>
                   Found by address
                   <LinkStyledButton
