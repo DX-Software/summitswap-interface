@@ -5,7 +5,7 @@ import { Spinner } from '../Shared'
 import { AutoColumn } from '../Column'
 import { Wrapper, Section, ConfirmedIcon, ContentHeader } from './helpers'
 
-type LoadingModalProps = {    
+type LoadingContentProps = {    
     onDismiss: () => void
     title: string
     subtitle: string | undefined
@@ -18,7 +18,7 @@ const CustomLightSpinner = styled(Spinner) <{ size: string }>`
   width: ${({ size }) => size};
 `
 
-const LoadingModal = ({ onDismiss, title, subtitle = "", description = "" }: LoadingModalProps) => {
+const LoadingContent = ({ onDismiss, title, subtitle = "", description = "" }: LoadingContentProps) => {
   return (
     <Wrapper>
       <Section>
@@ -39,4 +39,4 @@ const LoadingModal = ({ onDismiss, title, subtitle = "", description = "" }: Loa
   )
 }
 
-export default LoadingModal
+export default LoadingContent
