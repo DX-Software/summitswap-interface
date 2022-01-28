@@ -4,6 +4,7 @@ import Logo from '../Logo'
 const CoinLogo = styled(Logo)<{ size: string }>`
   width: ${({ size }) => size};
   height: ${({ size }) => size};
+  color: ${({ theme }) => theme.colors.invertedContrast};
 `
 
 export default CoinLogo
