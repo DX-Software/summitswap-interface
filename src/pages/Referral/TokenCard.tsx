@@ -45,6 +45,7 @@ const ClaimWrapper = styled.div`
   flex-wrap: wrap;
   justify-content: right;
   gap: 10px;
+  align-items: center;
 `
 
 const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, setIsLoading, setCanClaimAll }) => {
@@ -121,11 +122,12 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
   const handleClaim = async () => {
     if (!tokenContract) return
     if (!refContract) return
+    if (!claimToken) return
 
     setIsLoading(true)
 
     try {
-      await refContract?.claimReward(tokenAddress)
+      await refContract.claimRewardIn(tokenAddress, claimToken.address)
       setClaimed(true)
     } catch (err) {
       const newBalance = (await refContract.balances(tokenAddress, account)) as BigNumber
@@ -158,7 +160,7 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
             <ClaimWrapper>
               <LinkBox mb={4} onClick={() => setModalOpen(true)} style={{ cursor: 'pointer' }}>
                 Claim in&nbsp;&nbsp;
-                <CurrencyLogo currency={claimToken} size="24px" />
+                <CurrencyLogo currency={claimToken} size="24px" />&nbsp;&nbsp;{claimToken?.symbol}
               </LinkBox>
               <Button onClick={handleClaim} disabled={isLoading || !hasReferralEnough || claimed || hasClaimedAll}>
                 {claimed || hasClaimedAll ? 'CLAIMED' : 'CLAIM'}

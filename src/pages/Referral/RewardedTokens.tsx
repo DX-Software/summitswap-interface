@@ -50,7 +50,7 @@ const RewardedTokens: React.FC = () => {
     setIsLoading(true)
 
     try {
-      await refContract.claimAllRewards()
+      await refContract.claimAllRewardsInOutput()
       setHasClaimedAll(true)
     } catch {
       setRewardTokens([...rewardTokens])
