@@ -35,6 +35,7 @@ interface CurrencySearchProps {
   showETH?: boolean
   tokens?: Array<Token>
   onChangeList: () => void
+  isAddedByUserOn: boolean
 }
 
 const TokenAutoSizer = styled(AutoSizer)`
@@ -60,6 +61,7 @@ export function CurrencySearch({
   showCommonBases,
   showETH,
   tokens,
+  isAddedByUserOn,
   onDismiss,
   isOpen,
   onChangeList,
@@ -208,6 +210,7 @@ export function CurrencySearch({
               otherCurrency={otherSelectedCurrency}
               selectedCurrency={selectedCurrency}
               fixedListRef={fixedList}
+              isAddedByUserOn={isAddedByUserOn}
             />
           )}
         </TokenAutoSizer>
