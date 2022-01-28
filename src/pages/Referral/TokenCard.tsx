@@ -127,7 +127,7 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
     setIsLoading(true)
 
     try {
-      await refContract.claimRewardIn(tokenAddress, claimToken.address)
+      await refContract.claimRewardIn(tokenAddress, claimToken.address ?? WETH[CHAIN_ID].address)
       setClaimed(true)
     } catch (err) {
       const newBalance = (await refContract.balances(tokenAddress, account)) as BigNumber
@@ -181,9 +181,9 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
         onCurrencySelect={handleTokenSelect}
         selectedCurrency={claimToken}
         otherSelectedCurrency={null}
-        showETH
         tokens={claimableTokens}
         isAddedByUserOn={false}
+        showETH
       />
     </>
   )

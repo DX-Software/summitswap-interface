@@ -103,8 +103,6 @@ export function CurrencySearch({
       .split(/\s+/)
       .filter((s) => s.length > 0)
 
-    const koda = sorted.filter(e => e.symbol === 'KODA')
-
     if (symbolMatch.length > 1) return sorted
     return [
       ...(searchToken ? [searchToken] : []),
@@ -115,6 +113,7 @@ export function CurrencySearch({
       b.priority - a.priority
     )
   }, [filteredTokens, searchQuery, searchToken, tokenComparator])
+  
   const handleCurrencySelect = useCallback(
     (currency: Currency) => {
       onCurrencySelect(currency)
