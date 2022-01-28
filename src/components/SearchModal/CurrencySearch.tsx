@@ -6,12 +6,11 @@ import { useTranslation } from 'react-i18next'
 import { FixedSizeList } from 'react-window'
 import styled, { ThemeContext } from 'styled-components'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import LoadingModal from 'components/LoadingModal'
 import { useActiveWeb3React } from '../../hooks'
 import { AppState } from '../../state'
 import { useAllTokens, useToken } from '../../hooks/Tokens'
 import { useSelectedListInfo } from '../../state/lists/hooks'
-import { LinkStyledButton } from '../Shared'
+import { LinkStyledButton, Spinner } from '../Shared'
 import { isAddress } from '../../utils'
 import Card from '../Card'
 import Column from '../Column'
@@ -52,6 +51,13 @@ const TokenAutoSizer = styled(AutoSizer)`
       border-radius: 10px;
     }
   }
+`
+
+const CustomLightSpinner = styled(Spinner) <{ size: string }>`
+  height: ${({ size }) => size};
+  width: ${({ size }) => size};
+  display: flex;
+  margin: auto;
 `
 
 export function CurrencySearch({
@@ -135,10 +141,10 @@ export function CurrencySearch({
   }, [isOpen])
 
   useEffect(() => {
-    if (isAddressSearch && filteredTokens.length > 0) {
+    if ((isAddressSearch && filteredTokens.length > 0) || !!isAddressSearch === false) {
       setIsLoading(false)
     }
-  }, [filteredTokens, isAddressSearch]);
+  }, [filteredTokens, isAddressSearch])
 
   // manage focus on modal show
   const inputRef = useRef<HTMLInputElement>()
@@ -170,21 +176,10 @@ export function CurrencySearch({
     [filteredSortedTokens, handleCurrencySelect, searchQuery]
   )
 
-  const handleDismissLoading = useCallback(() => {
-    setIsLoading(false)
-  }, [])
-
   const selectedListInfo = useSelectedListInfo()
 
   return (
     <Column style={{ width: '100%', flex: '1 1' }}>
-      <LoadingModal
-        isOpen={isLoading}
-        onDismiss={handleDismissLoading}
-        title="Load Token"
-        subtitle="Searching for token"
-        description={undefined}
-      />
       <PaddedColumn gap="14px">
         <RowBetween style={{ borderBottom: '1px solid #0d1b24', paddingBottom: 10 }}>
           <Text fontWeight='800' fontSize='26px' color='sidebarColor'>
@@ -217,22 +212,25 @@ export function CurrencySearch({
           {/* <SortButton ascending={invertSearchOrder} toggleSortOrder={() => setInvertSearchOrder((iso) => !iso)} /> */}
         </RowBetween>
       </PaddedColumn>
-
-      <div style={{ flex: '1', padding: '0px 40px 40px 40px' }}>
-        <TokenAutoSizer disableWidth>
-          {({ height }) => (
-            <CurrencyList
-              height={height}
-              showETH={isShowETH}
-              currencies={filteredSortedTokens}
-              onCurrencySelect={handleCurrencySelect}
-              otherCurrency={otherSelectedCurrency}
-              selectedCurrency={selectedCurrency}
-              fixedListRef={fixedList}
-            />
-          )}
-        </TokenAutoSizer>
-      </div>
+      {isLoading ? (
+        <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="90px" />
+      ): (
+        <div style={{ flex: '1', padding: '0px 40px 40px 40px' }}>
+          <TokenAutoSizer disableWidth>
+            {({ height }) => (
+              <CurrencyList
+                height={height}
+                showETH={isShowETH}
+                currencies={filteredSortedTokens}
+                onCurrencySelect={handleCurrencySelect}
+                otherCurrency={otherSelectedCurrency}
+                selectedCurrency={selectedCurrency}
+                fixedListRef={fixedList}
+              />
+            )}
+          </TokenAutoSizer>
+        </div>
+      )}
 
       {null && (
         <>
