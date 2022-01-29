@@ -95,11 +95,11 @@ export function useTradeExactIn(
   return useMemo(() => {
     if (currencyAmountIn && currencyOut && allowedPairs.length > 0) {
       return (
-        Trade.bestTradeExactIn(allowedPairs, currencyAmountIn, currencyOut, { maxHops: 3, maxNumResults: 1 })[0] ?? null
+        Trade.bestTradeExactIn(allowedPairs, currencyAmountIn, currencyOut, { maxHops: 3, maxNumResults: 1 }, [], currencyAmountIn, [], factoryAddress)[0] ?? null
       )
     }
     return null
-  }, [allowedPairs, currencyAmountIn, currencyOut])
+  }, [allowedPairs, currencyAmountIn, currencyOut, factoryAddress])
 }
 
 /**
@@ -116,10 +116,10 @@ export function useTradeExactOut(
   return useMemo(() => {
     if (currencyIn && currencyAmountOut && allowedPairs.length > 0) {
       return (
-        Trade.bestTradeExactOut(allowedPairs, currencyIn, currencyAmountOut, { maxHops: 3, maxNumResults: 1 })[0] ??
+        Trade.bestTradeExactOut(allowedPairs, currencyIn, currencyAmountOut, { maxHops: 3, maxNumResults: 1 }, [], currencyAmountOut, [], factoryAddress)[0] ??
         null
       )
     }
     return null
-  }, [allowedPairs, currencyIn, currencyAmountOut])
+  }, [allowedPairs, currencyIn, currencyAmountOut, factoryAddress])
 }
