@@ -75,7 +75,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
 
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
-  const { v2Trade, currencyBalances, parsedAmount, currencies, inputError: swapInputError, routerAddress } = useDerivedSwapInfo()
+  const { v2Trade, currencyBalances, parsedAmount, currencies, inputError: swapInputError } = useDerivedSwapInfo()
   const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
     currencies[Field.INPUT],
     currencies[Field.OUTPUT],
@@ -184,7 +184,6 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
     allowedSlippage,
     deadline,
     recipient,
-    routerAddress
   )
 
   const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade)

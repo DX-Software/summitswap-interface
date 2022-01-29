@@ -112,7 +112,6 @@ export function useDerivedSwapInfo(): {
   parsedAmount: CurrencyAmount | undefined
   v2Trade: Trade | undefined
   inputError?: string
-  routerAddress: string
 } {
   const { account } = useActiveWeb3React()
 
@@ -139,7 +138,6 @@ export function useDerivedSwapInfo(): {
 
   const [factory, setFactory] = useState(FACTORY_ADDRESS)
   const [initCodeHash, setInitCodeHash] = useState(INIT_CODE_HASH)
-  const [routerAddress, setRouterAddress] = useState(ROUTER_ADDRESS)
   const [additionalIndex, setAdditionalIndex] = useState(0)
 
   const bestTradeExactIn: Trade | null = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, factory, initCodeHash)
@@ -150,12 +148,10 @@ export function useDerivedSwapInfo(): {
     if (parsedAmount === undefined) {
       setFactory(FACTORY_ADDRESS)
       setInitCodeHash(INIT_CODE_HASH)
-      setRouterAddress(ROUTER_ADDRESS)
       setAdditionalIndex(0)
     } else if (v2Trade === null && ADDITIONAL_FACTORY_ADDRESSES.length > 0 && additionalIndex !== ADDITIONAL_FACTORY_ADDRESSES.length) {
       setFactory(ADDITIONAL_FACTORY_ADDRESSES[additionalIndex])
       setInitCodeHash(ADDITIONAL_INIT_CODE_HASHES[additionalIndex])
-      setRouterAddress(ADDITIONAL_ROUTER_ADDRESSES[additionalIndex])
       setAdditionalIndex((prevState) => prevState + 1)
     }
   }, [v2Trade, factory, parsedAmount, additionalIndex])
@@ -163,7 +159,6 @@ export function useDerivedSwapInfo(): {
   useEffect(() => {
     setFactory(FACTORY_ADDRESS)
     setInitCodeHash(INIT_CODE_HASH)
-    setRouterAddress(ROUTER_ADDRESS)
     setAdditionalIndex(0)
   }, [inputCurrency, outputCurrency])
 
@@ -220,8 +215,7 @@ export function useDerivedSwapInfo(): {
     currencyBalances,
     parsedAmount,
     v2Trade: v2Trade ?? undefined,
-    inputError,
-    routerAddress
+    inputError
   }
 }
 
