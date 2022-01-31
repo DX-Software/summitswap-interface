@@ -137,27 +137,29 @@ const RewardedTokens: React.FC = () => {
               />
             ))}
           </StyledContainer>
-          <ClaimButtonsWrapper>
-            {!hasClaimedAll && (
-              <Button mt={3} onClick={handleClaimAllIn} disabled={isLoading || !canClaimAll}>
-                CLAIM ALL IN&nbsp;
-                <CurrencyLogoWrapper
-                  onClick={(e) => {
-                    if (isLoading || !canClaimAll) return
+          {rewardTokens.length > 1 && (
+            <ClaimButtonsWrapper>
+              {!hasClaimedAll && (
+                <Button mt={3} onClick={handleClaimAllIn} disabled={isLoading || !canClaimAll}>
+                  CLAIM ALL IN&nbsp;
+                  <CurrencyLogoWrapper
+                    onClick={(e) => {
+                      if (isLoading || !canClaimAll) return
 
-                    setModalOpen(true)
-                    e.stopPropagation()
-                  }}
-                >
-                  <CurrencyLogo currency={claimToken} size="24px" />
-                  &nbsp;{claimToken?.symbol}
-                </CurrencyLogoWrapper>
+                      setModalOpen(true)
+                      e.stopPropagation()
+                    }}
+                  >
+                    <CurrencyLogo currency={claimToken} size="24px" />
+                    &nbsp;{claimToken?.symbol}
+                  </CurrencyLogoWrapper>
+                </Button>
+              )}
+              <Button mt={3} onClick={handleClaimAll} disabled={hasClaimedAll || isLoading || !canClaimAll}>
+                {hasClaimedAll ? 'CLAIMED ALL' : 'CLAIM ALL IN REWARDED'}
               </Button>
-            )}
-            <Button mt={3} onClick={handleClaimAll} disabled={hasClaimedAll || isLoading || !canClaimAll}>
-              {hasClaimedAll ? 'CLAIMED ALL' : 'CLAIM ALL IN REWARDED'}
-            </Button>
-          </ClaimButtonsWrapper>
+            </ClaimButtonsWrapper>
+          )}
         </>
       )}
       <CurrencySearchModal
