@@ -143,6 +143,8 @@ const RewardedTokens: React.FC = () => {
                 CLAIM ALL IN&nbsp;
                 <CurrencyLogoWrapper
                   onClick={(e) => {
+                    if (isLoading || !canClaimAll) return
+
                     setModalOpen(true)
                     e.stopPropagation()
                   }}

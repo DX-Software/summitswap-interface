@@ -18,14 +18,13 @@ interface Props {
   setCanClaimAll: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const LinkBox = styled(Box)`
+const CurrencyLogoWrapper = styled(Box)`
   color: ${({ theme }) => theme.colors.invertedContrast};
-  padding: 16px;
-  border-radius: 16px;
-  background: ${({ theme }) => theme.colors.sidebarBackground};
+  border-radius: 5px;
+  padding: 3px;
   display: inline-flex;
   align-items: center;
-  margin: 0px;
+  background: ${({ theme }) => `${theme.colors.sidebarBackground}99`};
 `
 
 const StyledContainer = styled(Box)`
@@ -158,12 +157,19 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
             </Text>
 
             <ClaimWrapper>
-              <LinkBox mb={4} onClick={() => setModalOpen(true)} style={{ cursor: 'pointer' }}>
-                Claim in&nbsp;
-                <CurrencyLogo currency={claimToken} size="24px" />&nbsp;{claimToken?.symbol}
-              </LinkBox>
               <Button onClick={handleClaim} disabled={isLoading || !hasReferralEnough || claimed || hasClaimedAll}>
-                {claimed || hasClaimedAll ? 'CLAIMED' : 'CLAIM'}
+                {claimed || hasClaimedAll ? 'CLAIMED IN' : 'CLAIM IN'}&nbsp;
+                <CurrencyLogoWrapper
+                  onClick={(e) => {
+                    if (isLoading || !hasReferralEnough || claimed || hasClaimedAll) return
+
+                    setModalOpen(true)
+                    e.stopPropagation()
+                  }}
+                >
+                  <CurrencyLogo currency={claimToken} size="24px" />
+                  &nbsp;{claimToken?.symbol}
+                </CurrencyLogoWrapper>
               </Button>
             </ClaimWrapper>
           </StyledContainer>
