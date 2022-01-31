@@ -15,6 +15,16 @@
         "internalType": "address",
         "name": "_pancakeswapRouter",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_kapex",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_busd",
+        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
@@ -70,37 +80,61 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "user",
+        "name": "referrer",
         "type": "address"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "tokenR",
+        "name": "lead",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "amountL",
+        "name": "timestamp",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "inputToken",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "outputToken",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "inputTokenAmount",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "amountS",
+        "name": "outputTokenAmount",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "amountD",
+        "name": "referrerReward",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "amountU",
+        "name": "leadReward",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "devReward",
         "type": "uint256"
       }
     ],
@@ -151,7 +185,33 @@
   },
   {
     "inputs": [],
-    "name": "claimAllRewards",
+    "name": "busd",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_claimToken",
+        "type": "address"
+      }
+    ],
+    "name": "claimAllRewardsIn",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "claimAllRewardsInOutput",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -160,13 +220,37 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_rewardToken",
+        "name": "_outputToken",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_claimToken",
         "type": "address"
       }
     ],
-    "name": "claimReward",
+    "name": "claimRewardIn",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "claimingFee",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -219,6 +303,21 @@
         "internalType": "uint256",
         "name": "devFee",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "promRefFee",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "promStart",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "promEnd",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -252,25 +351,6 @@
       }
     ],
     "name": "getBalancesLength",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_referrer",
-        "type": "address"
-      }
-    ],
-    "name": "getSwapListCount",
     "outputs": [
       {
         "internalType": "uint256",
@@ -466,6 +546,19 @@
   },
   {
     "inputs": [],
+    "name": "kapex",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "owner",
     "outputs": [
       {
@@ -579,6 +672,24 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "_claimToken",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_fee",
+        "type": "uint256"
+      }
+    ],
+    "name": "setClaimingFee",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "_devAddr",
         "type": "address"
       }
@@ -608,6 +719,21 @@
       {
         "internalType": "uint256",
         "name": "_devFee",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_promRefFee",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_promStart",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_promEnd",
         "type": "uint256"
       }
     ],
@@ -810,65 +936,6 @@
         "internalType": "address",
         "name": "",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "swapList",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "timestamp",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "inputToken",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "outputToken",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "rewardToken",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "inputTokenAmount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "outputTokenAmount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "referrerReward",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "devReward",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
       }
     ],
     "name": "totalReward",
@@ -893,6 +960,19 @@
     "name": "transferOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "wbnb",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   }
 ]

@@ -5,6 +5,7 @@ import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 import { ChainId } from '@summitswap-libs'
 import { NetworkConnector } from './NetworkConnector'
 import { BscConnector } from './bsc/bscConnector'
+import { CHAIN_ID } from '../constants'
 
 const NETWORK_URL = process.env.REACT_APP_NETWORK_URL
 
@@ -49,14 +50,12 @@ export const setupNetwork = async () => {
   }
 }
 
-export const NETWORK_CHAIN_ID: number = parseInt(process.env.REACT_APP_CHAIN_ID ?? '56')
-
 if (typeof NETWORK_URL === 'undefined') {
   throw new Error(`REACT_APP_NETWORK_URL must be a defined environment variable`)
 }
 
 export const network = new NetworkConnector({
-  urls: { [NETWORK_CHAIN_ID]: NETWORK_URL },
+  urls: { [CHAIN_ID]: NETWORK_URL },
 })
 
 let networkLibrary: Web3Provider | undefined
@@ -66,7 +65,7 @@ export function getNetworkLibrary(): Web3Provider {
 }
 
 export const injected = new InjectedConnector({
-  supportedChainIds: [NETWORK_CHAIN_ID],
+  supportedChainIds: [CHAIN_ID],
 })
 
 export const bsc = new BscConnector({ supportedChainIds: [56] })
@@ -74,7 +73,7 @@ export const bsc = new BscConnector({ supportedChainIds: [56] })
 // mainnet only
 export const walletconnect = () =>
   new WalletConnectConnector({
-    rpc: { [NETWORK_CHAIN_ID]: NETWORK_URL },
+    rpc: { [CHAIN_ID]: NETWORK_URL },
   })
 
 // mainnet only
