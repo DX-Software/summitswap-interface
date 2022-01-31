@@ -159,8 +159,8 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
 
             <ClaimWrapper>
               <LinkBox mb={4} onClick={() => setModalOpen(true)} style={{ cursor: 'pointer' }}>
-                Claim in&nbsp;&nbsp;
-                <CurrencyLogo currency={claimToken} size="24px" />&nbsp;&nbsp;{claimToken?.symbol}
+                Claim in&nbsp;
+                <CurrencyLogo currency={claimToken} size="24px" />&nbsp;{claimToken?.symbol}
               </LinkBox>
               <Button onClick={handleClaim} disabled={isLoading || !hasReferralEnough || claimed || hasClaimedAll}>
                 {claimed || hasClaimedAll ? 'CLAIMED' : 'CLAIM'}
