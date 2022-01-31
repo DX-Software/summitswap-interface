@@ -82,6 +82,7 @@ const RewardedTokens: React.FC = () => {
     try {
       await refContract.claimAllRewardsInOutput()
       setHasClaimedAll(true)
+      setRewardTokens([])
     } catch {
       setRewardTokens([...rewardTokens])
     }
@@ -97,6 +98,7 @@ const RewardedTokens: React.FC = () => {
     try {
       await refContract.claimAllRewardsIn(claimToken.address ?? WETH[CHAIN_ID].address)
       setHasClaimedAll(true)
+      setRewardTokens([])
     } catch {
       setRewardTokens([...rewardTokens])
     }
@@ -155,9 +157,11 @@ const RewardedTokens: React.FC = () => {
                   </CurrencyLogoWrapper>
                 </Button>
               )}
-              <Button mt={3} onClick={handleClaimAll} disabled={hasClaimedAll || isLoading || !canClaimAll}>
-                {hasClaimedAll ? 'CLAIMED ALL' : 'CLAIM ALL IN REWARDED'}
-              </Button>
+              {!hasClaimedAll && (
+                <Button mt={3} onClick={handleClaimAll} disabled={hasClaimedAll || isLoading || !canClaimAll}>
+                  CLAIM ALL IN REWARDED
+                </Button>
+              )}
             </ClaimButtonsWrapper>
           )}
         </>

@@ -149,7 +149,7 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
 
   return (
     <>
-      {tokenSymbol && balance && (
+      {tokenSymbol && balance && !claimed && !hasClaimedAll && (
         <>
           <StyledContainer>
             <Text>
@@ -158,7 +158,7 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
 
             <ClaimWrapper>
               <Button onClick={handleClaim} disabled={isLoading || !hasReferralEnough || claimed || hasClaimedAll}>
-                {claimed || hasClaimedAll ? 'CLAIMED IN' : 'CLAIM IN'}&nbsp;
+                CLAIM IN&nbsp;
                 <CurrencyLogoWrapper
                   onClick={(e) => {
                     if (isLoading || !hasReferralEnough || claimed || hasClaimedAll) return
