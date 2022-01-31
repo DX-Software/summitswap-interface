@@ -125,7 +125,6 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
     if (!claimToken) return
 
     closeClaimingFeeModal();
-
     setIsLoading(true)
 
     try {
@@ -148,8 +147,6 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
   })
 
   const handleClaim = async () => {
-    if (!tokenContract) return
-    if (!refContract) return
     if (!claimToken) return
 
     if (claimToken.address === BUSDs[CHAIN_ID].address || claimToken.address === undefined) {
