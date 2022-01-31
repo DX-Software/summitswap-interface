@@ -213,9 +213,9 @@ const Referral: React.FC<IProps> = () => {
         <p>Reward options - Recieve your rewards in:</p>
         <p>
           <br />
-          A) The projects token <br />
-          B) Auto-Convert it to KAPEX without fee <br />
-          C) Convert it to BNB or BUSD subject to fee
+          A) The projects tokens <br />
+          B) Convert it to KAPEX without fee <br />
+          C) Convert it to BNB or BUSD (10% - 15% fees respectively)
         </p>
       </div>
 
