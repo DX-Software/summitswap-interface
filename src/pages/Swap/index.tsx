@@ -286,7 +286,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
   )
 
   const areKnownTokens = useMemo(() => {
-    if (!allTokens) return false
+    if (!allTokens) return true
 
     return urlLoadedTokens.every((o) => !!allTokens[o.address])
   }, [urlLoadedTokens, allTokens])
