@@ -153,7 +153,7 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
         <>
           <StyledContainer>
             <Text>
-              {tokenSymbol} {ethers.utils.formatEther(balance)}
+              {tokenSymbol} {ethers.utils.formatUnits(balance, outputToken?.decimals)}
             </Text>
 
             <ClaimWrapper>
