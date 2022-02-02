@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Box, Text, Button } from '@summitswap-uikit'
 import { useTokenContract, useReferralContract } from 'hooks/useContract'
 import { useWeb3React } from '@web3-react/core'
 import { BigNumber, ethers } from 'ethers'
-import { REFERRAL_ADDRESS } from '../../constants'
+import CurrencyLogo from 'components/CurrencyLogo'
+import { Token, WETH, Currency } from '@summitswap-libs'
+import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
+import { useToken } from 'hooks/Tokens'
+import { REFERRAL_ADDRESS, BUSDs, CHAIN_ID, KAPEXs } from '../../constants'
 
 interface Props {
   tokenAddress: string
@@ -13,6 +17,15 @@ interface Props {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
   setCanClaimAll: React.Dispatch<React.SetStateAction<boolean>>
 }
+
+const CurrencyLogoWrapper = styled(Box)`
+  color: ${({ theme }) => theme.colors.invertedContrast};
+  border-radius: 5px;
+  padding: 3px;
+  display: inline-flex;
+  align-items: center;
+  background: ${({ theme }) => `${theme.colors.sidebarBackground}99`};
+`
 
 const StyledContainer = styled(Box)`
   padding: 16px;
@@ -26,6 +39,14 @@ const StyledContainer = styled(Box)`
   }
 `
 
+const ClaimWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: right;
+  gap: 10px;
+  align-items: center;
+`
+
 const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, setIsLoading, setCanClaimAll }) => {
   const { account } = useWeb3React()
 
@@ -34,8 +55,45 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
   const [hasReferralEnough, setHasReferralEnough] = useState(true)
   const [claimed, setClaimed] = useState(false)
 
+  const [modalOpen, setModalOpen] = useState(false)
+  const [claimToken, setClaimToken] = useState<Token | undefined>()
+  const [claimableTokens, setClaimableTokens] = useState<Token[]>([])
+  const [rewardTokenAddress, setRewardTokenAddress] = useState<string>()
+
+  const outputToken = useToken(tokenAddress)
+  const rewardToken = useToken(rewardTokenAddress)
   const tokenContract = useTokenContract(tokenAddress, true)
   const refContract = useReferralContract(REFERRAL_ADDRESS, true)
+
+  useEffect(() => {
+    if (!outputToken) return
+    if (!rewardToken) return
+
+    const tokenList: Token[] = [BUSDs[CHAIN_ID], KAPEXs[CHAIN_ID], outputToken, rewardToken]
+    const uniqueTokenAddresses = [...new Set(tokenList.map((o) => o.address))]
+    const uniqueTokenList = uniqueTokenAddresses.map((o) => tokenList.find((oo) => oo.address === o)) as Token[]
+
+    setClaimableTokens(uniqueTokenList)
+  }, [outputToken, rewardToken])
+
+  useEffect(() => {
+    if (!outputToken) return
+
+    setClaimToken(outputToken)
+  }, [outputToken])
+
+  useEffect(() => {
+    async function fetchRewardToken() {
+      if (!refContract) return
+      if (!tokenAddress) return
+
+      const feeInfo = await refContract.feeInfo(tokenAddress)
+
+      setRewardTokenAddress(feeInfo.tokenR)
+    }
+
+    fetchRewardToken()
+  }, [tokenAddress, refContract])
 
   useEffect(() => {
     const handleGetBasicInfo = async () => {
@@ -50,7 +108,6 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
       setBalance(newBalance)
       setHasReferralEnough(hasReferralEnoughBalance)
 
-      
       if (!hasReferralEnoughBalance) {
         setCanClaimAll(false)
       }
@@ -64,11 +121,12 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
   const handleClaim = async () => {
     if (!tokenContract) return
     if (!refContract) return
+    if (!claimToken) return
 
     setIsLoading(true)
 
     try {
-      await refContract?.claimReward(tokenAddress)
+      await refContract.claimRewardIn(tokenAddress, claimToken.address ?? WETH[CHAIN_ID].address)
       setClaimed(true)
     } catch (err) {
       const newBalance = (await refContract.balances(tokenAddress, account)) as BigNumber
@@ -81,6 +139,14 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
     setIsLoading(false)
   }
 
+  const handleTokenSelect = useCallback((inputCurrency) => {
+    setClaimToken(inputCurrency)
+  }, [])
+
+  const handleDismissSearch = useCallback(() => {
+    setModalOpen(false)
+  }, [setModalOpen])
+
   return (
     <>
       {tokenSymbol && balance && (
@@ -89,9 +155,23 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
             <Text>
               {tokenSymbol} {ethers.utils.formatEther(balance)}
             </Text>
-            <Button onClick={handleClaim} disabled={isLoading || !hasReferralEnough || claimed || hasClaimedAll}>
-              {claimed || hasClaimedAll ? 'CLAIMED' : 'CLAIM'}
-            </Button>
+
+            <ClaimWrapper>
+              <Button onClick={handleClaim} disabled={isLoading || !hasReferralEnough || claimed || hasClaimedAll}>
+                {claimed || hasClaimedAll ? 'CLAIMED IN' : 'CLAIM IN'}&nbsp;
+                <CurrencyLogoWrapper
+                  onClick={(e) => {
+                    if (isLoading || !hasReferralEnough || claimed || hasClaimedAll) return
+
+                    setModalOpen(true)
+                    e.stopPropagation()
+                  }}
+                >
+                  <CurrencyLogo currency={claimToken} size="24px" />
+                  &nbsp;{claimToken?.symbol}
+                </CurrencyLogoWrapper>
+              </Button>
+            </ClaimWrapper>
           </StyledContainer>
 
           {!hasReferralEnough && (
@@ -101,6 +181,16 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
           )}
         </>
       )}
+      <CurrencySearchModal
+        isOpen={modalOpen}
+        onDismiss={handleDismissSearch}
+        onCurrencySelect={handleTokenSelect}
+        selectedCurrency={claimToken}
+        otherSelectedCurrency={null}
+        tokens={claimableTokens}
+        isAddedByUserOn={false}
+        showETH
+      />
     </>
   )
 }
