@@ -140,8 +140,14 @@ export function useDerivedSwapInfo(): {
   const [initCodeHash, setInitCodeHash] = useState(INIT_CODE_HASH)
   const [additionalIndex, setAdditionalIndex] = useState(0)
 
-  const bestTradeExactIn: Trade | null = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, factory, initCodeHash)
-  const bestTradeExactOut: Trade | null = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined, factory, initCodeHash)
+  const bestTradeExactIn: {
+    isLoading: boolean,
+    trade: Trade | null
+  } = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, factory, initCodeHash)
+  const bestTradeExactOut: {
+    isLoading: boolean,
+    trade: Trade | null
+  } = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined, factory, initCodeHash)
   const v2Trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
 
   useEffect(() => {
@@ -149,7 +155,7 @@ export function useDerivedSwapInfo(): {
       setFactory(FACTORY_ADDRESS)
       setInitCodeHash(INIT_CODE_HASH)
       setAdditionalIndex(0)
-    } else if (v2Trade === null && ADDITIONAL_FACTORY_ADDRESSES.length > 0 && additionalIndex !== ADDITIONAL_FACTORY_ADDRESSES.length) {
+    } else if (!v2Trade.isLoading && v2Trade.trade === null && ADDITIONAL_FACTORY_ADDRESSES.length > 0 && additionalIndex !== ADDITIONAL_FACTORY_ADDRESSES.length) {
       setFactory(ADDITIONAL_FACTORY_ADDRESSES[additionalIndex])
       setInitCodeHash(ADDITIONAL_INIT_CODE_HASHES[additionalIndex])
       setAdditionalIndex((prevState) => prevState + 1)
@@ -190,15 +196,15 @@ export function useDerivedSwapInfo(): {
     inputError = inputError ?? 'Enter a recipient'
   } else if (
     BAD_RECIPIENT_ADDRESSES.indexOf(formattedTo) !== -1 ||
-    (bestTradeExactIn && involvesAddress(bestTradeExactIn, formattedTo)) ||
-    (bestTradeExactOut && involvesAddress(bestTradeExactOut, formattedTo))
+    (bestTradeExactIn.trade && involvesAddress(bestTradeExactIn.trade, formattedTo)) ||
+    (bestTradeExactOut.trade && involvesAddress(bestTradeExactOut.trade, formattedTo))
   ) {
     inputError = inputError ?? 'Invalid recipient'
   }
 
   const [allowedSlippage] = useUserSlippageTolerance()
 
-  const slippageAdjustedAmounts = v2Trade && allowedSlippage && computeSlippageAdjustedAmounts(v2Trade, allowedSlippage)
+  const slippageAdjustedAmounts = v2Trade.trade && allowedSlippage && computeSlippageAdjustedAmounts(v2Trade.trade, allowedSlippage)
 
   // compare input balance to max input based on version
   const [balanceIn, amountIn] = [
@@ -214,7 +220,7 @@ export function useDerivedSwapInfo(): {
     currencies,
     currencyBalances,
     parsedAmount,
-    v2Trade: v2Trade ?? undefined,
+    v2Trade: v2Trade.trade ?? undefined,
     inputError
   }
 }
