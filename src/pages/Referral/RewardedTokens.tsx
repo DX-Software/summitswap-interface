@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { Box, Text, Button } from '@summitswap-uikit'
-import { Token, WETH, Currency } from '@summitswap-libs'
+import { Token, WETH } from '@summitswap-libs'
 import { useReferralContract } from 'hooks/useContract'
 
 import { useWeb3React } from '@web3-react/core'
@@ -9,6 +9,7 @@ import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import CurrencyLogo from 'components/CurrencyLogo'
 import TokenCard from './TokenCard'
 import { BUSDs, REFERRAL_ADDRESS, CHAIN_ID, KAPEXs } from '../../constants'
+import { useClaimingFeeModal } from './useClaimingFeeModal'
 
 const StyledContainer = styled(Box)`
   display: grid;
@@ -74,14 +75,22 @@ const RewardedTokens: React.FC = () => {
     setClaimableTokens(uniqueTokenList)
   }, [])
 
-  async function handleClaimAll() {
-    if (!refContract) return
+  const [openClaimingFeeModal, closeClaimingFeeModal] = useClaimingFeeModal({
+    symbol: claimToken?.symbol as string,
+    onConfirm: claimAllInClaimToken,
+  })
 
+  async function claimAllInClaimToken() {
+    if (!refContract) return
+    if (!claimToken) return
+
+    closeClaimingFeeModal()
     setIsLoading(true)
 
     try {
-      await refContract.claimAllRewardsInOutput()
+      await refContract.claimAllRewardsIn(claimToken.address ?? WETH[CHAIN_ID].address)
       setHasClaimedAll(true)
+      setRewardTokens([])
     } catch {
       setRewardTokens([...rewardTokens])
     }
@@ -89,19 +98,30 @@ const RewardedTokens: React.FC = () => {
     setIsLoading(false)
   }
 
-  async function handleClaimAllIn() {
+  async function handleClaimAllInRewarded() {
     if (!refContract) return
 
     setIsLoading(true)
 
     try {
-      await refContract.claimAllRewardsIn(claimToken.address ?? WETH[CHAIN_ID].address)
+      await refContract.claimAllRewardsInOutput()
       setHasClaimedAll(true)
+      setRewardTokens([])
     } catch {
       setRewardTokens([...rewardTokens])
     }
 
     setIsLoading(false)
+  }
+
+  async function handleClaimAllInClaimToken() {
+    if (!claimToken) return
+
+    if (claimToken.address === BUSDs[CHAIN_ID].address || claimToken.address === undefined) {
+      openClaimingFeeModal()
+    } else {
+      await claimAllInClaimToken()
+    }
   }
 
   const handleTokenSelect = useCallback((inputCurrency) => {
@@ -137,27 +157,31 @@ const RewardedTokens: React.FC = () => {
               />
             ))}
           </StyledContainer>
-          <ClaimButtonsWrapper>
-            {!hasClaimedAll && (
-              <Button mt={3} onClick={handleClaimAllIn} disabled={isLoading || !canClaimAll}>
-                CLAIM ALL IN&nbsp;
-                <CurrencyLogoWrapper
-                  onClick={(e) => {
-                    if (isLoading || !canClaimAll) return
+          {rewardTokens.length > 1 && (
+            <ClaimButtonsWrapper>
+              {!hasClaimedAll && (
+                <Button mt={3} onClick={handleClaimAllInClaimToken} disabled={isLoading || !canClaimAll}>
+                  CLAIM ALL IN&nbsp;
+                  <CurrencyLogoWrapper
+                    onClick={(e) => {
+                      if (isLoading || !canClaimAll) return
 
-                    setModalOpen(true)
-                    e.stopPropagation()
-                  }}
-                >
-                  <CurrencyLogo currency={claimToken} size="24px" />
-                  &nbsp;{claimToken?.symbol}
-                </CurrencyLogoWrapper>
-              </Button>
-            )}
-            <Button mt={3} onClick={handleClaimAll} disabled={hasClaimedAll || isLoading || !canClaimAll}>
-              {hasClaimedAll ? 'CLAIMED ALL' : 'CLAIM ALL IN REWARDED'}
-            </Button>
-          </ClaimButtonsWrapper>
+                      setModalOpen(true)
+                      e.stopPropagation()
+                    }}
+                  >
+                    <CurrencyLogo currency={claimToken} size="24px" />
+                    &nbsp;{claimToken?.symbol}
+                  </CurrencyLogoWrapper>
+                </Button>
+              )}
+              {!hasClaimedAll && (
+                <Button mt={3} onClick={handleClaimAllInRewarded} disabled={hasClaimedAll || isLoading || !canClaimAll}>
+                  CLAIM ALL IN REWARDED
+                </Button>
+              )}
+            </ClaimButtonsWrapper>
+          )}
         </>
       )}
       <CurrencySearchModal

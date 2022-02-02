@@ -5,10 +5,11 @@ import { useTokenContract, useReferralContract } from 'hooks/useContract'
 import { useWeb3React } from '@web3-react/core'
 import { BigNumber, ethers } from 'ethers'
 import CurrencyLogo from 'components/CurrencyLogo'
-import { Token, WETH, Currency } from '@summitswap-libs'
+import { Token, WETH } from '@summitswap-libs'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { useToken } from 'hooks/Tokens'
 import { REFERRAL_ADDRESS, BUSDs, CHAIN_ID, KAPEXs } from '../../constants'
+import { useClaimingFeeModal } from './useClaimingFeeModal'
 
 interface Props {
   tokenAddress: string
@@ -118,11 +119,12 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
     handleGetBasicInfo()
   }, [tokenContract, refContract, tokenAddress, account, setIsLoading, setCanClaimAll])
 
-  const handleClaim = async () => {
+  async function claim() {
     if (!tokenContract) return
     if (!refContract) return
     if (!claimToken) return
 
+    closeClaimingFeeModal();
     setIsLoading(true)
 
     try {
@@ -139,6 +141,21 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
     setIsLoading(false)
   }
 
+  const [openClaimingFeeModal, closeClaimingFeeModal] = useClaimingFeeModal({
+    symbol: claimToken?.symbol as string,
+    onConfirm: claim,
+  })
+
+  const handleClaim = async () => {
+    if (!claimToken) return
+
+    if (claimToken.address === BUSDs[CHAIN_ID].address || claimToken.address === undefined) {
+      openClaimingFeeModal()
+    } else {
+      await claim()
+    }
+  }
+
   const handleTokenSelect = useCallback((inputCurrency) => {
     setClaimToken(inputCurrency)
   }, [])
@@ -149,16 +166,16 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
 
   return (
     <>
-      {tokenSymbol && balance && (
+      {tokenSymbol && balance && !claimed && !hasClaimedAll && (
         <>
           <StyledContainer>
             <Text>
-              {tokenSymbol} {ethers.utils.formatEther(balance)}
+              {tokenSymbol} {ethers.utils.formatUnits(balance, outputToken?.decimals)}
             </Text>
 
             <ClaimWrapper>
               <Button onClick={handleClaim} disabled={isLoading || !hasReferralEnough || claimed || hasClaimedAll}>
-                {claimed || hasClaimedAll ? 'CLAIMED IN' : 'CLAIM IN'}&nbsp;
+                CLAIM IN&nbsp;
                 <CurrencyLogoWrapper
                   onClick={(e) => {
                     if (isLoading || !hasReferralEnough || claimed || hasClaimedAll) return
