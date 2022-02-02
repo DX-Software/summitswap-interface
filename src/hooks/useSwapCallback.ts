@@ -69,16 +69,10 @@ function useSwapCallArguments(
 
     const outputTokenAddress = trade.route.path[trade.route.path.length - 1].address
 
-    console.log('outputTokenAddress', outputTokenAddress)
-    // console.log('account', account)
-
     referralContract.referrers(outputTokenAddress, account).then((o) => {
-      console.log(o, 'contrr')
       setReferrer(o)
     })
   }, [account, referralContract, trade])
-
-  // let referrer = await referralContract.referrers(outputTokenAddress, account)
 
   return useMemo(() => {
     if (!trade || !recipient || !library || !account || !chainId) return []
@@ -116,10 +110,6 @@ function useSwapCallArguments(
         })
       )
     }
-
-    console.log(
-      referrer === NULL_ADDRESS ? referralCached[trade.route.path[trade.route.path.length - 1].address] : undefined
-    )
 
     return swapMethods.map((parameters) => ({ parameters, contract: routerContract }))
   }, [trade, recipient, library, account, chainId, referralContract, referrer, allowedSlippage, deadline])
@@ -213,14 +203,6 @@ export function useSwapCallback(
           })
         )
 
-        // const aaa = estimatedCalls.findIndex(
-        //   (el, ix, list): el is SuccessfulCall =>
-        //     'gasEstimate' in el && (ix === list.length - 1 || 'gasEstimate' in list[ix + 1])
-        // )
-        // console.log(estimatedCalls, aaa);
-
-        // a successful estimation is a bignumber gas estimate and the next call is also a bignumber gas estimate
-        console.log(estimatedCalls)
         const successfulEstimation = estimatedCalls.find(
           (el, ix, list): el is SuccessfulCall =>
             'gasEstimate' in el && (ix === list.length - 1 || 'gasEstimate' in list[ix + 1])
