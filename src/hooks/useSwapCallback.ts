@@ -69,8 +69,8 @@ function useSwapCallArguments(
 
     const outputTokenAddress = trade.route.path[trade.route.path.length - 1].address
 
-    referralContract.referrers(outputTokenAddress, account).then((o) => {
-      setReferrer(o)
+    referralContract.referrers(outputTokenAddress, account).then((referrerFromContract) => {
+      setReferrer(referrerFromContract)
     })
   }, [account, referralContract, trade])
 
@@ -82,8 +82,9 @@ function useSwapCallArguments(
       return []
     }
 
-    const referralCached: Record<string, string> = JSON.parse(localStorage.getItem('referral') ?? '{}')
     const swapMethods = [] as SwapParameters[]
+    const outputTokenAddress = trade.route.path[trade.route.path.length - 1].address
+    const referralCached = JSON.parse(localStorage.getItem('referral') ?? '{}') as Record<string, string>
 
     swapMethods.push(
       Router.swapCallParameters(trade, {
@@ -92,7 +93,9 @@ function useSwapCallArguments(
         recipient,
         ttl: deadline,
         referrer:
-          referrer === NULL_ADDRESS ? referralCached[trade.route.path[trade.route.path.length - 1].address] : undefined,
+          referrer === NULL_ADDRESS && referralCached[outputTokenAddress] !== account
+            ? referralCached[outputTokenAddress]
+            : undefined,
       })
     )
 
@@ -104,8 +107,8 @@ function useSwapCallArguments(
           recipient,
           ttl: deadline,
           referrer:
-            referrer === NULL_ADDRESS
-              ? referralCached[trade.route.path[trade.route.path.length - 1].address]
+            referrer === NULL_ADDRESS && referralCached[outputTokenAddress] !== account
+              ? referralCached[outputTokenAddress]
               : undefined,
         })
       )
