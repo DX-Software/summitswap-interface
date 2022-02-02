@@ -1,7 +1,18 @@
 import React, { useEffect } from 'react'
-import { Flex, Text, Box, Button, useWalletModal } from '@summitswap-uikit'
+import { Box } from '@summitswap-uikit'
+import styled from 'styled-components'
 import { rubicConfiguration } from './config'
 import AppBody from '../AppBody'
+
+const RubicWrapper = styled.div`
+  overflow: hidden;
+
+  iframe {
+    height: 825px;
+    width: min(600px, 100%);
+    box-shadow: none !important;
+  }
+`
 
 export default function CrossChainSwap() {
   useEffect(() => {
@@ -10,9 +21,7 @@ export default function CrossChainSwap() {
 
   return (
     <AppBody>
-      <Box mt={5}>
-        <div id="rubic-widget-root" />
-      </Box>
+      <RubicWrapper id="rubic-widget-root" />
     </AppBody>
   )
 }
