@@ -1,37 +1,43 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { connectorLocalStorageKey, Menu as UikitMenu } from '@summitswap-uikit'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
-import { allLanguages } from 'constants/localisation/languageCodes'
-import { LanguageContext } from 'hooks/LanguageContext'
 import useTheme from 'hooks/useTheme'
 import useGetPriceData from 'hooks/useGetPriceData'
 import useGetKodaPriceData from 'hooks/useGetKodaPriceData'
 import { injected, bsc, walletconnect, setupNetwork } from 'connectors'
 import { NoEthereumProviderError } from '@web3-react/injected-connector'
 import { NoBscProviderError } from 'connectors/bsc/bscConnector'
-import links from './config'
+import { useLocation } from 'react-router-dom'
+import config from './config'
 
 const Menu: React.FC = (props) => {
   const { account, activate, deactivate } = useWeb3React()
-  const { selectedLanguage, setSelectedLanguage } = useContext(LanguageContext)
   const { toggleTheme } = useTheme()
+
+  const location = useLocation()
   const priceData = useGetPriceData()
   const cakePriceUsd = priceData ? Number(priceData.prices.Cake) : undefined
   const kodaPriceData = useGetKodaPriceData()
-  const kodaPriceUsd = kodaPriceData ? Number(kodaPriceData["koda-finance"].usd) : undefined
+  const kodaPriceUsd = kodaPriceData ? Number(kodaPriceData['koda-finance'].usd) : undefined
+  // const { selectedLanguage, setSelectedLanguage } = useContext(LanguageContext)
+
+  const [showConnectButton, setShowConnectButton] = useState(true)
+
+  useEffect(() => {
+    setShowConnectButton(config.some((o) => o.href && o.showConnectButton && location.pathname.includes(o.href)))
+  }, [location])
 
   return (
     <UikitMenu
-      links={links}
+      showConnectButton={showConnectButton}
+      links={config}
       account={account as string}
       login={async (connectorId: string) => {
         if (connectorId === 'walletconnect') {
           await activate(walletconnect())
-        }
-        else if (connectorId === 'bsc') {
+        } else if (connectorId === 'bsc') {
           await activate(bsc)
-        }
-        else {
+        } else {
           await activate(injected, async (error: Error) => {
             if (error instanceof UnsupportedChainIdError) {
               const hasSetup = await setupNetwork()
