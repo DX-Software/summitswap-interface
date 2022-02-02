@@ -4,11 +4,10 @@ import { useReferralContract } from 'hooks/useContract'
 import _ from 'lodash'
 import React, { useState, useEffect } from 'react'
 import { Box, Text } from '@summitswap-uikit'
-import { REFERRAL_ADDRESS } from '../../constants'
 
 export default function SwapList() {
   const { account } = useActiveWeb3React()
-  const referralContract = useReferralContract(REFERRAL_ADDRESS, true)
+  const referralContract = useReferralContract(true)
 
   const [swapList, setSwapList] = useState<any[]>([])
 

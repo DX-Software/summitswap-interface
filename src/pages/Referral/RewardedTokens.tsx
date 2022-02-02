@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { Box, Text, Button } from '@summitswap-uikit'
-import { Token, WETH, Currency } from '@summitswap-libs'
+import { Token, WETH } from '@summitswap-libs'
 import { useReferralContract } from 'hooks/useContract'
 
 import { useWeb3React } from '@web3-react/core'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import CurrencyLogo from 'components/CurrencyLogo'
 import TokenCard from './TokenCard'
-import { BUSDs, REFERRAL_ADDRESS, CHAIN_ID, KAPEXs } from '../../constants'
+import { BUSDs, CHAIN_ID, KAPEXs } from '../../constants'
 
 const StyledContainer = styled(Box)`
   display: grid;
@@ -43,7 +43,7 @@ const RewardedTokens: React.FC = () => {
   const [claimableTokens, setClaimableTokens] = useState<Token[]>([])
   const [modalOpen, setModalOpen] = useState(false)
 
-  const refContract = useReferralContract(REFERRAL_ADDRESS, true)
+  const refContract = useReferralContract(true)
 
   useEffect(() => {
     const fetchRewardTokens = async () => {

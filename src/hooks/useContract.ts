@@ -11,6 +11,7 @@ import Referral_ABI from '../constants/abis/referral.json'
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall'
 import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
+import { REFERRAL_ADDRESS } from '../constants'
 
 // returns null on errors
 function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {
@@ -27,8 +28,8 @@ function useContract(address: string | undefined, ABI: any, withSignerIfPossible
   }, [address, ABI, library, withSignerIfPossible, account])
 }
 
-export function useReferralContract(referralAddress?: string, withSignerIfPossible?: boolean): Contract | null {
-  return useContract(referralAddress, Referral_ABI, withSignerIfPossible)
+export function useReferralContract(withSignerIfPossible?: boolean): Contract | null {
+  return useContract(REFERRAL_ADDRESS, Referral_ABI, withSignerIfPossible)
 }
 
 export function useTokenContract(tokenAddress?: string, withSignerIfPossible?: boolean): Contract | null {

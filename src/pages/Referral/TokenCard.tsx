@@ -5,7 +5,7 @@ import { useTokenContract, useReferralContract } from 'hooks/useContract'
 import { useWeb3React } from '@web3-react/core'
 import { BigNumber, ethers } from 'ethers'
 import CurrencyLogo from 'components/CurrencyLogo'
-import { Token, WETH, Currency } from '@summitswap-libs'
+import { Token, WETH } from '@summitswap-libs'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { useToken } from 'hooks/Tokens'
 import { REFERRAL_ADDRESS, BUSDs, CHAIN_ID, KAPEXs } from '../../constants'
@@ -63,7 +63,7 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
   const outputToken = useToken(tokenAddress)
   const rewardToken = useToken(rewardTokenAddress)
   const tokenContract = useTokenContract(tokenAddress, true)
-  const refContract = useReferralContract(REFERRAL_ADDRESS, true)
+  const refContract = useReferralContract(true)
 
   useEffect(() => {
     if (!outputToken) return
