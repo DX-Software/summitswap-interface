@@ -101,12 +101,14 @@ function CurrencyRow({
   isSelected,
   otherSelected,
   style,
+  isAddedByUserOn
 }: {
   currency: Currency
   onSelect: () => void
   isSelected: boolean
   otherSelected: boolean
-  style: CSSProperties
+  style: CSSProperties,
+  isAddedByUserOn: boolean
 }) {
   const { account, chainId } = useActiveWeb3React()
   const key = currencyKey(currency)
@@ -135,7 +137,7 @@ function CurrencyRow({
           <Column style={{ marginLeft: 16 }}>
             <Text title={currency.name} color='sidebarColor' fontSize='16px' fontWeight='600'>{currency.symbol}</Text>
             <FadedSpan>
-              {!isOnSelectedList && customAdded && !(currency instanceof WrappedTokenInfo) ? (
+              {isAddedByUserOn && !isOnSelectedList && customAdded && !(currency instanceof WrappedTokenInfo) ? (
                 <Text>
                   Added by user
                   <LinkStyledButton
@@ -148,7 +150,7 @@ function CurrencyRow({
                   </LinkStyledButton>
                 </Text>
               ) : null}
-              {!isOnSelectedList && !customAdded && !(currency instanceof WrappedTokenInfo) ? (
+              {isAddedByUserOn && !isOnSelectedList && !customAdded && !(currency instanceof WrappedTokenInfo) ? (
                 <Text>
                   Found by address
                   <LinkStyledButton
@@ -181,6 +183,7 @@ export default function CurrencyList({
   otherCurrency,
   fixedListRef,
   showETH,
+  isAddedByUserOn
 }: {
   height: number
   currencies: Currency[]
@@ -188,7 +191,8 @@ export default function CurrencyList({
   onCurrencySelect: (currency: Currency) => void
   otherCurrency?: Currency | null
   fixedListRef?: MutableRefObject<FixedSizeList | undefined>
-  showETH: boolean
+  showETH: boolean,
+  isAddedByUserOn: boolean
 }) {
   const itemData = useMemo(() => (showETH ? [Currency.ETHER, ...currencies] : [...currencies]), [currencies, showETH])
 
@@ -205,10 +209,11 @@ export default function CurrencyList({
           isSelected={isSelected}
           onSelect={handleSelect}
           otherSelected={otherSelected}
+          isAddedByUserOn={isAddedByUserOn}
         />
       )
     },
-    [onCurrencySelect, otherCurrency, selectedCurrency]
+    [onCurrencySelect, otherCurrency, selectedCurrency, isAddedByUserOn]
   )
 
   const itemKey = useCallback((index: number, data: any) => currencyKey(data[index]), [])

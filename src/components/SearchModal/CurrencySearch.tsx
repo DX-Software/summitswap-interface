@@ -35,6 +35,7 @@ interface CurrencySearchProps {
   showETH?: boolean
   tokens?: Array<Token>
   onChangeList: () => void
+  isAddedByUserOn: boolean
 }
 
 const TokenAutoSizer = styled(AutoSizer)`
@@ -67,6 +68,7 @@ export function CurrencySearch({
   showCommonBases,
   showETH,
   tokens,
+  isAddedByUserOn,
   onDismiss,
   isOpen,
   onChangeList,
@@ -109,8 +111,6 @@ export function CurrencySearch({
       .split(/\s+/)
       .filter((s) => s.length > 0)
 
-    const koda = sorted.filter(e => e.symbol === 'KODA')
-
     if (symbolMatch.length > 1) return sorted
     return [
       ...(searchToken ? [searchToken] : []),
@@ -121,6 +121,7 @@ export function CurrencySearch({
       b.priority - a.priority
     )
   }, [filteredTokens, searchQuery, searchToken, tokenComparator])
+  
   const handleCurrencySelect = useCallback(
     (currency: Currency) => {
       onCurrencySelect(currency)
@@ -226,6 +227,7 @@ export function CurrencySearch({
                 otherCurrency={otherSelectedCurrency}
                 selectedCurrency={selectedCurrency}
                 fixedListRef={fixedList}
+                isAddedByUserOn={isAddedByUserOn}
               />
             )}
           </TokenAutoSizer>

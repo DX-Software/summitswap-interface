@@ -95,7 +95,7 @@ const Referral: React.FC<IProps> = () => {
 
   useEffect(() => {
     setReferralURL(
-      `http://${document.location.hostname}${
+      `${document.location.protocol}//${document.location.hostname}${
         document.location.port ? `:${document.location.port}` : ''
       }/#/swap?output=${selectedOutputCoin && selectedOutputCoin.address}&ref=${account}`
     )
@@ -160,7 +160,8 @@ const Referral: React.FC<IProps> = () => {
             </LinkBox>
           </>
         )}
-        <SwapList />
+        {/* TODO: Display swaplist using lambda x blockchain events */}
+        {/* <SwapList /> */}
         <RewardedTokens />
       </Box>
 
