@@ -15,9 +15,18 @@ export const RowBetween = styled(Row)`
   justify-content: space-between;
 `
 
-export const RowFlat = styled.div`
+export const RowFlatCenter = styled.div`
   display: flex;
   align-items: flex-end;
+  flex-wrap: wrap;
+  justify-content: center;
+`
+
+export const ColumnFlatCenter = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `
 
 export const AutoRow = styled(Row)<{ gap?: string; justify?: string }>`

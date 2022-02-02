@@ -13,7 +13,7 @@ const config: MenuEntry[] = [
   },
   {
     label: "Referral",
-    icon: "FarmIcon",
+    icon: "ReferralIcon",
     href: "/referral",
   },
   {
