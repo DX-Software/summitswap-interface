@@ -13,7 +13,7 @@ import CurrencyInputPanel from 'components/CurrencyInputPanel'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { AddRemoveTabs } from 'components/NavigationTabs'
 import { MinimalPositionCard } from 'components/PositionCard'
-import Row, { RowBetween, RowFlat } from 'components/Row'
+import Row, { RowBetween, RowFlatCenter, ColumnFlatCenter } from 'components/Row'
 
 import { PairState } from 'data/Reserves'
 import { useActiveWeb3React } from 'hooks'
@@ -193,21 +193,28 @@ export default function AddLiquidity({
     return noLiquidity ? (
       <AutoColumn gap="20px">
         <LightCard mt="20px" borderRadius="20px">
-          <RowFlat>
-            <UIKitText fontSize="48px" mr="8px">
-              {`${currencies[Field.CURRENCY_A]?.symbol}/${currencies[Field.CURRENCY_B]?.symbol}`}
-            </UIKitText>
+          <ColumnFlatCenter>
+            <RowFlatCenter>
+              <UIKitText fontSize="48px" mr="8px">
+                {currencies[Field.CURRENCY_A]?.symbol}
+              </UIKitText>
+              <UIKitText fontSize="48px" mr="8px">/</UIKitText>
+              <UIKitText fontSize="48px">
+                {currencies[Field.CURRENCY_B]?.symbol}
+              </UIKitText>
+            </RowFlatCenter>
+            
             <DoubleCurrencyLogo
               currency0={currencies[Field.CURRENCY_A]}
               currency1={currencies[Field.CURRENCY_B]}
               size={30}
             />
-          </RowFlat>
+          </ColumnFlatCenter>
         </LightCard>
       </AutoColumn>
     ) : (
       <AutoColumn gap="20px">
-        <RowFlat style={{ marginTop: '20px' }}>
+        <RowFlatCenter style={{ marginTop: '20px' }}>
           <UIKitText fontSize="48px" mr="8px">
             {liquidityMinted?.toSignificant(6)}
           </UIKitText>
@@ -216,7 +223,7 @@ export default function AddLiquidity({
             currency1={currencies[Field.CURRENCY_B]}
             size={30}
           />
-        </RowFlat>
+        </RowFlatCenter>
         <Row>
           <UIKitText fontSize="24px">
             {`${currencies[Field.CURRENCY_A]?.symbol}/${currencies[Field.CURRENCY_B]?.symbol} Pool Tokens`}

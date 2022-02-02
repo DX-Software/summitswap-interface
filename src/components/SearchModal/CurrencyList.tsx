@@ -44,6 +44,7 @@ const Tag = styled.div`
 
 const LogoContainer = styled.div`
   position: relative;
+  flex-shrink: 0;
   border-radius: 50%;
   width: 30px;
   height: 30px;

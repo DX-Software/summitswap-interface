@@ -10,7 +10,7 @@ import { useActiveWeb3React } from '../../hooks'
 import { AppState } from '../../state'
 import { useAllTokens, useToken } from '../../hooks/Tokens'
 import { useSelectedListInfo } from '../../state/lists/hooks'
-import { LinkStyledButton } from '../Shared'
+import { LinkStyledButton, Spinner } from '../Shared'
 import { isAddress } from '../../utils'
 import Card from '../Card'
 import Column from '../Column'
@@ -54,6 +54,13 @@ const TokenAutoSizer = styled(AutoSizer)`
   }
 `
 
+const CustomLightSpinner = styled(Spinner) <{ size: string }>`
+  height: ${({ size }) => size};
+  width: ${({ size }) => size};
+  display: flex;
+  margin: auto;
+`
+
 export function CurrencySearch({
   selectedCurrency,
   onCurrencySelect,
@@ -73,6 +80,7 @@ export function CurrencySearch({
   const fixedList = useRef<FixedSizeList>()
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [invertSearchOrder] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const allTokens = useAllTokens()
 
   // if they input an address, use it
@@ -133,11 +141,19 @@ export function CurrencySearch({
     if (isOpen) setSearchQuery('')
   }, [isOpen])
 
+  useEffect(() => {
+    if ((isAddressSearch && filteredTokens.length > 0) || !!isAddressSearch === false) {
+      setIsLoading(false)
+    }
+  }, [filteredTokens, isAddressSearch])
+
   // manage focus on modal show
   const inputRef = useRef<HTMLInputElement>()
   const handleInput = useCallback((event) => {
     const input = event.target.value
     const checksummedInput = isAddress(input)
+
+    if (checksummedInput) setIsLoading(true)
     setSearchQuery(checksummedInput || input)
     fixedList.current?.scrollTo(0)
   }, [])
@@ -197,23 +213,26 @@ export function CurrencySearch({
           {/* <SortButton ascending={invertSearchOrder} toggleSortOrder={() => setInvertSearchOrder((iso) => !iso)} /> */}
         </RowBetween>
       </PaddedColumn>
-
-      <div style={{ flex: '1', padding: '0px 40px 40px 40px' }}>
-        <TokenAutoSizer disableWidth>
-          {({ height }) => (
-            <CurrencyList
-              height={height}
-              showETH={isShowETH}
-              currencies={filteredSortedTokens}
-              onCurrencySelect={handleCurrencySelect}
-              otherCurrency={otherSelectedCurrency}
-              selectedCurrency={selectedCurrency}
-              fixedListRef={fixedList}
-              isAddedByUserOn={isAddedByUserOn}
-            />
-          )}
-        </TokenAutoSizer>
-      </div>
+      {isLoading ? (
+        <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="90px" />
+      ): (
+        <div style={{ flex: '1', padding: '0px 40px 40px 40px' }}>
+          <TokenAutoSizer disableWidth>
+            {({ height }) => (
+              <CurrencyList
+                height={height}
+                showETH={isShowETH}
+                currencies={filteredSortedTokens}
+                onCurrencySelect={handleCurrencySelect}
+                otherCurrency={otherSelectedCurrency}
+                selectedCurrency={selectedCurrency}
+                fixedListRef={fixedList}
+                isAddedByUserOn={isAddedByUserOn}
+              />
+            )}
+          </TokenAutoSizer>
+        </div>
+      )}
 
       {null && (
         <>
