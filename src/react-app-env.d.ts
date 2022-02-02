@@ -1,7 +1,7 @@
 /// <reference types="react-scripts" />
 
 declare module 'jazzicon' {
-  export default function(diameter: number, seed: number): HTMLElement
+  export default function (diameter: number, seed: number): HTMLElement
 }
 
 declare module 'fortmatic'
@@ -15,6 +15,8 @@ interface Window {
   web3?: any
   BinanceChain?: BinanceChain
 }
+
+declare const rubicWidget: any; 
 
 declare module 'content-hash' {
   declare function decode(x: string): string
