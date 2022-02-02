@@ -95,7 +95,7 @@ const Referral: React.FC<IProps> = () => {
 
   useEffect(() => {
     setReferralURL(
-      `${document.location.port ? 'http' : 'https'}://${document.location.hostname}${
+      `${document.location.protocol}//${document.location.hostname}${
         document.location.port ? `:${document.location.port}` : ''
       }/#/swap?output=${selectedOutputCoin && selectedOutputCoin.address}&ref=${account}`
     )
