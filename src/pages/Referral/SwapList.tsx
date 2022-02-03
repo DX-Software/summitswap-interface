@@ -12,7 +12,7 @@ export default function SwapList() {
   const { account, library } = useActiveWeb3React()
   const referralContract = useReferralContract(true)
 
-  const [swapList, setSwapList] = useState<any[]>([])
+  const [swapList, setSwapList] = useState<ReferralReward[]>([])
 
   useEffect(() => {
     setSwapList([])
