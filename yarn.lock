@@ -2948,9 +2948,9 @@
     "@styled-system/core" "^5.1.2"
     "@styled-system/css" "^5.1.5"
 
-"@summitswap-libs@git+https://github.com/Koda-Finance/summitswap-sdk.git#feat/record-referral-while-making-first-swap":
+"@summitswap-libs@git+https://github.com/Koda-Finance/summitswap-sdk.git#main":
   version "1.0.0"
-  resolved "git+https://github.com/Koda-Finance/summitswap-sdk.git#876a54ef61e82482da1cbb66d472143f138ef6d8"
+  resolved "git+https://github.com/Koda-Finance/summitswap-sdk.git#69aa18ee6fe6c8f7849bf3eb9cd6deadaf9136f2"
   dependencies:
     "@pancakeswap-libs/pancake-swap-core" "^0.1.0"
     big.js "^5.2.2"
