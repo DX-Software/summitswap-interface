@@ -7,7 +7,7 @@ import { useWeb3React } from '@web3-react/core'
 import _ from 'lodash'
 import { injected, walletconnect } from 'connectors'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
-import ReferralTransactionRow from 'components/PageHeader/ReferralTransactionRow'
+import ReferralTransactionRow from 'pages/Referral/ReferralTransactionRow'
 import { TranslateString } from 'utils/translateTextHelpers'
 import { useAllTokens } from 'hooks/Tokens'
 import CurrencyLogo from 'components/CurrencyLogo'
@@ -161,7 +161,7 @@ const Referral: React.FC<IProps> = () => {
           </>
         )}
         {/* TODO: Display swaplist using lambda x blockchain events */}
-        {/* <SwapList /> */}
+        <SwapList />
         <RewardedTokens />
       </Box>
 
