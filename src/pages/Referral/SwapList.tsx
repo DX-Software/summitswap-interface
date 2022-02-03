@@ -18,8 +18,8 @@ export default function SwapList() {
         const referrerFilter = referralContract.filters.ReferralReward(account)
         const leadFilter = referralContract.filters.ReferralReward(null, account)
 
-        const referrerLogs = await referralContract.queryFilter(referrerFilter, -100000, "latest")
-        const leadLogs = await referralContract.queryFilter(leadFilter, -100000, "latest")
+        const referrerLogs = await referralContract.queryFilter(referrerFilter, 0, "latest")
+        const leadLogs = await referralContract.queryFilter(leadFilter, 0, "latest")
 
         let eventLogs: Array<any> = [...referrerLogs, ...leadLogs];
         eventLogs = eventLogs.map((eventLog) => eventLog.args)
