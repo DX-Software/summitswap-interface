@@ -161,7 +161,7 @@ const Referral: React.FC<IProps> = () => {
           </>
         )}
         {/* TODO: Display swaplist using lambda x blockchain events */}
-        {/* <SwapList /> */}
+        <SwapList />
         <RewardedTokens />
       </Box>
 

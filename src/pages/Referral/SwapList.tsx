@@ -15,16 +15,18 @@ export default function SwapList() {
   useEffect(() => {
     async function fetchSwapList() {
       if (account && referralContract) {
-        const swapListLength = Number(await referralContract.getSwapListCount(account))
-        const fetchedSwapList = await Promise.all(
-          Array(swapListLength)
-            .fill(0)
-            .map((val, swapIndex) => {
-              return referralContract.swapList(account, swapIndex)
-            })
-        ).then((o) => _.orderBy(o, ['timestamp'], ['desc']))
+        const referrerFilter = referralContract.filters.ReferralReward(account)
+        const leadFilter = referralContract.filters.ReferralReward(null, account)
 
-        setSwapList(fetchedSwapList)
+        const referrerLogs = await referralContract.queryFilter(referrerFilter, -100000, "latest")
+        const leadLogs = await referralContract.queryFilter(leadFilter, -100000, "latest")
+
+        let eventLogs: Array<any> = [...referrerLogs, ...leadLogs];
+        eventLogs = eventLogs.map((eventLog) => eventLog.args)
+        eventLogs = _.orderBy(eventLogs, (eventLog) => eventLog.timestamp.toNumber(), 'desc')
+
+
+        setSwapList(eventLogs)
       }
     }
 
@@ -40,7 +42,7 @@ export default function SwapList() {
           </Text>
           <Box mb={2}>
             {_.map(swapList, (x: any) => (
-              <ReferralTransactionRow {...x} />
+              <ReferralTransactionRow account={account} {...x} />
             ))}
           </Box>
         </>
