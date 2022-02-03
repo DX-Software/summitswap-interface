@@ -8,7 +8,7 @@ import { useWeb3React } from '@web3-react/core'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import CurrencyLogo from 'components/CurrencyLogo'
 import TokenCard from './TokenCard'
-import { BUSDs, REFERRAL_ADDRESS, CHAIN_ID, KAPEXs } from '../../constants'
+import { BUSDs, CHAIN_ID, KAPEXs } from '../../constants'
 import { useClaimingFeeModal } from './useClaimingFeeModal'
 
 const StyledContainer = styled(Box)`
@@ -44,7 +44,7 @@ const RewardedTokens: React.FC = () => {
   const [claimableTokens, setClaimableTokens] = useState<Token[]>([])
   const [modalOpen, setModalOpen] = useState(false)
 
-  const refContract = useReferralContract(REFERRAL_ADDRESS, true)
+  const refContract = useReferralContract(true)
 
   useEffect(() => {
     const fetchRewardTokens = async () => {

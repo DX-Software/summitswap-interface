@@ -64,7 +64,7 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
   const outputToken = useToken(tokenAddress)
   const rewardToken = useToken(rewardTokenAddress)
   const tokenContract = useTokenContract(tokenAddress, true)
-  const refContract = useReferralContract(REFERRAL_ADDRESS, true)
+  const refContract = useReferralContract(true)
 
   useEffect(() => {
     if (!outputToken) return
