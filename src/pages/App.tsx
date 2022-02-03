@@ -73,9 +73,7 @@ export default function App() {
   const [selectedLanguage, setSelectedLanguage] = useState<any>(undefined)
   const [translatedLanguage, setTranslatedLanguage] = useState<any>(undefined)
   const [translations, setTranslations] = useState<Array<any>>([])
-  const [referrals, setReferrals] = useState<Record<string, string>>({}) // Output token => Referrer
 
-  const referralContract = useReferralContract(REFERRAL_ADDRESS, true)
   const location = useLocation()
 
   const handleLogin = (connectorId: string) => {
@@ -127,41 +125,11 @@ export default function App() {
       const referralCached: Record<string, string> = JSON.parse(localStorage.getItem('referral') ?? '{}')
       referralCached[outputParam] = referrerParam
       localStorage.setItem('referral', JSON.stringify(referralCached))
-      localStorage.removeItem('rejected')
-      setReferrals(referralCached)
       onPresentConnectModal()
-    } else {
-      setReferrals(JSON.parse(localStorage.getItem('referral') ?? '{}'))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
 
-  useEffect(() => {
-    async function recordReferral() {
-      if (!account) return
-      if (!referralContract) return
-      if (localStorage.getItem('rejected') === '1') return
-
-      const outputTokens = Object.keys(referrals)
-      for (let i = 0; i < outputTokens.length; i++) {
-        if (account === referrals[outputTokens[i]]) return
-
-        const referrer = await referralContract.referrers(outputTokens[i], account)
-        if (referrer === NULL_ADDRESS) {
-          try {
-            await referralContract.recordReferral(outputTokens[i], referrals[outputTokens[i]])
-            delete referrals[outputTokens[i]]
-            localStorage.setItem('referral', JSON.stringify(referrals))
-            setReferrals({ ...referrals })
-          } catch (err: any) {
-            if (err.code === 4001) localStorage.setItem('rejected', '1')
-          }
-        }
-      }
-    }
-
-    recordReferral()
-  }, [account, referrals, referralContract])
 
   return (
     <Suspense fallback={null}>

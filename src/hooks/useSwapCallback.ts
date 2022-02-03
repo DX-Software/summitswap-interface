@@ -2,14 +2,21 @@ import { useSelector } from 'react-redux'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 import { JSBI, Percent, Router, SwapParameters, Trade, TradeType } from '@summitswap-libs'
-import { useMemo } from 'react'
-import { BIPS_BASE, DEFAULT_DEADLINE_FROM_NOW, INITIAL_ALLOWED_SLIPPAGE } from '../constants'
+import { useEffect, useMemo, useState } from 'react'
+import {
+  BIPS_BASE,
+  DEFAULT_DEADLINE_FROM_NOW,
+  INITIAL_ALLOWED_SLIPPAGE,
+  NULL_ADDRESS,
+  REFERRAL_ADDRESS,
+} from '../constants'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { calculateGasMargin, getRouterContract, isAddress, shortenAddress } from '../utils'
 import isZero from '../utils/isZero'
 import { useActiveWeb3React } from './index'
 import useENS from './useENS'
 import { AppState } from '../state'
+import { useReferralContract } from './useContract'
 
 enum SwapCallbackState {
   INVALID,
@@ -48,44 +55,67 @@ function useSwapCallArguments(
   recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
 ): SwapCall[] {
   const { account, chainId, library } = useActiveWeb3React()
+  const referralContract = useReferralContract(true)
 
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
 
+  const [referrer, setReferrer] = useState<string>()
+
+  useEffect(() => {
+    if (!trade) return
+    if (!referralContract) return
+    if (!account) return
+
+    const outputTokenAddress = trade.route.path[trade.route.path.length - 1].address
+
+    referralContract.referrers(outputTokenAddress, account).then((referrerFromContract) => {
+      setReferrer(referrerFromContract)
+    })
+  }, [account, referralContract, trade])
+
   return useMemo(() => {
     if (!trade || !recipient || !library || !account || !chainId) return []
 
-    const contract: Contract | null = getRouterContract(chainId, library, account)
-    if (!contract) {
+    const routerContract: Contract | null = getRouterContract(chainId, library, account)
+    if (!routerContract || !referralContract) {
       return []
     }
 
-    const swapMethods = []
+    const swapMethods = [] as SwapParameters[]
+    const outputTokenAddress = trade.route.path[trade.route.path.length - 1].address
+    const referralCached = JSON.parse(localStorage.getItem('referral') ?? '{}') as Record<string, string>
 
     swapMethods.push(
-      // @ts-ignore
       Router.swapCallParameters(trade, {
         feeOnTransfer: false,
         allowedSlippage: new Percent(JSBI.BigInt(Math.floor(allowedSlippage)), BIPS_BASE),
         recipient,
         ttl: deadline,
+        referrer:
+          referrer === NULL_ADDRESS && referralCached[outputTokenAddress] !== account
+            ? referralCached[outputTokenAddress]
+            : undefined,
       })
     )
 
     if (trade.tradeType === TradeType.EXACT_INPUT) {
       swapMethods.push(
-        // @ts-ignore
         Router.swapCallParameters(trade, {
           feeOnTransfer: true,
           allowedSlippage: new Percent(JSBI.BigInt(Math.floor(allowedSlippage)), BIPS_BASE),
           recipient,
           ttl: deadline,
+          referrer:
+            referrer === NULL_ADDRESS && referralCached[outputTokenAddress] !== account
+              ? referralCached[outputTokenAddress]
+              : undefined,
         })
       )
     }
 
-    return swapMethods.map((parameters) => ({ parameters, contract }))
-  }, [account, allowedSlippage, chainId, deadline, library, recipient, trade])
+    return swapMethods.map((parameters) => ({ parameters, contract: routerContract }))
+  }, [trade, recipient, library, account, chainId, referralContract, referrer, allowedSlippage, deadline])
 }
 
 const playFailMusic = (audioPlay) => {
@@ -156,7 +186,7 @@ export function useSwapCallback(
                     console.info('Call threw error', call, callError)
                     let errorMessageToShow: string
 
-                    const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message;
+                    const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message
 
                     switch (callErrorMessage) {
                       case 'SummitswapRouter02: INSUFFICIENT_OUTPUT_AMOUNT':
@@ -169,14 +199,13 @@ export function useSwapCallback(
                       default:
                         errorMessageToShow = `The transaction cannot succeed due to error: ${callErrorMessage}. This is probably an issue with one of the tokens you are swapping.`
                     }
-                    
+
                     return { call, error: new Error(errorMessageToShow) }
                   })
               })
           })
         )
 
-        // a successful estimation is a bignumber gas estimate and the next call is also a bignumber gas estimate
         const successfulEstimation = estimatedCalls.find(
           (el, ix, list): el is SuccessfulCall =>
             'gasEstimate' in el && (ix === list.length - 1 || 'gasEstimate' in list[ix + 1])
@@ -211,10 +240,11 @@ export function useSwapCallback(
             const withRecipient =
               recipient === account
                 ? base
-                : `${base} to ${recipientAddressOrName && isAddress(recipientAddressOrName)
-                  ? shortenAddress(recipientAddressOrName)
-                  : recipientAddressOrName
-                }`
+                : `${base} to ${
+                    recipientAddressOrName && isAddress(recipientAddressOrName)
+                      ? shortenAddress(recipientAddressOrName)
+                      : recipientAddressOrName
+                  }`
 
             addTransaction(response, {
               summary: withRecipient,

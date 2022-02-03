@@ -4,13 +4,13 @@ import _ from 'lodash'
 import React, { useState, useEffect } from 'react'
 import { Box, Text } from '@summitswap-uikit'
 import { Event } from 'ethers'
-import { MAX_QUERYING_BLOCK_AMOUNT, REFERRAL_ADDRESS, REFERRAL_DEPLOYMENT_BLOCKNUMBER } from '../../constants'
+import { MAX_QUERYING_BLOCK_AMOUNT, REFERRAL_DEPLOYMENT_BLOCKNUMBER } from '../../constants'
 import ReferralTransactionRow from './ReferralTransactionRow'
 import { ReferralReward } from './types'
 
 export default function SwapList() {
   const { account, library } = useActiveWeb3React()
-  const referralContract = useReferralContract(REFERRAL_ADDRESS, true)
+  const referralContract = useReferralContract(true)
 
   const [swapList, setSwapList] = useState<any[]>([])
 
