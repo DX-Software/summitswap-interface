@@ -210,7 +210,7 @@ const Referral: React.FC<IProps> = () => {
       </div>
 
       <div className="reward-section font-15">
-        <p>Reward options - Recieve your rewards in:</p>
+        <p>Reward options - Receive your rewards in:</p>
         <p>
           <br />
           A) The projects tokens <br />
