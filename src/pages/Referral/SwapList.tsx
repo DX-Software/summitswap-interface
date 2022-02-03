@@ -1,10 +1,10 @@
-import ReferralTransactionRow from 'components/PageHeader/ReferralTransactionRow'
 import { useActiveWeb3React } from 'hooks'
 import { useReferralContract } from 'hooks/useContract'
 import _ from 'lodash'
 import React, { useState, useEffect } from 'react'
 import { Box, Text } from '@summitswap-uikit'
-import { REFERRAL_ADDRESS } from '../../constants'
+import { REFERRAL_ADDRESS, REFERRAL_DEPLOYMENT_BLOCKNUMBER } from '../../constants'
+import ReferralTransactionRow from './ReferralTransactionRow'
 
 export default function SwapList() {
   const { account } = useActiveWeb3React()
@@ -14,20 +14,20 @@ export default function SwapList() {
 
   useEffect(() => {
     async function fetchSwapList() {
-      if (account && referralContract) {
-        const referrerFilter = referralContract.filters.ReferralReward(account)
-        const leadFilter = referralContract.filters.ReferralReward(null, account)
+      if (!account || !referralContract) return
 
-        const referrerLogs = await referralContract.queryFilter(referrerFilter, 0, "latest")
-        const leadLogs = await referralContract.queryFilter(leadFilter, 0, "latest")
+      const referrerFilter = referralContract.filters.ReferralReward(account)
+      const leadFilter = referralContract.filters.ReferralReward(null, account)
 
-        let eventLogs: Array<any> = [...referrerLogs, ...leadLogs];
-        eventLogs = eventLogs.map((eventLog) => eventLog.args)
-        eventLogs = _.orderBy(eventLogs, (eventLog) => eventLog.timestamp.toNumber(), 'desc')
+      const referrerLogs = await referralContract.queryFilter(referrerFilter, REFERRAL_DEPLOYMENT_BLOCKNUMBER, 'latest')
+      const leadLogs = await referralContract.queryFilter(leadFilter, REFERRAL_DEPLOYMENT_BLOCKNUMBER, 'latest')
 
+      let eventLogs: Array<any> = [...referrerLogs, ...leadLogs]
+      eventLogs = eventLogs.map((eventLog) => eventLog.args)
+      eventLogs = _.orderBy(eventLogs, (eventLog) => eventLog.timestamp.toNumber(), 'desc')
 
-        setSwapList(eventLogs)
-      }
+      // console.log(eventLogs)
+      setSwapList(eventLogs)
     }
 
     fetchSwapList()
