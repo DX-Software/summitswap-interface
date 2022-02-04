@@ -10,13 +10,11 @@ const config: MenuEntry[] = [
     label: 'Trade',
     icon: 'TradeIcon',
     href: '/swap',
-    showConnectButton: true,
   },
   {
     label: 'Referral',
     icon: 'ReferralIcon',
     href: '/referral',
-    showConnectButton: true,
   },
   {
     label: 'Cross-Chain',

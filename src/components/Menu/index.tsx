@@ -24,7 +24,15 @@ const Menu: React.FC = (props) => {
   const [showConnectButton, setShowConnectButton] = useState(true)
 
   useEffect(() => {
-    setShowConnectButton(config.some((o) => o.href && o.showConnectButton && location.pathname.includes(o.href)))
+    setShowConnectButton(
+      !config.some(
+        (o) =>
+          o.href &&
+          !o.showConnectButton &&
+          typeof o.showConnectButton === 'boolean' &&
+          location.pathname.includes(o.href)
+      )
+    )
   }, [location])
 
   return (
