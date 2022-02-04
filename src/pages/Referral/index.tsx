@@ -140,11 +140,12 @@ const Referral: React.FC<IProps> = () => {
               </Box>
               <Box
                 onClick={async () => {
+                  window.alert("copying")
                   if (navigator.clipboard) {
                     try {
                       await navigator.clipboard.writeText(referralURL)
                     } catch (err) {
-                      console.log(err)
+                      window.alert(JSON.stringify(err))
                     }
                     setIsTooltipDisplayed(true)
                     setTimeout(() => {
