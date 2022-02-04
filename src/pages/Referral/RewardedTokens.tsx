@@ -68,7 +68,7 @@ const RewardedTokens: React.FC = () => {
   }, [account, refContract])
 
   useEffect(() => {
-    const tokenList: Token[] = [BUSDs[CHAIN_ID], KAPEXs[CHAIN_ID]]
+    const tokenList: Token[] = [BUSDs[CHAIN_ID], KAPEXs[CHAIN_ID]].filter((o) => !!o)
     const uniqueTokenAddresses = [...new Set(tokenList.map((o) => o.address))]
     const uniqueTokenList = uniqueTokenAddresses.map((o) => tokenList.find((oo) => oo.address === o)) as Token[]
 
