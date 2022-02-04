@@ -1,6 +1,7 @@
 import React from 'react'
 import { Trade, TradeType } from '@summitswap-libs'
 import { Card, CardBody, Text } from '@summitswap-uikit'
+import styled from 'styled-components'
 import { Field } from '../../state/swap/actions'
 import { useUserSlippageTolerance } from '../../state/user/hooks'
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown } from '../../utils/prices'
@@ -9,6 +10,19 @@ import QuestionHelper from '../QuestionHelper'
 import { RowBetween, RowFixed } from '../Row'
 import { SectionBreak } from './styleds'
 import SwapRoute from './SwapRoute'
+
+const Title = styled(Text)`
+  font-size: 14px;
+  font-family: Raleway;
+  color: ${({ theme }) => theme.colors.invertedContrast};
+`;
+
+const Description = styled(Text)`
+  font-size: 14px;
+  font-family: Oswald;
+  color: ${({ theme }) => theme.colors.invertedContrast};
+  text-align: right;
+`
 
 function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippage: number }) {
   const { realizedLPFee } = computeTradePriceBreakdown(trade)
@@ -20,53 +34,45 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
       <CardBody>
         <RowBetween>
           <RowFixed>
-            <Text fontSize="14px" color="text" style={{ fontFamily: 'Raleway' }}>
-              Slippage Tolerance
-            </Text>
+            <Title>Slippage Tolerance</Title>
             <QuestionHelper
               isGray
               text="This is a setting for the limit of price slippage you are willing to accept."
             />
           </RowFixed>
-          <Text fontSize="14px" style={{ fontFamily: 'Oswald' }} color="text">
-            {allowedSlippage / 100}
-          </Text>
+          <Description>{allowedSlippage / 100}</Description>
         </RowBetween>
 
         <RowBetween>
           <RowFixed>
-            <Text fontSize="14px" color="text" style={{ fontFamily: 'Raleway' }}>
-              {isExactIn ? 'Minimum received' : 'Maximum sold'}
-            </Text>
+            <Title>{isExactIn ? 'Minimum received' : 'Maximum sold'}</Title>
             <QuestionHelper
               isGray
               text="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed."
             />
           </RowFixed>
           <RowFixed>
-            <Text fontSize="14px" style={{ fontFamily: 'Oswald' }} color="text">
+            <Description>
               {isExactIn
                 ? `${slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(4)} ${trade.outputAmount.currency.symbol}` ??
                   '-'
                 : `${slippageAdjustedAmounts[Field.INPUT]?.toSignificant(4)} ${trade.inputAmount.currency.symbol}` ??
                   '-'}
-            </Text>
+            </Description>
           </RowFixed>
         </RowBetween>
 
         <RowBetween>
           <RowFixed>
-            <Text fontSize="14px" color="text" style={{ fontFamily: 'Raleway' }}>
-              Liquidity Provider Fee
-            </Text>
+            <Title>Liquidity Provider Fee</Title>
             <QuestionHelper
               isGray
               text="For each trade a 0.2% fee is paid. 0.17% goes to liquidity providers and 0.03% goes to the Summitswap treasury."
             />
           </RowFixed>
-          <Text fontSize="14px" style={{ fontFamily: 'Oswald' }} color="text">
+          <Description>
             {realizedLPFee ? `${realizedLPFee.toSignificant(4)} ${trade.inputAmount.currency.symbol}` : '-'}
-          </Text>
+          </Description>
         </RowBetween>
       </CardBody>
     </Card>
