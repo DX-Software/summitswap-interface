@@ -4,7 +4,7 @@ import { ArrowDown } from 'react-feather'
 import { CardBody, Button, IconButton, Text } from '@summitswap-uikit'
 import { ThemeContext } from 'styled-components'
 import AddressInputPanel from 'components/AddressInputPanel'
-import Card, { GreyCard } from 'components/Card'
+import { GreyCard } from 'components/Card'
 import { AutoColumn } from 'components/Column'
 import ConfirmSwapModal from 'components/swap/ConfirmSwapModal'
 import CurrencyInputPanel from 'components/CurrencyInputPanel'
@@ -12,15 +12,12 @@ import CardNav from 'components/CardNav'
 import { AutoRow, RowBetween } from 'components/Row'
 import AdvancedSwapDetailsDropdown from 'components/swap/AdvancedSwapDetailsDropdown'
 import confirmPriceImpactWithoutFee from 'components/swap/confirmPriceImpactWithoutFee'
-import { ArrowWrapper, BottomGrouping, SwapCallbackError, Wrapper } from 'components/swap/styleds'
-import TradePrice from 'components/swap/TradePrice'
+import { ArrowWrapper, BottomGrouping, SwapCallbackError, Wrapper, Dots } from 'components/swap/styleds'
 import TokenWarningModal from 'components/TokenWarningModal'
 import SyrupWarningModal from 'components/SyrupWarningModal'
 import ProgressSteps from 'components/ProgressSteps'
-
-import { INITIAL_ALLOWED_SLIPPAGE } from 'constants/index'
-import { useActiveWeb3React } from 'hooks'
-import { useCurrency } from 'hooks/Tokens'
+import { useWeb3React } from '@web3-react/core'
+import { useAllTokens, useCurrency } from 'hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from 'hooks/useApproveCallback'
 import { useSwapCallback } from 'hooks/useSwapCallback'
 import useWrapCallback, { WrapType } from 'hooks/useWrapCallback'
@@ -31,9 +28,7 @@ import { LinkStyledButton } from 'components/Shared'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from 'utils/prices'
 import Loader from 'components/Loader'
-import { TranslateString } from 'utils/translateTextHelpers'
 import PageHeader from 'components/PageHeader'
-import ConnectWalletButton from 'components/ConnectWalletButton'
 import ConnectWalletButtonSwap from 'components/ConnectWalletButtonSwap'
 import expandMore from 'img/expandMore.svg'
 import useGetTokenData from 'hooks/useGetTokenData'
@@ -42,16 +37,21 @@ import AppBody from '../AppBody'
 
 interface IProps {
   isLanding?: boolean
+  match?: any
 }
 
 const Swap: React.FC<IProps> = ({ isLanding }) => {
-  const loadedUrlParams = useDefaultsFromURLSearch()
+  const { account } = useWeb3React()
 
+  const allTokens = useAllTokens()
+
+  const loadedUrlParams = useDefaultsFromURLSearch()
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
     useCurrency(loadedUrlParams?.inputCurrencyId),
     useCurrency(loadedUrlParams?.outputCurrencyId),
   ]
+
   const [dismissTokenWarning, setDismissTokenWarning] = useState<boolean>(false)
   const [isSyrup, setIsSyrup] = useState<boolean>(false)
   const [syrupTransactionType, setSyrupTransactionType] = useState<string>('')
@@ -68,7 +68,6 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
     setSyrupTransactionType('')
   }, [])
 
-  const { account } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
 
   const [isExpertMode] = useExpertModeManager()
@@ -90,14 +89,13 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
 
   const parsedAmounts = showWrap
     ? {
-      [Field.INPUT]: parsedAmount,
-      [Field.OUTPUT]: parsedAmount,
-    }
+        [Field.INPUT]: parsedAmount,
+        [Field.OUTPUT]: parsedAmount,
+      }
     : {
-      [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-      [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
-    }
-
+        [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
+        [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
+      }
   const ethPrice = useGetEthPrice()
   const output = useGetTokenData()
 
@@ -181,7 +179,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
   }, [approval, approvalSubmitted])
 
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT])
-  const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
+  // const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
 
   // the callback to execute the swap
   const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(
@@ -221,7 +219,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
   }, [priceImpactWithoutFee, swapCallback, setSwapState])
 
   // errors
-  const [showInverted, setShowInverted] = useState<boolean>(false)
+  // const [showInverted, setShowInverted] = useState<boolean>(false)
 
   // warnings on slippage
   const priceImpactSeverity = warningSeverity(priceImpactWithoutFee)
@@ -287,10 +285,16 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
     [onCurrencySelection, checkForSyrup]
   )
 
+  const areKnownTokens = useMemo(() => {
+    if (!allTokens) return true
+
+    return urlLoadedTokens.every((o) => !!allTokens[o.address])
+  }, [urlLoadedTokens, allTokens])
+
   return (
     <>
       <TokenWarningModal
-        isOpen={urlLoadedTokens.length > 0 && !dismissTokenWarning}
+        isOpen={urlLoadedTokens.length > 0 && !dismissTokenWarning && !areKnownTokens}
         tokens={urlLoadedTokens}
         onConfirm={handleConfirmTokenWarning}
       />
@@ -300,7 +304,9 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
         onConfirm={handleConfirmSyrupWarning}
       />
       <AppBody>
-        <PageHeader title="Swap" />
+        <PageHeader
+        // title="Swap"
+        />
         {isLanding ? '' : <CardNav />}
         <Wrapper id="swap-page">
           <ConfirmSwapModal
@@ -321,7 +327,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
               <CurrencyInputPanel
                 label={`From ${parsedAmounts.INPUT ? parsedAmounts.INPUT.currency.name : ''}`}
                 value={formattedAmounts[Field.INPUT]}
-                showMaxButton={!atMaxAmountInput}
+                // showMaxButton={!atMaxAmountInput}
                 currency={currencies[Field.INPUT]}
                 onUserInput={handleTypeInput}
                 onMax={handleMaxInput}
@@ -357,7 +363,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
                 value={formattedAmounts[Field.OUTPUT]}
                 onUserInput={handleTypeOutput}
                 label={`To ${parsedAmounts.OUTPUT ? parsedAmounts.OUTPUT?.currency.name : ''}`}
-                showMaxButton={false}
+                // showMaxButton={false}
                 currency={currencies[Field.OUTPUT]}
                 onCurrencySelect={handleOutputSelect}
                 otherCurrency={currencies[Field.INPUT]}
@@ -392,7 +398,9 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
                   </Button>
                 ) : noRoute && userHasSpecifiedInputOutput ? (
                   <GreyCard style={{ textAlign: 'center' }}>
-                    <Text mb="4px" color='text'>Insufficient liquidity for this trade.</Text>
+                    <Text mb="4px" color="text">
+                      Insufficient liquidity for this trade.
+                    </Text>
                   </GreyCard>
                 ) : showApproveFlow ? (
                   <RowBetween>
@@ -404,7 +412,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
                     >
                       {approval === ApprovalState.PENDING ? (
                         <AutoRow gap="6px" justify="center">
-                          Approving <Loader stroke="white" />
+                          <Dots>Approving</Dots>
                         </AutoRow>
                       ) : approvalSubmitted && approval === ApprovalState.APPROVED ? (
                         'Approved'

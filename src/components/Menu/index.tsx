@@ -1,42 +1,73 @@
-import React, { useContext } from 'react'
-import { Menu as UikitMenu } from '@summitswap-uikit'
-import { useWeb3React } from '@web3-react/core'
-import { allLanguages } from 'constants/localisation/languageCodes'
-import { LanguageContext } from 'hooks/LanguageContext'
+import React, { useEffect, useState } from 'react'
+import { connectorLocalStorageKey, Menu as UikitMenu } from '@summitswap-uikit'
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import useTheme from 'hooks/useTheme'
 import useGetPriceData from 'hooks/useGetPriceData'
-import { injected, bsc, walletconnect } from 'connectors'
-import links from './config'
+import useGetKodaPriceData from 'hooks/useGetKodaPriceData'
+import { injected, bsc, walletconnect, setupNetwork } from 'connectors'
+import { NoEthereumProviderError } from '@web3-react/injected-connector'
+import { NoBscProviderError } from 'connectors/bsc/bscConnector'
+import { useLocation } from 'react-router-dom'
+import config from './config'
 
 const Menu: React.FC = (props) => {
   const { account, activate, deactivate } = useWeb3React()
-  const { selectedLanguage, setSelectedLanguage } = useContext(LanguageContext)
-  const { isDark, toggleTheme } = useTheme()
+  const { toggleTheme } = useTheme()
+
+  const location = useLocation()
   const priceData = useGetPriceData()
   const cakePriceUsd = priceData ? Number(priceData.prices.Cake) : undefined
+  const kodaPriceData = useGetKodaPriceData()
+  const kodaPriceUsd = kodaPriceData ? Number(kodaPriceData['koda-finance'].usd) : undefined
+  // const { selectedLanguage, setSelectedLanguage } = useContext(LanguageContext)
+
+  const [showConnectButton, setShowConnectButton] = useState(true)
+
+  useEffect(() => {
+    setShowConnectButton(
+      !config.some(
+        (o) =>
+          o.href &&
+          !o.showConnectButton &&
+          typeof o.showConnectButton === 'boolean' &&
+          location.pathname.includes(o.href)
+      )
+    )
+  }, [location])
 
   return (
     <UikitMenu
-      links={links}
+      showConnectButton={showConnectButton}
+      links={config}
       account={account as string}
-      login={(connectorId: string) => {
+      login={async (connectorId: string) => {
         if (connectorId === 'walletconnect') {
-          return activate(walletconnect)
+          await activate(walletconnect())
+        } else if (connectorId === 'bsc') {
+          await activate(bsc)
+        } else {
+          await activate(injected, async (error: Error) => {
+            if (error instanceof UnsupportedChainIdError) {
+              const hasSetup = await setupNetwork()
+              if (hasSetup) {
+                activate(injected)
+              }
+            } else {
+              window.localStorage.removeItem(connectorLocalStorageKey)
+              if (error instanceof NoEthereumProviderError || error instanceof NoBscProviderError) {
+                window.alert('Provider Error, No provider was found')
+              } else {
+                window.alert(`${error.name}, ${error.message}`)
+              }
+            }
+          })
         }
-
-        if (connectorId === 'bsc') {
-          return activate(bsc)
-        }
-
-        return activate(injected)
       }}
       logout={deactivate}
-      isDark={isDark}
+      isDark
       toggleTheme={toggleTheme}
-      currentLang={selectedLanguage?.code || ''}
-      langs={allLanguages}
-      setLang={setSelectedLanguage}
       cakePriceUsd={cakePriceUsd}
+      kodaPriceUsd={kodaPriceUsd}
       {...props}
     />
   )

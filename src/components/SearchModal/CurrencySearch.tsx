@@ -3,14 +3,14 @@ import React, { KeyboardEvent, RefObject, useCallback, useContext, useEffect, us
 import { Text, CloseIcon } from '@summitswap-uikit'
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { FixedSizeList } from 'react-window'
+import { VariableSizeList } from 'react-window'
 import styled, { ThemeContext } from 'styled-components'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { useActiveWeb3React } from '../../hooks'
 import { AppState } from '../../state'
 import { useAllTokens, useToken } from '../../hooks/Tokens'
 import { useSelectedListInfo } from '../../state/lists/hooks'
-import { LinkStyledButton } from '../Shared'
+import { LinkStyledButton, Spinner } from '../Shared'
 import { isAddress } from '../../utils'
 import Card from '../Card'
 import Column from '../Column'
@@ -20,7 +20,6 @@ import Row, { RowBetween } from '../Row'
 import CommonBases from './CommonBases'
 import CurrencyList from './CurrencyList'
 import { filterTokens } from './filtering'
-import SortButton from './SortButton'
 import { useTokenComparator } from './sorting'
 import { PaddedColumn, SearchInput, Separator } from './styleds'
 import TranslatedText from '../TranslatedText'
@@ -33,14 +32,43 @@ interface CurrencySearchProps {
   onCurrencySelect: (currency: Currency) => void
   otherSelectedCurrency?: Currency | null
   showCommonBases?: boolean
+  showETH?: boolean
+  tokens?: Array<Token>
   onChangeList: () => void
+  isAddedByUserOn: boolean
 }
+
+const TokenAutoSizer = styled(AutoSizer)`
+  >div {
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: ${({ theme }) => theme.colors.linkColor}; 
+      border-radius: 8px;
+    }
+    &::-webkit-scrollbar-track {
+      box-shadow: none; 
+      border-radius: 10px;
+    }
+  }
+`
+
+const CustomLightSpinner = styled(Spinner) <{ size: string }>`
+  height: ${({ size }) => size};
+  width: ${({ size }) => size};
+  display: flex;
+  margin: auto;
+`
 
 export function CurrencySearch({
   selectedCurrency,
   onCurrencySelect,
   otherSelectedCurrency,
   showCommonBases,
+  showETH,
+  tokens,
+  isAddedByUserOn,
   onDismiss,
   isOpen,
   onChangeList,
@@ -49,19 +77,21 @@ export function CurrencySearch({
   const { chainId } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
 
-  const fixedList = useRef<FixedSizeList>()
+  const variableList = useRef<VariableSizeList>()
   const [searchQuery, setSearchQuery] = useState<string>('')
-  const [invertSearchOrder, setInvertSearchOrder] = useState<boolean>(false)
+  const [invertSearchOrder] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const allTokens = useAllTokens()
 
   // if they input an address, use it
   const isAddressSearch = isAddress(searchQuery)
   const searchToken = useToken(searchQuery)
 
-  const showETH: boolean = useMemo(() => {
+  const isShowETH: boolean = useMemo(() => {
+    if (showETH === false) return showETH
     const s = searchQuery.toLowerCase().trim()
     return s === '' || s === 'e' || s === 'et' || s === 'eth'
-  }, [searchQuery])
+  }, [searchQuery, showETH])
 
   const tokenComparator = useTokenComparator(invertSearchOrder)
 
@@ -69,31 +99,29 @@ export function CurrencySearch({
 
   const filteredTokens: Token[] = useMemo(() => {
     if (isAddressSearch) return searchToken ? [searchToken] : []
-    return filterTokens(Object.values(allTokens), searchQuery)
-  }, [isAddressSearch, searchToken, allTokens, searchQuery])
+    const _tokens = tokens ?? Object.values(allTokens)
+    return filterTokens(_tokens, searchQuery)
+  }, [isAddressSearch, searchToken, allTokens, searchQuery, tokens])
 
   const filteredSortedTokens: Token[] = useMemo(() => {
     if (searchToken) return [searchToken]
-    let sorted = filteredTokens.sort(tokenComparator)
+    const sorted = filteredTokens.sort(tokenComparator)
     const symbolMatch = searchQuery
       .toLowerCase()
       .split(/\s+/)
       .filter((s) => s.length > 0)
 
-    const koda = sorted.filter(e => e.symbol === 'KODA')
-    sorted.splice(sorted.findIndex(e => e.symbol === 'PSG'), 1)
-    sorted = koda.concat(sorted)
-
     if (symbolMatch.length > 1) return sorted
-
     return [
       ...(searchToken ? [searchToken] : []),
       // sort any exact symbol matches first
       ...sorted.filter((token) => token.symbol?.toLowerCase() === symbolMatch[0]),
       ...sorted.filter((token) => token.symbol?.toLowerCase() !== symbolMatch[0]),
-    ]
+    ].sort((a, b) => 
+      b.priority - a.priority
+    )
   }, [filteredTokens, searchQuery, searchToken, tokenComparator])
-
+  
   const handleCurrencySelect = useCallback(
     (currency: Currency) => {
       onCurrencySelect(currency)
@@ -113,13 +141,21 @@ export function CurrencySearch({
     if (isOpen) setSearchQuery('')
   }, [isOpen])
 
+  useEffect(() => {
+    if ((isAddressSearch && filteredTokens.length > 0) || !!isAddressSearch === false) {
+      setIsLoading(false)
+    }
+  }, [filteredTokens, isAddressSearch])
+
   // manage focus on modal show
   const inputRef = useRef<HTMLInputElement>()
   const handleInput = useCallback((event) => {
     const input = event.target.value
     const checksummedInput = isAddress(input)
+
+    if (checksummedInput) setIsLoading(true)
     setSearchQuery(checksummedInput || input)
-    fixedList.current?.scrollTo(0)
+    variableList.current?.scrollTo(0)
   }, [])
 
   const handleEnter = useCallback(
@@ -177,22 +213,26 @@ export function CurrencySearch({
           {/* <SortButton ascending={invertSearchOrder} toggleSortOrder={() => setInvertSearchOrder((iso) => !iso)} /> */}
         </RowBetween>
       </PaddedColumn>
-
-      <div style={{ flex: '1', padding: '0px 40px 40px 40px' }}>
-        <TokenAutoSizer disableWidth>
-          {({ height }) => (
-            <CurrencyList
-              height={height}
-              showETH={showETH}
-              currencies={filteredSortedTokens}
-              onCurrencySelect={handleCurrencySelect}
-              otherCurrency={otherSelectedCurrency}
-              selectedCurrency={selectedCurrency}
-              fixedListRef={fixedList}
-            />
-          )}
-        </TokenAutoSizer>
-      </div>
+      {isLoading ? (
+        <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="90px" />
+      ): (
+        <div style={{ flex: '1', padding: '0px 40px 40px 40px' }}>
+          <TokenAutoSizer disableWidth>
+            {({ height }) => (
+              <CurrencyList
+                height={height}
+                showETH={isShowETH}
+                currencies={filteredSortedTokens}
+                onCurrencySelect={handleCurrencySelect}
+                otherCurrency={otherSelectedCurrency}
+                selectedCurrency={selectedCurrency}
+                variableListRef={variableList}
+                isAddedByUserOn={isAddedByUserOn}
+              />
+            )}
+          </TokenAutoSizer>
+        </div>
+      )}
 
       {null && (
         <>
@@ -225,21 +265,5 @@ export function CurrencySearch({
     </Column>
   )
 }
-
-const TokenAutoSizer = styled(AutoSizer)`
-  >div {
-    &::-webkit-scrollbar {
-      width: 8px;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: ${({ theme }) => theme.colors.linkColor}; 
-      border-radius: 8px;
-    }
-    &::-webkit-scrollbar-track {
-      box-shadow: none; 
-      border-radius: 10px;
-    }
-  }
-`
 
 export default CurrencySearch

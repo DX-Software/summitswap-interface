@@ -11,7 +11,7 @@ const UnlockButton: React.FC<ButtonProps> = (props) => {
 
   const handleLogin = (connectorId: string) => {
     if (connectorId === 'walletconnect') {
-      return activate(walletconnect)
+      return activate(walletconnect())
     }
     return activate(injected)
   }

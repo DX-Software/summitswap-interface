@@ -18,7 +18,8 @@ export class WrappedTokenInfo extends Token {
   public readonly tags: TagInfo[]
 
   constructor(tokenInfo: TokenInfo, tags: TagInfo[]) {
-    super(tokenInfo.chainId, tokenInfo.address, tokenInfo.decimals, tokenInfo.symbol, tokenInfo.name)
+    // eslint-disable-next-line dot-notation
+    super(tokenInfo.chainId, tokenInfo.address, tokenInfo.decimals, tokenInfo.symbol, tokenInfo.name, tokenInfo['priority'], tokenInfo['referralEnabled'])
     this.tokenInfo = tokenInfo
     this.tags = tags
   }

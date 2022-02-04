@@ -7,9 +7,20 @@ const config: MenuEntry[] = [
   //   href: "/",
   // },
   {
-    label: "Trade",
-    icon: "TradeIcon",
-    href: "/swap",
+    label: 'Trade',
+    icon: 'TradeIcon',
+    href: '/swap',
+  },
+  {
+    label: 'Referral',
+    icon: 'ReferralIcon',
+    href: '/referral',
+  },
+  {
+    label: 'Cross-Chain',
+    icon: 'RubicIcon',
+    href: '/cross-chain-swap',
+    showConnectButton: false,
   },
   // {
   //   label: "Farms",

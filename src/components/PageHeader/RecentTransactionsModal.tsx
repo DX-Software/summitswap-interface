@@ -39,6 +39,7 @@ const RecentTransactionsModal = ({ onDismiss = defaultOnDismiss }: RecentTransac
     return txs.filter(isTransactionRecent).sort(newTransactionsFirst)
   }, [allTransactions])
 
+
   return (
     <Modal title="Recent Transactions" onDismiss={onDismiss}>
       {!account && (
@@ -78,7 +79,7 @@ const RecentTransactionsModal = ({ onDismiss = defaultOnDismiss }: RecentTransac
             </>
           )
         })}
-    </Modal>
+    </Modal >
   )
 }
 
