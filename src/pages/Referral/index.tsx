@@ -139,9 +139,13 @@ const Referral: React.FC<IProps> = () => {
                 <Text>{referralURL}</Text>
               </Box>
               <Box
-                onClick={() => {
+                onClick={async () => {
                   if (navigator.clipboard) {
-                    navigator.clipboard.writeText(referralURL)
+                    try {
+                      await navigator.clipboard.writeText(referralURL)
+                    } catch (err) {
+                      console.log(err)
+                    }
                     setIsTooltipDisplayed(true)
                     setTimeout(() => {
                       setIsTooltipDisplayed(false)
