@@ -3,7 +3,7 @@ import React, { KeyboardEvent, RefObject, useCallback, useContext, useEffect, us
 import { Text, CloseIcon } from '@summitswap-uikit'
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { FixedSizeList } from 'react-window'
+import { VariableSizeList } from 'react-window'
 import styled, { ThemeContext } from 'styled-components'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { useActiveWeb3React } from '../../hooks'
@@ -77,7 +77,7 @@ export function CurrencySearch({
   const { chainId } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
 
-  const fixedList = useRef<FixedSizeList>()
+  const variableList = useRef<VariableSizeList>()
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [invertSearchOrder] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -155,7 +155,7 @@ export function CurrencySearch({
 
     if (checksummedInput) setIsLoading(true)
     setSearchQuery(checksummedInput || input)
-    fixedList.current?.scrollTo(0)
+    variableList.current?.scrollTo(0)
   }, [])
 
   const handleEnter = useCallback(
@@ -226,7 +226,7 @@ export function CurrencySearch({
                 onCurrencySelect={handleCurrencySelect}
                 otherCurrency={otherSelectedCurrency}
                 selectedCurrency={selectedCurrency}
-                fixedListRef={fixedList}
+                variableListRef={variableList}
                 isAddedByUserOn={isAddedByUserOn}
               />
             )}
