@@ -112,9 +112,9 @@ export default function Pool() {
                     {TranslateString(108, 'Import it.')}
                   </StyledInternalLink>
                 </Text>
-                <Text color='sidebarColor' fontSize="16px" style={{ marginTop: 20, padding: '0 19px' }}>
+                {/* <Text color='sidebarColor' fontSize="16px" style={{ marginTop: 20, padding: '0 19px' }}>
                   Or, if you staked your FLIP tokens in a farm,<br />unstake them to see them here.
-                </Text>
+                </Text> */}
               </div>
             </AutoColumn>
           </CardBody>

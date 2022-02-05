@@ -221,7 +221,7 @@ const Referral: React.FC<IProps> = () => {
 
       <p className="paragraph">
         Known as the trusted swap site, SummitSwap offers its user base many advantages over alternatives. One of these
-        features is a unique referal system that allows tokens to reward their communities whilst growing their
+        features is a unique referral system that allows tokens to reward their communities whilst growing their
         projects.
       </p>
 
@@ -262,9 +262,9 @@ const Referral: React.FC<IProps> = () => {
       </p>
 
       <p className="paragraph">
-        The project may chose to remove fees from the reward pool contract so that rewards are paid in full to thier
-        loyal community. Although our native invetment token KODA and our utility token KAPEX does this, please note
-        that every project will have their own set up and may chose to keep the transactions with fees included. You can
+        The project may choose to remove fees from the reward pool contract so that rewards are paid in full to thier
+        loyal community. Although our native investment token KODA and our utility token KAPEX does this, please note
+        that every project will have their own set up and may choose to keep the transactions with fees included. You can
         find out this information on their whitelisting project profile through SummitCheck.
       </p>
       <CurrencySearchModal
