@@ -16,6 +16,7 @@ import InviteImage from '../../img/invite.png'
 import CoinStackImage from '../../img/coinstack.png'
 import expandMore from '../../img/expandMore.svg'
 import RewardedTokens from './RewardedTokens'
+import login from '../../utils/login'
 
 import './style.css'
 import SwapList from './SwapList'
@@ -85,10 +86,7 @@ const Referral: React.FC<IProps> = () => {
   }, [selectedOutputCoin, allTokens])
 
   const handleLogin = (connectorId: string) => {
-    if (connectorId === 'walletconnect') {
-      return activate(walletconnect())
-    }
-    return activate(injected)
+    login(connectorId, activate)
   }
 
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
