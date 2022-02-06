@@ -5,6 +5,7 @@ import { useReferralContract } from 'hooks/useContract'
 import { injected, walletconnect } from 'connectors'
 import { useWalletModal } from '@summitswap-uikit'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
+import login from 'utils/login'
 import Popups from '../components/Popups'
 import Web3ReactManager from '../components/Web3ReactManager'
 import { RedirectDuplicateTokenIds, RedirectOldAddLiquidityPathStructure } from './AddLiquidity/redirects'
@@ -77,10 +78,7 @@ export default function App() {
   const location = useLocation()
 
   const handleLogin = (connectorId: string) => {
-    if (connectorId === 'walletconnect') {
-      return activate(walletconnect())
-    }
-    return activate(injected)
+    login(connectorId, activate)
   }
 
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
