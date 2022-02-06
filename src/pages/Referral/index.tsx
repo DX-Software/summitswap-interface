@@ -118,11 +118,7 @@ const Referral: React.FC<IProps> = () => {
   }, [])
 
   const copyReferralLink = useCallback(() => {
-    copyText(
-      referralURL,
-      displayCopiedTooltip,
-      (err) => console.log(err)
-    )
+    copyText(referralURL, displayCopiedTooltip)
   }, [referralURL, displayCopiedTooltip])
 
   const isCopySupported = useMemo(() => {

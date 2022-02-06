@@ -1,8 +1,8 @@
-export default function copyText(text: string, onSuccess: () => void, onError: (err: any) => void) {
+export default function copyText(text: string, onSuccess: () => void) {
   if (navigator.clipboard && navigator.permissions) {
     navigator.clipboard.writeText(text)
         .then(() => onSuccess())
-        .catch((err) => onError(err))
+        .catch((err) => console.log(err))
   } else if (document.queryCommandSupported('copy')) {
     const textArea = document.createElement('textarea')
     textArea.value = text
