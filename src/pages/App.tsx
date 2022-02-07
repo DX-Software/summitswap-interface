@@ -1,8 +1,6 @@
 import React, { Suspense, useEffect, useState } from 'react'
 import { Route, Switch, Redirect, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
-import { useReferralContract } from 'hooks/useContract'
-import { injected, walletconnect } from 'connectors'
 import { useWalletModal } from '@summitswap-uikit'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import login from 'utils/login'
@@ -24,7 +22,6 @@ import { TranslationsContext } from '../hooks/TranslationsContext'
 import langSrc from '../constants/localisation/translate/index'
 import AppHeader from './AppHeader'
 import Menu from '../components/Menu'
-import { NULL_ADDRESS, REFERRAL_ADDRESS } from '../constants'
 
 const AppWrapper = styled.div`
   display: flex;
