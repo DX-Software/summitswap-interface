@@ -23,7 +23,7 @@ const UnlockButton: React.FC<ButtonProps> = (props) => {
 
   return (
     <Button scale='xxs' onClick={onPresentConnectModal} {...props} style={{ borderRadius: '30px', width: '65%', paddingTop: 25, paddingBottom: 25 }}>
-      <MyText>{TranslateString(292, 'UNLOCK WALLET')}</MyText>
+      <MyText>{TranslateString(292, 'Unlock Wallet')}</MyText>
     </Button>
   )
 }
