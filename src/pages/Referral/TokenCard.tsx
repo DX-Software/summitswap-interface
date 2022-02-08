@@ -206,6 +206,7 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
         otherSelectedCurrency={null}
         tokens={claimableTokens}
         isAddedByUserOn={false}
+        shownUnknownToken={false}
         showETH
       />
     </>
