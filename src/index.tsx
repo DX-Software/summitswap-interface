@@ -11,6 +11,7 @@ import TransactionUpdater from './state/transactions/updater'
 import Providers from './Providers'
 import 'inter-ui'
 import './i18n'
+import withClearCache from "./components/ClearCache";
 
 if ('ethereum' in window) {
   (window.ethereum as any).autoRefreshOnNetworkChange = false
@@ -19,6 +20,8 @@ if ('ethereum' in window) {
 window.addEventListener('error', () => {
    localStorage?.removeItem('redux_localstorage_simple_lists')
 })
+
+const ClearCacheComponent = withClearCache(App)
 
 ReactDOM.render(
   <StrictMode>
@@ -32,7 +35,7 @@ ReactDOM.render(
       <ResetCSS />
       <GlobalStyle />
       <HashRouter>
-        <App />
+        <ClearCacheComponent />
       </HashRouter>
     </Providers>
   </StrictMode>,

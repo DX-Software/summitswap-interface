@@ -55,6 +55,7 @@
     "jazzicon": "^1.5.0",
     "js-cookie": "^2.2.1",
     "lodash.flatmap": "^4.5.0",
+    "moment": "^2.29.1",
     "multicodec": "^2.0.0",
     "multihashes": "^3.0.1",
     "polished": "^3.3.2",
@@ -92,7 +93,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "node ./update-build.js && react-scripts build",
     "build-test": "env-cmd -f ./.env.development react-scripts build",
     "build-mainnet": "env-cmd -f ./.env.production react-scripts build",
     "start-mainnet": "env-cmd -f ./.env.production react-scripts start",
@@ -115,5 +116,6 @@
       "last 1 safari version"
     ]
   },
-  "license": "GPL-3.0-or-later"
+  "license": "GPL-3.0-or-later",
+  "buildDate": 1644302170813
 }
