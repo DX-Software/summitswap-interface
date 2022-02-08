@@ -281,7 +281,7 @@ const Referral: React.FC<IProps> = () => {
         selectedCurrency={selectedOutputCoin}
         otherSelectedCurrency={null}
         showETH={false}
-        shownUnknownToken={false}
+        showUnknownTokens={false}
         tokens={allTokens.filter((token) => token.referralEnabled)}
       />
     </div>
