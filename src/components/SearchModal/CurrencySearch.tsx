@@ -36,6 +36,7 @@ interface CurrencySearchProps {
   tokens?: Array<Token>
   onChangeList: () => void
   isAddedByUserOn: boolean
+  shownUnknownToken: boolean
 }
 
 const TokenAutoSizer = styled(AutoSizer)`
@@ -72,6 +73,7 @@ export function CurrencySearch({
   onDismiss,
   isOpen,
   onChangeList,
+  shownUnknownToken,
 }: CurrencySearchProps) {
   const { t } = useTranslation()
   const { chainId } = useActiveWeb3React()
@@ -84,7 +86,7 @@ export function CurrencySearch({
   const allTokens = useAllTokens()
 
   // if they input an address, use it
-  const isAddressSearch = isAddress(searchQuery)
+  const isAddressSearch = shownUnknownToken ? isAddress(searchQuery) : shownUnknownToken
   const searchToken = useToken(searchQuery)
 
   const isShowETH: boolean = useMemo(() => {
@@ -104,7 +106,7 @@ export function CurrencySearch({
   }, [isAddressSearch, searchToken, allTokens, searchQuery, tokens])
 
   const filteredSortedTokens: Token[] = useMemo(() => {
-    if (searchToken) return [searchToken]
+    if (isAddressSearch && searchToken) return [searchToken]
     const sorted = filteredTokens.sort(tokenComparator)
     const symbolMatch = searchQuery
       .toLowerCase()
@@ -120,7 +122,7 @@ export function CurrencySearch({
     ].sort((a, b) => 
       b.priority - a.priority
     )
-  }, [filteredTokens, searchQuery, searchToken, tokenComparator])
+  }, [isAddressSearch, filteredTokens, searchQuery, searchToken, tokenComparator])
   
   const handleCurrencySelect = useCallback(
     (currency: Currency) => {
