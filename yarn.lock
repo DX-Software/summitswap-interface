@@ -2962,7 +2962,7 @@
 
 "@summitswap-uikit@git+https://github.com/Koda-Finance/summitswap-uikit.git#feat/wallet-deep-link":
   version "0.0.1"
-  resolved "git+https://github.com/Koda-Finance/summitswap-uikit.git#dc235bb5b206a67d8729111aaa36b6d638a8decb"
+  resolved "git+https://github.com/Koda-Finance/summitswap-uikit.git#62fb530dd20ba6bbb918f542f812a3c018dca189"
   dependencies:
     "@types/lodash" "^4.14.162"
     "@types/styled-system" "^5.1.10"
