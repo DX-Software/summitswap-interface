@@ -192,7 +192,7 @@ const RewardedTokens: React.FC = () => {
         otherSelectedCurrency={null}
         tokens={claimableTokens}
         isAddedByUserOn={false}
-        shownUnknownToken={false}
+        showUnknownTokens={false}
         showETH
       />
     </>
