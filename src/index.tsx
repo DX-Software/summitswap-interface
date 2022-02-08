@@ -21,7 +21,7 @@ window.addEventListener('error', () => {
    localStorage?.removeItem('redux_localstorage_simple_lists')
 })
 
-const ClearCacheComponent = withClearCache(App)
+const ClearCacheAppComponent = withClearCache(App)
 
 ReactDOM.render(
   <StrictMode>
@@ -35,7 +35,7 @@ ReactDOM.render(
       <ResetCSS />
       <GlobalStyle />
       <HashRouter>
-        <ClearCacheComponent />
+        <ClearCacheAppComponent />
       </HashRouter>
     </Providers>
   </StrictMode>,
