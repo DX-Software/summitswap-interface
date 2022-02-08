@@ -87,7 +87,7 @@ export function CurrencySearch({
 
   // if they input an address, use it
   const isAddressSearch = shownUnknownToken ? isAddress(searchQuery) : shownUnknownToken
-  const searchToken = useToken(searchQuery)
+  const searchToken = useToken(shownUnknownToken ? searchQuery : undefined)
 
   const isShowETH: boolean = useMemo(() => {
     if (showETH === false) return showETH
@@ -106,7 +106,7 @@ export function CurrencySearch({
   }, [isAddressSearch, searchToken, allTokens, searchQuery, tokens])
 
   const filteredSortedTokens: Token[] = useMemo(() => {
-    if (isAddressSearch && searchToken) return [searchToken]
+    if (searchToken) return [searchToken]
     const sorted = filteredTokens.sort(tokenComparator)
     const symbolMatch = searchQuery
       .toLowerCase()
@@ -122,7 +122,7 @@ export function CurrencySearch({
     ].sort((a, b) => 
       b.priority - a.priority
     )
-  }, [isAddressSearch, filteredTokens, searchQuery, searchToken, tokenComparator])
+  }, [filteredTokens, searchQuery, searchToken, tokenComparator])
   
   const handleCurrencySelect = useCallback(
     (currency: Currency) => {
