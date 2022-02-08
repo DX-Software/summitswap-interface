@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react"
-import { BigNumber } from 'ethers'
 import packageJson from "../../../package.json"
 
 function buildDateGreaterThan(latestDate, currentDate): boolean {
-  const momLatestDateTime = BigNumber.from(latestDate)
-  const momCurrentDateTime = BigNumber.from(currentDate)
+  const momLatestDateTime = BigInt(latestDate)
+  const momCurrentDateTime = BigInt(currentDate)
 
-  return momLatestDateTime.gt(momCurrentDateTime)
+  return momLatestDateTime > momCurrentDateTime
 }
 
 function withClearCache(Component) {
