@@ -49,11 +49,13 @@ const LogoContainer = styled.div`
   width: 30px;
   height: 30px;
   background: white;
-  >img, >svg {
+  > img,
+  > svg {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    border-radius: 50%;
   }
 `
 
@@ -102,14 +104,14 @@ function CurrencyRow({
   otherSelected,
   style,
   isAddedByUserOn,
-  currencyRef
+  currencyRef,
 }: {
   currency: Currency
   onSelect: () => void
   isSelected: boolean
   otherSelected: boolean
-  style: CSSProperties,
-  isAddedByUserOn: boolean,
+  style: CSSProperties
+  isAddedByUserOn: boolean
   currencyRef: any
 }) {
   const { account, chainId } = useActiveWeb3React()
@@ -131,13 +133,15 @@ function CurrencyRow({
       disabled={isSelected}
       selected={otherSelected}
     >
-      <Flex justifyContent='space-between' width='100%' ref={currencyRef}>
+      <Flex justifyContent="space-between" width="100%" ref={currencyRef}>
         <LogoContainer>
           <CurrencyLogo currency={currency} size="24px" />
         </LogoContainer>
-        <Flex justifyContent='space-between' alignItems='center' width='100%'>
+        <Flex justifyContent="space-between" alignItems="center" width="100%">
           <Column style={{ marginLeft: 16 }}>
-            <Text title={currency.name} color='sidebarColor' fontSize='16px' fontWeight='600'>{currency.symbol}</Text>
+            <Text title={currency.name} color="sidebarColor" fontSize="16px" fontWeight="600">
+              {currency.symbol}
+            </Text>
             <FadedSpan>
               {isAddedByUserOn && !isOnSelectedList && customAdded && !(currency instanceof WrappedTokenInfo) ? (
                 <Text>
@@ -187,7 +191,7 @@ export default function CurrencyList({
   otherCurrency,
   variableListRef,
   showETH,
-  isAddedByUserOn
+  isAddedByUserOn,
 }: {
   height: number
   currencies: Currency[]
@@ -195,39 +199,39 @@ export default function CurrencyList({
   onCurrencySelect: (currency: Currency) => void
   otherCurrency?: Currency | null
   variableListRef?: MutableRefObject<VariableSizeList | undefined>
-  showETH: boolean,
+  showETH: boolean
   isAddedByUserOn: boolean
 }) {
   const rowHeights = useRef({})
   const itemData = useMemo(() => (showETH ? [Currency.ETHER, ...currencies] : [...currencies]), [currencies, showETH])
 
   function Row({ data, index, style }) {
-      const rowRef = useRef({}) as any
+    const rowRef = useRef({}) as any
 
-      const currency: Currency = data[index]
-      const isSelected = Boolean(selectedCurrency && currencyEquals(selectedCurrency, currency))
-      const otherSelected = Boolean(otherCurrency && currencyEquals(otherCurrency, currency))
-      const handleSelect = () => onCurrencySelect(currency)
+    const currency: Currency = data[index]
+    const isSelected = Boolean(selectedCurrency && currencyEquals(selectedCurrency, currency))
+    const otherSelected = Boolean(otherCurrency && currencyEquals(otherCurrency, currency))
+    const handleSelect = () => onCurrencySelect(currency)
 
-      useEffect(() => {
-        if (rowRef.current) {
-          setRowHeight(index, rowRef?.current?.clientHeight)
-        }
-        // eslint-disable-next-line
-      }, [rowRef])
+    useEffect(() => {
+      if (rowRef.current) {
+        setRowHeight(index, rowRef?.current?.clientHeight)
+      }
+      // eslint-disable-next-line
+    }, [rowRef])
 
-      return (
-        <CurrencyRow
-          style={style}
-          currency={currency}
-          isSelected={isSelected}
-          onSelect={handleSelect}
-          otherSelected={otherSelected}
-          isAddedByUserOn={isAddedByUserOn}
-          currencyRef={rowRef as any}
-        />
-      )
-    }
+    return (
+      <CurrencyRow
+        style={style}
+        currency={currency}
+        isSelected={isSelected}
+        onSelect={handleSelect}
+        otherSelected={otherSelected}
+        isAddedByUserOn={isAddedByUserOn}
+        currencyRef={rowRef as any}
+      />
+    )
+  }
 
   const setRowHeight = (index, size: any) => {
     variableListRef?.current?.resetAfterIndex(0)
