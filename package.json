@@ -92,9 +92,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
-    "build-test": "env-cmd -f ./.env.development react-scripts build",
-    "build-mainnet": "env-cmd -f ./.env.production react-scripts build",
+    "build": "node ./update-build.js && react-scripts build",
+    "build-test": "node ./update-build.js && env-cmd -f ./.env.development react-scripts build",
+    "build-mainnet": "node ./update-build.js && env-cmd -f ./.env.production react-scripts build",
     "start-mainnet": "env-cmd -f ./.env.production react-scripts start",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
@@ -115,5 +115,6 @@
       "last 1 safari version"
     ]
   },
-  "license": "GPL-3.0-or-later"
+  "license": "GPL-3.0-or-later",
+  "buildDate": 1644306013217
 }
