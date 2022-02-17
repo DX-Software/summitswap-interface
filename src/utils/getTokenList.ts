@@ -1,13 +1,9 @@
 import { TokenList } from '@uniswap/token-lists'
-import schema from '@uniswap/token-lists/src/tokenlist.schema.json'
 import Ajv from 'ajv'
+import schema from '../constants/schemas/tokenlist.schema.json'
 import contenthashToUri from './contenthashToUri'
 import { parseENSAddress } from './parseENSAddress'
 import uriToHttp from './uriToHttp'
-
-// bakeryswap defaultTokenJson
-import { DEFAULT_TOKEN_LIST_URL } from '../constants/lists'
-import defaultTokenJson from '../constants/token/summitswap.json'
 
 const tokenListValidator = new Ajv({ allErrors: true }).compile(schema)
 
@@ -20,9 +16,6 @@ export default async function getTokenList(
   listUrl: string,
   resolveENSContentHash: (ensName: string) => Promise<string>
 ): Promise<TokenList> {
-  if (listUrl === DEFAULT_TOKEN_LIST_URL) {
-    return defaultTokenJson
-  }
   const parsedENS = parseENSAddress(listUrl)
 
   let urls: string[]
