@@ -910,6 +910,27 @@
       "chainId": 56,
       "decimals": 18,
       "referralEnabled": true
+    },
+    {
+      "name": "Endgame",
+      "symbol": "END",
+      "address": "0x373e4b4E4D328927bc398A9B50e0082C6f91B7bb",
+      "chainId": 56,
+      "decimals": 9
+    },
+    {
+      "name": "CMC Coin",
+      "symbol": "CMCC",
+      "address": "0xfa134985a4d9D10DBf2d7dCf811055aA25d0807C",
+      "chainId": 56,
+      "decimals": 18
+    },
+    {
+      "name": "Kapex",
+      "symbol": "KAPEX",
+      "address": "0x11441afb1d10e3ce4e39666fc4f4a2a5d6d8c0da",
+      "chainId": 56,
+      "decimals": 9
     }
   ]
 }
