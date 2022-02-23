@@ -1,6 +1,6 @@
 import React, { StrictMode } from 'react'
 import ReactDOM from 'react-dom'
-import { ResetCSS } from '@summitswap/uikit'
+import { ResetCSS } from '@koda-finance/summitswap-uikit'
 import { HashRouter } from 'react-router-dom'
 import GlobalStyle from './style/Global'
 import App from './pages/App'

@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
-import { JSBI, Percent, Router, SwapParameters, Trade, TradeType } from '@summitswap/sdk'
+import { JSBI, Percent, Router, SwapParameters, Trade, TradeType } from '@koda-finance/summitswap-sdk'
 import { useEffect, useMemo, useState } from 'react'
 import {
   BIPS_BASE,

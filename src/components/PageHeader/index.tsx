@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react'
 import styled from 'styled-components'
-import { IconButton, Text, Flex, useModal } from '@summitswap/uikit'
+import { IconButton, Text, Flex, useModal } from '@koda-finance/summitswap-uikit'
 import settings from 'img/settings.svg'
 import history from 'img/history.svg'
 import SettingsModal from './SettingsModal'

@@ -1,6 +1,6 @@
 import React from 'react'
-import { Text } from '@summitswap/uikit'
-import { ChainId, Currency, currencyEquals, ETHER, Token } from '@summitswap/sdk'
+import { Text } from '@koda-finance/summitswap-uikit'
+import { ChainId, Currency, currencyEquals, ETHER, Token } from '@koda-finance/summitswap-sdk'
 import styled from 'styled-components'
 
 import { SUGGESTED_BASES } from '../../constants'

@@ -1,4 +1,4 @@
-import { Token } from '@summitswap/sdk'
+import { Token } from '@koda-finance/summitswap-sdk'
 import { isAddress } from '../../utils'
 
 export function filterTokens(tokens: Token[], search: string): Token[] {

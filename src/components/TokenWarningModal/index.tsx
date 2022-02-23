@@ -1,6 +1,6 @@
-import { Token } from '@summitswap/sdk'
+import { Token } from '@koda-finance/summitswap-sdk'
 import { transparentize } from 'polished'
-import { Button, Text } from '@summitswap/uikit'
+import { Button, Text } from '@koda-finance/summitswap-uikit'
 import React, { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { AlertTriangle } from 'react-feather'

@@ -1,4 +1,4 @@
-import { Currency, currencyEquals, ETHER, WETH } from '@summitswap/sdk'
+import { Currency, currencyEquals, ETHER, WETH } from '@koda-finance/summitswap-sdk'
 import { useMemo } from 'react'
 import { tryParseAmount } from '../state/swap/hooks'
 import { useTransactionAdder } from '../state/transactions/hooks'

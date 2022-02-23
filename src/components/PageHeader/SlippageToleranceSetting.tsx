@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Button, Flex, Input, Text } from '@summitswap/uikit'
+import { Button, Flex, Input, Text } from '@koda-finance/summitswap-uikit'
 import { useUserSlippageTolerance } from 'state/user/hooks'
 import Question from 'components/QuestionHelper'
 import { TranslateString } from 'utils/translateTextHelpers'

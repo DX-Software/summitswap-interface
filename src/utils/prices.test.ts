@@ -1,4 +1,4 @@
-import { ChainId, JSBI, Pair, Route, Token, TokenAmount, Trade, TradeType } from '@summitswap/sdk'
+import { ChainId, JSBI, Pair, Route, Token, TokenAmount, Trade, TradeType } from '@koda-finance/summitswap-sdk'
 import { computeTradePriceBreakdown } from './prices'
 
 describe('prices', () => {

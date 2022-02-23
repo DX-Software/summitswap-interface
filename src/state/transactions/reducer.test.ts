@@ -1,4 +1,4 @@
-import { ChainId } from '@summitswap/sdk'
+import { ChainId } from '@koda-finance/summitswap-sdk'
 import { createStore, Store } from 'redux'
 import { addTransaction, checkedTransaction, clearAllTransactions, finalizeTransaction } from './actions'
 import reducer, { initialState, TransactionState } from './reducer'

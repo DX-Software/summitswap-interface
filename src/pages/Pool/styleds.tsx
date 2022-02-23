@@ -1,4 +1,4 @@
-import { Text } from '@summitswap/uikit'
+import { Text } from '@koda-finance/summitswap-uikit'
 import styled from 'styled-components'
 
 export const Wrapper = styled.div`

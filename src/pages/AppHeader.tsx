@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Box } from '@summitswap/uikit'
+import { Box } from '@koda-finance/summitswap-uikit'
 
 import TopLogoIcon from 'img/top_logo.png'
 import { useLocation } from 'react-router-dom'

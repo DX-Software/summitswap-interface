@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, Button, useModal, Modal } from '@summitswap/uikit'
+import { Text, Button, useModal, Modal } from '@koda-finance/summitswap-uikit'
 
 type ClaimingFeeProps = {
   symbol: string

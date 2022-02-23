@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import styled from 'styled-components'
-import { Button } from '@summitswap/uikit'
+import { Button } from '@koda-finance/summitswap-uikit'
 import web3 from 'web3'
 import { SUMMITCHECK_API } from '../../constants'
 

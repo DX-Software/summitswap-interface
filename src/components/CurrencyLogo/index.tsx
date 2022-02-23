@@ -1,4 +1,4 @@
-import { Currency, ETHER, Token } from '@summitswap/sdk'
+import { Currency, ETHER, Token } from '@koda-finance/summitswap-sdk'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import useHttpLocations from '../../hooks/useHttpLocations'

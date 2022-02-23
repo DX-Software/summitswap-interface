@@ -1,4 +1,4 @@
-import { Currency } from '@summitswap/sdk'
+import { Currency } from '@koda-finance/summitswap-sdk'
 import React from 'react'
 import styled from 'styled-components'
 import CurrencyLogo from '../CurrencyLogo'

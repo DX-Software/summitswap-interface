@@ -1,5 +1,5 @@
-import { currencyEquals, Trade } from '@summitswap/sdk'
-import { useModal, Button } from '@summitswap/uikit'
+import { currencyEquals, Trade } from '@koda-finance/summitswap-sdk'
+import { useModal, Button } from '@koda-finance/summitswap-uikit'
 import React, { useCallback, useMemo} from 'react'
 import TransactionConfirmationModal, {
   ConfirmationModalContent,

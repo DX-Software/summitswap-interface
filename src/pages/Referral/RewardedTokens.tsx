@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import styled from 'styled-components'
-import { Box, Text, Button } from '@summitswap/uikit'
-import { Token, WETH } from '@summitswap/sdk'
+import { Box, Text, Button } from '@koda-finance/summitswap-uikit'
+import { Token, WETH } from '@koda-finance/summitswap-sdk'
 import { useReferralContract } from 'hooks/useContract'
 
 import { useWeb3React } from '@web3-react/core'

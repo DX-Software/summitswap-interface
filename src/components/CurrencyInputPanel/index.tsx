@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
-import { Currency, Pair } from '@summitswap/sdk'
-import { Text, Flex } from '@summitswap/uikit'
+import { Currency, Pair } from '@koda-finance/summitswap-sdk'
+import { Text, Flex } from '@koda-finance/summitswap-uikit'
 import styled from 'styled-components'
 import { darken } from 'polished'
 import expandMore from 'img/expandMore.svg'

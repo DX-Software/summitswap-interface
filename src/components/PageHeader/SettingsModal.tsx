@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Modal, Flex } from '@summitswap/uikit'
+import { Button, Modal, Flex } from '@koda-finance/summitswap-uikit'
 import SlippageToleranceSetting from './SlippageToleranceSetting'
 import TransactionDeadlineSetting from './TransactionDeadlineSetting'
 

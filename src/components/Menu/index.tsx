@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { connectorLocalStorageKey, Menu as UikitMenu } from '@summitswap/uikit'
+import { connectorLocalStorageKey, Menu as UikitMenu } from '@koda-finance/summitswap-uikit'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import useTheme from 'hooks/useTheme'
 import useGetPriceData from 'hooks/useGetPriceData'

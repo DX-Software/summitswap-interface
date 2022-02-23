@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-unresolved
-import { PancakeTheme } from '@summitswap/uikit/dist/theme'
+import { PancakeTheme } from '@koda-finance/summitswap-uikit/dist/theme'
 
 declare module 'styled-components' {
   /* eslint-disable @typescript-eslint/no-empty-interface */
