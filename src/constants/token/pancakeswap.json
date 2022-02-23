@@ -924,13 +924,6 @@
       "address": "0xfa134985a4d9D10DBf2d7dCf811055aA25d0807C",
       "chainId": 56,
       "decimals": 18
-    },
-    {
-      "name": "KAPEX",
-      "symbol": "KAPEX",
-      "address": "0x11441afb1d10e3ce4e39666fc4f4a2a5d6d8c0da",
-      "chainId": 56,
-      "decimals": 9
     }
   ]
 }
