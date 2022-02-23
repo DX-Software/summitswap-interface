@@ -240,8 +240,7 @@
           "address",
           "decimals",
           "name",
-          "symbol",
-          "referralEnabled"
+          "symbol"
         ]
       }
     },
