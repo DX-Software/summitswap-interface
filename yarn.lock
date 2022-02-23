@@ -2948,9 +2948,10 @@
     "@styled-system/core" "^5.1.2"
     "@styled-system/css" "^5.1.5"
 
-"@summitswap-libs@git+https://github.com/Koda-Finance/summitswap-sdk.git#main":
+"@summitswap/sdk@^1.0.0":
   version "1.0.0"
-  resolved "git+https://github.com/Koda-Finance/summitswap-sdk.git#c23b642a911dcd2e4851703c7ff123cc8e01a6e5"
+  resolved "https://registry.yarnpkg.com/@summitswap/sdk/-/sdk-1.0.0.tgz#0d94cabbe555e50f1ac0156820ef4e827b0df501"
+  integrity sha512-VpM2EPADjL3arZ1SjgTpAPMmMwOux8Opzy6cixLt4xxNF+R5UaPc/Dm2gqhj6KnlGjN37xq05rFgytkWoojEVg==
   dependencies:
     "@pancakeswap-libs/pancake-swap-core" "^0.1.0"
     big.js "^5.2.2"
@@ -2960,9 +2961,10 @@
     tiny-warning "^1.0.3"
     toformat "^2.0.0"
 
-"@summitswap-uikit@git+https://github.com/Koda-Finance/summitswap-uikit.git#main":
-  version "0.0.1"
-  resolved "git+https://github.com/Koda-Finance/summitswap-uikit.git#e35a5b56d8a360471ec653dad5f468aec00ee2b8"
+"@summitswap/uikit@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@summitswap/uikit/-/uikit-1.0.0.tgz#7a871734ef9f9b8654426752052c5ec6956046b9"
+  integrity sha512-CVYC62dsnoAFncZecxpAp8ac67g6mosePg0xJT9s3GkHIHPdEqz0nFYcPvuzDAZ0iLijetjmGIIhwL1zUUovWQ==
   dependencies:
     "@types/lodash" "^4.14.162"
     "@types/styled-system" "^5.1.10"
