@@ -916,14 +916,16 @@
       "symbol": "END",
       "address": "0x373e4b4E4D328927bc398A9B50e0082C6f91B7bb",
       "chainId": 56,
-      "decimals": 9
+      "decimals": 9,
+      "priority": 98
     },
     {
       "name": "CMC Coin",
       "symbol": "CMCC",
       "address": "0xfa134985a4d9D10DBf2d7dCf811055aA25d0807C",
       "chainId": 56,
-      "decimals": 18
+      "decimals": 18,
+      "priority": 99
     }
   ]
 }
