@@ -1,6 +1,14 @@
 import { ChainId, JSBI, Percent, Token, WETH } from '@summitswap-libs'
 
+export const MAX_QUERYING_BLOCK_AMOUNT = 5000;
 export const ROUTER_ADDRESS = `${process.env.REACT_APP_ROUTER_ADDRESS}`
+export const REFERRAL_ADDRESS = `${process.env.REACT_APP_REFERRAL_ADDRESS}`
+export const REFERRAL_DEPLOYMENT_BLOCKNUMBER = +`${process.env.REACT_APP_REFERRAL_DEPLOYMENT_BLOCKNUMBER}`
+
+export const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
+export const SUMMITCHECK_API = `${process.env.REACT_APP_SUMMITCHECK_API}`
+export const CHAIN_ID = parseInt(process.env.REACT_APP_CHAIN_ID ?? '56')
+
 
 // a list of tokens by chain
 type ChainTokenList = {
@@ -16,7 +24,18 @@ export const UST = new Token(
   18,
   'UST',
   'Wrapped UST Token'
-)
+  )
+
+export const BUSDs = {
+  [ChainId.MAINNET]: BUSD,
+  [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7', 18, 'BUSD', 'Binance USD'),
+}
+
+// TODO: Use real kapex addresses
+export const KAPEXs = {
+  [ChainId.MAINNET]: undefined,
+  [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0xe0eBb40d8Aa7f498eD461feDaB361033f6B73C43', 18, 'KAPEX', 'KAPEX'),
+}
 
 const WETH_ONLY: ChainTokenList = {
   [ChainId.MAINNET]: [WETH[ChainId.MAINNET]],

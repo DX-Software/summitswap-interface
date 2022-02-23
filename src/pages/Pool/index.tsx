@@ -1,7 +1,6 @@
-import React, { useContext, useMemo } from 'react'
-import { ThemeContext } from 'styled-components'
+import React, { useMemo } from 'react'
 import { Pair } from '@summitswap-libs'
-import { Box, Button, CardBody, Text } from '@summitswap-uikit'
+import { Button, CardBody, Text } from '@summitswap-uikit'
 import { Link } from 'react-router-dom'
 import CardNav from 'components/CardNav'
 import Question from 'components/QuestionHelper'
@@ -11,7 +10,6 @@ import { StyledInternalLink } from 'components/Shared'
 import { LightCard } from 'components/Card'
 import { RowBetween } from 'components/Row'
 import { AutoColumn } from 'components/Column'
-
 import { useActiveWeb3React } from 'hooks'
 import { usePairs } from 'data/Reserves'
 import { toV2LiquidityToken, useTrackedTokenPairs } from 'state/user/hooks'
@@ -22,7 +20,6 @@ import PageHeader from 'components/PageHeader'
 import AppBody from '../AppBody'
 
 export default function Pool() {
-  const theme = useContext(ThemeContext)
   const { account } = useActiveWeb3React()
 
   // fetch the user's balances of all tracked V2 LP tokens
@@ -58,8 +55,8 @@ export default function Pool() {
     <>
       <AppBody>
         <PageHeader
-          title={TranslateString(262, 'Liquidity')}
-          description={TranslateString(1168, 'Add liquidity to receive LP tokens')}
+        // title={TranslateString(262, 'Liquidity')}
+        // description={TranslateString(1168, 'Add liquidity to receive LP tokens')}
         />
         <CardNav activeIndex={1} />
         <AutoColumn gap="40px" justify="center" >
@@ -115,9 +112,9 @@ export default function Pool() {
                     {TranslateString(108, 'Import it.')}
                   </StyledInternalLink>
                 </Text>
-                <Text color='sidebarColor' fontSize="16px" style={{ marginTop: 20, padding: '0 19px' }}>
+                {/* <Text color='sidebarColor' fontSize="16px" style={{ marginTop: 20, padding: '0 19px' }}>
                   Or, if you staked your FLIP tokens in a farm,<br />unstake them to see them here.
-                </Text>
+                </Text> */}
               </div>
             </AutoColumn>
           </CardBody>

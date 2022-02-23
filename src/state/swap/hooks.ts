@@ -1,11 +1,11 @@
 import { parseUnits } from '@ethersproject/units'
 import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount, Trade } from '@summitswap-libs'
 import { ParsedQs } from 'qs'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import useENS from '../../hooks/useENS'
 import { useActiveWeb3React } from '../../hooks'
-import { useAllTokens, useCurrency } from '../../hooks/Tokens'
+import { useCurrency } from '../../hooks/Tokens'
 import { useTradeExactIn, useTradeExactOut } from '../../hooks/Trades'
 import useParsedQueryString from '../../hooks/useParsedQueryString'
 import { isAddress } from '../../utils'
@@ -229,7 +229,7 @@ function validatedRecipient(recipient: any): string | null {
 
 export function queryParametersToSwapState(parsedQs: ParsedQs): SwapState {
   let inputCurrency = parseCurrencyFromURLParameter(parsedQs.inputCurrency)
-  let outputCurrency = parseCurrencyFromURLParameter(parsedQs.outputCurrency)
+  let outputCurrency = parseCurrencyFromURLParameter(parsedQs.output)
   if (inputCurrency === outputCurrency) {
     if (typeof parsedQs.outputCurrency === 'string') {
       inputCurrency = ''

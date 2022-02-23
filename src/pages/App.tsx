@@ -1,6 +1,9 @@
 import React, { Suspense, useEffect, useState } from 'react'
-import { HashRouter, Route, Switch, Redirect } from 'react-router-dom'
+import { Route, Switch, Redirect, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
+import { useWalletModal } from '@summitswap-uikit'
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
+import login from 'utils/login'
 import Popups from '../components/Popups'
 import Web3ReactManager from '../components/Web3ReactManager'
 import { RedirectDuplicateTokenIds, RedirectOldAddLiquidityPathStructure } from './AddLiquidity/redirects'
@@ -18,7 +21,6 @@ import { LanguageContext } from '../hooks/LanguageContext'
 import { TranslationsContext } from '../hooks/TranslationsContext'
 import langSrc from '../constants/localisation/translate/index'
 import AppHeader from './AppHeader'
-
 import Menu from '../components/Menu'
 
 const AppWrapper = styled.div`
@@ -58,9 +60,25 @@ const Marginer = styled.div`
 `
 
 export default function App() {
+  const { account, deactivate, activate, error } = useWeb3React()
+
+  useEffect(() => {
+    if (error instanceof UnsupportedChainIdError) {
+      localStorage.removeItem('walletconnect')
+    }
+  }, [error])
+
   const [selectedLanguage, setSelectedLanguage] = useState<any>(undefined)
   const [translatedLanguage, setTranslatedLanguage] = useState<any>(undefined)
   const [translations, setTranslations] = useState<Array<any>>([])
+
+  const location = useLocation()
+
+  const handleLogin = (connectorId: string) => {
+    login(connectorId, activate)
+  }
+
+  const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
 
   const getStoredLang = (storedLangCode: string) => {
     return allLanguages.filter((language) => {
@@ -94,48 +112,60 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedLanguage])
 
+  useEffect(() => {
+    const referrerParam = new URLSearchParams(location.search).get('ref')
+    const outputParam = new URLSearchParams(location.search).get('output')
+
+    if (referrerParam && outputParam) {
+      const referralCached: Record<string, string> = JSON.parse(localStorage.getItem('referral') ?? '{}')
+      referralCached[outputParam] = referrerParam
+      localStorage.setItem('referral', JSON.stringify(referralCached))
+      onPresentConnectModal()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location])
+
+
   return (
     <Suspense fallback={null}>
-      <HashRouter>
-        <AppWrapper>
-          <LanguageContext.Provider
-            value={{ selectedLanguage, setSelectedLanguage, translatedLanguage, setTranslatedLanguage }}
-          >
-            <TranslationsContext.Provider value={{ translations, setTranslations }}>
-              <Popups />
-              <Web3ReactManager>
-                <Switch>
-                  <Route exact strict path="/">
-                    <Redirect to="/swap" />
-                  </Route>
-                  <Menu>
-                    <BodyWrapper>
-                      <AppHeader />
-                      <Route exact path="/swap" component={Swap} />
-                      <Route exact path="/cross-chain-swap" component={CrossChainSwap} />
-                      <Route exact path="/swap?ref=:ref" component={Referral} />
-                      <Route exact path="/referral" component={Referral} />
-                      <Route exact strict path="/find" component={PoolFinder} />
-                      <Route exact strict path="/pool" component={Pool} />
-                      <Route exact path="/add" component={AddLiquidity} />
-                      <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
+      <AppWrapper>
+        <LanguageContext.Provider
+          value={{ selectedLanguage, setSelectedLanguage, translatedLanguage, setTranslatedLanguage }}
+        >
+          <TranslationsContext.Provider value={{ translations, setTranslations }}>
+            <Popups />
+            <Web3ReactManager>
+              <Switch>
+                <Route exact strict path="/">
+                  <Redirect to="/swap" />
+                </Route>
+                <Menu>
+                  <BodyWrapper>
+                    <AppHeader />
+                    <Route exact path="/swap" component={Swap} />
+                    <Route exact path="/cross-chain-swap" component={CrossChainSwap} />
+                    <Route exact path="/swap?ref=:ref" component={Referral} />
+                    <Route exact path="/referral" component={Referral} />
+                    <Route exact strict path="/find" component={PoolFinder} />
+                    <Route exact strict path="/pool" component={Pool} />
+                    <Route exact path="/add" component={AddLiquidity} />
+                    <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
 
-                      {/* Redirection: These old routes are still used in the code base */}
-                      <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
-                      <Route exact path="/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
-                      <Route exact strict path="/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
-                      <Route exact path="/summitcheck" component={SummitCheck} />
+                    {/* Redirection: These old routes are still used in the code base */}
+                    <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
+                    <Route exact path="/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
+                    <Route exact strict path="/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
+                    <Route exact path="/summitcheck" component={SummitCheck} />
 
-                      {/* <Route component={RedirectPathToSwapOnly} /> */}
-                    </BodyWrapper>
-                  </Menu>
-                </Switch>
-              </Web3ReactManager>
-              <Marginer />
-            </TranslationsContext.Provider>
-          </LanguageContext.Provider>
-        </AppWrapper>
-      </HashRouter>
+                    {/* <Route component={RedirectPathToSwapOnly} /> */}
+                  </BodyWrapper>
+                </Menu>
+              </Switch>
+            </Web3ReactManager>
+            <Marginer />
+          </TranslationsContext.Provider>
+        </LanguageContext.Provider>
+      </AppWrapper>
     </Suspense>
   )
 }

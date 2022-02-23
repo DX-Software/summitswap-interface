@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionResponse } from '@ethersproject/providers'
 import { Currency, currencyEquals, ETHER, TokenAmount, WETH } from '@summitswap-libs'
@@ -13,7 +13,7 @@ import CurrencyInputPanel from 'components/CurrencyInputPanel'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { AddRemoveTabs } from 'components/NavigationTabs'
 import { MinimalPositionCard } from 'components/PositionCard'
-import Row, { RowBetween, RowFlat } from 'components/Row'
+import Row, { RowBetween, RowFlatCenter, ColumnFlatCenter } from 'components/Row'
 
 import { PairState } from 'data/Reserves'
 import { useActiveWeb3React } from 'hooks'
@@ -31,11 +31,11 @@ import { currencyId } from 'utils/currencyId'
 import PageHeader from 'components/PageHeader'
 import Pane from 'components/Pane'
 import ConnectWalletButton from 'components/ConnectWalletButton'
+import { ROUTER_ADDRESS } from '../../constants'
 import AppBody from '../AppBody'
 import { Dots, Wrapper } from '../Pool/styleds'
 import { ConfirmAddModalBottom } from './ConfirmAddModalBottom'
 import { PoolPriceBar } from './PoolPriceBar'
-import { ROUTER_ADDRESS } from '../../constants'
 
 export default function AddLiquidity({
   match: {
@@ -99,15 +99,15 @@ export default function AddLiquidity({
     {}
   )
 
-  const atMaxAmounts: { [field in Field]?: TokenAmount } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce(
-    (accumulator, field) => {
-      return {
-        ...accumulator,
-        [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? '0'),
-      }
-    },
-    {}
-  )
+  // const atMaxAmounts: { [field in Field]?: TokenAmount } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce(
+  //   (accumulator, field) => {
+  //     return {
+  //       ...accumulator,
+  //       [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? '0'),
+  //     }
+  //   },
+  //   {}
+  // )
 
   // check whether the user has approved the router on the tokens
   const [approvalA, approveACallback] = useApproveCallback(parsedAmounts[Field.CURRENCY_A], ROUTER_ADDRESS)
@@ -193,21 +193,28 @@ export default function AddLiquidity({
     return noLiquidity ? (
       <AutoColumn gap="20px">
         <LightCard mt="20px" borderRadius="20px">
-          <RowFlat>
-            <UIKitText fontSize="48px" mr="8px">
-              {`${currencies[Field.CURRENCY_A]?.symbol}/${currencies[Field.CURRENCY_B]?.symbol}`}
-            </UIKitText>
+          <ColumnFlatCenter>
+            <RowFlatCenter>
+              <UIKitText fontSize="48px" mr="8px">
+                {currencies[Field.CURRENCY_A]?.symbol}
+              </UIKitText>
+              <UIKitText fontSize="48px" mr="8px">/</UIKitText>
+              <UIKitText fontSize="48px">
+                {currencies[Field.CURRENCY_B]?.symbol}
+              </UIKitText>
+            </RowFlatCenter>
+            
             <DoubleCurrencyLogo
               currency0={currencies[Field.CURRENCY_A]}
               currency1={currencies[Field.CURRENCY_B]}
               size={30}
             />
-          </RowFlat>
+          </ColumnFlatCenter>
         </LightCard>
       </AutoColumn>
     ) : (
       <AutoColumn gap="20px">
-        <RowFlat style={{ marginTop: '20px' }}>
+        <RowFlatCenter style={{ marginTop: '20px' }}>
           <UIKitText fontSize="48px" mr="8px">
             {liquidityMinted?.toSignificant(6)}
           </UIKitText>
@@ -216,7 +223,7 @@ export default function AddLiquidity({
             currency1={currencies[Field.CURRENCY_B]}
             size={30}
           />
-        </RowFlat>
+        </RowFlatCenter>
         <Row>
           <UIKitText fontSize="24px">
             {`${currencies[Field.CURRENCY_A]?.symbol}/${currencies[Field.CURRENCY_B]?.symbol} Pool Tokens`}
@@ -285,7 +292,9 @@ export default function AddLiquidity({
   return (
     <>
       <AppBody>
-        <PageHeader title="Swap" />
+        <PageHeader
+        // title="Swap"
+        />
         <CardNav activeIndex={1} />
         <AddRemoveTabs adding />
         <Wrapper>
@@ -324,7 +333,7 @@ export default function AddLiquidity({
                   onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toExact() ?? '')
                 }}
                 onCurrencySelect={handleCurrencyASelect}
-                showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
+                // showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
                 currency={currencies[Field.CURRENCY_A]}
                 id="add-liquidity-input-tokena"
                 showCommonBases={false}
@@ -339,7 +348,7 @@ export default function AddLiquidity({
                 onMax={() => {
                   onFieldBInput(maxAmounts[Field.CURRENCY_B]?.toExact() ?? '')
                 }}
-                showMaxButton={!atMaxAmounts[Field.CURRENCY_B]}
+                // showMaxButton={!atMaxAmounts[Field.CURRENCY_B]}
                 currency={currencies[Field.CURRENCY_B]}
                 id="add-liquidity-input-tokenb"
                 showCommonBases={false}

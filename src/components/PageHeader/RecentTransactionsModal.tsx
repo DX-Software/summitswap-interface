@@ -1,13 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import { CheckmarkCircleIcon, ErrorIcon, Flex, LinkExternal, Text, Modal, Button, Box } from '@summitswap-uikit'
+import React, { useMemo } from 'react'
+import { CheckmarkCircleIcon, ErrorIcon, Flex, LinkExternal, Text, Modal, Button } from '@summitswap-uikit'
 import { useActiveWeb3React } from 'hooks'
 import { getBscScanLink } from 'utils'
-import { isTransactionRecent, useAllSwapList, useAllTransactions } from 'state/transactions/hooks'
+import { isTransactionRecent, useAllTransactions } from 'state/transactions/hooks'
 import { TransactionDetails } from 'state/transactions/reducer'
 import Loader from 'components/Loader'
-import _ from 'lodash'
-import { useToken } from 'hooks/Tokens'
-import ReferralTransactionRow from './ReferralTransactionRow'
 
 type RecentTransactionsModalProps = {
   onDismiss?: () => void

@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import { Currency, Pair } from '@summitswap-libs'
-import { Button, ChevronDownIcon, Text, Flex } from '@summitswap-uikit'
+import { Text, Flex } from '@summitswap-uikit'
 import styled from 'styled-components'
 import { darken } from 'polished'
 import expandMore from 'img/expandMore.svg'
@@ -83,7 +83,6 @@ interface CurrencyInputPanelProps {
   value: string
   onUserInput: (value: string) => void
   onMax?: () => void
-  showMaxButton: boolean
   label?: string
   onCurrencySelect?: (currency: Currency) => void
   currency?: Currency | null
@@ -102,7 +101,6 @@ export default function CurrencyInputPanel({
   value,
   onUserInput,
   onMax,
-  showMaxButton,
   label = TranslateString(132, 'Input'),
   onCurrencySelect,
   currency,

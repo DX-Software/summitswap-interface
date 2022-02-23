@@ -1,5 +1,6 @@
 import { Currency, CurrencyAmount, Fraction, Percent } from '@summitswap-libs'
-import React from 'react'
+import React, { useContext } from 'react'
+import { ThemeContext } from 'styled-components'
 import { Button, Text } from '@summitswap-uikit'
 import { RowBetween, RowFixed } from '../../components/Row'
 import CurrencyLogo from '../../components/CurrencyLogo'
@@ -20,19 +21,21 @@ export function ConfirmAddModalBottom({
   poolTokenPercentage?: Percent
   onAdd: () => void
 }) {
+  const theme = useContext(ThemeContext)
+
   return (
     <>
       <RowBetween>
         <Text>{currencies[Field.CURRENCY_A]?.symbol} Deposited</Text>
         <RowFixed>
-          <CurrencyLogo currency={currencies[Field.CURRENCY_A]} style={{ marginRight: '8px' }} />
+          <CurrencyLogo currency={currencies[Field.CURRENCY_A]} style={{ marginRight: '8px', color: theme.colors.invertedContrast }} />
           <Text>{parsedAmounts[Field.CURRENCY_A]?.toSignificant(6)}</Text>
         </RowFixed>
       </RowBetween>
       <RowBetween>
         <Text>{currencies[Field.CURRENCY_B]?.symbol} Deposited</Text>
         <RowFixed>
-          <CurrencyLogo currency={currencies[Field.CURRENCY_B]} style={{ marginRight: '8px' }} />
+          <CurrencyLogo currency={currencies[Field.CURRENCY_B]} style={{ marginRight: '8px', color: theme.colors.invertedContrast }} />
           <Text>{parsedAmounts[Field.CURRENCY_B]?.toSignificant(6)}</Text>
         </RowFixed>
       </RowBetween>

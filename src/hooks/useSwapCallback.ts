@@ -2,14 +2,21 @@ import { useSelector } from 'react-redux'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 import { JSBI, Percent, Router, SwapParameters, Trade, TradeType } from '@summitswap-libs'
-import { useMemo } from 'react'
-import { BIPS_BASE, DEFAULT_DEADLINE_FROM_NOW, INITIAL_ALLOWED_SLIPPAGE } from '../constants'
+import { useEffect, useMemo, useState } from 'react'
+import {
+  BIPS_BASE,
+  DEFAULT_DEADLINE_FROM_NOW,
+  INITIAL_ALLOWED_SLIPPAGE,
+  NULL_ADDRESS,
+  REFERRAL_ADDRESS,
+} from '../constants'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { calculateGasMargin, getRouterContract, isAddress, shortenAddress } from '../utils'
 import isZero from '../utils/isZero'
 import { useActiveWeb3React } from './index'
 import useENS from './useENS'
 import { AppState } from '../state'
+import { useReferralContract } from './useContract'
 
 enum SwapCallbackState {
   INVALID,
@@ -48,44 +55,67 @@ function useSwapCallArguments(
   recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
 ): SwapCall[] {
   const { account, chainId, library } = useActiveWeb3React()
+  const referralContract = useReferralContract(true)
 
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
 
+  const [referrer, setReferrer] = useState<string>()
+
+  useEffect(() => {
+    if (!trade) return
+    if (!referralContract) return
+    if (!account) return
+
+    const outputTokenAddress = trade.route.path[trade.route.path.length - 1].address
+
+    referralContract.referrers(outputTokenAddress, account).then((referrerFromContract) => {
+      setReferrer(referrerFromContract)
+    })
+  }, [account, referralContract, trade])
+
   return useMemo(() => {
     if (!trade || !recipient || !library || !account || !chainId) return []
 
-    const contract: Contract | null = getRouterContract(chainId, library, account)
-    if (!contract) {
+    const routerContract: Contract | null = getRouterContract(chainId, library, account)
+    if (!routerContract || !referralContract) {
       return []
     }
 
-    const swapMethods = []
+    const swapMethods = [] as SwapParameters[]
+    const outputTokenAddress = trade.route.path[trade.route.path.length - 1].address
+    const referralCached = JSON.parse(localStorage.getItem('referral') ?? '{}') as Record<string, string>
 
     swapMethods.push(
-      // @ts-ignore
       Router.swapCallParameters(trade, {
         feeOnTransfer: false,
         allowedSlippage: new Percent(JSBI.BigInt(Math.floor(allowedSlippage)), BIPS_BASE),
         recipient,
         ttl: deadline,
+        referrer:
+          referrer === NULL_ADDRESS && referralCached[outputTokenAddress] !== account
+            ? referralCached[outputTokenAddress]
+            : undefined,
       })
     )
 
     if (trade.tradeType === TradeType.EXACT_INPUT) {
       swapMethods.push(
-        // @ts-ignore
         Router.swapCallParameters(trade, {
           feeOnTransfer: true,
           allowedSlippage: new Percent(JSBI.BigInt(Math.floor(allowedSlippage)), BIPS_BASE),
           recipient,
           ttl: deadline,
+          referrer:
+            referrer === NULL_ADDRESS && referralCached[outputTokenAddress] !== account
+              ? referralCached[outputTokenAddress]
+              : undefined,
         })
       )
     }
 
-    return swapMethods.map((parameters) => ({ parameters, contract }))
-  }, [account, allowedSlippage, chainId, deadline, library, recipient, trade])
+    return swapMethods.map((parameters) => ({ parameters, contract: routerContract }))
+  }, [trade, recipient, library, account, chainId, referralContract, referrer, allowedSlippage, deadline])
 }
 
 const playFailMusic = (audioPlay) => {
@@ -146,7 +176,7 @@ export function useSwapCallback(
               })
               .catch((gasError) => {
                 console.info('Gas estimate failed, trying eth_call to extract error', call)
-                playFailMusic(audioPlay)                    
+                playFailMusic(audioPlay)
                 return contract.callStatic[methodName](...args, options)
                   .then((result) => {
                     console.info('Unexpected successful call after failed estimate gas', call, gasError, result)
@@ -154,30 +184,35 @@ export function useSwapCallback(
                   })
                   .catch((callError) => {
                     console.info('Call threw error', call, callError)
-                    let errorMessage: string
-                    switch (callError.reason) {
-                      case 'UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT':
-                      case 'UniswapV2Router: EXCESSIVE_INPUT_AMOUNT':
-                        errorMessage =
+                    let errorMessageToShow: string
+
+                    const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message
+
+                    switch (callErrorMessage) {
+                      case 'SummitswapRouter02: INSUFFICIENT_OUTPUT_AMOUNT':
+                      case 'SummitswapRouter02: EXCESSIVE_INPUT_AMOUNT':
+                      case 'execution reverted: SummitswapRouter02: INSUFFICIENT_OUTPUT_AMOUNT':
+                      case 'execution reverted: SummitswapRouter02: EXCESSIVE_INPUT_AMOUNT':
+                        errorMessageToShow =
                           'This transaction will not succeed either due to price movement or fee on transfer. Try increasing your slippage tolerance.'
                         break
                       default:
-                        errorMessage = `The transaction cannot succeed due to error: ${callError.reason}. This is probably an issue with one of the tokens you are swapping.`
+                        errorMessageToShow = `The transaction cannot succeed due to error: ${callErrorMessage}. This is probably an issue with one of the tokens you are swapping.`
                     }
-                    return { call, error: new Error(errorMessage) }
+
+                    return { call, error: new Error(errorMessageToShow) }
                   })
               })
           })
         )
 
-        // a successful estimation is a bignumber gas estimate and the next call is also a bignumber gas estimate
         const successfulEstimation = estimatedCalls.find(
           (el, ix, list): el is SuccessfulCall =>
             'gasEstimate' in el && (ix === list.length - 1 || 'gasEstimate' in list[ix + 1])
         )
 
         if (!successfulEstimation) {
-          playFailMusic(audioPlay)                    
+          playFailMusic(audioPlay)
           const errorCalls = estimatedCalls.filter((call): call is FailedCall => 'error' in call)
           if (errorCalls.length > 0) throw errorCalls[errorCalls.length - 1].error
           throw new Error('Unexpected error. Please contact support: none of the calls threw an error')
@@ -205,10 +240,11 @@ export function useSwapCallback(
             const withRecipient =
               recipient === account
                 ? base
-                : `${base} to ${recipientAddressOrName && isAddress(recipientAddressOrName)
-                  ? shortenAddress(recipientAddressOrName)
-                  : recipientAddressOrName
-                }`
+                : `${base} to ${
+                    recipientAddressOrName && isAddress(recipientAddressOrName)
+                      ? shortenAddress(recipientAddressOrName)
+                      : recipientAddressOrName
+                  }`
 
             addTransaction(response, {
               summary: withRecipient,
@@ -218,7 +254,7 @@ export function useSwapCallback(
           })
           .catch((error: any) => {
             // if the user rejected the tx, pass this along
-            playFailMusic(audioPlay)                    
+            playFailMusic(audioPlay)
             if (error?.code === 4001) {
               throw new Error('Transaction rejected.')
             } else {
