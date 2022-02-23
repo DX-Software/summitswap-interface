@@ -1,7 +1,7 @@
-import { Trade } from '@summitswap-libs'
+import { Trade } from '@summitswap/sdk'
 import React, { Fragment, memo, useContext } from 'react'
 import { ChevronRight } from 'react-feather'
-import { Flex, Text } from '@summitswap-uikit'
+import { Flex, Text } from '@summitswap/uikit'
 import { ThemeContext } from 'styled-components'
 import CurrencyLogo from '../CurrencyLogo'
 

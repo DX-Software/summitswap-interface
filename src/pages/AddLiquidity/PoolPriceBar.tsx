@@ -1,6 +1,6 @@
 import React from 'react'
-import { Currency, Percent, Price } from '@summitswap-libs'
-import { Text } from '@summitswap-uikit'
+import { Currency, Percent, Price } from '@summitswap/sdk'
+import { Text } from '@summitswap/uikit'
 import { AutoColumn } from '../../components/Column'
 import { AutoRow } from '../../components/Row'
 import { ONE_BIPS } from '../../constants'

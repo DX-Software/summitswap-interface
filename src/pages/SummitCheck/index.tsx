@@ -1,5 +1,5 @@
 import React from 'react'
-import { Flex } from '@summitswap-uikit'
+import { Flex } from '@summitswap/uikit'
 import CardNav from 'components/CardNav'
 import PageHeader from 'components/PageHeader'
 import AppBody from '../AppBody'

@@ -1,7 +1,7 @@
 import React, { Suspense, useEffect, useState } from 'react'
 import { Route, Switch, Redirect, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
-import { useWalletModal } from '@summitswap-uikit'
+import { useWalletModal } from '@summitswap/uikit'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import login from 'utils/login'
 import Popups from '../components/Popups'

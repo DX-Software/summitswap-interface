@@ -1,4 +1,4 @@
-import { Token } from '@summitswap-libs'
+import { Token } from '@summitswap/sdk'
 import { isAddress } from '../../utils'
 
 export function filterTokens(tokens: Token[], search: string): Token[] {

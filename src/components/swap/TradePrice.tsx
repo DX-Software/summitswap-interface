@@ -1,6 +1,6 @@
 import React from 'react'
-import { Price } from '@summitswap-libs'
-import { SyncAltIcon, Text } from '@summitswap-uikit'
+import { Price } from '@summitswap/sdk'
+import { SyncAltIcon, Text } from '@summitswap/uikit'
 import { StyledBalanceMaxMini } from './styleds'
 
 interface TradePriceProps {

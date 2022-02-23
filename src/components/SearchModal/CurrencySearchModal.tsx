@@ -1,4 +1,4 @@
-import { Currency, Token } from '@summitswap-libs'
+import { Currency, Token } from '@summitswap/sdk'
 import React, { useCallback, useEffect, useState } from 'react'
 import useLast from '../../hooks/useLast'
 import { useSelectedListUrl } from '../../state/lists/hooks'

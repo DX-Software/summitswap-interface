@@ -1,4 +1,4 @@
-import { Currency } from '@summitswap-libs'
+import { Currency } from '@summitswap/sdk'
 import React from 'react'
 import styled from 'styled-components'
 import CurrencyLogo from '../CurrencyLogo'

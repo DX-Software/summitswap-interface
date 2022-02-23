@@ -1,5 +1,5 @@
 import React from 'react'
-import { InjectedModalProps, Modal } from '@summitswap-uikit'
+import { InjectedModalProps, Modal } from '@summitswap/uikit'
 
 interface CustomModalProps extends InjectedModalProps {
   title: string

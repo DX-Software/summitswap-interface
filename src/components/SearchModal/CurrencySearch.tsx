@@ -1,6 +1,6 @@
-import { Currency, ETHER, Token } from '@summitswap-libs'
+import { Currency, ETHER, Token } from '@summitswap/sdk'
 import React, { KeyboardEvent, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { Text, CloseIcon } from '@summitswap-uikit'
+import { Text, CloseIcon } from '@summitswap/uikit'
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { VariableSizeList } from 'react-window'

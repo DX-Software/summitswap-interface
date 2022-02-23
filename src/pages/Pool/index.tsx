@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
-import { Pair } from '@summitswap-libs'
-import { Button, CardBody, Text } from '@summitswap-uikit'
+import { Pair } from '@summitswap/sdk'
+import { Button, CardBody, Text } from '@summitswap/uikit'
 import { Link } from 'react-router-dom'
 import CardNav from 'components/CardNav'
 import Question from 'components/QuestionHelper'

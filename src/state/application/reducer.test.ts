@@ -1,4 +1,4 @@
-import { ChainId } from '@summitswap-libs'
+import { ChainId } from '@summitswap/sdk'
 import { createStore, Store } from 'redux'
 import { addPopup, removePopup, toggleSettingsMenu, toggleWalletModal, updateBlockNumber } from './actions'
 import reducer, { ApplicationState } from './reducer'

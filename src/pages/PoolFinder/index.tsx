@@ -1,6 +1,6 @@
-import { Currency, ETHER, JSBI, TokenAmount } from '@summitswap-libs'
+import { Currency, ETHER, JSBI, TokenAmount } from '@summitswap/sdk'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Button, ChevronDownIcon, AddIcon, CardBody, Text, Box } from '@summitswap-uikit'
+import { Button, ChevronDownIcon, AddIcon, CardBody, Text, Box } from '@summitswap/uikit'
 import CardNav from 'components/CardNav'
 import { LightCard } from 'components/Card'
 import { AutoColumn, ColumnCenter } from 'components/Column'

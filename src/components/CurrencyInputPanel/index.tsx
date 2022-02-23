@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
-import { Currency, Pair } from '@summitswap-libs'
-import { Text, Flex } from '@summitswap-uikit'
+import { Currency, Pair } from '@summitswap/sdk'
+import { Text, Flex } from '@summitswap/uikit'
 import styled from 'styled-components'
 import { darken } from 'polished'
 import expandMore from 'img/expandMore.svg'

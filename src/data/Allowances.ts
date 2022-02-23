@@ -1,4 +1,4 @@
-import { Token, TokenAmount } from '@summitswap-libs'
+import { Token, TokenAmount } from '@summitswap/sdk'
 import { useMemo } from 'react'
 
 import { useTokenContract } from '../hooks/useContract'

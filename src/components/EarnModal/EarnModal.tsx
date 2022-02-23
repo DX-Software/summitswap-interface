@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { Input, CheckmarkCircleIcon, ErrorIcon, Flex, Checkbox, Text, Modal, Button } from '@summitswap-uikit'
+import { Input, CheckmarkCircleIcon, ErrorIcon, Flex, Checkbox, Text, Modal, Button } from '@summitswap/uikit'
 import { useActiveWeb3React } from 'hooks'
 import { isTransactionRecent, useAllTransactions } from 'state/transactions/hooks'
 import { TransactionDetails } from 'state/transactions/reducer'

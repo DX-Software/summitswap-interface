@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, Pair, Token, Trade } from '@summitswap-libs'
+import { Currency, CurrencyAmount, Pair, Token, Trade } from '@summitswap/sdk'
 import flatMap from 'lodash.flatmap'
 import { useMemo } from 'react'
 

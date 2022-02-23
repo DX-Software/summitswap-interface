@@ -1,4 +1,4 @@
-import { ChainId, JSBI, Pair, Route, Token, TokenAmount, Trade, TradeType } from '@summitswap-libs'
+import { ChainId, JSBI, Pair, Route, Token, TokenAmount, Trade, TradeType } from '@summitswap/sdk'
 import { computeTradePriceBreakdown } from './prices'
 
 describe('prices', () => {

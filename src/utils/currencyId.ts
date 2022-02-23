@@ -1,4 +1,4 @@
-import { Currency, ETHER, Token } from '@summitswap-libs'
+import { Currency, ETHER, Token } from '@summitswap/sdk'
 
 export function currencyId(currency: Currency): string {
   if (currency === ETHER) return 'ETH'
