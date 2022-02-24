@@ -1,6 +1,6 @@
 import { Currency, CurrencyAmount, currencyEquals, ETHER, Token } from '@summitswap-libs'
-import React, { CSSProperties, MutableRefObject, useCallback, useMemo } from 'react'
-import { FixedSizeList } from 'react-window'
+import React, { CSSProperties, MutableRefObject, useCallback, useEffect, useMemo, useRef } from 'react'
+import { VariableSizeList } from 'react-window'
 import styled from 'styled-components'
 import { Flex, Text } from '@summitswap-uikit'
 import { useActiveWeb3React } from '../../hooks'
@@ -44,15 +44,18 @@ const Tag = styled.div`
 
 const LogoContainer = styled.div`
   position: relative;
+  flex-shrink: 0;
   border-radius: 50%;
   width: 30px;
   height: 30px;
   background: white;
-  >img, >svg {
+  > img,
+  > svg {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    border-radius: 50%;
   }
 `
 
@@ -100,12 +103,16 @@ function CurrencyRow({
   isSelected,
   otherSelected,
   style,
+  isAddedByUserOn,
+  currencyRef,
 }: {
   currency: Currency
   onSelect: () => void
   isSelected: boolean
   otherSelected: boolean
   style: CSSProperties
+  isAddedByUserOn: boolean
+  currencyRef: any
 }) {
   const { account, chainId } = useActiveWeb3React()
   const key = currencyKey(currency)
@@ -126,18 +133,21 @@ function CurrencyRow({
       disabled={isSelected}
       selected={otherSelected}
     >
-      <Flex justifyContent='space-between' width='100%'>
+      <Flex justifyContent="space-between" width="100%" ref={currencyRef}>
         <LogoContainer>
           <CurrencyLogo currency={currency} size="24px" />
         </LogoContainer>
-        <Flex justifyContent='space-between' alignItems='center' width='100%'>
+        <Flex justifyContent="space-between" alignItems="center" width="100%">
           <Column style={{ marginLeft: 16 }}>
-            <Text title={currency.name} color='sidebarColor' fontSize='16px' fontWeight='600'>{currency.symbol}</Text>
+            <Text title={currency.name} color="sidebarColor" fontSize="16px" fontWeight="600">
+              {currency.symbol}
+            </Text>
             <FadedSpan>
-              {!isOnSelectedList && customAdded && !(currency instanceof WrappedTokenInfo) ? (
+              {isAddedByUserOn && !isOnSelectedList && customAdded && !(currency instanceof WrappedTokenInfo) ? (
                 <Text>
-                  Added by user
+                  Added by user&nbsp;
                   <LinkStyledButton
+                    style={{ padding: 0 }}
                     onClick={(event) => {
                       event.stopPropagation()
                       if (chainId && currency instanceof Token) removeToken(chainId, currency.address)
@@ -147,10 +157,11 @@ function CurrencyRow({
                   </LinkStyledButton>
                 </Text>
               ) : null}
-              {!isOnSelectedList && !customAdded && !(currency instanceof WrappedTokenInfo) ? (
+              {isAddedByUserOn && !isOnSelectedList && !customAdded && !(currency instanceof WrappedTokenInfo) ? (
                 <Text>
-                  Found by address
+                  Found by address&nbsp;
                   <LinkStyledButton
+                    style={{ padding: 0 }}
                     onClick={(event) => {
                       event.stopPropagation()
                       if (currency instanceof Token) addToken(currency)
@@ -178,51 +189,72 @@ export default function CurrencyList({
   selectedCurrency,
   onCurrencySelect,
   otherCurrency,
-  fixedListRef,
+  variableListRef,
   showETH,
+  isAddedByUserOn,
 }: {
   height: number
   currencies: Currency[]
   selectedCurrency?: Currency | null
   onCurrencySelect: (currency: Currency) => void
   otherCurrency?: Currency | null
-  fixedListRef?: MutableRefObject<FixedSizeList | undefined>
+  variableListRef?: MutableRefObject<VariableSizeList | undefined>
   showETH: boolean
+  isAddedByUserOn: boolean
 }) {
+  const rowHeights = useRef({})
   const itemData = useMemo(() => (showETH ? [Currency.ETHER, ...currencies] : [...currencies]), [currencies, showETH])
 
-  const Row = useCallback(
-    ({ data, index, style }) => {
-      const currency: Currency = data[index]
-      const isSelected = Boolean(selectedCurrency && currencyEquals(selectedCurrency, currency))
-      const otherSelected = Boolean(otherCurrency && currencyEquals(otherCurrency, currency))
-      const handleSelect = () => onCurrencySelect(currency)
-      return (
-        <CurrencyRow
-          style={style}
-          currency={currency}
-          isSelected={isSelected}
-          onSelect={handleSelect}
-          otherSelected={otherSelected}
-        />
-      )
-    },
-    [onCurrencySelect, otherCurrency, selectedCurrency]
-  )
+  function Row({ data, index, style }) {
+    const rowRef = useRef({}) as any
+
+    const currency: Currency = data[index]
+    const isSelected = Boolean(selectedCurrency && currencyEquals(selectedCurrency, currency))
+    const otherSelected = Boolean(otherCurrency && currencyEquals(otherCurrency, currency))
+    const handleSelect = () => onCurrencySelect(currency)
+
+    useEffect(() => {
+      if (rowRef.current) {
+        setRowHeight(index, rowRef?.current?.clientHeight)
+      }
+      // eslint-disable-next-line
+    }, [rowRef])
+
+    return (
+      <CurrencyRow
+        style={style}
+        currency={currency}
+        isSelected={isSelected}
+        onSelect={handleSelect}
+        otherSelected={otherSelected}
+        isAddedByUserOn={isAddedByUserOn}
+        currencyRef={rowRef as any}
+      />
+    )
+  }
+
+  const setRowHeight = (index, size: any) => {
+    variableListRef?.current?.resetAfterIndex(0)
+    rowHeights.current = { ...rowHeights.current, [index]: size }
+  }
+
+  const getRowHeight = (index: number): number => {
+    return rowHeights.current[index] + 16 || 56
+  }
 
   const itemKey = useCallback((index: number, data: any) => currencyKey(data[index]), [])
 
   return (
-    <FixedSizeList
+    <VariableSizeList
       height={height}
-      ref={fixedListRef as any}
+      ref={variableListRef as any}
       width="100%"
       itemData={itemData}
       itemCount={itemData.length}
-      itemSize={56}
+      itemSize={getRowHeight}
       itemKey={itemKey}
     >
       {Row}
-    </FixedSizeList>
+    </VariableSizeList>
   )
 }

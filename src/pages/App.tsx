@@ -1,10 +1,9 @@
 import React, { Suspense, useEffect, useState } from 'react'
 import { Route, Switch, Redirect, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
-import { useReferralContract } from 'hooks/useContract'
-import { injected, walletconnect } from 'connectors'
 import { useWalletModal } from '@summitswap-uikit'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
+import login from 'utils/login'
 import Popups from '../components/Popups'
 import Web3ReactManager from '../components/Web3ReactManager'
 import { RedirectDuplicateTokenIds, RedirectOldAddLiquidityPathStructure } from './AddLiquidity/redirects'
@@ -23,7 +22,6 @@ import { TranslationsContext } from '../hooks/TranslationsContext'
 import langSrc from '../constants/localisation/translate/index'
 import AppHeader from './AppHeader'
 import Menu from '../components/Menu'
-import { NULL_ADDRESS, REFERRAL_ADDRESS } from '../constants'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -73,16 +71,11 @@ export default function App() {
   const [selectedLanguage, setSelectedLanguage] = useState<any>(undefined)
   const [translatedLanguage, setTranslatedLanguage] = useState<any>(undefined)
   const [translations, setTranslations] = useState<Array<any>>([])
-  const [referrerAddress, setReferrerAddress] = useState<string | null>(null)
 
-  const referralContract = useReferralContract(REFERRAL_ADDRESS, true)
   const location = useLocation()
 
   const handleLogin = (connectorId: string) => {
-    if (connectorId === 'walletconnect') {
-      return activate(walletconnect())
-    }
-    return activate(injected)
+    login(connectorId, activate)
   }
 
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
@@ -120,50 +113,18 @@ export default function App() {
   }, [selectedLanguage])
 
   useEffect(() => {
-    const referralParam = new URLSearchParams(location.search).get('ref')
+    const referrerParam = new URLSearchParams(location.search).get('ref')
+    const outputParam = new URLSearchParams(location.search).get('output')
 
-    if (referralParam) {
-      localStorage.setItem('referrer', referralParam)
-      localStorage.removeItem('rejected')
-      setReferrerAddress(referralParam)
-    } else {
-      setReferrerAddress(localStorage.getItem('referrer'))
-    }
-  }, [location])
-
-  useEffect(() => {
-    if (!account && referrerAddress && localStorage.getItem('rejected') !== '1') {
+    if (referrerParam && outputParam) {
+      const referralCached: Record<string, string> = JSON.parse(localStorage.getItem('referral') ?? '{}')
+      referralCached[outputParam] = referrerParam
+      localStorage.setItem('referral', JSON.stringify(referralCached))
       onPresentConnectModal()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, referrerAddress])
+  }, [location])
 
-  useEffect(() => {
-    async function recordReferral() {
-      if (
-        account &&
-        referrerAddress &&
-        referralContract &&
-        referrerAddress !== account &&
-        localStorage.getItem('rejected') !== '1'
-      ) {
-        const referrer = await referralContract.getReferrer(account)
-
-        if (referrer === NULL_ADDRESS) {
-          try {
-            await referralContract.recordReferral(account, referrerAddress)
-
-            localStorage.removeItem('referrer')
-            localStorage.removeItem('rejected')
-          } catch (err: any) {
-            if (err.code === 4001) localStorage.setItem('rejected', '1')
-          }
-        }
-      }
-    }
-
-    recordReferral()
-  }, [account, referrerAddress, referralContract])
 
   return (
     <Suspense fallback={null}>

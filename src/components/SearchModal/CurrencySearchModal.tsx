@@ -16,6 +16,8 @@ interface CurrencySearchModalProps {
   showCommonBases?: boolean
   showETH?: boolean
   tokens?: Array<Token>
+  isAddedByUserOn?: boolean
+  showUnknownTokens?: boolean
 }
 
 export default function CurrencySearchModal({
@@ -26,6 +28,8 @@ export default function CurrencySearchModal({
   otherSelectedCurrency,
   showETH,
   tokens,
+  isAddedByUserOn = true,
+  showUnknownTokens = true
 }: CurrencySearchModalProps) {
   const [listView, setListView] = useState<boolean>(false)
   const lastOpen = useLast(isOpen)
@@ -69,6 +73,8 @@ export default function CurrencySearchModal({
           showCommonBases={false}
           showETH={showETH}
           tokens={tokens}
+          isAddedByUserOn={isAddedByUserOn}
+          showUnknownTokens={showUnknownTokens}
         />
       ) : (
         <CurrencySearch
@@ -81,6 +87,8 @@ export default function CurrencySearchModal({
           showCommonBases={false}
           showETH={showETH}
           tokens={tokens}
+          isAddedByUserOn={isAddedByUserOn}
+          showUnknownTokens={showUnknownTokens}
         />
       )}
     </Modal>
