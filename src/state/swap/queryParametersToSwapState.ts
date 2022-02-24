@@ -36,7 +36,7 @@ export default function queryParametersToSwapState(parsedQs: ParsedQs): SwapStat
   let inputCurrency = parseCurrencyFromURLParameter(parsedQs.inputCurrency)
   let outputCurrency = parseCurrencyFromURLParameter(parsedQs.output)
   if (inputCurrency === outputCurrency) {
-    if (typeof parsedQs.outputCurrency === 'string') {
+    if (typeof parsedQs.output === 'string') {
       inputCurrency = ''
     } else {
       outputCurrency = ''
