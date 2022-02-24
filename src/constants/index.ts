@@ -1,6 +1,7 @@
 import { ChainId, JSBI, Percent, Token, WETH } from '@summitswap-libs'
 
 export const MAX_QUERYING_BLOCK_AMOUNT = 5000;
+export const NETWORK_URL = `${process.env.REACT_APP_NETWORK_URL}`
 export const ROUTER_ADDRESS = `${process.env.REACT_APP_ROUTER_ADDRESS}`
 export const REFERRAL_ADDRESS = `${process.env.REACT_APP_REFERRAL_ADDRESS}`
 export const REFERRAL_DEPLOYMENT_BLOCKNUMBER = +`${process.env.REACT_APP_REFERRAL_DEPLOYMENT_BLOCKNUMBER}`
