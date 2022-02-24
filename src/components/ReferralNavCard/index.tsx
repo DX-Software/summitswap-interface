@@ -1,9 +1,12 @@
 import React from 'react'
 import { ButtonMenu, ButtonMenuItem } from '@summitswap-uikit'
 import styled from 'styled-components';
+import { ReferralSements } from '../../constants/ReferralSegmentInitial';
 
 interface ReferralNavCardProps {
     selectedController: number;
+    setSegmentControllerIndex: (index: number) => void;
+    segments: ReferralSements
 }
 
 const CenterDiv = styled.div`
@@ -29,28 +32,26 @@ const CenterDiv = styled.div`
     }
 `
 
-const ReferralNavCard: React.FC<ReferralNavCardProps> = ({selectedController}) => {
-  return (
-    <CenterDiv>
-      <ButtonMenu activeIndex={selectedController} variant="awesome">
-        <ButtonMenuItem as="button">
-            User Dashboard
-        </ButtonMenuItem>
-        <ButtonMenuItem as="button">
-            Coin Manager Dashboard
-        </ButtonMenuItem>
-        <ButtonMenuItem as="button">
-            Lead Influencer Dashboard
-        </ButtonMenuItem>
-        <ButtonMenuItem as="button">
-            Sub Influencer Dashboard
-        </ButtonMenuItem>
-        <ButtonMenuItem as="button">
-            Transaction History
-        </ButtonMenuItem>
-      </ButtonMenu>
-    </CenterDiv>
-  )
+const ReferralNavCard: React.FC<ReferralNavCardProps> = ({selectedController, setSegmentControllerIndex, segments}) => {
+
+	const getButtons = () => {
+		return Object.keys(segments)
+			.filter(key => segments[key].isActive)
+			.map((key, index) => {
+				return <ButtonMenuItem as="button" onClickCapture={() => setSegmentControllerIndex(index)} key={key}>
+					{segments[key].title}
+				</ButtonMenuItem>
+			})
+	}
+
+	return (
+			<CenterDiv>
+				<ButtonMenu activeIndex={selectedController} variant="awesome">
+					{getButtons
+					()}
+				</ButtonMenu>
+			</CenterDiv>
+	)
 }
 
 export default ReferralNavCard

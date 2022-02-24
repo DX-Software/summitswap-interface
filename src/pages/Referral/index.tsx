@@ -5,12 +5,15 @@ import { Text, Box, Button, useWalletModal, Flex } from '@summitswap-uikit'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import _ from 'lodash'
+import { Event } from 'ethers'
+
 import { injected, walletconnect } from 'connectors'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
+import LinkBox from 'components/LinkBox'
 import ReferralTransactionRow from 'pages/Referral/ReferralTransactionRow'
 import { TranslateString } from 'utils/translateTextHelpers'
 import { useAllTokens } from 'hooks/Tokens'
-import CurrencyLogo from 'components/CurrencyLogo'
+import { useReferralContract } from 'hooks/useContract'
 import ReferalLinkImage from '../../img/referral-link.png'
 import InviteImage from '../../img/invite.png'
 import CoinStackImage from '../../img/coinstack.png'
@@ -22,45 +25,13 @@ import login from '../../utils/login'
 import './style.css'
 import SwapList from './SwapList'
 import ReferralNavCard from '../../components/ReferralNavCard'
+import { MAX_QUERYING_BLOCK_AMOUNT, REFERRAL_DEPLOYMENT_BLOCKNUMBER } from '../../constants'
+import CurrencySelector from './CurrencySelector'
+import ReferralSegmentInitial from '../../constants/ReferralSegmentInitial'
+import ReferralSegment from './ReferralSegment'
 
-const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
-  display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'block' : 'none')};
-  position: absolute;
-  bottom: 36px;
-  right: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-  background-color: ${({ theme }) => theme.colors.sidebarBackground} !important;
-  color: ${({ theme }) => theme.colors.invertedContrast};
-  border-radius: 16px;
-  opacity: 0.7;
-  width: fit-content;
-  padding: 10px;
-`
-const LinkBox = styled(Box)`
-  color: ${({ theme }) => theme.colors.invertedContrast};
-  padding: 16px;
-  border-radius: 16px;
-  background: ${({ theme }) => theme.colors.sidebarBackground};
-  display: flex;
-  align-items: center;
-  > div:first-of-type {
-    flex: 1;
-    overflow: hidden;
-    > div {
-      overflow: hidden;
-      max-width: calc(100% - 20px);
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      word-break: break-all;
-    }
-  }
-  > div:last-of-type {
-    cursor: pointer;
-    position: relative;
-  }
-`
+
+
 
 interface IProps {
   isLanding?: boolean
@@ -68,7 +39,7 @@ interface IProps {
 }
 
 const Referral: React.FC<IProps> = () => {
-  const { account, chainId, deactivate, activate } = useWeb3React()
+  const { account, chainId, deactivate, activate, library} = useWeb3React()
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedOutputCoin, setSelectedOutputCoin] = useState<Token | undefined>()
   const [allTokens, setAllTokens] = useState<Array<Token>>([])
@@ -76,6 +47,9 @@ const Referral: React.FC<IProps> = () => {
   const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
   const allTokensTemp = useAllTokens()
   const location = useLocation()
+  const refContract = useReferralContract(true)
+  const [segmentControllerIndex, setSegmentControllerIndex] = useState(0)
+  const [enabledSegments, setEnabledSegments] = useState(ReferralSegmentInitial)
 
   useEffect(() => {
     setAllTokens(Object.values(allTokensTemp))
@@ -90,6 +64,42 @@ const Referral: React.FC<IProps> = () => {
   const handleLogin = (connectorId: string) => {
     login(connectorId, activate)
   }
+
+  useEffect(() => {
+
+    async function fetchReferralData() {
+      if (!account || !refContract) return
+
+      // const isManager = await refContract.isManager(selectedOutputCoin?.address, account)
+      
+      const referrals = refContract.filters.ReferralRecorded(null, account, selectedOutputCoin?.address)
+
+      const latestBlocknumber = await library.getBlockNumber()
+
+      let referrerEvents = [] as Event[]
+
+      const queries: [start: number, end: number][] = []
+
+      for (
+        let blockNumber = REFERRAL_DEPLOYMENT_BLOCKNUMBER;
+        blockNumber < latestBlocknumber;
+        blockNumber += MAX_QUERYING_BLOCK_AMOUNT
+      ) {
+        queries.push([blockNumber, Math.min(latestBlocknumber, blockNumber + MAX_QUERYING_BLOCK_AMOUNT - 1)])
+      }
+
+      await Promise.all(queries.map(async (query) => {
+        const referrerResults = await refContract?.queryFilter(referrals, query[0], query[1])
+
+        referrerEvents = [...referrerEvents, ...referrerResults]
+
+      }))
+
+      console.log(referrerEvents.map(event => event.args))
+
+    }
+    fetchReferralData()
+  }, [refContract, account, selectedOutputCoin, library, enabledSegments])
 
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
 
@@ -129,7 +139,12 @@ const Referral: React.FC<IProps> = () => {
 
   return (
     <div className="main-content">
-      <ReferralNavCard selectedController={0} />
+      {account && <ReferralNavCard selectedController={segmentControllerIndex} 
+          segments={enabledSegments}
+          setSegmentControllerIndex={(value: number) => {
+            setSegmentControllerIndex(value)
+        }} />
+      }
       <Box>
         {!account && (
           <Flex mb={3} justifyContent="center">
@@ -138,40 +153,13 @@ const Referral: React.FC<IProps> = () => {
             </Button>
           </Flex>
         )}
-        {account && (
-          <>
-            <Text mb="8px" bold>
-              Output Coin
-            </Text>
-            <LinkBox mb={4} onClick={() => setModalOpen(true)} style={{ cursor: 'pointer' }}>
-              <CurrencyLogo currency={selectedOutputCoin} size="24px" style={{ marginRight: '8px' }} />
-              <Box>
-                <Text>{`${selectedOutputCoin?.symbol} - ${selectedOutputCoin?.address}`}</Text>
-              </Box>
-              <img src={expandMore} alt="" width={24} height={24} style={{ marginLeft: '10px' }} />
-            </LinkBox>
-            <Text mb="8px" bold>
-              My Referral link
-            </Text>
-            <LinkBox mb={3}>
-              <Box>
-                <Text style={{ whiteSpace: isCopySupported ? 'nowrap' : 'normal' }}>{referralURL}</Text>
-              </Box>
-              <Box style={{ display: isCopySupported ? 'block' : 'none' }} onClick={copyReferralLink}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="19" height="22" viewBox="0 0 19 22" fill="none">
-                  <path
-                    d="M13 0L2 0C0.9 0 0 0.9 0 2L0 15C0 15.55 0.45 16 1 16C1.55 16 2 15.55 2 15L2 3C2 2.45 2.45 2 3 2L13 2C13.55 2 14 1.55 14 1C14 0.45 13.55 0 13 0ZM17 4L6 4C4.9 4 4 4.9 4 6L4 20C4 21.1 4.9 22 6 22H17C18.1 22 19 21.1 19 20V6C19 4.9 18.1 4 17 4ZM16 20H7C6.45 20 6 19.55 6 19L6 7C6 6.45 6.45 6 7 6L16 6C16.55 6 17 6.45 17 7V19C17 19.55 16.55 20 16 20Z"
-                    fill="white"
-                  />
-                </svg>
-                <Tooltip isTooltipDisplayed={isTooltipDisplayed}>Copied</Tooltip>
-              </Box>
-            </LinkBox>
-                    {/* TODO: Display swaplist using lambda x blockchain events */}
-            <SwapList />
-            <RewardedTokens />
-          </>
-        )}
+        {account && (<ReferralSegment 
+            copyReferralLink={copyReferralLink} 
+            isCopySupported={isCopySupported} 
+            isTooltipDisplayed={isTooltipDisplayed} 
+            referralURL={referralURL}
+            setModalOpen={setModalOpen} 
+            selectedOutputCoin={selectedOutputCoin} />)}
       </Box>
 
       <div className="invite-friends-area">
