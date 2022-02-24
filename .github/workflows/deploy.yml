@@ -34,4 +34,4 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           # forceSsl: # optional, default is false
           localDir: "./build"
-          remoteDir: "./app.summitswap.finance"
+          remoteDir: "./testnet.summitswap.finance"
