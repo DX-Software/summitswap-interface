@@ -27,7 +27,6 @@ import { useExpertModeManager, useUserDeadline, useUserSlippageTolerance } from 
 import { LinkStyledButton } from 'components/Shared'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from 'utils/prices'
-import Loader from 'components/Loader'
 import PageHeader from 'components/PageHeader'
 import ConnectWalletButtonSwap from 'components/ConnectWalletButtonSwap'
 import expandMore from 'img/expandMore.svg'
