@@ -103,7 +103,7 @@ export default function ConfirmSwapModal({
   return (
     <>
       <Button width="100%" variant="primary" onClick={onMoonpayClick} mb="20px">
-        Buy BNB with Moonpay
+        Buy BNB with card on Moonpay
       </Button>
 
       <TransactionConfirmationModal
