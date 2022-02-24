@@ -21,7 +21,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: build
-        run: yarn build-test
+        run: CI=false yarn build-test
 
       - name: push to ftp
         uses: sebastianpopp/ftp-action@v2.0.0
