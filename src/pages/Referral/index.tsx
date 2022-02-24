@@ -21,6 +21,7 @@ import login from '../../utils/login'
 
 import './style.css'
 import SwapList from './SwapList'
+import ReferralNavCard from '../../components/ReferralNavCard'
 
 const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
   display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'block' : 'none')};
@@ -128,6 +129,7 @@ const Referral: React.FC<IProps> = () => {
 
   return (
     <div className="main-content">
+      <ReferralNavCard selectedController={0} />
       <Box>
         {!account && (
           <Flex mb={3} justifyContent="center">
@@ -165,11 +167,11 @@ const Referral: React.FC<IProps> = () => {
                 <Tooltip isTooltipDisplayed={isTooltipDisplayed}>Copied</Tooltip>
               </Box>
             </LinkBox>
+                    {/* TODO: Display swaplist using lambda x blockchain events */}
+            <SwapList />
+            <RewardedTokens />
           </>
         )}
-        {/* TODO: Display swaplist using lambda x blockchain events */}
-        <SwapList />
-        <RewardedTokens />
       </Box>
 
       <div className="invite-friends-area">
