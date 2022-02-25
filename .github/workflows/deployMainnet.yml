@@ -1,0 +1,37 @@
+name: deploy mainnet
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone repo
+        uses: actions/checkout@v2
+
+      - name: setup node 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+          cache: "yarn"
+
+      - name: install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: build
+        run: CI=false yarn build-test
+
+      - name: push to ftp
+        uses: sebastianpopp/ftp-action@v2.0.0
+        with:
+          # FTP host
+          host: ${{ secrets.FTP_HOST }}
+          # FTP user
+          user: ${{ secrets.FTP_USER }}
+          # FTP password
+          password: ${{ secrets.FTP_PASSWORD }}
+          # forceSsl: # optional, default is false
+          localDir: "./build"
+          remoteDir: "./httpdocs"
