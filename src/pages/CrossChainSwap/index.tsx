@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import { Box } from '@koda-finance/summitswap-uikit'
 import styled from 'styled-components'
 import { rubicConfiguration } from './config'
 import AppBody from '../AppBody'
