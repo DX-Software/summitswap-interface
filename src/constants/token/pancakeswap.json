@@ -46,7 +46,7 @@
       "address": "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
       "chainId": 56,
       "decimals": 18,
-      "referralEnabled": true
+      "referralEnabled": false
     },
     {
       "name": "LP3 Token",
@@ -74,7 +74,7 @@
       "decimals": 18,
       "priority": 97,
       "logoURI": "/images/coins/BUSD.png",
-      "referralEnabled": true
+      "referralEnabled": false
     },
     {
       "name": "PancakeSwap Token",
@@ -83,7 +83,7 @@
       "chainId": 56,
       "decimals": 18,
       "priority": 96,
-      "referralEnabled": true
+      "referralEnabled": false
     },
     {
       "name": "Endgame",
@@ -91,7 +91,8 @@
       "address": "0x373e4b4E4D328927bc398A9B50e0082C6f91B7bb",
       "chainId": 56,
       "decimals": 9,
-      "priority": 98
+      "priority": 98,
+      "referralEnabled": true
     },
     {
       "name": "CMC Coin",
@@ -99,7 +100,8 @@
       "address": "0xfa134985a4d9D10DBf2d7dCf811055aA25d0807C",
       "chainId": 56,
       "decimals": 18,
-      "priority": 99
+      "priority": 99,
+      "referralEnabled": true
     }
   ]
 }
