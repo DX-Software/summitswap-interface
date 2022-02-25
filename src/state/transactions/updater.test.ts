@@ -1,4 +1,4 @@
-import shouldCheck from './shouldCheck'
+import { shouldCheck } from './updater'
 
 describe('transactions updater', () => {
   describe('shouldCheck', () => {
