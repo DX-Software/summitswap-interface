@@ -2,7 +2,7 @@ name: deploy testnet
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "feat/autodeploy" ]
 
 jobs:
   deploy:
