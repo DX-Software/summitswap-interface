@@ -55,6 +55,7 @@ const Referral: React.FC<IProps> = () => {
   const refContract = useReferralContract(true)
   const [segmentControllerIndex, setSegmentControllerIndex] = useState(0)
   const [enabledSegments, setEnabledSegments] = useState(ReferralSegmentInitial)
+  const [leadInfluencers, setLeadInfluencers] = useState<Influencer[]>([])
 
   useEffect(() => {
     setAllTokens(Object.values(allTokensTemp))
@@ -71,11 +72,35 @@ const Referral: React.FC<IProps> = () => {
   }
 
   useEffect(() => {
+    setEnabledSegments(prevState => {
+      const segmentOptions = {...prevState}
+      segmentOptions.coinManager.isActive = false
+      return segmentOptions
+    })
+    async function checkIfManager() {
+      if (!account || !refContract || !selectedOutputCoin) return
+      const isManager = await refContract.isManager(selectedOutputCoin.address, account)
+      if (isManager) {
+        setEnabledSegments(prevState => {
+          const segmentOptions = {...prevState}
+          segmentOptions.coinManager.isActive = true
+          return segmentOptions
+        })
+        setSegmentControllerIndex(0)
+      }
+    }
+    checkIfManager()
+  }, [account, selectedOutputCoin, refContract])
+
+  useEffect(() => {
+    setEnabledSegments(prevState => {
+      const segmentOptions = {...prevState}
+      segmentOptions.leadInfluencer.isActive = false
+      return segmentOptions
+    })
 
     async function fetchReferralData() {
       if (!account || !refContract) return
-
-      // const isManager = await refContract.isManager(selectedOutputCoin?.address, account)
       
       const referrals = refContract.filters.ReferralRecorded(null, account, selectedOutputCoin?.address)
 
@@ -97,14 +122,23 @@ const Referral: React.FC<IProps> = () => {
         const referrerResults = await refContract?.queryFilter(referrals, query[0], query[1])
 
         referrerEvents = [...referrerEvents, ...referrerResults]
-
       }))
 
-      const influencers = referrerEvents.map(event => event.args) as unknown as [Influencer]
-      console.log(influencers)
+      const influencers = referrerEvents.map(event => event.args) as unknown as Influencer[]
+
+      if (influencers.length !== 0) {
+        setEnabledSegments(prevState => {
+          const segmentOptions = {...prevState}
+          segmentOptions.leadInfluencer.isActive = true
+          return segmentOptions
+        })
+      }
+
+      setSegmentControllerIndex(0)
+      setLeadInfluencers(influencers)
     }
     fetchReferralData()
-  }, [refContract, account, selectedOutputCoin, library, enabledSegments])
+  }, [refContract, account, selectedOutputCoin, library])
 
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
 
@@ -143,7 +177,9 @@ const Referral: React.FC<IProps> = () => {
   }, [])
 
   const getViewForSegment = () => {
-    const segmentKey = Object.keys(enabledSegments)[segmentControllerIndex]
+    const segmentKey = Object.keys(enabledSegments).filter(key => {
+      return enabledSegments[key].isActive
+    })[segmentControllerIndex]
 
     // TODO: add caching for segments
     switch (segmentKey) {
@@ -160,7 +196,7 @@ const Referral: React.FC<IProps> = () => {
       case 'coinManager':
         return (<CoinManagerSegment />)
       case 'leadInfluencer':
-        return <LeadInfluencer />
+        return <LeadInfluencer influencers={leadInfluencers}/>
       case 'subInfluencer':
         return (<SubInfluencer />)
       case 'history':
