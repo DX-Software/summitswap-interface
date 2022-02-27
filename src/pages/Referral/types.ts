@@ -12,3 +12,9 @@ export interface ReferralReward extends Result {
   lead: string
   leadReward: BigNumber
 }
+
+export interface Influencer {
+  outputToken: string;
+  referee: string;
+  referrer: string;
+}

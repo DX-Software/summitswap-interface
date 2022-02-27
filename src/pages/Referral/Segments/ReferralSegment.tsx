@@ -4,9 +4,9 @@ import styled from 'styled-components'
 import { Token } from '@summitswap-libs'
 
 import LinkBox from 'components/LinkBox'
-import RewardedTokens from './RewardedTokens'
-import CurrencySelector from './CurrencySelector'
-import SwapList from './SwapList'
+import RewardedTokens from '../RewardedTokens'
+import CurrencySelector from '../CurrencySelector'
+import SwapList from '../SwapList'
 
 const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
   display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'block' : 'none')};

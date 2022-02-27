@@ -28,7 +28,12 @@ import ReferralNavCard from '../../components/ReferralNavCard'
 import { MAX_QUERYING_BLOCK_AMOUNT, REFERRAL_DEPLOYMENT_BLOCKNUMBER } from '../../constants'
 import CurrencySelector from './CurrencySelector'
 import ReferralSegmentInitial from '../../constants/ReferralSegmentInitial'
-import ReferralSegment from './ReferralSegment'
+import ReferralSegment from './Segments/ReferralSegment'
+import CoinManagerSegment from './Segments/CoinManagerSegment'
+import HistorySegment from './Segments/HistorySegment'
+import SubInfluencer from './Segments/SubInfluencer'
+import LeadInfluencer from './Segments/LeadInfluencer'
+import { Influencer } from './types'
 
 
 
@@ -95,8 +100,8 @@ const Referral: React.FC<IProps> = () => {
 
       }))
 
-      console.log(referrerEvents.map(event => event.args))
-
+      const influencers = referrerEvents.map(event => event.args) as unknown as [Influencer]
+      console.log(influencers)
     }
     fetchReferralData()
   }, [refContract, account, selectedOutputCoin, library, enabledSegments])
@@ -137,6 +142,35 @@ const Referral: React.FC<IProps> = () => {
     return false
   }, [])
 
+  const getViewForSegment = () => {
+    const segmentKey = Object.keys(enabledSegments)[segmentControllerIndex]
+
+    // TODO: add caching for segments
+    switch (segmentKey) {
+      case 'userDashboard':
+        return (
+          <ReferralSegment 
+            copyReferralLink={copyReferralLink} 
+            isCopySupported={isCopySupported} 
+            isTooltipDisplayed={isTooltipDisplayed} 
+            referralURL={referralURL}
+            setModalOpen={setModalOpen} 
+            selectedOutputCoin={selectedOutputCoin} />
+          )
+      case 'coinManager':
+        return (<CoinManagerSegment />)
+      case 'leadInfluencer':
+        return <LeadInfluencer />
+      case 'subInfluencer':
+        return (<SubInfluencer />)
+      case 'history':
+        return (<HistorySegment />)
+      default:
+        return <p>Segment Index out of range</p>
+    }
+
+  }
+
   return (
     <div className="main-content">
       {account && <ReferralNavCard selectedController={segmentControllerIndex} 
@@ -153,13 +187,7 @@ const Referral: React.FC<IProps> = () => {
             </Button>
           </Flex>
         )}
-        {account && (<ReferralSegment 
-            copyReferralLink={copyReferralLink} 
-            isCopySupported={isCopySupported} 
-            isTooltipDisplayed={isTooltipDisplayed} 
-            referralURL={referralURL}
-            setModalOpen={setModalOpen} 
-            selectedOutputCoin={selectedOutputCoin} />)}
+        {account && getViewForSegment()}
       </Box>
 
       <div className="invite-friends-area">
