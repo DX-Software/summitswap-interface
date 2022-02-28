@@ -20,4 +20,4 @@ jobs:
         run: yarn
 
       - name: run test
-        run: yarn test --watchAll
+        run: ci=true yarn test

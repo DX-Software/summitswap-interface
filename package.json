@@ -97,7 +97,7 @@
     "build-test": "node ./update-build.js && env-cmd -f ./.env.development react-scripts build",
     "build-mainnet": "node ./update-build.js && env-cmd -f ./.env.production react-scripts build",
     "start-mainnet": "env-cmd -f ./.env.production react-scripts start",
-    "test": "env-cmd -f ./.env.development react-scripts test --env=jsdom",
+    "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
     "lint:fix": "eslint 'src/**/*.{js,jsx,ts,tsx}' --fix",
