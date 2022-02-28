@@ -2,31 +2,23 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Token } from '@summitswap-libs'
 import { Text, Box, Button, useWalletModal, Flex } from '@summitswap-uikit'
-import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import _ from 'lodash'
 import { Event } from 'ethers'
 
-import { injected, walletconnect } from 'connectors'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
-import LinkBox from 'components/LinkBox'
-import ReferralTransactionRow from 'pages/Referral/ReferralTransactionRow'
 import { TranslateString } from 'utils/translateTextHelpers'
 import { useAllTokens } from 'hooks/Tokens'
 import { useReferralContract } from 'hooks/useContract'
 import ReferalLinkImage from '../../img/referral-link.png'
 import InviteImage from '../../img/invite.png'
 import CoinStackImage from '../../img/coinstack.png'
-import expandMore from '../../img/expandMore.svg'
-import RewardedTokens from './RewardedTokens'
 import copyText from '../../utils/copyText'
 import login from '../../utils/login'
 
 import './style.css'
-import SwapList from './SwapList'
 import ReferralNavCard from '../../components/ReferralNavCard'
 import { MAX_QUERYING_BLOCK_AMOUNT, REFERRAL_DEPLOYMENT_BLOCKNUMBER } from '../../constants'
-import CurrencySelector from './CurrencySelector'
 import ReferralSegmentInitial from '../../constants/ReferralSegmentInitial'
 import ReferralSegment from './Segments/ReferralSegment'
 import CoinManagerSegment from './Segments/CoinManagerSegment'
@@ -34,9 +26,6 @@ import HistorySegment from './Segments/HistorySegment'
 import SubInfluencer from './Segments/SubInfluencer'
 import LeadInfluencer from './Segments/LeadInfluencer'
 import { Influencer } from './types'
-
-
-
 
 interface IProps {
   isLanding?: boolean
@@ -192,7 +181,7 @@ const Referral: React.FC<IProps> = () => {
             referralURL={referralURL}
             setModalOpen={setModalOpen} 
             selectedOutputCoin={selectedOutputCoin} />
-          )
+        )
       case 'coinManager':
         return (<CoinManagerSegment />)
       case 'leadInfluencer':
