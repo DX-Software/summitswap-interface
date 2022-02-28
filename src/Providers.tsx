@@ -15,7 +15,7 @@ const Providers: React.FC = ({ children }) => {
       <Web3ProviderNetwork getLibrary={getLibrary}>
         <Provider store={store}>
           <ThemeContextProvider>
-            <ModalProvider>{children}</ModalProvider>
+<!--             <ModalProvider>{children}</ModalProvider> -->
           </ThemeContextProvider>
         </Provider>
       </Web3ProviderNetwork>
