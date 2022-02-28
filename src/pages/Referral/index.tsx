@@ -183,7 +183,7 @@ const Referral: React.FC<IProps> = () => {
             selectedOutputCoin={selectedOutputCoin} />
         )
       case 'coinManager':
-        return (<CoinManagerSegment />)
+        return (<CoinManagerSegment selectedCoin={selectedOutputCoin}/>)
       case 'leadInfluencer':
         return <LeadInfluencer influencers={leadInfluencers}/>
       case 'subInfluencer':
