@@ -1,4 +1,4 @@
-name: Tests
+name: test
 
 on: [pull_request]
 
@@ -17,7 +17,7 @@ jobs:
           cache: "yarn"
 
       - name: install dependencies
-        run: yarn
+        run: yarn install --frozen-lockfile
 
       - name: run test
         run: ci=true yarn test
