@@ -12,7 +12,7 @@ const StyledBnbLogo = styled.img<{ size: string }>`
   width: ${({ size }) => size};
   height: ${({ size }) => size};
   box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.075);
-  border-radius: 24px;
+  border-radius: 50%;
 `
 
 export default function CurrencyLogo({
@@ -31,10 +31,10 @@ export default function CurrencyLogo({
 
     if (currency instanceof Token) {
       if (currency instanceof WrappedTokenInfo) {
-        return [...uriLocations, `/images/coins/${currency?.symbol ?? 'token'}.png`, getTokenLogoURL(currency.address)]
+        return [...uriLocations, getTokenLogoURL(currency.address)]
       }
 
-      return [`/images/coins/${currency?.symbol ?? 'token'}.png`, getTokenLogoURL(currency.address)]
+      return [getTokenLogoURL(currency.address)]
     }
     return []
   }, [currency, uriLocations])

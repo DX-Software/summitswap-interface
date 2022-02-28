@@ -4,10 +4,7 @@ import { Token } from '@summitswap-libs'
 import { Text, Box, Button, useWalletModal, Flex } from '@summitswap-uikit'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
-import _ from 'lodash'
-import { injected, walletconnect } from 'connectors'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
-import ReferralTransactionRow from 'pages/Referral/ReferralTransactionRow'
 import { TranslateString } from 'utils/translateTextHelpers'
 import { useAllTokens } from 'hooks/Tokens'
 import CurrencyLogo from 'components/CurrencyLogo'
@@ -67,7 +64,7 @@ interface IProps {
 }
 
 const Referral: React.FC<IProps> = () => {
-  const { account, chainId, deactivate, activate } = useWeb3React()
+  const { account, deactivate, activate } = useWeb3React()
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedOutputCoin, setSelectedOutputCoin] = useState<Token | undefined>()
   const [allTokens, setAllTokens] = useState<Array<Token>>([])
