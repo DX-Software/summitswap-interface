@@ -1,4 +1,4 @@
-import { ChainId, JSBI, Percent, Token, WETH } from '@summitswap-libs'
+import { ChainId, JSBI, Percent, Token, WETH } from '@koda-finance/summitswap-sdk'
 
 export const MAX_QUERYING_BLOCK_AMOUNT = 5000;
 export const ROUTER_ADDRESS = `${process.env.REACT_APP_ROUTER_ADDRESS}`

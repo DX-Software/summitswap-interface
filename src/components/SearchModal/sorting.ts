@@ -1,4 +1,4 @@
-import { Token, TokenAmount } from '@summitswap-libs'
+import { Token, TokenAmount } from '@koda-finance/summitswap-sdk'
 import { useMemo } from 'react'
 import { useAllTokenBalances } from '../../state/wallet/hooks'
 
