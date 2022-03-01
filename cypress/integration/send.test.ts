@@ -1,11 +1,11 @@
 describe('Send', () => {
-  xit('should redirect', () => {
+  it('should redirect', () => {
     cy.visit('/send')
     cy.url().should('include', '/swap')
   })
 
-  xit('should redirect with url params', () => {
-    cy.visit('/send?outputCurrency=ETH&recipient=bob.argent.xyz')
-    cy.url().should('contain', '/swap?outputCurrency=ETH&recipient=bob.argent.xyz')
+  it('should redirect with url params', () => {
+    cy.visit('/send?output=ETH&recipient=bob.argent.xyz')
+    cy.url().should('contain', '/swap?output=ETH&recipient=bob.argent.xyz')
   })
 })
