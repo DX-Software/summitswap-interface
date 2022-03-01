@@ -205,6 +205,15 @@
               true
             ]
           },
+          "slippageTolerance": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 49,
+            "description": "The maximum amount of slippage that can be tolerated for the token",
+            "examples": [
+              20
+            ]
+          },
           "tags": {
             "type": "array",
             "description": "An array of tag identifiers associated with the token; tags are defined at the list level",
