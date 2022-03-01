@@ -180,9 +180,10 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
   useEffect(() => {
     if (currencies[Field.INPUT] === undefined || currencies[Field.OUTPUT] === undefined) return
 
-    const inputToken = currencies[Field.INPUT] as Token
-    const outputToken = currencies[Field.OUTPUT] as Token
-    const _allowedSlippage = inputToken.slippageTolerance > outputToken.slippageTolerance ? inputToken.slippageTolerance : outputToken.slippageTolerance
+    const sellSlippageTolerance = (currencies[Field.INPUT] as Token).sellSlippageTolerance || 0
+    const buySlippageTolerance = (currencies[Field.OUTPUT] as Token).buySlippageTolerance || 0
+    const _allowedSlippage = sellSlippageTolerance > buySlippageTolerance ? sellSlippageTolerance : buySlippageTolerance
+
     if (_allowedSlippage > 0) {
       setAllowedSlippage(_allowedSlippage * 100)
     }
