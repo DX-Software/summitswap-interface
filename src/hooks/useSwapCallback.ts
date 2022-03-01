@@ -1,14 +1,13 @@
 import { useSelector } from 'react-redux'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
-import { JSBI, Percent, Router, SwapParameters, Trade, TradeType } from '@summitswap-libs'
+import { JSBI, Percent, Router, SwapParameters, Trade, TradeType } from '@koda-finance/summitswap-sdk'
 import { useEffect, useMemo, useState } from 'react'
 import {
   BIPS_BASE,
   DEFAULT_DEADLINE_FROM_NOW,
   INITIAL_ALLOWED_SLIPPAGE,
   NULL_ADDRESS,
-  REFERRAL_ADDRESS,
 } from '../constants'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { calculateGasMargin, getRouterContract, isAddress, shortenAddress } from '../utils'

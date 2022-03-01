@@ -1,4 +1,4 @@
-import { Currency, ETHER, Token } from '@summitswap-libs'
+import { Currency, ETHER, Token } from '@koda-finance/summitswap-sdk'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import useHttpLocations from '../../hooks/useHttpLocations'
@@ -31,10 +31,10 @@ export default function CurrencyLogo({
 
     if (currency instanceof Token) {
       if (currency instanceof WrappedTokenInfo) {
-        return [...uriLocations, `/images/coins/${currency?.symbol ?? 'token'}.png`, getTokenLogoURL(currency.address)]
+        return [...uriLocations, getTokenLogoURL(currency.address)]
       }
 
-      return [`/images/coins/${currency?.symbol ?? 'token'}.png`, getTokenLogoURL(currency.address)]
+      return [getTokenLogoURL(currency.address)]
     }
     return []
   }, [currency, uriLocations])

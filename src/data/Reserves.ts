@@ -1,4 +1,4 @@
-import { TokenAmount, Pair, Currency } from '@summitswap-libs'
+import { TokenAmount, Pair, Currency } from '@koda-finance/summitswap-sdk'
 import { useMemo } from 'react'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { Interface } from '@ethersproject/abi'
@@ -31,7 +31,6 @@ export function usePairs(currencies: [Currency | undefined, Currency | undefined
   const pairAddresses = useMemo(
     () =>
       tokens.map(([tokenA, tokenB]) => {
-        console.log(tokenA, tokenB)
         return tokenA && tokenB && !tokenA.equals(tokenB) ? Pair.getAddress(tokenA, tokenB) : undefined
       }),
     [tokens]

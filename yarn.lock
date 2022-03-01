@@ -2524,6 +2524,30 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
+"@koda-finance/summitswap-sdk@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@koda-finance/summitswap-sdk/-/summitswap-sdk-1.0.0.tgz#80321caa674fd8b16672aad6d8f6688cc9dbe668"
+  integrity sha512-Eag4+5pfYdlV705TOp4lImcAXHYXUxi+g2Rwa/TKmiMPxGvpebM7Rxb3fEwN/QWheV/bkShQcrdvz02ka42QIw==
+  dependencies:
+    "@pancakeswap-libs/pancake-swap-core" "^0.1.0"
+    big.js "^5.2.2"
+    decimal.js-light "^2.5.0"
+    jsbi "^3.1.1"
+    tiny-invariant "^1.1.0"
+    tiny-warning "^1.0.3"
+    toformat "^2.0.0"
+
+"@koda-finance/summitswap-uikit@^1.0.0":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@koda-finance/summitswap-uikit/-/summitswap-uikit-1.0.1.tgz#7760e51c997692b32411afe2c498f66863fb902e"
+  integrity sha512-7/cU7NDIOKxKJBVrlLiRrLK8CHvtFfSRfFmTifaJUJ/4tbSvzDfVOX2tOEcy8hBT9oVplrElP6VfgZjbSAO36A==
+  dependencies:
+    "@types/lodash" "^4.14.162"
+    "@types/styled-system" "^5.1.10"
+    lodash "^4.17.20"
+    react-transition-group "^4.4.1"
+    styled-system "^5.1.5"
+
 "@metamask/safe-event-emitter@2.0.0", "@metamask/safe-event-emitter@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@metamask/safe-event-emitter/-/safe-event-emitter-2.0.0.tgz#af577b477c683fad17c619a78208cede06f9605c"
@@ -2947,28 +2971,6 @@
   dependencies:
     "@styled-system/core" "^5.1.2"
     "@styled-system/css" "^5.1.5"
-
-"@summitswap-libs@git+https://github.com/Koda-Finance/summitswap-sdk.git#main":
-  version "1.0.0"
-  resolved "git+https://github.com/Koda-Finance/summitswap-sdk.git#c23b642a911dcd2e4851703c7ff123cc8e01a6e5"
-  dependencies:
-    "@pancakeswap-libs/pancake-swap-core" "^0.1.0"
-    big.js "^5.2.2"
-    decimal.js-light "^2.5.0"
-    jsbi "^3.1.1"
-    tiny-invariant "^1.1.0"
-    tiny-warning "^1.0.3"
-    toformat "^2.0.0"
-
-"@summitswap-uikit@git+https://github.com/Koda-Finance/summitswap-uikit.git#main":
-  version "0.0.1"
-  resolved "git+https://github.com/Koda-Finance/summitswap-uikit.git#e35a5b56d8a360471ec653dad5f468aec00ee2b8"
-  dependencies:
-    "@types/lodash" "^4.14.162"
-    "@types/styled-system" "^5.1.10"
-    lodash "^4.17.20"
-    react-transition-group "^4.4.1"
-    styled-system "^5.1.5"
 
 "@surma/rollup-plugin-off-main-thread@^1.1.1":
   version "1.4.2"
