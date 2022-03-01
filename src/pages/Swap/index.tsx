@@ -382,10 +382,6 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
                 isSwap
                 price={priceOut}
               />
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'nowrap', marginTop: '12px', padding: "0px 16px" }}>
-                <Text bold fontSize="13px" mr="12px">Slippage Tolerance</Text>
-                <Text bold fontSize="18px" style={{ overflowWrap: 'anywhere' }}>{allowedSlippage / 100}%</Text>
-              </div>
 
               {recipient !== null && !showWrap ? (
                 <>
