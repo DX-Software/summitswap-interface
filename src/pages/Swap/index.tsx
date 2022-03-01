@@ -73,7 +73,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
 
   // get custom setting values for user
   const [deadline] = useUserDeadline()
-  const [allowedSlippage] = useUserSlippageTolerance()
+  const [allowedSlippage, setAllowedSlippage] = useUserSlippageTolerance()
 
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
@@ -176,6 +176,19 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
       setApprovalSubmitted(true)
     }
   }, [approval, approvalSubmitted])
+
+  useEffect(() => {
+    if (currencies[Field.INPUT] === undefined || currencies[Field.OUTPUT] === undefined) return
+
+    const inputToken = currencies[Field.INPUT] as Token
+    const outputToken = currencies[Field.OUTPUT] as Token
+    const _allowedSlippage = inputToken.slippageTolerance > outputToken.slippageTolerance ? inputToken.slippageTolerance : outputToken.slippageTolerance
+    if (_allowedSlippage > 0) {
+      setAllowedSlippage(_allowedSlippage * 100)
+    }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currencies[Field.INPUT], currencies[Field.OUTPUT]])
 
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT])
   // const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
