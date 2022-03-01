@@ -2524,10 +2524,9 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@koda-finance/summitswap-sdk@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@koda-finance/summitswap-sdk/-/summitswap-sdk-1.0.0.tgz#80321caa674fd8b16672aad6d8f6688cc9dbe668"
-  integrity sha512-Eag4+5pfYdlV705TOp4lImcAXHYXUxi+g2Rwa/TKmiMPxGvpebM7Rxb3fEwN/QWheV/bkShQcrdvz02ka42QIw==
+"@koda-finance/summitswap-sdk@git+https://github.com/Koda-Finance/summitswap-sdk.git#feat/tokens-slippage-tolerance":
+  version "1.0.3"
+  resolved "git+https://github.com/Koda-Finance/summitswap-sdk.git#2e5f6e2b26b040415dd9df83771a96834ee542a9"
   dependencies:
     "@pancakeswap-libs/pancake-swap-core" "^0.1.0"
     big.js "^5.2.2"
