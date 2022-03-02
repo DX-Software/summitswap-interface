@@ -9,6 +9,7 @@ export const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 export const SUMMITCHECK_API = `${process.env.REACT_APP_SUMMITCHECK_API}`
 export const CHAIN_ID = parseInt(process.env.REACT_APP_CHAIN_ID ?? '56')
 
+export const DEFAULT_SLIPPAGE_TOLERANCE = 0.8
 
 // a list of tokens by chain
 type ChainTokenList = {
