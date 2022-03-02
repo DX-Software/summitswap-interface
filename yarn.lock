@@ -2526,7 +2526,7 @@
 
 "@koda-finance/summitswap-sdk@git+https://github.com/Koda-Finance/summitswap-sdk.git#feat/tokens-slippage-tolerance":
   version "1.0.3"
-  resolved "git+https://github.com/Koda-Finance/summitswap-sdk.git#2e5f6e2b26b040415dd9df83771a96834ee542a9"
+  resolved "git+https://github.com/Koda-Finance/summitswap-sdk.git#e678675e669761aa1f41453e157491e0d4bea41d"
   dependencies:
     "@pancakeswap-libs/pancake-swap-core" "^0.1.0"
     big.js "^5.2.2"
