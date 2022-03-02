@@ -25,7 +25,7 @@ import CoinManagerSegment from './Segments/CoinManagerSegment'
 import HistorySegment from './Segments/HistorySegment'
 import SubInfluencer from './Segments/SubInfluencer'
 import LeadInfluencer from './Segments/LeadInfluencer'
-import { Influencer } from './types'
+import { InfInfo, Influencer } from './types'
 
 interface IProps {
   isLanding?: boolean
@@ -49,6 +49,28 @@ const Referral: React.FC<IProps> = () => {
   useEffect(() => {
     setAllTokens(Object.values(allTokensTemp))
   }, [allTokensTemp])
+
+  useEffect(() => {
+    setEnabledSegments(prevState => {
+      const nextValue = {...prevState}
+      nextValue.leadInfluencer.isActive = false
+      nextValue.subInfluencer.isActive = false
+      return nextValue
+    })
+    const getIfLead = async () => {
+      if (!account || !refContract || !selectedOutputCoin) return
+      const influncerInfo = await refContract.influencers(selectedOutputCoin.address, account) as InfInfo
+      setEnabledSegments(prevState => {
+        const nextValue = {...prevState}
+        nextValue.leadInfluencer.isActive = influncerInfo.isLead
+        if (!influncerInfo.isLead && influncerInfo.lead) {
+          nextValue.subInfluencer.isActive = true
+        }
+        return nextValue
+      })
+    }
+    getIfLead()
+  }, [selectedOutputCoin, account, refContract])
 
   useEffect(() => {
     if (!selectedOutputCoin) {
@@ -115,15 +137,6 @@ const Referral: React.FC<IProps> = () => {
 
       const influencers = referrerEvents.map(event => event.args) as unknown as Influencer[]
 
-      if (influencers.length !== 0) {
-        setEnabledSegments(prevState => {
-          const segmentOptions = {...prevState}
-          segmentOptions.leadInfluencer.isActive = true
-          return segmentOptions
-        })
-      }
-
-      setSegmentControllerIndex(0)
       setLeadInfluencers(influencers)
     }
     fetchReferralData()
@@ -183,7 +196,7 @@ const Referral: React.FC<IProps> = () => {
             selectedOutputCoin={selectedOutputCoin} />
         )
       case 'coinManager':
-        return (<CoinManagerSegment selectedCoin={selectedOutputCoin}/>)
+        return (<CoinManagerSegment selectedCoin={selectedOutputCoin} influencers={leadInfluencers} />)
       case 'leadInfluencer':
         return <LeadInfluencer influencers={leadInfluencers}/>
       case 'subInfluencer':

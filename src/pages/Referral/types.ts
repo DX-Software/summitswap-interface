@@ -18,3 +18,11 @@ export interface Influencer {
   referee: string;
   referrer: string;
 }
+
+export interface InfInfo {
+  lead: string;
+  leadFee: BigNumber;
+  refFee: BigNumber;
+  isActive: boolean;
+  isLead: boolean;
+}
