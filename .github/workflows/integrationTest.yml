@@ -1,0 +1,28 @@
+name: integration test
+
+on: [pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone repo
+        uses: actions/checkout@v2
+
+      - name: setup node 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+          cache: "yarn"
+
+      - name: install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: install cypress
+        run: yarn cypress install
+
+      - name: build
+        run: CI=false yarn build-test
+
+      - name: run test
+        run: yarn integration-test
