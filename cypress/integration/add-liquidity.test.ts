@@ -1,14 +1,14 @@
 describe('Add Liquidity', () => {
   it('loads the two correct tokens', () => {
-    cy.visit('#/add/0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82-0xe9e7cea3dedca5984780bafc599bd69add087d56')
-    cy.get('#add-liquidity-input-tokena #pair').should('contain.text', 'CAKE')
+    cy.visit('#/add/0x8094e772fA4A60bdEb1DfEC56AB040e17DD608D5-0xe9e7cea3dedca5984780bafc599bd69add087d56')
+    cy.get('#add-liquidity-input-tokena #pair').should('contain.text', 'KODA')
     cy.get('#add-liquidity-input-tokenb #pair').should('contain.text', 'BUSD')
   })
 
-  it('does not crash if CAKE is duplicated', () => {
-    cy.visit('#/add/0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82-0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82')
-    cy.get('#add-liquidity-input-tokena #pair').should('contain.text', 'CAKE')
-    cy.get('#add-liquidity-input-tokenb #pair').should('not.contain.text', 'CAKE')
+  it('does not crash if KODA is duplicated', () => {
+    cy.visit('#/add/0x8094e772fA4A60bdEb1DfEC56AB040e17DD608D5-0x8094e772fA4A60bdEb1DfEC56AB040e17DD608D5')
+    cy.get('#add-liquidity-input-tokena #pair').should('contain.text', 'KODA')
+    cy.get('#add-liquidity-input-tokenb #pair').should('not.contain.text', 'KODA')
   })
 
   it('token not in storage is loaded', () => {
