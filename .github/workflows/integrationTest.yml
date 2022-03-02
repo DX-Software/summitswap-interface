@@ -22,7 +22,7 @@ jobs:
         run: yarn cypress install
 
       - name: build
-        run: CI=false yarn build-test
+        run: CI=false yarn build-mainnet
 
       - name: run test
         run: yarn integration-test

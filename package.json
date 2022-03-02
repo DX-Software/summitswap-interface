@@ -101,7 +101,7 @@
     "eject": "react-scripts eject",
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
     "lint:fix": "eslint 'src/**/*.{js,jsx,ts,tsx}' --fix",
-    "integration-test": "start-server-and-test 'serve build -l 3000' http://localhost:3000 'cypress run'",
+    "integration-test": "start-server-and-test start-mainnet http://localhost:3000 'cypress run'",
     "deploy": "yarn build-test && mv build/index.html build/200.html && surge -p build -d exchange-summitswap.surge.sh"
   },
   "browserslist": {
