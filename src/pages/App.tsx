@@ -63,10 +63,10 @@ export default function App() {
   const { account, deactivate, activate, error } = useWeb3React()
 
   useEffect(() => {
-    if (error instanceof UnsupportedChainIdError) {
+    if (error instanceof UnsupportedChainIdError || !account) {
       localStorage.removeItem('walletconnect')
     }
-  }, [error])
+  }, [error, account])
 
   const [selectedLanguage, setSelectedLanguage] = useState<any>(undefined)
   const [translatedLanguage, setTranslatedLanguage] = useState<any>(undefined)
