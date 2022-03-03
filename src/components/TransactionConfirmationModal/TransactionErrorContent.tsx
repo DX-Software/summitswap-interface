@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { ThemeContext } from 'styled-components'
-import { Button, Text } from '@summitswap-uikit'
+import { Button, Text } from '@koda-finance/summitswap-uikit'
 import { AlertTriangle } from 'react-feather'
 import { AutoColumn } from '../Column'
 import { Wrapper, Section, BottomSection, ContentHeader } from './helpers'

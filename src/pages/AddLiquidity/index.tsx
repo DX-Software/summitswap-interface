@@ -1,9 +1,9 @@
 /* eslint-disable prefer-const */
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionResponse } from '@ethersproject/providers'
-import { Currency, currencyEquals, ETHER, TokenAmount, WETH } from '@summitswap-libs'
-import { Button, CardBody, AddIcon, Text as UIKitText } from '@summitswap-uikit'
+import { Currency, currencyEquals, ETHER, TokenAmount, WETH } from '@koda-finance/summitswap-sdk'
+import { Button, CardBody, AddIcon, Text as UIKitText } from '@koda-finance/summitswap-uikit'
 import { RouteComponentProps } from 'react-router-dom'
 import { LightCard } from 'components/Card'
 import { AutoColumn, ColumnCenter } from 'components/Column'

@@ -1,6 +1,6 @@
 import React from 'react'
-import { Trade, TradeType } from '@summitswap-libs'
-import { Card, CardBody, Text } from '@summitswap-uikit'
+import { Trade, TradeType } from '@koda-finance/summitswap-sdk'
+import { Card, CardBody, Text } from '@koda-finance/summitswap-uikit'
 import styled from 'styled-components'
 import { Field } from '../../state/swap/actions'
 import { useUserSlippageTolerance } from '../../state/user/hooks'
