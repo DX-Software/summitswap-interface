@@ -5,9 +5,8 @@ import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
 import { abi as IUniswapV2Router02ABI } from '@uniswap/v2-periphery/build/IUniswapV2Router02.json'
 import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER } from '@summitswap-libs'
-import { ROUTER_ADDRESS, MIDDLEMAN_ADDRESS } from '../constants'
+import { ROUTER_ADDRESS } from '../constants'
 import { TokenAddressMap } from '../state/lists/hooks'
-import MIDDLEMAN_ABI from '../constants/abis/middleman.json'
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
@@ -91,10 +90,6 @@ export function getContract(address: string, ABI: any, library: Web3Provider, ac
 // account is optional
 export function getRouterContract(_: number, library: Web3Provider, account?: string, routerAddress: string = ROUTER_ADDRESS): Contract {
   return getContract(routerAddress, IUniswapV2Router02ABI, library, account)
-}
-
-export function getMiddlemanContract(_:number, library: Web3Provider, account?: string): Contract {
-  return getContract(MIDDLEMAN_ADDRESS, MIDDLEMAN_ABI, library, account)
 }
 
 export function escapeRegExp(string: string): string {
