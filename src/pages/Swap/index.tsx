@@ -33,6 +33,7 @@ import expandMore from 'img/expandMore.svg'
 import useGetTokenData from 'hooks/useGetTokenData'
 import useGetEthPrice from 'hooks/useGetEthPrice'
 import AppBody from '../AppBody'
+import { DEFAULT_SLIPPAGE_TOLERANCE } from '../../constants'
 
 interface IProps {
   isLanding?: boolean
@@ -73,7 +74,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
 
   // get custom setting values for user
   const [deadline] = useUserDeadline()
-  const [allowedSlippage] = useUserSlippageTolerance()
+  const [allowedSlippage, setAllowedSlippage] = useUserSlippageTolerance()
 
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
@@ -176,6 +177,34 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
       setApprovalSubmitted(true)
     }
   }, [approval, approvalSubmitted])
+
+  useEffect(() => {
+    if (currencies[Field.INPUT] === undefined || currencies[Field.OUTPUT] === undefined) return
+
+    let _allowedSlippage = DEFAULT_SLIPPAGE_TOLERANCE
+
+    const hasMultipleRoutePath = Boolean(v2Trade && v2Trade.route.path.length > 2)
+
+    if (v2Trade && hasMultipleRoutePath) {
+      for (let i = 1; i < v2Trade.route.path.length; i++) {
+        const sellSlippageTolerance = (v2Trade.route.path[i - 1] as Token).sellSlippageTolerance || DEFAULT_SLIPPAGE_TOLERANCE
+        const buySlippageTolerance = (v2Trade.route.path[i] as Token).buySlippageTolerance || DEFAULT_SLIPPAGE_TOLERANCE
+
+        const newSlippageTolerance = sellSlippageTolerance > buySlippageTolerance ? sellSlippageTolerance : buySlippageTolerance
+        _allowedSlippage = newSlippageTolerance > _allowedSlippage ? newSlippageTolerance : _allowedSlippage
+      }
+    } else {
+      const sellSlippageTolerance = (currencies[Field.INPUT] as Token).sellSlippageTolerance || DEFAULT_SLIPPAGE_TOLERANCE
+      const buySlippageTolerance = (currencies[Field.OUTPUT] as Token).buySlippageTolerance || DEFAULT_SLIPPAGE_TOLERANCE
+      _allowedSlippage = sellSlippageTolerance > buySlippageTolerance ? sellSlippageTolerance : buySlippageTolerance
+    }
+
+    if (_allowedSlippage > 0) {
+      setAllowedSlippage(_allowedSlippage * 100)
+    }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currencies[Field.INPUT], currencies[Field.OUTPUT], v2Trade])
 
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT])
   // const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
@@ -303,9 +332,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
         onConfirm={handleConfirmSyrupWarning}
       />
       <AppBody>
-        <PageHeader
-        // title="Swap"
-        />
+        <PageHeader />
         {isLanding ? '' : <CardNav />}
         <Wrapper id="swap-page">
           <ConfirmSwapModal
