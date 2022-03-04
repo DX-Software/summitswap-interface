@@ -9,13 +9,14 @@ export const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 export const SUMMITCHECK_API = `${process.env.REACT_APP_SUMMITCHECK_API}`
 export const CHAIN_ID = parseInt(process.env.REACT_APP_CHAIN_ID ?? '56')
 
+export const DEFAULT_SLIPPAGE_TOLERANCE = 0.8
 
 // a list of tokens by chain
 type ChainTokenList = {
   readonly [chainId in ChainId]: Token[]
 }
 
-export const KODA = new Token(ChainId.MAINNET, '0x8094e772fa4a60bdeb1dfec56ab040e17dd608d5', 9, 'KODA', 'KODA Token')
+export const KODA = new Token(ChainId.MAINNET, '0x8094e772fa4a60bdeb1dfec56ab040e17dd608d5', 9, 'KODA', 'KODA Token', 100, true, 11.25, 11.23)
 export const DAI = new Token(ChainId.MAINNET, '0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3', 18, 'DAI', 'Dai Stablecoin')
 export const BUSD = new Token(ChainId.MAINNET, '0xe9e7cea3dedca5984780bafc599bd69add087d56', 18, 'BUSD', 'Binance USD')
 export const USDT = new Token(ChainId.MAINNET, '0x55d398326f99059ff775485246999027b3197955', 18, 'USDT', 'Tether USD')
