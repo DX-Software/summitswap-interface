@@ -16,7 +16,7 @@ jobs:
           cache: "yarn"
 
       - name: install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile ${{ secrets.FTP_USER }}
 
       - name: run test
         run: yarn test --watchAll=false
