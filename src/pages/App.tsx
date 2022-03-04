@@ -136,8 +136,8 @@ export default function App() {
             <Popups />
             <Web3ReactManager>
               <Switch>
-                <Route exact strict path="/">
-                  <Redirect to="/swap" />
+                <Route exact strict path={["/", "/send"]}>
+                  <Redirect to={`/swap${location.search}`} />
                 </Route>
                 <Menu>
                   <BodyWrapper>

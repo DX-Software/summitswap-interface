@@ -73,6 +73,7 @@
     "rebass": "^4.0.7",
     "redux-localstorage-simple": "^2.3.1",
     "styled-components": "^5.2.1",
+    "text-decoding": "^1.0.0",
     "typescript": "^4.1.3"
   },
   "devDependencies": {
@@ -96,11 +97,11 @@
     "build-test": "node ./update-build.js && env-cmd -f ./.env.development react-scripts build",
     "build-mainnet": "node ./update-build.js && env-cmd -f ./.env.production react-scripts build",
     "start-mainnet": "env-cmd -f ./.env.production react-scripts start",
-    "test": "react-scripts test --env=jsdom",
+    "test": "env-cmd -f ./.env.development react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
     "lint:fix": "eslint 'src/**/*.{js,jsx,ts,tsx}' --fix",
-    "integration-test": "start-server-and-test 'serve build -l 3000' http://localhost:3000 'cypress run'",
+    "integration-test": "start-server-and-test start-mainnet http://localhost:3000 'cypress run'",
     "deploy": "yarn build-test && mv build/index.html build/200.html && surge -p build -d exchange-summitswap.surge.sh"
   },
   "browserslist": {
