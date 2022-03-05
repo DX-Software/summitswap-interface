@@ -45,6 +45,7 @@ const Referral: React.FC<IProps> = () => {
   const [segmentControllerIndex, setSegmentControllerIndex] = useState(0)
   const [enabledSegments, setEnabledSegments] = useState(ReferralSegmentInitial)
   const [leadInfluencers, setLeadInfluencers] = useState<Influencer[]>([])
+  const [myLeadInfluencerAddress, setMyLeadInfluencerAddress] = useState<string | undefined>()
 
   useEffect(() => {
     setAllTokens(Object.values(allTokensTemp))
@@ -54,7 +55,6 @@ const Referral: React.FC<IProps> = () => {
     setEnabledSegments(prevState => {
       const nextValue = {...prevState}
       nextValue.leadInfluencer.isActive = false
-      nextValue.subInfluencer.isActive = false
       return nextValue
     })
     const getIfLead = async () => {
@@ -64,7 +64,7 @@ const Referral: React.FC<IProps> = () => {
         const nextValue = {...prevState}
         nextValue.leadInfluencer.isActive = influncerInfo.isLead
         if (!influncerInfo.isLead && influncerInfo.lead) {
-          nextValue.subInfluencer.isActive = true
+          setMyLeadInfluencerAddress(influncerInfo.lead)
         }
         return nextValue
       })
@@ -200,7 +200,7 @@ const Referral: React.FC<IProps> = () => {
       case 'leadInfluencer':
         return <LeadInfluencer influencers={leadInfluencers}/>
       case 'subInfluencer':
-        return (<SubInfluencer />)
+        return (<SubInfluencer myLeadInfluencerAddress={myLeadInfluencerAddress} selectedCoin={selectedOutputCoin}/>)
       case 'history':
         return (<HistorySegment />)
       default:

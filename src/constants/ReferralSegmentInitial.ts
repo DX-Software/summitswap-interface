@@ -12,7 +12,7 @@ const ReferralSegmentInitial = {
         title: "Lead Influencer Dashboard"
     },
     subInfluencer: {
-        isActive: false,
+        isActive: true,
         title: "Sub Influencer Dashboard"
     },
     history: {

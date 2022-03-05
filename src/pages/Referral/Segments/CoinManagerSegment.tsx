@@ -10,45 +10,15 @@ import checkIfUint256 from 'utils/checkUint256'
 import { WrappedTokenInfo } from 'state/lists/hooks'
 import { isAddress } from '../../../utils'
 import { Influencer } from '../types';
-
-
-const StyledInput = styled.input`
-  color: ${({ theme }) => theme.colors.invertedContrast};
-  padding-left: 16px;
-  padding-right: 16px;
-  padding-top: 12px;
-  padding-bottom: 12px;
-  margin-bottom: 12px;
-  border-radius: 12px;
-  background: ${({ theme }) => theme.colors.sidebarBackground};
-  width: 100%;
-`
-
-const StyledBr = styled.div`
-  margin-top: 16px;
-  margin-bottom: 16px;
-  height: 3px;
-  border-radius: 50%;
-  background-color: ${({ theme }) => theme.colors.sidebarBackground};
-`
-
-const StyledWhiteBr = styled.div`
-  margin-top: 4px;
-  margin-bottom: 24px;
-  height: 1px;
-  border-radius: 50%;
-  background-color: #fff;
-`
+import CenterDiv from '../CenterDiv';
+import StyledInput from '../StyledInput';
+import { StyledBr, StyledWhiteBr } from '../StyledBr';
 
 const InfluencerBox = styled(Box)`
   color: ${({ theme }) => theme.colors.invertedContrast};
   padding: 16px;
   border-radius: 16px;
   background: ${({ theme }) => theme.colors.sidebarBackground};
-`
-
-const Center = styled(Flex)`
-  justify-content: center;
 `
 
 interface CoinManagerSegmentProps {
@@ -70,12 +40,12 @@ const CoinManagerSegment: React.FC<CoinManagerSegmentProps> = ({selectedCoin, in
   console.log(`COIN URL: ${coinLogoURL}`)
 
   return <>
-    <Center>
+    <CenterDiv>
       {coinLogoURL && <img src={coinLogoURL} alt="COIN LOGO"/>}
       <Text bold>{selectedCoin?.symbol}</Text>
       <Text bold> - </Text>
       <Text bold>{selectedCoin?.address}</Text>
-    </Center>
+    </CenterDiv>
     <SetFirstBuyFee contract={refContract} selectedCoin={selectedCoin} />
     <SetLeadManager contract={refContract} selectedCoin={selectedCoin} />
     <RemoveLead contract={refContract} selectedCoin={selectedCoin} />
