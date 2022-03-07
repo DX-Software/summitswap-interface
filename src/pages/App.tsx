@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { useWalletModal } from '@koda-finance/summitswap-uikit'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import login from 'utils/login'
+import SupportChatWidget from '../components/SupportChatWidget'
 import Popups from '../components/Popups'
 import Web3ReactManager from '../components/Web3ReactManager'
 import { RedirectDuplicateTokenIds, RedirectOldAddLiquidityPathStructure } from './AddLiquidity/redirects'
@@ -158,6 +159,7 @@ export default function App() {
                     <Route exact path="/summitcheck" component={SummitCheck} />
 
                     {/* <Route component={RedirectPathToSwapOnly} /> */}
+                    <SupportChatWidget/>
                   </BodyWrapper>
                 </Menu>
               </Switch>
