@@ -1,19 +1,16 @@
 import React from 'react'
 import { useWeb3React } from '@web3-react/core'
-import { Button, ButtonProps, useWalletModal } from '@summitswap-uikit'
-import { injected, walletconnect } from 'connectors'
+import { Button, ButtonProps, useWalletModal } from '@koda-finance/summitswap-uikit'
 import useI18n from 'hooks/useI18n'
 import styled from 'styled-components'
+import login from 'utils/login'
 
 const UnlockButton: React.FC<ButtonProps> = (props) => {
   const TranslateString = useI18n()
   const { account, activate, deactivate } = useWeb3React()
 
   const handleLogin = (connectorId: string) => {
-    if (connectorId === 'walletconnect') {
-      return activate(walletconnect())
-    }
-    return activate(injected)
+    login(connectorId, activate)
   }
 
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)

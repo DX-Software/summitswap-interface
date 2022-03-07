@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
-import { Pair } from '@summitswap-libs'
-import { Button, CardBody, Text } from '@summitswap-uikit'
+import { Pair } from '@koda-finance/summitswap-sdk'
+import { Button, CardBody, Text } from '@koda-finance/summitswap-uikit'
 import { Link } from 'react-router-dom'
 import CardNav from 'components/CardNav'
 import Question from 'components/QuestionHelper'
@@ -112,9 +112,9 @@ export default function Pool() {
                     {TranslateString(108, 'Import it.')}
                   </StyledInternalLink>
                 </Text>
-                <Text color='sidebarColor' fontSize="16px" style={{ marginTop: 20, padding: '0 19px' }}>
+                {/* <Text color='sidebarColor' fontSize="16px" style={{ marginTop: 20, padding: '0 19px' }}>
                   Or, if you staked your FLIP tokens in a farm,<br />unstake them to see them here.
-                </Text>
+                </Text> */}
               </div>
             </AutoColumn>
           </CardBody>

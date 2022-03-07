@@ -1,4 +1,4 @@
-import { MenuEntry } from '@summitswap-uikit'
+import { MenuEntry } from '@koda-finance/summitswap-uikit'
 
 const config: MenuEntry[] = [
   // {
@@ -7,20 +7,20 @@ const config: MenuEntry[] = [
   //   href: "/",
   // },
   {
-    label: "Trade",
-    icon: "TradeIcon",
-    href: "/swap",
+    label: 'Trade',
+    icon: 'TradeIcon',
+    href: '/swap',
   },
   {
-    label: "Referral",
-    icon: "FarmIcon",
-    href: "/referral",
+    label: 'Referral',
+    icon: 'ReferralIcon',
+    href: '/referral',
   },
   {
-    label: "Cross-Chain",
-    icon: "RubicIcon",
-    href: "/cross-chain-swap",
-    isConnectButtonShown: false,
+    label: 'Cross-Chain',
+    icon: 'RubicIcon',
+    href: '/cross-chain-swap',
+    showConnectButton: false,
   },
   // {
   //   label: "Farms",

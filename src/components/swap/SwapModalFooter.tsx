@@ -1,6 +1,6 @@
-import { Trade, TradeType } from '@summitswap-libs'
+import { Trade, TradeType } from '@koda-finance/summitswap-sdk'
 import React, { useMemo, useState } from 'react'
-import { Text , Button } from '@summitswap-uikit'
+import { Text , Button } from '@koda-finance/summitswap-uikit'
 import { Repeat } from 'react-feather'
 
 import { Field } from '../../state/swap/actions'

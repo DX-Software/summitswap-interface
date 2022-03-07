@@ -38,7 +38,9 @@ const FixedPopupColumn = styled(AutoColumn)`
   right: 1rem;
   max-width: 355px !important;
   width: 100%;
-  z-index: 2;
+  z-index: 22;
+  left: 50%;
+  transform: translate(-50%, 0);
 
   ${({ theme }) => theme.mediaQueries.sm} {
     display: none;

@@ -1,4 +1,4 @@
-import { Currency } from '@summitswap-libs'
+import { Currency } from '@koda-finance/summitswap-sdk'
 import React from 'react'
 import styled from 'styled-components'
 import CurrencyLogo from '../CurrencyLogo'
@@ -8,6 +8,7 @@ const Wrapper = styled.div<{ margin: boolean; sizeraw: number }>`
   display: flex;
   flex-direction: row;
   margin-right: ${({ sizeraw, margin }) => margin && `${(sizeraw / 3 + 8).toString()  }px`};
+  color: ${({ theme }) => theme.colors.invertedContrast};
 `
 
 interface DoubleCurrencyLogoProps {
@@ -33,7 +34,7 @@ export default function DoubleCurrencyLogo({
 }: DoubleCurrencyLogoProps) {
   return (
     <Wrapper sizeraw={size} margin={margin}>
-      {currency0 && <HigherLogo currency={currency0} size={`${size.toString()  }px`} />}
+      {currency0 && <HigherLogo currency={currency0} size={`${size.toString()  }px`} />} &nbsp;
       {currency1 && <CoveredLogo currency={currency1} size={`${size.toString()  }px`} sizeraw={size} />}
     </Wrapper>
   )

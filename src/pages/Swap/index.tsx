@@ -1,7 +1,7 @@
-import { CurrencyAmount, JSBI, Token, Trade } from '@summitswap-libs'
+import { CurrencyAmount, JSBI, Token, Trade } from '@koda-finance/summitswap-sdk'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown } from 'react-feather'
-import { CardBody, Button, IconButton, Text } from '@summitswap-uikit'
+import { CardBody, Button, IconButton, Text } from '@koda-finance/summitswap-uikit'
 import { ThemeContext } from 'styled-components'
 import AddressInputPanel from 'components/AddressInputPanel'
 import { GreyCard } from 'components/Card'
@@ -12,12 +12,12 @@ import CardNav from 'components/CardNav'
 import { AutoRow, RowBetween } from 'components/Row'
 import AdvancedSwapDetailsDropdown from 'components/swap/AdvancedSwapDetailsDropdown'
 import confirmPriceImpactWithoutFee from 'components/swap/confirmPriceImpactWithoutFee'
-import { ArrowWrapper, BottomGrouping, SwapCallbackError, Wrapper } from 'components/swap/styleds'
+import { ArrowWrapper, BottomGrouping, SwapCallbackError, Wrapper, Dots } from 'components/swap/styleds'
 import TokenWarningModal from 'components/TokenWarningModal'
 import SyrupWarningModal from 'components/SyrupWarningModal'
 import ProgressSteps from 'components/ProgressSteps'
 import { useWeb3React } from '@web3-react/core'
-import { useCurrency } from 'hooks/Tokens'
+import { useAllTokens, useCurrency } from 'hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from 'hooks/useApproveCallback'
 import { useSwapCallback } from 'hooks/useSwapCallback'
 import useWrapCallback, { WrapType } from 'hooks/useWrapCallback'
@@ -27,13 +27,13 @@ import { useExpertModeManager, useUserDeadline, useUserSlippageTolerance } from 
 import { LinkStyledButton } from 'components/Shared'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from 'utils/prices'
-import Loader from 'components/Loader'
 import PageHeader from 'components/PageHeader'
 import ConnectWalletButtonSwap from 'components/ConnectWalletButtonSwap'
 import expandMore from 'img/expandMore.svg'
 import useGetTokenData from 'hooks/useGetTokenData'
 import useGetEthPrice from 'hooks/useGetEthPrice'
 import AppBody from '../AppBody'
+import { DEFAULT_SLIPPAGE_TOLERANCE } from '../../constants'
 
 interface IProps {
   isLanding?: boolean
@@ -43,12 +43,15 @@ interface IProps {
 const Swap: React.FC<IProps> = ({ isLanding }) => {
   const { account } = useWeb3React()
 
+  const allTokens = useAllTokens()
+
   const loadedUrlParams = useDefaultsFromURLSearch()
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
     useCurrency(loadedUrlParams?.inputCurrencyId),
     useCurrency(loadedUrlParams?.outputCurrencyId),
   ]
+
   const [dismissTokenWarning, setDismissTokenWarning] = useState<boolean>(false)
   const [isSyrup, setIsSyrup] = useState<boolean>(false)
   const [syrupTransactionType, setSyrupTransactionType] = useState<string>('')
@@ -71,7 +74,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
 
   // get custom setting values for user
   const [deadline] = useUserDeadline()
-  const [allowedSlippage] = useUserSlippageTolerance()
+  const [allowedSlippage, setAllowedSlippage] = useUserSlippageTolerance()
 
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
@@ -174,6 +177,34 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
       setApprovalSubmitted(true)
     }
   }, [approval, approvalSubmitted])
+
+  useEffect(() => {
+    if (currencies[Field.INPUT] === undefined || currencies[Field.OUTPUT] === undefined) return
+
+    let _allowedSlippage = DEFAULT_SLIPPAGE_TOLERANCE
+
+    const hasMultipleRoutePath = Boolean(v2Trade && v2Trade.route.path.length > 2)
+
+    if (v2Trade && hasMultipleRoutePath) {
+      for (let i = 1; i < v2Trade.route.path.length; i++) {
+        const sellSlippageTolerance = (v2Trade.route.path[i - 1] as Token).sellSlippageTolerance || DEFAULT_SLIPPAGE_TOLERANCE
+        const buySlippageTolerance = (v2Trade.route.path[i] as Token).buySlippageTolerance || DEFAULT_SLIPPAGE_TOLERANCE
+
+        const newSlippageTolerance = sellSlippageTolerance > buySlippageTolerance ? sellSlippageTolerance : buySlippageTolerance
+        _allowedSlippage = newSlippageTolerance > _allowedSlippage ? newSlippageTolerance : _allowedSlippage
+      }
+    } else {
+      const sellSlippageTolerance = (currencies[Field.INPUT] as Token).sellSlippageTolerance || DEFAULT_SLIPPAGE_TOLERANCE
+      const buySlippageTolerance = (currencies[Field.OUTPUT] as Token).buySlippageTolerance || DEFAULT_SLIPPAGE_TOLERANCE
+      _allowedSlippage = sellSlippageTolerance > buySlippageTolerance ? sellSlippageTolerance : buySlippageTolerance
+    }
+
+    if (_allowedSlippage > 0) {
+      setAllowedSlippage(_allowedSlippage * 100)
+    }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currencies[Field.INPUT], currencies[Field.OUTPUT], v2Trade])
 
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT])
   // const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
@@ -283,10 +314,16 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
     [onCurrencySelection, checkForSyrup]
   )
 
+  const areKnownTokens = useMemo(() => {
+    if (!allTokens) return true
+
+    return urlLoadedTokens.every((o) => !!allTokens[o.address])
+  }, [urlLoadedTokens, allTokens])
+
   return (
     <>
       <TokenWarningModal
-        isOpen={urlLoadedTokens.length > 0 && !dismissTokenWarning}
+        isOpen={urlLoadedTokens.length > 0 && !dismissTokenWarning && !areKnownTokens}
         tokens={urlLoadedTokens}
         onConfirm={handleConfirmTokenWarning}
       />
@@ -296,9 +333,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
         onConfirm={handleConfirmSyrupWarning}
       />
       <AppBody>
-        <PageHeader
-        // title="Swap"
-        />
+        <PageHeader />
         {isLanding ? '' : <CardNav />}
         <Wrapper id="swap-page">
           <ConfirmSwapModal
@@ -404,7 +439,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
                     >
                       {approval === ApprovalState.PENDING ? (
                         <AutoRow gap="6px" justify="center">
-                          Approving <Loader stroke="white" />
+                          <Dots>Approving</Dots>
                         </AutoRow>
                       ) : approvalSubmitted && approval === ApprovalState.APPROVED ? (
                         'Approved'

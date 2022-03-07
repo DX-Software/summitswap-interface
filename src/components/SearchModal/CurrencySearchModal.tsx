@@ -1,4 +1,4 @@
-import { Currency, Token } from '@summitswap-libs'
+import { Currency, Token } from '@koda-finance/summitswap-sdk'
 import React, { useCallback, useEffect, useState } from 'react'
 import useLast from '../../hooks/useLast'
 import { useSelectedListUrl } from '../../state/lists/hooks'
@@ -17,6 +17,7 @@ interface CurrencySearchModalProps {
   showETH?: boolean
   tokens?: Array<Token>
   isAddedByUserOn?: boolean
+  showUnknownTokens?: boolean
 }
 
 export default function CurrencySearchModal({
@@ -27,7 +28,8 @@ export default function CurrencySearchModal({
   otherSelectedCurrency,
   showETH,
   tokens,
-  isAddedByUserOn = true
+  isAddedByUserOn = true,
+  showUnknownTokens = true
 }: CurrencySearchModalProps) {
   const [listView, setListView] = useState<boolean>(false)
   const lastOpen = useLast(isOpen)
@@ -72,6 +74,7 @@ export default function CurrencySearchModal({
           showETH={showETH}
           tokens={tokens}
           isAddedByUserOn={isAddedByUserOn}
+          showUnknownTokens={showUnknownTokens}
         />
       ) : (
         <CurrencySearch
@@ -85,6 +88,7 @@ export default function CurrencySearchModal({
           showETH={showETH}
           tokens={tokens}
           isAddedByUserOn={isAddedByUserOn}
+          showUnknownTokens={showUnknownTokens}
         />
       )}
     </Modal>

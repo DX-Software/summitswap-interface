@@ -1,10 +1,9 @@
 import React, { Suspense, useEffect, useState } from 'react'
 import { Route, Switch, Redirect, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
-import { useReferralContract } from 'hooks/useContract'
-import { injected, walletconnect } from 'connectors'
-import { useWalletModal } from '@summitswap-uikit'
+import { useWalletModal } from '@koda-finance/summitswap-uikit'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
+import login from 'utils/login'
 import Popups from '../components/Popups'
 import Web3ReactManager from '../components/Web3ReactManager'
 import { RedirectDuplicateTokenIds, RedirectOldAddLiquidityPathStructure } from './AddLiquidity/redirects'
@@ -23,7 +22,6 @@ import { TranslationsContext } from '../hooks/TranslationsContext'
 import langSrc from '../constants/localisation/translate/index'
 import AppHeader from './AppHeader'
 import Menu from '../components/Menu'
-import { NULL_ADDRESS, REFERRAL_ADDRESS } from '../constants'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -65,24 +63,19 @@ export default function App() {
   const { account, deactivate, activate, error } = useWeb3React()
 
   useEffect(() => {
-    if (error instanceof UnsupportedChainIdError) {
+    if (error instanceof UnsupportedChainIdError || !account) {
       localStorage.removeItem('walletconnect')
     }
-  }, [error])
+  }, [error, account])
 
   const [selectedLanguage, setSelectedLanguage] = useState<any>(undefined)
   const [translatedLanguage, setTranslatedLanguage] = useState<any>(undefined)
   const [translations, setTranslations] = useState<Array<any>>([])
-  const [referrals, setReferrals] = useState<Record<string, string>>({}) // Output token => Referrer
 
-  const referralContract = useReferralContract(REFERRAL_ADDRESS, true)
   const location = useLocation()
 
   const handleLogin = (connectorId: string) => {
-    if (connectorId === 'walletconnect') {
-      return activate(walletconnect())
-    }
-    return activate(injected)
+    login(connectorId, activate)
   }
 
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
@@ -127,41 +120,11 @@ export default function App() {
       const referralCached: Record<string, string> = JSON.parse(localStorage.getItem('referral') ?? '{}')
       referralCached[outputParam] = referrerParam
       localStorage.setItem('referral', JSON.stringify(referralCached))
-      localStorage.removeItem('rejected')
-      setReferrals(referralCached)
       onPresentConnectModal()
-    } else {
-      setReferrals(JSON.parse(localStorage.getItem('referral') ?? '{}'))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
 
-  useEffect(() => {
-    async function recordReferral() {
-      if (!account) return
-      if (!referralContract) return
-      if (localStorage.getItem('rejected') === '1') return
-
-      const outputTokens = Object.keys(referrals)
-      for (let i = 0; i < outputTokens.length; i++) {
-        if (account === referrals[outputTokens[i]]) return
-
-        const referrer = await referralContract.referrers(outputTokens[i], account)
-        if (referrer === NULL_ADDRESS) {
-          try {
-            await referralContract.recordReferral(outputTokens[i], referrals[outputTokens[i]])
-            delete referrals[outputTokens[i]]
-            localStorage.setItem('referral', JSON.stringify(referrals))
-            setReferrals({ ...referrals })
-          } catch (err: any) {
-            if (err.code === 4001) localStorage.setItem('rejected', '1')
-          }
-        }
-      }
-    }
-
-    recordReferral()
-  }, [account, referrals, referralContract])
 
   return (
     <Suspense fallback={null}>
@@ -173,8 +136,8 @@ export default function App() {
             <Popups />
             <Web3ReactManager>
               <Switch>
-                <Route exact strict path="/">
-                  <Redirect to="/swap" />
+                <Route exact strict path={["/", "/send"]}>
+                  <Redirect to={`/swap${location.search}`} />
                 </Route>
                 <Menu>
                   <BodyWrapper>

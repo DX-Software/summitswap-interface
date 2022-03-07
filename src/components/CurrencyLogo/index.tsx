@@ -1,9 +1,8 @@
-import { Currency, ETHER, Token } from '@summitswap-libs'
+import { Currency, ETHER, Token } from '@koda-finance/summitswap-sdk'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import useHttpLocations from '../../hooks/useHttpLocations'
 import { WrappedTokenInfo } from '../../state/lists/hooks'
-import Logo from '../Logo'
 import CoinLogo from '../pancake/CoinLogo'
 
 const getTokenLogoURL = (address: string) =>
@@ -13,12 +12,7 @@ const StyledBnbLogo = styled.img<{ size: string }>`
   width: ${({ size }) => size};
   height: ${({ size }) => size};
   box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.075);
-  border-radius: 24px;
-`
-
-const StyledLogo = styled(Logo)<{ size: string }>`
-  width: ${({ size }) => size};
-  height: ${({ size }) => size};
+  border-radius: 50%;
 `
 
 export default function CurrencyLogo({
@@ -37,10 +31,10 @@ export default function CurrencyLogo({
 
     if (currency instanceof Token) {
       if (currency instanceof WrappedTokenInfo) {
-        return [...uriLocations, `/images/coins/${currency?.symbol ?? 'token'}.png`, getTokenLogoURL(currency.address)]
+        return [...uriLocations, getTokenLogoURL(currency.address)]
       }
 
-      return [`/images/coins/${currency?.symbol ?? 'token'}.png`, getTokenLogoURL(currency.address)]
+      return [getTokenLogoURL(currency.address)]
     }
     return []
   }, [currency, uriLocations])
@@ -49,9 +43,5 @@ export default function CurrencyLogo({
     return <StyledBnbLogo src="/images/coins/bnb.png" size={size} style={style} />
   }
 
-  return (currency as any)?.symbol ? (
-    <CoinLogo size={size} srcs={srcs} alt={`${currency?.symbol ?? 'token'} logo`} style={style} />
-  ) : (
-    <StyledLogo size={size} srcs={srcs} alt={`${currency?.symbol ?? 'token'} logo`} style={style} />
-  )
+  return <CoinLogo size={size} srcs={srcs} alt={`${currency?.symbol ?? 'token'} logo`} style={style} />
 }

@@ -1,21 +1,26 @@
-import React from 'react'
-import { Flex } from '@summitswap-uikit'
+import React, { useEffect } from 'react'
+import styled from 'styled-components'
+import { rubicConfiguration } from './config'
 import AppBody from '../AppBody'
 
+const RubicWrapper = styled.div`
+  overflow: hidden;
+
+  iframe {
+    height: 825px;
+    width: min(600px, 100%);
+    box-shadow: none !important;
+  }
+`
+
 export default function CrossChainSwap() {
+  useEffect(() => {
+    rubicWidget.init(rubicConfiguration)
+  }, [])
+
   return (
-    <Flex justifyContent="center">
-      <iframe
-        title="Rubic"
-        id="rubic-widget-iframe"
-        frameBorder="0"
-        src="https://app.rubic.exchange/?iframe=vertical&amp;amount=1&amp;background=%23011d2c&amp;bsc_tokens=%5B%220x8094e772fA4A60bdEb1DfEC56AB040e17DD608D5%22%5D&amp;from=ETH&amp;fromChain=ETH&amp;theme=dark&amp;to=KODA&amp;toChain=BSC"
-        style={{
-          borderRadius: 20,
-          width: 'min(500px, 100vw)',
-          height: '700px',
-        }}
-      />
-    </Flex>
+    <AppBody>
+      <RubicWrapper id="rubic-widget-root" />
+    </AppBody>
   )
 }

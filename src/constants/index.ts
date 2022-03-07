@@ -1,9 +1,12 @@
-import { ChainId, JSBI, Percent, Token, WETH } from '@summitswap-libs'
+import { ChainId, JSBI, Percent, Token, WETH } from '@koda-finance/summitswap-sdk'
 
+export const MAX_QUERYING_BLOCK_AMOUNT = 5000;
+export const NETWORK_URL = `${process.env.REACT_APP_NETWORK_URL}`
 export const ROUTER_ADDRESS = `${process.env.REACT_APP_ROUTER_ADDRESS}`
 export const FACTORY_ADDRESS = `${process.env.REACT_APP_FACTORY_ADDRESS}`
 export const INIT_CODE_HASH = `${process.env.REACT_APP_INIT_CODE_HASH}`
 export const REFERRAL_ADDRESS = `${process.env.REACT_APP_REFERRAL_ADDRESS}`
+export const REFERRAL_DEPLOYMENT_BLOCKNUMBER = +`${process.env.REACT_APP_REFERRAL_DEPLOYMENT_BLOCKNUMBER}`
 
 export const ADDITIONAL_ROUTER_ADDRESSES: string[] = process.env.REACT_APP_ADDITIONAL_ROUTER_ADDRESS?.split(",") ?? []
 export const ADDITIONAL_FACTORY_ADDRESSES: string[] = process.env.REACT_APP_ADDITIONAL_FACTORY_ADDRESS?.split(",") ?? []
@@ -13,19 +16,21 @@ export const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 export const SUMMITCHECK_API = `${process.env.REACT_APP_SUMMITCHECK_API}`
 export const CHAIN_ID = parseInt(process.env.REACT_APP_CHAIN_ID ?? '56')
 
+export const DEFAULT_SLIPPAGE_TOLERANCE = 0.8
 
 // a list of tokens by chain
 type ChainTokenList = {
   readonly [chainId in ChainId]: Token[]
 }
 
+export const KODA = new Token(ChainId.MAINNET, '0x8094e772fA4A60bdEb1DfEC56AB040e17DD608D5', 9, 'KODA', 'KODA Token', 100, true, 11.25, 11.23)
+export const DAI = new Token(ChainId.MAINNET, '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3', 18, 'DAI', 'Dai Stablecoin')
+export const BUSD = new Token(ChainId.MAINNET, '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56', 18, 'BUSD', 'Binance USD')
+export const USDT = new Token(ChainId.MAINNET, '0x55d398326f99059fF775485246999027B3197955', 18, 'USDT', 'Tether USD')
 
-export const DAI = new Token(ChainId.MAINNET, '0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3', 18, 'DAI', 'Dai Stablecoin')
-export const BUSD = new Token(ChainId.MAINNET, '0xe9e7cea3dedca5984780bafc599bd69add087d56', 18, 'BUSD', 'Binance USD')
-export const USDT = new Token(ChainId.MAINNET, '0x55d398326f99059ff775485246999027b3197955', 18, 'USDT', 'Tether USD')
 export const UST = new Token(
   ChainId.MAINNET,
-  '0x23396cf899ca06c4472205fc903bdb4de249d6fc',
+  '0x23396cF899Ca06c4472205fC903bDB4de249D6fC',
   18,
   'UST',
   'Wrapped UST Token'
@@ -50,7 +55,7 @@ const WETH_ONLY: ChainTokenList = {
 // used to construct intermediary pairs for trading
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
   ...WETH_ONLY,
-  [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], DAI, BUSD, USDT, UST],
+  [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], DAI, BUSD, USDT, UST, KODA],
 }
 
 /**
@@ -76,8 +81,8 @@ export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
 export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } = {
   [ChainId.MAINNET]: [
     [
-      new Token(ChainId.MAINNET, '0x8094e772fa4a60bdeb1dfec56ab040e17dd608d5', 18, 'KODA', 'KODA Token'),
-      new Token(ChainId.MAINNET, '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c', 18, 'WBNB', 'Wrapped BNB'),
+      KODA,
+      new Token(ChainId.MAINNET, '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', 18, 'WBNB', 'Wrapped BNB'),
     ],
     [BUSD, USDT],
     [DAI, USDT],

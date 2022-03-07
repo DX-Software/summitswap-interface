@@ -1,16 +1,16 @@
-import { Currency, ETHER, Token } from '@summitswap-libs'
+import { Currency, ETHER, Token } from '@koda-finance/summitswap-sdk'
 import React, { KeyboardEvent, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { Text, CloseIcon } from '@summitswap-uikit'
+import { Text, CloseIcon } from '@koda-finance/summitswap-uikit'
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { FixedSizeList } from 'react-window'
+import { VariableSizeList } from 'react-window'
 import styled, { ThemeContext } from 'styled-components'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { useActiveWeb3React } from '../../hooks'
 import { AppState } from '../../state'
 import { useAllTokens, useToken } from '../../hooks/Tokens'
 import { useSelectedListInfo } from '../../state/lists/hooks'
-import { LinkStyledButton } from '../Shared'
+import { LinkStyledButton, Spinner } from '../Shared'
 import { isAddress } from '../../utils'
 import Card from '../Card'
 import Column from '../Column'
@@ -36,6 +36,7 @@ interface CurrencySearchProps {
   tokens?: Array<Token>
   onChangeList: () => void
   isAddedByUserOn: boolean
+  showUnknownTokens: boolean
 }
 
 const TokenAutoSizer = styled(AutoSizer)`
@@ -54,6 +55,13 @@ const TokenAutoSizer = styled(AutoSizer)`
   }
 `
 
+const CustomLightSpinner = styled(Spinner) <{ size: string }>`
+  height: ${({ size }) => size};
+  width: ${({ size }) => size};
+  display: flex;
+  margin: auto;
+`
+
 export function CurrencySearch({
   selectedCurrency,
   onCurrencySelect,
@@ -65,19 +73,21 @@ export function CurrencySearch({
   onDismiss,
   isOpen,
   onChangeList,
+  showUnknownTokens,
 }: CurrencySearchProps) {
   const { t } = useTranslation()
   const { chainId } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
 
-  const fixedList = useRef<FixedSizeList>()
+  const variableList = useRef<VariableSizeList>()
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [invertSearchOrder] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const allTokens = useAllTokens()
 
   // if they input an address, use it
-  const isAddressSearch = isAddress(searchQuery)
-  const searchToken = useToken(searchQuery)
+  const isAddressSearch = showUnknownTokens ? isAddress(searchQuery) : showUnknownTokens
+  const searchToken = useToken(showUnknownTokens ? searchQuery : undefined)
 
   const isShowETH: boolean = useMemo(() => {
     if (showETH === false) return showETH
@@ -133,13 +143,21 @@ export function CurrencySearch({
     if (isOpen) setSearchQuery('')
   }, [isOpen])
 
+  useEffect(() => {
+    if ((isAddressSearch && filteredTokens.length > 0) || !!isAddressSearch === false) {
+      setIsLoading(false)
+    }
+  }, [filteredTokens, isAddressSearch])
+
   // manage focus on modal show
   const inputRef = useRef<HTMLInputElement>()
   const handleInput = useCallback((event) => {
     const input = event.target.value
     const checksummedInput = isAddress(input)
+
+    if (checksummedInput) setIsLoading(true)
     setSearchQuery(checksummedInput || input)
-    fixedList.current?.scrollTo(0)
+    variableList.current?.scrollTo(0)
   }, [])
 
   const handleEnter = useCallback(
@@ -197,23 +215,26 @@ export function CurrencySearch({
           {/* <SortButton ascending={invertSearchOrder} toggleSortOrder={() => setInvertSearchOrder((iso) => !iso)} /> */}
         </RowBetween>
       </PaddedColumn>
-
-      <div style={{ flex: '1', padding: '0px 40px 40px 40px' }}>
-        <TokenAutoSizer disableWidth>
-          {({ height }) => (
-            <CurrencyList
-              height={height}
-              showETH={isShowETH}
-              currencies={filteredSortedTokens}
-              onCurrencySelect={handleCurrencySelect}
-              otherCurrency={otherSelectedCurrency}
-              selectedCurrency={selectedCurrency}
-              fixedListRef={fixedList}
-              isAddedByUserOn={isAddedByUserOn}
-            />
-          )}
-        </TokenAutoSizer>
-      </div>
+      {isLoading ? (
+        <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="90px" />
+      ): (
+        <div style={{ flex: '1', padding: '0px 40px 40px 40px' }}>
+          <TokenAutoSizer disableWidth>
+            {({ height }) => (
+              <CurrencyList
+                height={height}
+                showETH={isShowETH}
+                currencies={filteredSortedTokens}
+                onCurrencySelect={handleCurrencySelect}
+                otherCurrency={otherSelectedCurrency}
+                selectedCurrency={selectedCurrency}
+                variableListRef={variableList}
+                isAddedByUserOn={isAddedByUserOn}
+              />
+            )}
+          </TokenAutoSizer>
+        </div>
+      )}
 
       {null && (
         <>

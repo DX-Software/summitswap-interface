@@ -1,13 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { Token } from '@summitswap-libs'
-import { Text, Box, Button, useWalletModal, Flex } from '@summitswap-uikit'
+import { Token } from '@koda-finance/summitswap-sdk'
+import { Text, Box, Button, useWalletModal, Flex } from '@koda-finance/summitswap-uikit'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
-import _ from 'lodash'
-import { injected, walletconnect } from 'connectors'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
-import ReferralTransactionRow from 'components/PageHeader/ReferralTransactionRow'
 import { TranslateString } from 'utils/translateTextHelpers'
 import { useAllTokens } from 'hooks/Tokens'
 import CurrencyLogo from 'components/CurrencyLogo'
@@ -16,6 +13,8 @@ import InviteImage from '../../img/invite.png'
 import CoinStackImage from '../../img/coinstack.png'
 import expandMore from '../../img/expandMore.svg'
 import RewardedTokens from './RewardedTokens'
+import copyText from '../../utils/copyText'
+import login from '../../utils/login'
 
 import './style.css'
 import SwapList from './SwapList'
@@ -65,7 +64,7 @@ interface IProps {
 }
 
 const Referral: React.FC<IProps> = () => {
-  const { account, chainId, deactivate, activate } = useWeb3React()
+  const { account, deactivate, activate } = useWeb3React()
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedOutputCoin, setSelectedOutputCoin] = useState<Token | undefined>()
   const [allTokens, setAllTokens] = useState<Array<Token>>([])
@@ -85,17 +84,14 @@ const Referral: React.FC<IProps> = () => {
   }, [selectedOutputCoin, allTokens])
 
   const handleLogin = (connectorId: string) => {
-    if (connectorId === 'walletconnect') {
-      return activate(walletconnect())
-    }
-    return activate(injected)
+    login(connectorId, activate)
   }
 
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
 
   useEffect(() => {
     setReferralURL(
-      `http://${document.location.hostname}${
+      `${document.location.protocol}//${document.location.hostname}${
         document.location.port ? `:${document.location.port}` : ''
       }/#/swap?output=${selectedOutputCoin && selectedOutputCoin.address}&ref=${account}`
     )
@@ -108,6 +104,24 @@ const Referral: React.FC<IProps> = () => {
   const handleDismissSearch = useCallback(() => {
     setModalOpen(false)
   }, [setModalOpen])
+
+  const displayCopiedTooltip = useCallback(() => {
+    setIsTooltipDisplayed(true)
+    setTimeout(() => {
+      setIsTooltipDisplayed(false)
+    }, 1000)
+  }, [])
+
+  const copyReferralLink = useCallback(() => {
+    copyText(referralURL, displayCopiedTooltip)
+  }, [referralURL, displayCopiedTooltip])
+
+  const isCopySupported = useMemo(() => {
+    if ((navigator.clipboard && navigator.permissions) || document.queryCommandSupported('copy')) {
+      return true
+    }
+    return false
+  }, [])
 
   return (
     <div className="main-content">
@@ -136,19 +150,9 @@ const Referral: React.FC<IProps> = () => {
             </Text>
             <LinkBox mb={3}>
               <Box>
-                <Text>{referralURL}</Text>
+                <Text style={{ whiteSpace: isCopySupported ? 'nowrap' : 'normal' }}>{referralURL}</Text>
               </Box>
-              <Box
-                onClick={() => {
-                  if (navigator.clipboard) {
-                    navigator.clipboard.writeText(referralURL)
-                    setIsTooltipDisplayed(true)
-                    setTimeout(() => {
-                      setIsTooltipDisplayed(false)
-                    }, 1000)
-                  }
-                }}
-              >
+              <Box style={{ display: isCopySupported ? 'block' : 'none' }} onClick={copyReferralLink}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="19" height="22" viewBox="0 0 19 22" fill="none">
                   <path
                     d="M13 0L2 0C0.9 0 0 0.9 0 2L0 15C0 15.55 0.45 16 1 16C1.55 16 2 15.55 2 15L2 3C2 2.45 2.45 2 3 2L13 2C13.55 2 14 1.55 14 1C14 0.45 13.55 0 13 0ZM17 4L6 4C4.9 4 4 4.9 4 6L4 20C4 21.1 4.9 22 6 22H17C18.1 22 19 21.1 19 20V6C19 4.9 18.1 4 17 4ZM16 20H7C6.45 20 6 19.55 6 19L6 7C6 6.45 6.45 6 7 6L16 6C16.55 6 17 6.45 17 7V19C17 19.55 16.55 20 16 20Z"
@@ -161,7 +165,7 @@ const Referral: React.FC<IProps> = () => {
           </>
         )}
         {/* TODO: Display swaplist using lambda x blockchain events */}
-        {/* <SwapList /> */}
+        <SwapList />
         <RewardedTokens />
       </Box>
 
@@ -210,18 +214,18 @@ const Referral: React.FC<IProps> = () => {
       </div>
 
       <div className="reward-section font-15">
-        <p>Reward options - Recieve your rewards in:</p>
+        <p>Reward options - Receive your rewards in:</p>
         <p>
           <br />
-          A) The projects token <br />
-          B) Auto-Convert it to KAPEX without fee <br />
-          C) Convert it to BNB or BUSD subject to fee
+          A) The projects tokens <br />
+          B) Convert it to KAPEX without fee <br />
+          C) Convert it to BNB or BUSD (10% - 15% fees respectively)
         </p>
       </div>
 
       <p className="paragraph">
         Known as the trusted swap site, SummitSwap offers its user base many advantages over alternatives. One of these
-        features is a unique referal system that allows tokens to reward their communities whilst growing their
+        features is a unique referral system that allows tokens to reward their communities whilst growing their
         projects.
       </p>
 
@@ -262,9 +266,9 @@ const Referral: React.FC<IProps> = () => {
       </p>
 
       <p className="paragraph">
-        The project may chose to remove fees from the reward pool contract so that rewards are paid in full to thier
-        loyal community. Although our native invetment token KODA and our utility token KAPEX does this, please note
-        that every project will have their own set up and may chose to keep the transactions with fees included. You can
+        The project may choose to remove fees from the reward pool contract so that rewards are paid in full to thier
+        loyal community. Although our native investment token KODA and our utility token KAPEX does this, please note
+        that every project will have their own set up and may choose to keep the transactions with fees included. You can
         find out this information on their whitelisting project profile through SummitCheck.
       </p>
       <CurrencySearchModal
@@ -274,6 +278,7 @@ const Referral: React.FC<IProps> = () => {
         selectedCurrency={selectedOutputCoin}
         otherSelectedCurrency={null}
         showETH={false}
+        showUnknownTokens={false}
         tokens={allTokens.filter((token) => token.referralEnabled)}
       />
     </div>
