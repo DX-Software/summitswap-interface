@@ -88,8 +88,8 @@ export function getContract(address: string, ABI: any, library: Web3Provider, ac
 }
 
 // account is optional
-export function getRouterContract(_: number, library: Web3Provider, account?: string): Contract {
-  return getContract(ROUTER_ADDRESS, SummitswapRouterAbi, library, account)
+export function getRouterContract(_: number, library: Web3Provider, account?: string, routerAddress: string = ROUTER_ADDRESS): Contract {
+  return getContract(routerAddress, SummitswapRouterAbi, library, account)
 }
 
 export function escapeRegExp(string: string): string {

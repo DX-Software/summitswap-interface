@@ -16,6 +16,7 @@ import { SwapState } from './reducer'
 
 import { useUserSlippageTolerance } from '../user/hooks'
 import { computeSlippageAdjustedAmounts } from '../../utils/prices'
+import { ADDITIONAL_FACTORY_ADDRESSES, ADDITIONAL_INIT_CODE_HASHES, ADDITIONAL_ROUTER_ADDRESSES, FACTORY_ADDRESS, INIT_CODE_HASH, ROUTER_ADDRESS } from '../../constants'
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>((state) => state.swap)
@@ -111,6 +112,7 @@ export function useDerivedSwapInfo(): {
   parsedAmount: CurrencyAmount | undefined
   v2Trade: Trade | undefined
   inputError?: string
+  routerAddress: string
 } {
   const { account } = useActiveWeb3React()
 
@@ -135,10 +137,41 @@ export function useDerivedSwapInfo(): {
   const isExactIn: boolean = independentField === Field.INPUT
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined)
 
-  const bestTradeExactIn = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
-  const bestTradeExactOut = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined)
+  const [factory, setFactory] = useState(FACTORY_ADDRESS)
+  const [initCodeHash, setInitCodeHash] = useState(INIT_CODE_HASH)
+  const [routerAddress, setRouterAddress] = useState(ROUTER_ADDRESS)
+  const [additionalIndex, setAdditionalIndex] = useState(0)
 
+  const bestTradeExactIn: {
+    isLoading: boolean,
+    trade: Trade | null
+  } = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, factory, initCodeHash)
+  const bestTradeExactOut: {
+    isLoading: boolean,
+    trade: Trade | null
+  } = useTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined, factory, initCodeHash)
   const v2Trade = isExactIn ? bestTradeExactIn : bestTradeExactOut
+
+  useEffect(() => {
+    if (parsedAmount === undefined) {
+      setFactory(FACTORY_ADDRESS)
+      setInitCodeHash(INIT_CODE_HASH)
+      setRouterAddress(ROUTER_ADDRESS)
+      setAdditionalIndex(0)
+    } else if (!v2Trade.isLoading && v2Trade.trade === null && ADDITIONAL_FACTORY_ADDRESSES.length > 0 && additionalIndex !== ADDITIONAL_FACTORY_ADDRESSES.length) {
+      setFactory(ADDITIONAL_FACTORY_ADDRESSES[additionalIndex])
+      setInitCodeHash(ADDITIONAL_INIT_CODE_HASHES[additionalIndex])
+      setRouterAddress(ADDITIONAL_ROUTER_ADDRESSES[additionalIndex])
+      setAdditionalIndex((prevState) => prevState + 1)
+    }
+  }, [v2Trade, factory, parsedAmount, additionalIndex])
+
+  useEffect(() => {
+    setFactory(FACTORY_ADDRESS)
+    setInitCodeHash(INIT_CODE_HASH)
+    setRouterAddress(ROUTER_ADDRESS)
+    setAdditionalIndex(0)
+  }, [inputCurrency, outputCurrency])
 
   const currencyBalances = {
     [Field.INPUT]: relevantTokenBalances[0],
@@ -168,15 +201,15 @@ export function useDerivedSwapInfo(): {
     inputError = inputError ?? 'Enter a recipient'
   } else if (
     BAD_RECIPIENT_ADDRESSES.indexOf(formattedTo) !== -1 ||
-    (bestTradeExactIn && involvesAddress(bestTradeExactIn, formattedTo)) ||
-    (bestTradeExactOut && involvesAddress(bestTradeExactOut, formattedTo))
+    (bestTradeExactIn.trade && involvesAddress(bestTradeExactIn.trade, formattedTo)) ||
+    (bestTradeExactOut.trade && involvesAddress(bestTradeExactOut.trade, formattedTo))
   ) {
     inputError = inputError ?? 'Invalid recipient'
   }
 
   const [allowedSlippage] = useUserSlippageTolerance()
 
-  const slippageAdjustedAmounts = v2Trade && allowedSlippage && computeSlippageAdjustedAmounts(v2Trade, allowedSlippage)
+  const slippageAdjustedAmounts = v2Trade.trade && allowedSlippage && computeSlippageAdjustedAmounts(v2Trade.trade, allowedSlippage)
 
   // compare input balance to max input based on version
   const [balanceIn, amountIn] = [
@@ -192,8 +225,9 @@ export function useDerivedSwapInfo(): {
     currencies,
     currencyBalances,
     parsedAmount,
-    v2Trade: v2Trade ?? undefined,
+    v2Trade: v2Trade.trade ?? undefined,
     inputError,
+    routerAddress
   }
 }
 

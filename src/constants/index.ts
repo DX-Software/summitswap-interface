@@ -3,8 +3,14 @@ import { ChainId, JSBI, Percent, Token, WETH } from '@koda-finance/summitswap-sd
 export const MAX_QUERYING_BLOCK_AMOUNT = 5000;
 export const NETWORK_URL = `${process.env.REACT_APP_NETWORK_URL}`
 export const ROUTER_ADDRESS = `${process.env.REACT_APP_ROUTER_ADDRESS}`
+export const FACTORY_ADDRESS = `${process.env.REACT_APP_FACTORY_ADDRESS}`
+export const INIT_CODE_HASH = `${process.env.REACT_APP_INIT_CODE_HASH}`
 export const REFERRAL_ADDRESS = `${process.env.REACT_APP_REFERRAL_ADDRESS}`
 export const REFERRAL_DEPLOYMENT_BLOCKNUMBER = +`${process.env.REACT_APP_REFERRAL_DEPLOYMENT_BLOCKNUMBER}`
+
+export const ADDITIONAL_ROUTER_ADDRESSES: string[] = process.env.REACT_APP_ADDITIONAL_ROUTER_ADDRESS?.split(",") ?? []
+export const ADDITIONAL_FACTORY_ADDRESSES: string[] = process.env.REACT_APP_ADDITIONAL_FACTORY_ADDRESS?.split(",") ?? []
+export const ADDITIONAL_INIT_CODE_HASHES: string[] = process.env.REACT_APP_ADDITIONAL_INIT_CODE_HASH?.split(",") ?? []
 
 export const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 export const SUMMITCHECK_API = `${process.env.REACT_APP_SUMMITCHECK_API}`

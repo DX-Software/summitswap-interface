@@ -78,7 +78,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
 
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
-  const { v2Trade, currencyBalances, parsedAmount, currencies, inputError: swapInputError } = useDerivedSwapInfo()
+  const { v2Trade, currencyBalances, parsedAmount, currencies, inputError: swapInputError, routerAddress } = useDerivedSwapInfo()
   const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
     currencies[Field.INPUT],
     currencies[Field.OUTPUT],
@@ -166,7 +166,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
   const noRoute = !route
 
   // check whether the user has approved the router on the input token
-  const [approval, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage)
+  const [approval, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage, routerAddress)
 
   // check if user has gone through approval process, used to show two step buttons, reset on token change
   const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false)
@@ -214,7 +214,8 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
     trade,
     allowedSlippage,
     deadline,
-    recipient
+    recipient,
+    routerAddress
   )
 
   const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade)
