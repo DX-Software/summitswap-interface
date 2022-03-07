@@ -37,8 +37,6 @@ const CoinManagerSegment: React.FC<CoinManagerSegmentProps> = ({selectedCoin, in
 
   const coinLogoURL = selectedCoin instanceof WrappedTokenInfo ? selectedCoin.logoURI : undefined
 
-  console.log(`COIN URL: ${coinLogoURL}`)
-
   return <>
     <CenterDiv>
       {coinLogoURL && <img src={coinLogoURL} alt="COIN LOGO"/>}

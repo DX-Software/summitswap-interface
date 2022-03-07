@@ -27,6 +27,7 @@ import SubInfluencer from './Segments/SubInfluencer'
 import LeadInfluencer from './Segments/LeadInfluencer'
 import { InfInfo, Influencer } from './types'
 import CurrencySelector from './CurrencySelector'
+import SwapList from './SwapList'
 
 interface IProps {
   isLanding?: boolean
@@ -201,7 +202,7 @@ const Referral: React.FC<IProps> = () => {
       case 'subInfluencer':
         return (<SubInfluencer myLeadInfluencerAddress={myLeadInfluencerAddress} selectedCoin={selectedOutputCoin} />)
       case 'history':
-        return (<HistorySegment />)
+        return (<SwapList />)
       default:
         return <p>Segment Index out of range</p>
     }

@@ -1,18 +1,22 @@
-import { useActiveWeb3React } from 'hooks'
-import { useReferralContract } from 'hooks/useContract'
-import _ from 'lodash'
 import React, { useState, useEffect } from 'react'
+import _ from 'lodash'
 import { Box, Text } from '@summitswap-uikit'
 import { Event } from 'ethers'
+import CustomLightSpinner from '../../components/CustomLightSpinner'
+import { useReferralContract } from '../../hooks/useContract'
+import { useActiveWeb3React } from '../../hooks'
 import { MAX_QUERYING_BLOCK_AMOUNT, REFERRAL_DEPLOYMENT_BLOCKNUMBER } from '../../constants'
 import ReferralTransactionRow from './ReferralTransactionRow'
 import { ReferralReward } from './types'
+
+
 
 export default function SwapList() {
   const { account, library } = useActiveWeb3React()
   const referralContract = useReferralContract(true)
 
   const [swapList, setSwapList] = useState<ReferralReward[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     setSwapList([])
@@ -52,6 +56,7 @@ export default function SwapList() {
           eventLogs = _.orderBy(eventLogs, (eventLog) => eventLog.timestamp.toNumber(), 'desc')
 
           setSwapList(eventLogs)
+          setIsLoading(false)
         })
       )
     }
@@ -59,9 +64,11 @@ export default function SwapList() {
     fetchSwapList()
   }, [account, library, referralContract])
 
-  return (
+  return isLoading ? (
+    <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="90px" />
+  ) : (
     <>
-      {!!swapList.length && (
+      {swapList.length ? (
         <>
           <Text bold mb={2}>
             Referred swaps
@@ -71,6 +78,10 @@ export default function SwapList() {
               <ReferralTransactionRow account={account} {...swap} />
             ))}
           </Box>
+        </>
+      ) : (
+        <>
+          <Text bold> No history to be displayed! </Text>
         </>
       )}
     </>

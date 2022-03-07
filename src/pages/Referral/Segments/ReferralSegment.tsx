@@ -57,7 +57,6 @@ const ReferralSegment: React.FC<ReferralSegmentProps> = ({
         </Box>
       </LinkBox>
       {/* TODO: Display swaplist using lambda x blockchain events */}
-      <SwapList />
       <RewardedTokens />
     </>
   )
