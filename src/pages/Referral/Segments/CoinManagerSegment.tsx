@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Text, Box, Button, Flex } from '@summitswap-uikit'
+import { Text, Box, Button } from '@summitswap-uikit'
 import { Token } from '@summitswap-libs'
 import styled from 'styled-components'
 import { useFormik } from 'formik';

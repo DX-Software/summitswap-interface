@@ -25,8 +25,6 @@ const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
 `
 
 interface ReferralSegmentProps {
-	setModalOpen: (val: boolean) => void;
-	selectedOutputCoin?: Token;
 	copyReferralLink: () => void;
 	isTooltipDisplayed: boolean;
 	isCopySupported: boolean;
@@ -34,8 +32,6 @@ interface ReferralSegmentProps {
 }
 
 const ReferralSegment: React.FC<ReferralSegmentProps> = ({
-	setModalOpen, 
-	selectedOutputCoin, 
 	isCopySupported, 
 	referralURL, 
 	copyReferralLink, 
@@ -43,7 +39,6 @@ const ReferralSegment: React.FC<ReferralSegmentProps> = ({
 }) => {
   return (
     <>
-      <CurrencySelector setModalOpen={setModalOpen} selectedOutputCoin={selectedOutputCoin} />
       <Text mb="8px" bold>
         My Referral link
       </Text>

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { useReferralContract } from 'hooks/useContract';
 import { Token } from '@summitswap-libs'
 import { Text, Box, Button } from '@summitswap-uikit'
 import { Contract } from 'ethers'
 
+import { useReferralContract } from 'hooks/useContract';
 import { InfInfo } from '../types';
 import CenterDiv from '../CenterDiv';
 import { StyledBr, StyledWhiteBr } from '../StyledBr';
@@ -65,9 +65,6 @@ const EnterLeadAddressSection: React.FC<EnterLeadAddressSectionProps> = ({contra
 }
 
 const LeadInfoBox: React.FC<LeadInfoBoxProps> = ({leadInfo}) => {
-
-  console.log(leadInfo)
-
   return <Box>
     <Text>
       Lead Address - {leadInfo.lead}

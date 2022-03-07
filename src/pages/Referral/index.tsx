@@ -26,6 +26,7 @@ import HistorySegment from './Segments/HistorySegment'
 import SubInfluencer from './Segments/SubInfluencer'
 import LeadInfluencer from './Segments/LeadInfluencer'
 import { InfInfo, Influencer } from './types'
+import CurrencySelector from './CurrencySelector'
 
 interface IProps {
   isLanding?: boolean
@@ -191,16 +192,14 @@ const Referral: React.FC<IProps> = () => {
             copyReferralLink={copyReferralLink} 
             isCopySupported={isCopySupported} 
             isTooltipDisplayed={isTooltipDisplayed} 
-            referralURL={referralURL}
-            setModalOpen={setModalOpen} 
-            selectedOutputCoin={selectedOutputCoin} />
+            referralURL={referralURL} />
         )
       case 'coinManager':
         return (<CoinManagerSegment selectedCoin={selectedOutputCoin} influencers={leadInfluencers} />)
       case 'leadInfluencer':
-        return <LeadInfluencer influencers={leadInfluencers}/>
+        return <LeadInfluencer selectedCoin={selectedOutputCoin}/>
       case 'subInfluencer':
-        return (<SubInfluencer myLeadInfluencerAddress={myLeadInfluencerAddress} selectedCoin={selectedOutputCoin}/>)
+        return (<SubInfluencer myLeadInfluencerAddress={myLeadInfluencerAddress} selectedCoin={selectedOutputCoin} />)
       case 'history':
         return (<HistorySegment />)
       default:
@@ -211,11 +210,15 @@ const Referral: React.FC<IProps> = () => {
 
   return (
     <div className="main-content">
-      {account && <ReferralNavCard selectedController={segmentControllerIndex} 
-          segments={enabledSegments}
-          setSegmentControllerIndex={(value: number) => {
-            setSegmentControllerIndex(value)
-        }} />
+      {account && <>
+          <CurrencySelector setModalOpen={setModalOpen} selectedOutputCoin={selectedOutputCoin} /> 
+          <ReferralNavCard 
+            selectedController={segmentControllerIndex} 
+            segments={enabledSegments}
+            setSegmentControllerIndex={(value: number) => {
+              setSegmentControllerIndex(value)
+          }} />
+        </>
       }
       <Box>
         {!account && (
