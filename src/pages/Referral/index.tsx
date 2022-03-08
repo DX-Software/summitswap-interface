@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Token } from '@summitswap-libs'
-import { Text, Box, Button, useWalletModal, Flex } from '@summitswap-uikit'
+import { Box, Button, useWalletModal, Flex } from '@summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
 import _ from 'lodash'
 import { Event } from 'ethers'
@@ -22,7 +22,6 @@ import { MAX_QUERYING_BLOCK_AMOUNT, REFERRAL_DEPLOYMENT_BLOCKNUMBER } from '../.
 import ReferralSegmentInitial from '../../constants/ReferralSegmentInitial'
 import ReferralSegment from './Segments/ReferralSegment'
 import CoinManagerSegment from './Segments/CoinManagerSegment'
-import HistorySegment from './Segments/HistorySegment'
 import SubInfluencer from './Segments/SubInfluencer'
 import LeadInfluencer from './Segments/LeadInfluencer'
 import { InfInfo, Influencer } from './types'
@@ -35,7 +34,7 @@ interface IProps {
 }
 
 const Referral: React.FC<IProps> = () => {
-  const { account, chainId, deactivate, activate, library} = useWeb3React()
+  const { account, chainId, deactivate, activate, library } = useWeb3React()
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedOutputCoin, setSelectedOutputCoin] = useState<Token | undefined>()
   const [allTokens, setAllTokens] = useState<Array<Token>>([])
@@ -48,23 +47,47 @@ const Referral: React.FC<IProps> = () => {
   const [enabledSegments, setEnabledSegments] = useState(ReferralSegmentInitial)
   const [leadInfluencers, setLeadInfluencers] = useState<Influencer[]>([])
   const [myLeadInfluencerAddress, setMyLeadInfluencerAddress] = useState<string | undefined>()
+  const [isSegmentDisabled, setIsSegmentDisabled] = useState({
+    checkManager: false,
+    checkLeadOrSub: false,
+  })
 
   useEffect(() => {
     setAllTokens(Object.values(allTokensTemp))
   }, [allTokensTemp])
 
   useEffect(() => {
-    setEnabledSegments(prevState => {
-      const nextValue = {...prevState}
+    setSegmentControllerIndex(0)
+    setIsSegmentDisabled({
+      checkLeadOrSub: false, 
+      checkManager: false 
+    })
+  }, [enabledSegments])
+
+  useEffect(() => {
+    setEnabledSegments((prevState) => {
+      const nextValue = { ...prevState }
       nextValue.leadInfluencer.isActive = false
+      nextValue.subInfluencer.isActive = false
+      return nextValue
+    })
+    setIsSegmentDisabled((prevState) => {
+      const nextValue = {...prevState}
+      nextValue.checkLeadOrSub = false
       return nextValue
     })
     const getIfLead = async () => {
       if (!account || !refContract || !selectedOutputCoin) return
-      const influncerInfo = await refContract.influencers(selectedOutputCoin.address, account) as InfInfo
-      setEnabledSegments(prevState => {
+      const influncerInfo = (await refContract.influencers(selectedOutputCoin.address, account)) as InfInfo
+      setIsSegmentDisabled((prevState) => {
         const nextValue = {...prevState}
+        nextValue.checkLeadOrSub = true
+        return nextValue
+      })
+      setEnabledSegments((prevState) => {
+        const nextValue = { ...prevState }
         nextValue.leadInfluencer.isActive = influncerInfo.isLead
+        nextValue.subInfluencer.isActive = !influncerInfo.isLead
         if (!influncerInfo.isLead && influncerInfo.lead) {
           setMyLeadInfluencerAddress(influncerInfo.lead)
         }
@@ -85,36 +108,40 @@ const Referral: React.FC<IProps> = () => {
   }
 
   useEffect(() => {
-    setEnabledSegments(prevState => {
-      const segmentOptions = {...prevState}
+    setEnabledSegments((prevState) => {
+      const segmentOptions = { ...prevState }
       segmentOptions.coinManager.isActive = false
       return segmentOptions
+    })
+    setIsSegmentDisabled((prevState) => {
+      const nextValue = {...prevState}
+      nextValue.checkManager = false
+      return nextValue
     })
     async function checkIfManager() {
       if (!account || !refContract || !selectedOutputCoin) return
       const isManager = await refContract.isManager(selectedOutputCoin.address, account)
       if (isManager) {
-        setEnabledSegments(prevState => {
-          const segmentOptions = {...prevState}
+        setEnabledSegments((prevState) => {
+          const segmentOptions = { ...prevState }
           segmentOptions.coinManager.isActive = true
           return segmentOptions
         })
-        setSegmentControllerIndex(0)
+        setIsSegmentDisabled((prevState) => {
+          const nextValue = {...prevState}
+          nextValue.checkManager = true
+          return nextValue
+        })
       }
     }
     checkIfManager()
   }, [account, selectedOutputCoin, refContract])
 
   useEffect(() => {
-    setEnabledSegments(prevState => {
-      const segmentOptions = {...prevState}
-      segmentOptions.leadInfluencer.isActive = false
-      return segmentOptions
-    })
 
     async function fetchReferralData() {
       if (!account || !refContract) return
-      
+
       const referrals = refContract.filters.ReferralRecorded(null, account, selectedOutputCoin?.address)
 
       const latestBlocknumber = await library.getBlockNumber()
@@ -131,13 +158,15 @@ const Referral: React.FC<IProps> = () => {
         queries.push([blockNumber, Math.min(latestBlocknumber, blockNumber + MAX_QUERYING_BLOCK_AMOUNT - 1)])
       }
 
-      await Promise.all(queries.map(async (query) => {
-        const referrerResults = await refContract?.queryFilter(referrals, query[0], query[1])
+      await Promise.all(
+        queries.map(async (query) => {
+          const referrerResults = await refContract?.queryFilter(referrals, query[0], query[1])
 
-        referrerEvents = [...referrerEvents, ...referrerResults]
-      }))
+          referrerEvents = [...referrerEvents, ...referrerResults]
+        })
+      )
 
-      const influencers = referrerEvents.map(event => event.args) as unknown as Influencer[]
+      const influencers = (referrerEvents.map((event) => event.args) as unknown) as Influencer[]
 
       setLeadInfluencers(influencers)
     }
@@ -181,7 +210,7 @@ const Referral: React.FC<IProps> = () => {
   }, [])
 
   const getViewForSegment = () => {
-    const segmentKey = Object.keys(enabledSegments).filter(key => {
+    const segmentKey = Object.keys(enabledSegments).filter((key) => {
       return enabledSegments[key].isActive
     })[segmentControllerIndex]
 
@@ -189,38 +218,41 @@ const Referral: React.FC<IProps> = () => {
     switch (segmentKey) {
       case 'userDashboard':
         return (
-          <ReferralSegment 
-            copyReferralLink={copyReferralLink} 
-            isCopySupported={isCopySupported} 
-            isTooltipDisplayed={isTooltipDisplayed} 
-            referralURL={referralURL} />
+          <ReferralSegment
+            copyReferralLink={copyReferralLink}
+            isCopySupported={isCopySupported}
+            isTooltipDisplayed={isTooltipDisplayed}
+            referralURL={referralURL}
+          />
         )
       case 'coinManager':
-        return (<CoinManagerSegment selectedCoin={selectedOutputCoin} influencers={leadInfluencers} />)
+        return <CoinManagerSegment selectedCoin={selectedOutputCoin} influencers={leadInfluencers} />
       case 'leadInfluencer':
-        return <LeadInfluencer selectedCoin={selectedOutputCoin}/>
+        return <LeadInfluencer selectedCoin={selectedOutputCoin} />
       case 'subInfluencer':
-        return (<SubInfluencer myLeadInfluencerAddress={myLeadInfluencerAddress} selectedCoin={selectedOutputCoin} />)
+        return <SubInfluencer myLeadInfluencerAddress={myLeadInfluencerAddress} selectedCoin={selectedOutputCoin} />
       case 'history':
-        return (<SwapList />)
+        return <SwapList />
       default:
         return <p>Segment Index out of range</p>
     }
-
   }
 
   return (
     <div className="main-content">
-      {account && <>
-          <CurrencySelector setModalOpen={setModalOpen} selectedOutputCoin={selectedOutputCoin} /> 
-          <ReferralNavCard 
-            selectedController={segmentControllerIndex} 
+      {account && (
+        <>
+          <CurrencySelector setModalOpen={setModalOpen} selectedOutputCoin={selectedOutputCoin} />
+          <ReferralNavCard
+            selectedController={segmentControllerIndex}
             segments={enabledSegments}
+            isEnabled={isSegmentDisabled.checkLeadOrSub && isSegmentDisabled.checkManager}
             setSegmentControllerIndex={(value: number) => {
               setSegmentControllerIndex(value)
-          }} />
+            }}
+          />
         </>
-      }
+      )}
       <Box>
         {!account && (
           <Flex mb={3} justifyContent="center">
@@ -331,8 +363,8 @@ const Referral: React.FC<IProps> = () => {
       <p className="paragraph">
         The project may choose to remove fees from the reward pool contract so that rewards are paid in full to thier
         loyal community. Although our native investment token KODA and our utility token KAPEX does this, please note
-        that every project will have their own set up and may choose to keep the transactions with fees included. You can
-        find out this information on their whitelisting project profile through SummitCheck.
+        that every project will have their own set up and may choose to keep the transactions with fees included. You
+        can find out this information on their whitelisting project profile through SummitCheck.
       </p>
       <CurrencySearchModal
         isOpen={modalOpen}

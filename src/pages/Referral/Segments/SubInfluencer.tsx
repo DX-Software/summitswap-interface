@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { Token } from '@summitswap-libs'
 import { Text, Box, Button } from '@summitswap-uikit'
 import { Contract } from 'ethers'
+import { useWeb3React } from '@web3-react/core';
+import { AddressZero } from '@ethersproject/constants'
 
 import { useReferralContract } from 'hooks/useContract';
 import { InfInfo } from '../types';
@@ -11,13 +13,16 @@ import StyledInput from '../StyledInput';
 import { isAddress } from '../../../utils';
 
 
+
 interface SubInfluencerProps {
   myLeadInfluencerAddress?: string;
   selectedCoin?: Token;
 }
 
-interface LeadInfoBoxProps {
-  leadInfo: InfInfo
+interface InfoBoxProps {
+  address: string;
+  leadFee: string;
+  refFee: string;
 }
 
 interface EnterLeadAddressSectionProps {
@@ -41,7 +46,8 @@ const EnterLeadAddressSection: React.FC<EnterLeadAddressSectionProps> = ({contra
     try {
       await contract.acceptLeadInfluencer(selectedCoin.address, leadAddress)
       alert('Transaction succeeded!')
-    } catch {
+    } catch (e) {
+      console.log(e)
       alert("Can't run transaction!")
     }
 
@@ -64,16 +70,16 @@ const EnterLeadAddressSection: React.FC<EnterLeadAddressSectionProps> = ({contra
   </>
 }
 
-const LeadInfoBox: React.FC<LeadInfoBoxProps> = ({leadInfo}) => {
+const InfoBox: React.FC<InfoBoxProps> = ({address, leadFee, refFee}) => {
   return <Box>
     <Text>
-      Lead Address - {leadInfo.lead}
+      Lead Address - {address}
     </Text>
     <Text>
-      Lead Fee - {leadInfo.leadFee.toString()}
+      Lead Fee - {leadFee}
     </Text>
     <Text>
-      Referral Fee - {leadInfo.refFee.toString()}
+      Referral Fee - {refFee}
     </Text>
   </Box>
 }
@@ -81,28 +87,36 @@ const LeadInfoBox: React.FC<LeadInfoBoxProps> = ({leadInfo}) => {
 const SubInfluencer: React.FC<SubInfluencerProps> = ({myLeadInfluencerAddress, selectedCoin}) => {
 
   const refContract = useReferralContract(true)
-  const [leadInfo, setLeadInfo] = useState<InfInfo | undefined>()
+  const [leadInfo, setLeadInfo] = useState<InfoBoxProps | undefined>()
+  const [subInfo, setSubInfo] = useState<InfoBoxProps | undefined>()
+
+  const { account } = useWeb3React()
 
   useEffect(() => {
     const getLeadInfo = async () => {
       if (!refContract) return
       if (!selectedCoin) return
-      if (!myLeadInfluencerAddress) return 
+      if (!myLeadInfluencerAddress) return
+      if (!account) return
 
-      const influncerInfo = await refContract.influencers(selectedCoin.address, myLeadInfluencerAddress) as InfInfo
+      const subInfluncerInfo = await refContract.influencers(selectedCoin.address, account) as InfInfo
+      const leadInfluncerInfo = await refContract.influencers(selectedCoin.address, subInfluncerInfo.lead) as InfInfo
 
-      console.log(influncerInfo)
-
-      if (influncerInfo.isLead) {
-        setLeadInfo(influncerInfo)
+      if (subInfluncerInfo.lead !== AddressZero ) {
+        setSubInfo({address: account, leadFee: subInfluncerInfo.leadFee.toString(), refFee: subInfluncerInfo.refFee.toString() })
+        setLeadInfo({address: myLeadInfluencerAddress, leadFee: leadInfluncerInfo.leadFee.toString(), refFee: leadInfluncerInfo.refFee.toString() })
       }
+
     }
     getLeadInfo()
-  }, [myLeadInfluencerAddress, refContract, selectedCoin])
+  }, [myLeadInfluencerAddress, refContract, selectedCoin, account])
 
   return (
     <Box>
-      {leadInfo ? (<LeadInfoBox leadInfo={leadInfo}/>) : (
+      {leadInfo && subInfo ? (<>
+        <InfoBox {...leadInfo} />
+        <InfoBox {...subInfo} />
+      </>) : (
         <Box>
           <CenterDiv>
             <Text bold>Enter Lead Influencer Wallet Address</Text>

@@ -141,6 +141,8 @@ const LeadInfluencer: React.FC<LeadInfluencerProps> = ({selectedCoin}) => {
 
       const subInfluencerReward = referrerEvents.map(event => event.args) as ReferralReward[]
 
+      console.log(subInfluencerReward)
+
       setSubReward(subInfluencerReward)
     }
     fetchReferralData()
