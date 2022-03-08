@@ -33,7 +33,7 @@ const EnterLeadAddressSection: React.FC<EnterLeadAddressSectionProps> = ({contra
     if (!contract) return
     if (!selectedCoin) return
 
-    if (isAddress(leadAddress)) {
+    if (!isAddress(leadAddress)) {
       alert("Invalid lead wallet address")
       return
     }
@@ -90,6 +90,8 @@ const SubInfluencer: React.FC<SubInfluencerProps> = ({myLeadInfluencerAddress, s
       if (!myLeadInfluencerAddress) return 
 
       const influncerInfo = await refContract.influencers(selectedCoin.address, myLeadInfluencerAddress) as InfInfo
+
+      console.log(influncerInfo)
 
       if (influncerInfo.isLead) {
         setLeadInfo(influncerInfo)

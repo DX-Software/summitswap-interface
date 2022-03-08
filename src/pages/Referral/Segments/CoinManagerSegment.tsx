@@ -38,12 +38,6 @@ const CoinManagerSegment: React.FC<CoinManagerSegmentProps> = ({selectedCoin, in
   const coinLogoURL = selectedCoin instanceof WrappedTokenInfo ? selectedCoin.logoURI : undefined
 
   return <>
-    <CenterDiv>
-      {coinLogoURL && <img src={coinLogoURL} alt="COIN LOGO"/>}
-      <Text bold>{selectedCoin?.symbol}</Text>
-      <Text bold> - </Text>
-      <Text bold>{selectedCoin?.address}</Text>
-    </CenterDiv>
     <SetFirstBuyFee contract={refContract} selectedCoin={selectedCoin} />
     <SetLeadManager contract={refContract} selectedCoin={selectedCoin} />
     <RemoveLead contract={refContract} selectedCoin={selectedCoin} />

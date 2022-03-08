@@ -77,7 +77,8 @@ const SetSubInfluencerSegment: React.FC<SetSubInfluencerSegmentProps> = ({contra
           values.refFee
         )
         alert('Transaction succeeded!')
-      } catch {
+      } catch (error) {
+        console.error(error)
         alert("Can't run transaction!")
       }
   }})
