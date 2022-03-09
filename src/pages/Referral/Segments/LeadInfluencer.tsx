@@ -101,11 +101,11 @@ const SetSubInfluencerSegment: React.FC<SetSubInfluencerSegmentProps> = ({contra
       <Text mb="4px" small>
         Lead Influencer Fee
       </Text>
-      <StyledInput id="leadFee" name="leadFee" type="number" onChange={formik.handleChange} value={formik.values.leadFee}/>
+      <StyledInput id="leadFee" name="leadFee" type="number" onChange={formik.handleChange} value={formik.values.leadFee} min="0"/>
       <Text mb="4px" small>
         Sub Influncer Fee 
       </Text>
-      <StyledInput id="refFee" name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee}/>
+      <StyledInput id="refFee" name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee} min="0"/>
       <Box style={{marginTop: '12px'}}>
         <Button type="submit">Submit</Button>
       </Box>

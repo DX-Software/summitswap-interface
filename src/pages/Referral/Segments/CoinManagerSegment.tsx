@@ -1,24 +1,15 @@
 import React from 'react'
 import { Text, Box, Button } from '@summitswap-uikit'
 import { Token } from '@summitswap-libs'
-import styled from 'styled-components'
 import { useFormik } from 'formik';
 
 import { useReferralContract } from 'hooks/useContract'
 import { Contract } from 'ethers'
 import checkIfUint256 from 'utils/checkUint256'
 import { isAddress } from '../../../utils'
-import { Influencer } from '../types';
 
 import StyledInput from '../StyledInput';
 import { StyledBr, StyledWhiteBr } from '../StyledBr';
-
-const InfluencerBox = styled(Box)`
-  color: ${({ theme }) => theme.colors.invertedContrast};
-  padding: 16px;
-  border-radius: 16px;
-  background: ${({ theme }) => theme.colors.sidebarBackground};
-`
 
 interface CoinManagerSegmentProps {
   selectedCoin?: Token;
@@ -70,7 +61,7 @@ const SetFirstBuyFee: React.FC<SectionProps> = ({contract, selectedCoin}) => {
         Fee value
       </Text>
       <form onSubmit={formik.handleSubmit}>
-      <StyledInput value={formik.values.fee} onChange={formik.handleChange} id="fee" name="fee"/>
+      <StyledInput value={formik.values.fee} onChange={formik.handleChange} id="fee" name="fee" min="0"/>
       <Box style={{marginTop: '12px'}}>
         <Button type="submit" >Submit</Button>
       </Box>
@@ -169,15 +160,15 @@ const SetFeeInfo: React.FC<SectionProps> = ({contract, selectedCoin}) => {
       <Text mb="4px" small>
         Referral reward percentage
       </Text>
-      <StyledInput id="refFee" name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee}/>
+      <StyledInput id="refFee" name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee} min="0"/>
       <Text mb="4px" small>
         Developer reward percentage 
       </Text>
-      <StyledInput id="devFee" name="devFee" type="number" onChange={formik.handleChange} value={formik.values.devFee}/>
+      <StyledInput id="devFee" name="devFee" type="number" onChange={formik.handleChange} value={formik.values.devFee} min="0"/>
       <Text mb="4px" small>
         Promotion referral reward
       </Text>
-      <StyledInput id="promRefFee" name="promRefFee" type="number" onChange={formik.handleChange} value={formik.values.promRefFee}/>
+      <StyledInput id="promRefFee" name="promRefFee" type="number" onChange={formik.handleChange} value={formik.values.promRefFee} min="0"/>
       <Text mb="4px" small>
         Promotion start timestamp
       </Text>

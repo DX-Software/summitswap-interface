@@ -17,7 +17,6 @@ import login from '../../utils/login'
 
 import './style.css'
 import ReferralNavCard from '../../components/ReferralNavCard'
-import { MAX_QUERYING_BLOCK_AMOUNT, REFERRAL_DEPLOYMENT_BLOCKNUMBER } from '../../constants'
 import ReferralSegmentInitial from '../../constants/ReferralSegmentInitial'
 import ReferralSegment from './Segments/ReferralSegment'
 import CoinManagerSegment from './Segments/CoinManagerSegment'

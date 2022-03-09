@@ -29,7 +29,8 @@
 }
 
 .Dropdown-option.is-selected {
-    background-color: #000f1844 ;
+    background-color: #000f1844;
+    color: #555 !important;
 }
 
 .Dropdown-option {
