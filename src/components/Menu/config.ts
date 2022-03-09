@@ -22,11 +22,11 @@ const config: MenuEntry[] = [
     href: '/cross-chain-swap',
     showConnectButton: false,
   },
-  // {
-  //   label: "Farms",
-  //   icon: "FarmIcon",
-  //   href: "/farms",
-  // },
+  {
+    label: "Onboarding",
+    icon: "FarmIcon",
+    href: "/onboarding",
+  },
   // {
   //   label: "Pools",
   //   icon: "PoolsIcon",
