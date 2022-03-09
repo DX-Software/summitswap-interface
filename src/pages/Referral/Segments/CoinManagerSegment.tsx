@@ -53,7 +53,7 @@ const SetFirstBuyFee: React.FC<SectionProps> = ({contract, selectedCoin}) => {
 
   return <>
     <Text bold>
-      Set first buy fee
+      Set First Buy Fee
     </Text>
     <StyledWhiteBr />
     <Box>
@@ -149,7 +149,7 @@ const SetFeeInfo: React.FC<SectionProps> = ({contract, selectedCoin}) => {
 
   return <>
     <Text bold>
-      Set fee information
+      Set Fee Information
     </Text>
     <StyledWhiteBr />
     <form onSubmit={formik.handleSubmit}>

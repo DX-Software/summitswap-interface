@@ -1,43 +1,80 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { Text, Box } from '@summitswap-uikit'
+import { Token } from '@summitswap-libs'
+import { ethers, BigNumber } from 'ethers'
 
-import DropdownWrapper from 'components/DropdownWrapper';
+import DropdownWrapper from 'components/DropdownWrapper'
 import { PaginatedRewards, ReferralReward } from '../types'
-import { StyledBr } from '../StyledBr';
-import ReferralTransactionRow from '../ReferralTransactionRow';
-
+import { StyledBr, StyledWhiteBr } from '../StyledBr'
+import ReferralTransactionRow from '../ReferralTransactionRow'
 
 interface LeadHistoryProps {
   paginatedRewards: PaginatedRewards
   selectedAddress: string
   setSelectedAddress: (val: string) => void
+  outputToken?: Token
 }
 
 interface HistoryListProps {
   history: ReferralReward[]
 }
 
-const HistoryList: React.FC<HistoryListProps> = ({history}) => {
-  return <>
-    {history.map(record => {
-      return <Box>
-        <StyledBr />
-        <ReferralTransactionRow {...record}/>
-      </Box>
-    })}
-  </>
+const HistoryList: React.FC<HistoryListProps> = ({ history }) => {
+  return (
+    <>
+      {history.map((record) => {
+        return (
+          <Box>
+            <ReferralTransactionRow {...record} />
+          </Box>
+        )
+      })}
+    </>
+  )
 }
 
-const LeadHistory: React.FC<LeadHistoryProps> = ({ paginatedRewards, selectedAddress, setSelectedAddress }) => {
+const LeadHistory: React.FC<LeadHistoryProps> = ({
+  paginatedRewards,
+  selectedAddress,
+  setSelectedAddress,
+  outputToken,
+}) => {
   const addresses = Object.keys(paginatedRewards)
+  const headerLabel = "Check Sub Influencer's History"
+
+  const formatTotalSum = useCallback(() => {
+    if (!outputToken) return "0"
+
+    const sumAmount = paginatedRewards[selectedAddress]
+      .map((record) => record.outputTokenAmount)
+      .reduce((acc, currentReward) => {
+        return currentReward.add(acc)
+      })
+
+    return ethers.utils.formatUnits(sumAmount, outputToken.decimals)
+  }, [outputToken, paginatedRewards, selectedAddress])
+
 
   return addresses.length ? (
     <>
-        <DropdownWrapper options={addresses} onChange={(option) => { setSelectedAddress(option.value)}} value={selectedAddress} />;
-        <HistoryList history={paginatedRewards[selectedAddress]} />
+      <Box style={{ marginTop: '21px' }}>
+        <Text bold>{headerLabel}</Text>
+        <StyledWhiteBr />
+      </Box>
+      <DropdownWrapper
+        options={addresses}
+        onChange={(option) => {
+          setSelectedAddress(option.value)
+        }}
+        value={selectedAddress}
+      />
+      ;
+      <HistoryList history={paginatedRewards[selectedAddress]} />
+      <StyledBr />
+      <Text bold color="primary"> <span style={{ color: 'white' }}>Total bought: </span>{formatTotalSum()} <span style={{ color: 'white' }}>{outputToken?.symbol || ""}</span></Text>
     </>
   ) : (
-    <Text>No sub influencers history available!</Text>
+    <Text bold>No sub influencers history available!</Text>
   )
 }
 

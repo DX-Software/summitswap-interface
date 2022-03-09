@@ -3,7 +3,7 @@ import { Text, Box } from '@summitswap-uikit'
 import styled from 'styled-components'
 
 import LinkBox from 'components/LinkBox'
-import RewardedTokens from '../RewardedTokens'
+
 
 const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
   display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'block' : 'none')};
@@ -37,7 +37,7 @@ const ReferralSegment: React.FC<ReferralSegmentProps> = ({
   return (
     <>
       <Text mb="8px" bold>
-        My Referral link
+        My Referral Link
       </Text>
       <LinkBox mb={3}>
         <Box>
@@ -54,7 +54,6 @@ const ReferralSegment: React.FC<ReferralSegmentProps> = ({
         </Box>
       </LinkBox>
       {/* TODO: Display swaplist using lambda x blockchain events */}
-      <RewardedTokens />
     </>
   )
 }

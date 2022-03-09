@@ -10,7 +10,7 @@ import { isAddress } from 'utils'
 import checkIfUint256 from 'utils/checkUint256'
 import { PaginatedRewards, ReferralReward } from '../types'
 import StyledInput from '../StyledInput';
-import { StyledBr, StyledWhiteBr } from '../StyledBr';
+import { StyledWhiteBr } from '../StyledBr';
 import { REFERRAL_DEPLOYMENT_BLOCKNUMBER, MAX_QUERYING_BLOCK_AMOUNT } from '../../../constants'
 import LeadHistory from './LeadHistory'
 
@@ -90,27 +90,26 @@ const SetSubInfluencerSegment: React.FC<SetSubInfluencerSegmentProps> = ({contra
 
   return <>
     <Text bold>
-      Set fee information
+      Set Fee Information
     </Text>
     <StyledWhiteBr />
     <form onSubmit={formik.handleSubmit}>
       <Text mb="4px" small>
-        Sub Influncer Wallet Address
+        Sub influncer wallet address
       </Text>
       <StyledInput id="subWalletAdress" name="subWalletAdress" type="text" onChange={formik.handleChange} value={formik.values.subWalletAdress} />
       <Text mb="4px" small>
-        Lead Influencer Fee
+        Lead influencer fee
       </Text>
       <StyledInput id="leadFee" name="leadFee" type="number" onChange={formik.handleChange} value={formik.values.leadFee} min="0"/>
       <Text mb="4px" small>
-        Sub Influncer Fee 
+        Sub influncer fee 
       </Text>
       <StyledInput id="refFee" name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee} min="0"/>
       <Box style={{marginTop: '12px'}}>
         <Button type="submit">Submit</Button>
       </Box>
     </form>
-    <StyledBr />
   </>
 }
 
@@ -121,10 +120,9 @@ const LeadInfluencer: React.FC<LeadInfluencerProps> = ({selectedCoin}) => {
   const { account, library } = useWeb3React()
   const [selectedAddress, setSelectedAddress] = useState('')
   
-
   useEffect(() => {
     async function fetchReferralData() {
-      if (!account || !refContract || !library) return
+      if (!account || !refContract || !library || !selectedCoin) return
       
       const referralsRewardEvents = refContract.filters.ReferralReward(null, account)
 
@@ -149,7 +147,9 @@ const LeadInfluencer: React.FC<LeadInfluencerProps> = ({selectedCoin}) => {
 
       const subInfluencerReward = referrerEvents.map(event => event.args) as ReferralReward[]
 
-      const rewards = getRewardsPaginated(subInfluencerReward)
+      const filteredRewards = subInfluencerReward.filter(reward => reward.outputToken === selectedCoin?.address)
+
+      const rewards = getRewardsPaginated(filteredRewards)
 
       const subAdresses = Object.keys(rewards)
 
@@ -160,11 +160,17 @@ const LeadInfluencer: React.FC<LeadInfluencerProps> = ({selectedCoin}) => {
       setSubReward(rewards)
     }
     fetchReferralData()
-  }, [account, refContract, library])
+  }, [account, refContract, library, selectedCoin])
 
   return <>
-    <SetSubInfluencerSegment contract={refContract} selectedCoin={selectedCoin} />
-    <LeadHistory paginatedRewards={subReward} selectedAddress={selectedAddress} setSelectedAddress={setSelectedAddress}/>
+    <SetSubInfluencerSegment 
+      contract={refContract} 
+      selectedCoin={selectedCoin} />
+    <LeadHistory 
+      paginatedRewards={subReward} 
+      selectedAddress={selectedAddress} 
+      setSelectedAddress={setSelectedAddress} 
+      outputToken={selectedCoin} />
   </>
 }
 

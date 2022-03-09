@@ -8,6 +8,7 @@ import { useActiveWeb3React } from '../../hooks'
 import { MAX_QUERYING_BLOCK_AMOUNT, REFERRAL_DEPLOYMENT_BLOCKNUMBER } from '../../constants'
 import ReferralTransactionRow from './ReferralTransactionRow'
 import { ReferralReward } from './types'
+import RewardedTokens from './RewardedTokens'
 
 
 
@@ -78,6 +79,7 @@ export default function SwapList() {
               <ReferralTransactionRow account={account} {...swap} />
             ))}
           </Box>
+          <RewardedTokens />
         </>
       ) : (
         <>
