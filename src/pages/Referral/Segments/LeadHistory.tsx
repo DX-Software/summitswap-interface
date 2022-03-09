@@ -74,7 +74,9 @@ const LeadHistory: React.FC<LeadHistoryProps> = ({
       <Text bold color="primary"> <span style={{ color: 'white' }}>Total bought: </span>{formatTotalSum()} <span style={{ color: 'white' }}>{outputToken?.symbol || ""}</span></Text>
     </>
   ) : (
-    <Text bold>No sub influencers history available!</Text>
+    <Box style={{ marginTop: '21px' }}>
+      <Text bold>No sub influencers history available!</Text>
+    </Box>
   )
 }
 
