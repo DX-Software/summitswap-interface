@@ -22,7 +22,6 @@ const InfluencerBox = styled(Box)`
 
 interface CoinManagerSegmentProps {
   selectedCoin?: Token;
-  influencers:  Influencer[]
 }
 
 interface SectionProps {
@@ -309,7 +308,7 @@ const RemoveLead: React.FC<SectionProps> = ({contract, selectedCoin}) => {
 
 }
 
-const CoinManagerSegment: React.FC<CoinManagerSegmentProps> = ({selectedCoin, influencers}) => {
+const CoinManagerSegment: React.FC<CoinManagerSegmentProps> = ({selectedCoin}) => {
   const refContract = useReferralContract(true)
 
   return <>
@@ -317,13 +316,6 @@ const CoinManagerSegment: React.FC<CoinManagerSegmentProps> = ({selectedCoin, in
     <SetLeadManager contract={refContract} selectedCoin={selectedCoin} />
     <RemoveLead contract={refContract} selectedCoin={selectedCoin} />
     <SetFeeInfo contract={refContract} selectedCoin={selectedCoin} />
-    {influencers.map(influencer => {
-      return <InfluencerBox key={influencer.referee}>
-        <Box>
-          <Text>{influencer.referee}</Text>
-        </Box>
-      </InfluencerBox>
-    })}
   </>
 }
 

@@ -23,7 +23,7 @@ import ReferralSegment from './Segments/ReferralSegment'
 import CoinManagerSegment from './Segments/CoinManagerSegment'
 import SubInfluencer from './Segments/SubInfluencer'
 import LeadInfluencer from './Segments/LeadInfluencer'
-import { InfInfo, Influencer } from './types'
+import { InfInfo } from './types'
 import CurrencySelector from './CurrencySelector'
 import SwapList from './SwapList'
 
@@ -33,7 +33,7 @@ interface IProps {
 }
 
 const Referral: React.FC<IProps> = () => {
-  const { account, deactivate, activate, library } = useWeb3React()
+  const { account, deactivate, activate } = useWeb3React()
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedOutputCoin, setSelectedOutputCoin] = useState<Token | undefined>()
   const [allTokens, setAllTokens] = useState<Array<Token>>([])
@@ -44,7 +44,6 @@ const Referral: React.FC<IProps> = () => {
   const refContract = useReferralContract(true)
   const [segmentControllerIndex, setSegmentControllerIndex] = useState(0)
   const [enabledSegments, setEnabledSegments] = useState(ReferralSegmentInitial)
-  const [leadInfluencers, setLeadInfluencers] = useState<Influencer[]>([])
   const [myLeadInfluencerAddress, setMyLeadInfluencerAddress] = useState<string | undefined>()
   const [isSegmentDisabled, setIsSegmentDisabled] = useState({
     checkManager: false,
@@ -136,42 +135,6 @@ const Referral: React.FC<IProps> = () => {
     checkIfManager()
   }, [account, selectedOutputCoin, refContract])
 
-  useEffect(() => {
-
-    async function fetchReferralData() {
-      if (!account || !refContract) return
-
-      const referrals = refContract.filters.ReferralRecorded(null, account, selectedOutputCoin?.address)
-
-      const latestBlocknumber = await library.getBlockNumber()
-
-      let referrerEvents = [] as Event[]
-
-      const queries: [start: number, end: number][] = []
-
-      for (
-        let blockNumber = REFERRAL_DEPLOYMENT_BLOCKNUMBER;
-        blockNumber < latestBlocknumber;
-        blockNumber += MAX_QUERYING_BLOCK_AMOUNT
-      ) {
-        queries.push([blockNumber, Math.min(latestBlocknumber, blockNumber + MAX_QUERYING_BLOCK_AMOUNT - 1)])
-      }
-
-      await Promise.all(
-        queries.map(async (query) => {
-          const referrerResults = await refContract?.queryFilter(referrals, query[0], query[1])
-
-          referrerEvents = [...referrerEvents, ...referrerResults]
-        })
-      )
-
-      const influencers = (referrerEvents.map((event) => event.args) as unknown) as Influencer[]
-
-      setLeadInfluencers(influencers)
-    }
-    fetchReferralData()
-  }, [refContract, account, selectedOutputCoin, library])
-
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
 
   useEffect(() => {
@@ -225,7 +188,7 @@ const Referral: React.FC<IProps> = () => {
           />
         )
       case 'coinManager':
-        return <CoinManagerSegment selectedCoin={selectedOutputCoin} influencers={leadInfluencers} />
+        return <CoinManagerSegment selectedCoin={selectedOutputCoin} />
       case 'leadInfluencer':
         return <LeadInfluencer selectedCoin={selectedOutputCoin} />
       case 'subInfluencer':
