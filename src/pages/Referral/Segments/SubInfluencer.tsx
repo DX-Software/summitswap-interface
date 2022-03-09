@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Token } from '@summitswap-libs'
 import { Text, Box, Button } from '@summitswap-uikit'
-import { Contract } from 'ethers'
+import { Contract, ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core';
 import { AddressZero } from '@ethersproject/constants'
 
@@ -46,8 +46,7 @@ const EnterLeadAddressSection: React.FC<EnterLeadAddressSectionProps> = ({contra
     try {
       await contract.acceptLeadInfluencer(selectedCoin.address, leadAddress)
       alert('Transaction succeeded!')
-    } catch (e) {
-      console.log(e)
+    } catch {
       alert("Can't run transaction!")
     }
 
@@ -73,10 +72,10 @@ const EnterLeadAddressSection: React.FC<EnterLeadAddressSectionProps> = ({contra
 const InfoBox: React.FC<InfoBoxProps> = ({address, leadFee, refFee}) => {
   return <Box>
     <Text>
-      Lead Address - {address}
+      Address - {address}
     </Text>
     <Text>
-      Lead Fee - {leadFee}
+      Fee - {leadFee}
     </Text>
     <Text>
       Referral Fee - {refFee}
@@ -85,7 +84,6 @@ const InfoBox: React.FC<InfoBoxProps> = ({address, leadFee, refFee}) => {
 }
 
 const SubInfluencer: React.FC<SubInfluencerProps> = ({myLeadInfluencerAddress, selectedCoin}) => {
-
   const refContract = useReferralContract(true)
   const [leadInfo, setLeadInfo] = useState<InfoBoxProps | undefined>()
   const [subInfo, setSubInfo] = useState<InfoBoxProps | undefined>()
@@ -103,8 +101,8 @@ const SubInfluencer: React.FC<SubInfluencerProps> = ({myLeadInfluencerAddress, s
       const leadInfluncerInfo = await refContract.influencers(selectedCoin.address, subInfluncerInfo.lead) as InfInfo
 
       if (subInfluncerInfo.lead !== AddressZero ) {
-        setSubInfo({address: account, leadFee: subInfluncerInfo.leadFee.toString(), refFee: subInfluncerInfo.refFee.toString() })
-        setLeadInfo({address: myLeadInfluencerAddress, leadFee: leadInfluncerInfo.leadFee.toString(), refFee: leadInfluncerInfo.refFee.toString() })
+        setSubInfo({address: account, leadFee: ethers.utils.formatUnits(subInfluncerInfo.leadFee), refFee: ethers.utils.formatUnits(subInfluncerInfo.refFee) })
+        setLeadInfo({address: myLeadInfluencerAddress, leadFee: ethers.utils.formatUnits(leadInfluncerInfo.leadFee), refFee: ethers.utils.formatUnits(leadInfluncerInfo.refFee) })
       }
 
     }
@@ -114,7 +112,12 @@ const SubInfluencer: React.FC<SubInfluencerProps> = ({myLeadInfluencerAddress, s
   return (
     <Box>
       {leadInfo && subInfo ? (<>
+        <Text bold>Lead Influencer Info</Text>
+        <StyledWhiteBr />
         <InfoBox {...leadInfo} />
+        <StyledBr />
+        <Text bold>My Influencer Info</Text>
+        <StyledWhiteBr />
         <InfoBox {...subInfo} />
       </>) : (
         <Box>

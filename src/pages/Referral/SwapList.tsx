@@ -56,7 +56,6 @@ export default function SwapList() {
           eventLogs = _.orderBy(eventLogs, (eventLog) => eventLog.timestamp.toNumber(), 'desc')
 
           setSwapList(eventLogs)
-          console.log(eventLogs)
           setIsLoading(false)
         })
       )

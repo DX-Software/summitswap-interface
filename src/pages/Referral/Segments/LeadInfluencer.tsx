@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Text, Box, Button} from '@summitswap-uikit'
-import styled from 'styled-components'
+import { Text, Box, Button } from '@summitswap-uikit'
 import { Token } from '@summitswap-libs'
 import { Contract, Event } from 'ethers'
 import { useFormik } from 'formik'
@@ -9,18 +8,11 @@ import { useWeb3React } from '@web3-react/core'
 import { useReferralContract } from 'hooks/useContract';
 import { isAddress } from 'utils'
 import checkIfUint256 from 'utils/checkUint256'
-import { ReferralReward } from '../types'
+import { PaginatedRewards, ReferralReward } from '../types'
 import StyledInput from '../StyledInput';
 import { StyledBr, StyledWhiteBr } from '../StyledBr';
 import { REFERRAL_DEPLOYMENT_BLOCKNUMBER, MAX_QUERYING_BLOCK_AMOUNT } from '../../../constants'
-
-
-const InfluencerBox = styled(Box)`
-  color: ${({ theme }) => theme.colors.invertedContrast};
-  padding: 16px;
-  border-radius: 16px;
-  background: ${({ theme }) => theme.colors.sidebarBackground};
-`
+import LeadHistory from './LeadHistory'
 
 interface LeadInfluencerProps {
   selectedCoin?: Token
@@ -29,6 +21,19 @@ interface LeadInfluencerProps {
 interface SetSubInfluencerSegmentProps {
   contract: Contract | null
   selectedCoin?: Token
+}
+
+const getRewardsPaginated = (rewards: ReferralReward[]) => {
+  const pagination: PaginatedRewards = {}
+  return rewards.reduce((acc, reward) => {
+    const input = acc[reward.referrer]
+    if (input) {
+      acc[reward.referrer].push(reward)
+    } else {
+      acc[reward.referrer] = []
+    }
+    return acc
+  }, pagination)
 }
 
 const SetSubInfluencerSegment: React.FC<SetSubInfluencerSegmentProps> = ({contract, selectedCoin}) => {
@@ -109,10 +114,13 @@ const SetSubInfluencerSegment: React.FC<SetSubInfluencerSegmentProps> = ({contra
   </>
 }
 
+
 const LeadInfluencer: React.FC<LeadInfluencerProps> = ({selectedCoin}) => {
   const refContract = useReferralContract(true)
-  const [subReward, setSubReward] = useState<ReferralReward[]>([])
-  const { account, library} = useWeb3React()
+  const [subReward, setSubReward] = useState<PaginatedRewards>({})
+  const { account, library } = useWeb3React()
+  const [selectedAddress, setSelectedAddress] = useState('')
+  
 
   useEffect(() => {
     async function fetchReferralData() {
@@ -141,15 +149,22 @@ const LeadInfluencer: React.FC<LeadInfluencerProps> = ({selectedCoin}) => {
 
       const subInfluencerReward = referrerEvents.map(event => event.args) as ReferralReward[]
 
-      console.log(subInfluencerReward)
+      const rewards = getRewardsPaginated(subInfluencerReward)
 
-      setSubReward(subInfluencerReward)
+      const subAdresses = Object.keys(rewards)
+
+      const firstAddress = subAdresses.length ? subAdresses[0] : ''
+      
+      setSelectedAddress(firstAddress)
+
+      setSubReward(rewards)
     }
     fetchReferralData()
   }, [account, refContract, library])
 
   return <>
     <SetSubInfluencerSegment contract={refContract} selectedCoin={selectedCoin} />
+    <LeadHistory paginatedRewards={subReward} selectedAddress={selectedAddress} setSelectedAddress={setSelectedAddress}/>
   </>
 }
 

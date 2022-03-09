@@ -62,6 +62,7 @@
     "react": "^17.0.1",
     "react-device-detect": "^1.6.2",
     "react-dom": "^17.0.1",
+    "react-dropdown": "^1.9.2",
     "react-feather": "^2.0.8",
     "react-i18next": "^10.7.0",
     "react-popper": "^2.2.3",

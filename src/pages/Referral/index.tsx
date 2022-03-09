@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom'
 import { Token } from '@summitswap-libs'
 import { Box, Button, useWalletModal, Flex } from '@summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
-import _ from 'lodash'
 import { Event } from 'ethers'
 
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
@@ -34,7 +33,7 @@ interface IProps {
 }
 
 const Referral: React.FC<IProps> = () => {
-  const { account, chainId, deactivate, activate, library } = useWeb3React()
+  const { account, deactivate, activate, library } = useWeb3React()
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedOutputCoin, setSelectedOutputCoin] = useState<Token | undefined>()
   const [allTokens, setAllTokens] = useState<Array<Token>>([])

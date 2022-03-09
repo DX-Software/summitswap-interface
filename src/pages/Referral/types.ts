@@ -26,3 +26,5 @@ export interface InfInfo {
   isActive: boolean;
   isLead: boolean;
 }
+
+export type PaginatedRewards = { [key: string]: ReferralReward[] }

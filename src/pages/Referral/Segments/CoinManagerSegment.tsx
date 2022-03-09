@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Text, Box, Button } from '@summitswap-uikit'
 import { Token } from '@summitswap-libs'
 import styled from 'styled-components'
@@ -7,10 +7,9 @@ import { useFormik } from 'formik';
 import { useReferralContract } from 'hooks/useContract'
 import { Contract } from 'ethers'
 import checkIfUint256 from 'utils/checkUint256'
-import { WrappedTokenInfo } from 'state/lists/hooks'
 import { isAddress } from '../../../utils'
 import { Influencer } from '../types';
-import CenterDiv from '../CenterDiv';
+
 import StyledInput from '../StyledInput';
 import { StyledBr, StyledWhiteBr } from '../StyledBr';
 
@@ -31,48 +30,36 @@ interface SectionProps {
   selectedCoin?: Token;
 }
 
-const CoinManagerSegment: React.FC<CoinManagerSegmentProps> = ({selectedCoin, influencers}) => {
-
-  const refContract = useReferralContract(true)
-
-  const coinLogoURL = selectedCoin instanceof WrappedTokenInfo ? selectedCoin.logoURI : undefined
-
-  return <>
-    <SetFirstBuyFee contract={refContract} selectedCoin={selectedCoin} />
-    <SetLeadManager contract={refContract} selectedCoin={selectedCoin} />
-    <RemoveLead contract={refContract} selectedCoin={selectedCoin} />
-    <SetFeeInfo contract={refContract} selectedCoin={selectedCoin} />
-    {influencers.map(influencer => {
-      return <InfluencerBox key={influencer.referee}>
-        <Box>
-          <Text>{influencer.referee}</Text>
-        </Box>
-      </InfluencerBox>
-    })}
-  </>
-}
-
 const SetFirstBuyFee: React.FC<SectionProps> = ({contract, selectedCoin}) => {
 
-  const [fee, setFee] = useState('')
-
-  const submitHandler = async () => {
-    if (!selectedCoin) return
-    if (!contract) return
-
-    if (!checkIfUint256(fee)) {
-      alert(`Invalid fee!`)
-      return
-    }
-
-    try {
-      await contract.setFirstBuyFee(selectedCoin.address, fee)
-      alert('Transaction succeeded!')
-    } catch {
-      alert("Can't run transaction!")
-    }
-
+  interface FormInputs {
+    fee?: number;
   }
+
+  const formik = useFormik<FormInputs>({
+    initialValues: {
+      fee: undefined
+    },
+    onSubmit: async (values) => {
+      const {fee} = values
+
+      if (!selectedCoin) return
+      if (!contract) return
+      if (!fee) return
+  
+      if (!checkIfUint256(`${fee}`)) {
+        alert(`Invalid fee!`)
+        return
+      }
+  
+      try {
+        await contract.setFirstBuyFee(selectedCoin.address, fee)
+        alert('Transaction succeeded!')
+      } catch {
+        alert("Can't run transaction!")
+      }
+
+  }})
 
   return <>
     <Text bold>
@@ -83,13 +70,12 @@ const SetFirstBuyFee: React.FC<SectionProps> = ({contract, selectedCoin}) => {
       <Text mb="4px" small>
         Fee value
       </Text>
-      <StyledInput value={fee} onChange={(e) => {
-        const newValue = e.target.value
-        setFee(newValue)
-      }}/>
+      <form onSubmit={formik.handleSubmit}>
+      <StyledInput value={formik.values.fee} onChange={formik.handleChange} id="fee" name="fee"/>
       <Box style={{marginTop: '12px'}}>
-        <Button onClick={submitHandler}>Submit</Button>
+        <Button type="submit" >Submit</Button>
       </Box>
+      </form>
     </Box>
     <StyledBr />
   </>
@@ -150,7 +136,9 @@ const SetFeeInfo: React.FC<SectionProps> = ({contract, selectedCoin}) => {
 
       if (!validateInputs(values)) return
 
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const promStart = values.promStart!
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const promEnd = values.promEnd!
 
       try {
@@ -208,31 +196,43 @@ const SetFeeInfo: React.FC<SectionProps> = ({contract, selectedCoin}) => {
 }
 
 const SetLeadManager: React.FC<SectionProps> = ({contract, selectedCoin}) => {
-  const [influncerWallet, setInfluncerWallet] = useState('')
-  const [fee, setFee] = useState('')
+  interface FormInputs {
+    influncerWallet?: string;
+    fee?: string;
+  }
 
-  const submitHandler = async () => {
+  const formik = useFormik<FormInputs>({
+    initialValues: {
+      influncerWallet: undefined,
+      fee: undefined
+    },
+    onSubmit: async (values) => {
 
-    if (!selectedCoin) return
-    if (!contract) return
+      const {fee, influncerWallet} = values
 
-    if (!checkIfUint256(fee)) {
-      alert(`Invalid fee!`)
-      return
+      if (!selectedCoin) return
+      if (!contract) return
+      if (!fee) return
+      if (!influncerWallet) return
+  
+      if (!checkIfUint256(fee)) {
+        alert(`Invalid fee!`)
+        return
+      }
+  
+      if (!isAddress(influncerWallet)) {
+        alert('Invalid wallet address!')
+        return
+      }
+  
+      try {
+        await contract.setLeadInfluencer(selectedCoin.address, influncerWallet, fee)
+        alert('Transaction succeeded!')
+      } catch {
+        alert("Can't run transaction!")
+      }
     }
-
-    if (!isAddress(influncerWallet)) {
-      alert('Invalid wallet address!')
-      return
-    }
-
-    try {
-      await contract.setLeadInfluencer(selectedCoin.address, influncerWallet, fee)
-      alert('Transaction succeeded!')
-    } catch {
-      alert("Can't run transaction!")
-    }
-  } 
+  })
 
   return <>
     <Text bold>
@@ -243,44 +243,50 @@ const SetLeadManager: React.FC<SectionProps> = ({contract, selectedCoin}) => {
       <Text mb="4px" small>
         Influencer wallet address
       </Text>
-      <StyledInput value={influncerWallet} onChange={(e) => {
-        const newValue = e.target.value
-        setInfluncerWallet(newValue)
-      }}/>
-      <Text mb="4px" small>
-        Lead fee
-      </Text>
-      <StyledInput value={fee} onChange={(e) => {
-        const newValue = e.target.value
-        setFee(newValue)
-      }}/>
-      <Box style={{marginTop: '12px'}}>
-        <Button onClick={submitHandler}>Submit</Button>
-      </Box>
+      <form onSubmit={formik.handleSubmit}>
+        <StyledInput value={formik.values.influncerWallet} onChange={formik.handleChange} id="influncerWallet" name="influncerWallet"/>
+        <Text mb="4px" small>
+          Lead fee
+        </Text>
+        <StyledInput value={formik.values.fee} onChange={formik.handleChange} id="fee" name="fee"/>
+        <Box style={{marginTop: '12px'}}>
+          <Button type="submit">Submit</Button>
+        </Box>
+      </form>
     </Box>
     <StyledBr />
   </>
 }
 
 const RemoveLead: React.FC<SectionProps> = ({contract, selectedCoin}) => {
-
-  const [influncerWallet, setInfluncerWallet] = useState('');
-
-  const submitHandler = async () => {  
-    if (!contract) return
-    if (!selectedCoin) return
-
-    if (isAddress(influncerWallet)) {
-      try {
-        await contract.removeLeadInfluencer(selectedCoin.address, influncerWallet)
-        alert('Transaction succeeded!')
-      } catch {
-        alert("Can't run transaction!")
-      }
-    } else {
-      alert('Invalid wallet address!')
-    }
+  interface FormInputs {
+    influncerWallet?: string;
   }
+
+  const formik = useFormik<FormInputs>({
+    initialValues: {
+      influncerWallet: undefined,
+    },
+    onSubmit: async (values) => {
+      const { influncerWallet } = values
+
+      if (!contract) return
+      if (!selectedCoin) return
+      if (!influncerWallet) return
+
+      if (isAddress(influncerWallet)) {
+        try {
+          await contract.removeLeadInfluencer(selectedCoin.address, influncerWallet)
+          alert('Transaction succeeded!')
+        } catch {
+          alert("Can't run transaction!")
+        }
+      } else {
+        alert('Invalid wallet address!')
+      }
+    }
+  })
+
 
   return <>
     <Text bold>
@@ -291,17 +297,34 @@ const RemoveLead: React.FC<SectionProps> = ({contract, selectedCoin}) => {
       <Text mb="4px" small>
         Influencer wallet address
       </Text>
-      <StyledInput value={influncerWallet} onChange={(e) => {
-        const newValue = e.target.value
-        setInfluncerWallet(newValue)
-      }}/>
-      <Box style={{marginTop: '12px'}}>
-        <Button onClick={submitHandler}>Submit</Button>
-      </Box>
+      <form onSubmit={formik.handleSubmit}>
+        <StyledInput value={formik.values.influncerWallet} onChange={formik.handleChange}/>
+        <Box style={{marginTop: '12px'}}>
+          <Button type="submit">Submit</Button>
+        </Box>
+      </form>
     </Box>
     <StyledBr />
   </>
 
+}
+
+const CoinManagerSegment: React.FC<CoinManagerSegmentProps> = ({selectedCoin, influencers}) => {
+  const refContract = useReferralContract(true)
+
+  return <>
+    <SetFirstBuyFee contract={refContract} selectedCoin={selectedCoin} />
+    <SetLeadManager contract={refContract} selectedCoin={selectedCoin} />
+    <RemoveLead contract={refContract} selectedCoin={selectedCoin} />
+    <SetFeeInfo contract={refContract} selectedCoin={selectedCoin} />
+    {influencers.map(influencer => {
+      return <InfluencerBox key={influencer.referee}>
+        <Box>
+          <Text>{influencer.referee}</Text>
+        </Box>
+      </InfluencerBox>
+    })}
+  </>
 }
 
 export default CoinManagerSegment
