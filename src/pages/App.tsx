@@ -16,6 +16,7 @@ import Swap from './Swap'
 import CrossChainSwap from './CrossChainSwap'
 import Referral from './Referral'
 import SummitCheck from './SummitCheck'
+import SummitOverview from './Info/Overview'
 import { EN, allLanguages } from '../constants/localisation/languageCodes'
 import { LanguageContext } from '../hooks/LanguageContext'
 import { TranslationsContext } from '../hooks/TranslationsContext'
@@ -149,6 +150,7 @@ export default function App() {
                     <Route exact strict path="/find" component={PoolFinder} />
                     <Route exact strict path="/pool" component={Pool} />
                     <Route exact path="/add" component={AddLiquidity} />
+                    <Route exact path="/info" component={SummitOverview} />
                     <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
 
                     {/* Redirection: These old routes are still used in the code base */}
