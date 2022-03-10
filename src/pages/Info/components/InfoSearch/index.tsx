@@ -153,14 +153,10 @@ const Search = () => {
   useEffect(() => {
     if (showMenu) {
       document.addEventListener('click', handleOutsideClick)
-      if (document?.querySelector('body')?.style?.overflow && document.querySelector('body') !== null) {
-        document.querySelector('body')!.style.overflow = 'hidden'
-      }
+      document.querySelector('body')!.style.overflow = 'hidden'
     } else {
       document.removeEventListener('click', handleOutsideClick)
-      if (document?.querySelector('body')?.style?.overflow && document.querySelector('body') !== null) {
-        document.querySelector('body')!.style.overflow = 'visible'
-      }
+      document.querySelector('body')!.style.overflow = 'visible'
     }
 
     return () => {
