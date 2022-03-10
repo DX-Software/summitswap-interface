@@ -1,14 +1,35 @@
-import TokenDropdown from 'components/TokenDropdown'
-import { Token } from '@koda-finance/summitswap-sdk'
 import React, { useCallback, useEffect, useState } from 'react'
-import styled from 'styled-components'
-import AppBody from '../AppBody'
+import TokenDropdown from 'components/TokenDropdown'
+import { Token, WETH } from '@koda-finance/summitswap-sdk'
+import { Link } from 'react-router-dom'
+import { Button } from '@koda-finance/summitswap-uikit'
+import { useFactoryContract } from 'hooks/useContract'
+import { CHAIN_ID } from '../../constants'
 
+// TODO fix searching for uknown token
 export default function CrossChainSwap() {
-  const [selectedOutputCoin, setSelectedOutputCoin] = useState<Token>()
+  const [selectedToken, setSelectedToken] = useState<Token>()
+  const [pair, setPair] = useState<string>()
+
+  const factory = useFactoryContract()
+
+  useEffect(() => {
+    async function fetchPair() {
+      if (!selectedToken || !factory) {
+        setPair(undefined)
+        return
+      }
+
+      const fetchedPair = await factory.getPair(WETH[CHAIN_ID].address, selectedToken.address)
+
+      setPair(fetchedPair)
+    }
+
+    fetchPair()
+  }, [selectedToken, factory])
 
   const handleTokenSelect = useCallback((inputCurrency) => {
-    setSelectedOutputCoin(inputCurrency)
+    setSelectedToken(inputCurrency)
   }, [])
 
   return (
@@ -16,21 +37,25 @@ export default function CrossChainSwap() {
       <p className="paragraph">Select your token</p>
       <TokenDropdown
         onCurrencySelect={handleTokenSelect}
-        selectedCurrency={selectedOutputCoin}
+        selectedCurrency={selectedToken}
         showETH={false}
         showUnknownTokens={false}
         showOnlyUnknownTokens
       />
       <h3>Requirements:</h3>
       <p className="paragraph">
-        1. BNB to buy the liquidity. Suggest minimum £25k. This will be used to pair with the native token. (You can
-        always add extra liquidity in the future).
+        1. Add liquidity on <b>BNB/{selectedToken?.symbol ?? 'YOUR COIN'}</b>. Suggest minimum £25k. This will be used
+        to pair with the native token
       </p>
-      {/* <AddLiquidity/> */}
-      <p className="paragraph">
-        2. You lock that liquidity for minimum 12 months, send us locking transaction. - I can help or do this for you
-        if you don&apos;t know how.
-      </p>
+      {selectedToken ? (
+        <Button as={Link} to={`/add/ETH/${selectedToken?.address}`}>
+          Add Liquidity
+        </Button>
+      ) : (
+        <></>
+      )}
+      <p className="paragraph">2. Lock that liquidity for minimum 12 months, send us locking transaction</p>
+      {/* {pair} */}
       <p className="paragraph">
         3. Some END tokens sent to the referral contract as rewards,
         <br />
