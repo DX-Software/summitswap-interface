@@ -33,6 +33,7 @@ const CandleChart = ({ data, setValue, setLabel, ...rest }: LineChartProps) => {
       return
     }
     window.addEventListener('resize', handleResize)
+    // eslint-disable-next-line consistent-return
     return () => window.removeEventListener('resize', handleResize)
   }, [isClient, chartRef, handleResize]) // Empty array ensures that effect is only run on mount and unmount
 

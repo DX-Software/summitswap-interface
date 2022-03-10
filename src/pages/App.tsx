@@ -19,6 +19,8 @@ import SummitCheck from './SummitCheck'
 import SummitInfoOverview from './Info/Overview'
 import SummitInfoPools from './Info/Pools'
 import SummitInfoTokens from './Info/Tokens'
+import SummitInfoPool from './Info/Pools/PoolPage'
+import SummitInfoToken from './Info/Tokens/TokenPage'
 import { EN, allLanguages } from '../constants/localisation/languageCodes'
 import { LanguageContext } from '../hooks/LanguageContext'
 import { TranslationsContext } from '../hooks/TranslationsContext'
@@ -155,6 +157,8 @@ export default function App() {
                     <Route exact path="/info" component={SummitInfoOverview} />
                     <Route exact path="/info/pools" component={SummitInfoPools} />
                     <Route exact path="/info/tokens" component={SummitInfoTokens} />
+                    <Route exact path="/info/token/:address" component={SummitInfoToken} />
+                    <Route exact path="/info/pool/:address" component={SummitInfoPool} />
                     <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
 
                     {/* Redirection: These old routes are still used in the code base */}

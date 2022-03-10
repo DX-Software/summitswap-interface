@@ -16,13 +16,13 @@ import {
   Spinner,
   Image,
   useMatchBreakpoints,
-} from "@koda-finance/summitswap-uikit"
+} from '@koda-finance/summitswap-uikit'
 import { getBscScanLink } from 'utils'
 import truncateHash from 'utils/truncateHash'
-import useCMCLink from "pages/Info/hooks/useCMCLink"
-import { CurrencyLogo } from "pages/Info/components/CurrencyLogo"
-import { formatAmount } from "pages/Info/utils/formatInfoNumbers"
-import Percent from  "pages/Info/components/Percent"
+import useCMCLink from 'pages/Info/hooks/useCMCLink'
+import { CurrencyLogo } from 'pages/Info/components/CurrencyLogo'
+import { formatAmount } from 'pages/Info/utils/formatInfoNumbers'
+import Percent from 'pages/Info/components/Percent'
 import {
   usePoolDatas,
   useTokenData,
@@ -31,12 +31,13 @@ import {
   useTokenPriceData,
   useTokenTransactions,
 } from 'state/info/hooks'
-import PoolTable from "pages/Info/components/InfoTables/PoolsTable"
-import TransactionTable from "pages/Info/components/InfoTables/TransactionsTable"
-import { ONE_HOUR_SECONDS } from "constants/info"
+import PoolTable from 'pages/Info/components/InfoTables/PoolsTable'
+import TransactionTable from 'pages/Info/components/InfoTables/TransactionsTable'
+import { ONE_HOUR_SECONDS } from 'constants/info'
 import { useTranslation } from 'react-i18next'
-import ChartCard from "pages/Info/components/InfoCharts/ChartCard"
+import ChartCard from 'pages/Info/components/InfoCharts/ChartCard'
 import { useActiveWeb3React } from 'hooks'
+import InfoPageLayout from '../index'
 
 const ContentLayout = styled.div`
   margin-top: 16px;
@@ -60,7 +61,11 @@ const StyledCMCLink = styled(UIKitLink)`
 `
 const DEFAULT_TIME_WINDOW: Duration = { weeks: 1 }
 
-const TokenPage: React.FC<{ routeAddress: string }> = ({ routeAddress }) => {
+export default function TokenPage({
+  match: {
+    params: { address: routeAddress },
+  },
+}) {
   const { isXs, isSm } = useMatchBreakpoints()
   const { t } = useTranslation()
   const { chainId } = useActiveWeb3React()
@@ -96,7 +101,7 @@ const TokenPage: React.FC<{ routeAddress: string }> = ({ routeAddress }) => {
   }, [priceData, tokenData])
 
   return (
-    <>
+    <InfoPageLayout>
       {tokenData ? (
         !tokenData.exists ? (
           <Card>
@@ -164,7 +169,7 @@ const TokenPage: React.FC<{ routeAddress: string }> = ({ routeAddress }) => {
               </Flex>
               <Flex>
                 <Link to={`/add/${address}`}>
-                  <Button mr="8px" variant="secondary">
+                  <Button mr="8px" variant="tertiary">
                     {t('Add Liquidity')}
                   </Button>
                 </Link>
@@ -178,7 +183,7 @@ const TokenPage: React.FC<{ routeAddress: string }> = ({ routeAddress }) => {
             <ContentLayout>
               <Card>
                 <Box p="24px">
-                  <Text bold small color="secondary" fontSize="12px" textTransform="uppercase">
+                  <Text bold small color="primary" fontSize="12px" textTransform="uppercase">
                     {t('Liquidity')}
                   </Text>
                   <Text bold fontSize="24px">
@@ -186,7 +191,7 @@ const TokenPage: React.FC<{ routeAddress: string }> = ({ routeAddress }) => {
                   </Text>
                   <Percent value={tokenData.liquidityUSDChange} />
 
-                  <Text mt="24px" bold color="secondary" fontSize="12px" textTransform="uppercase">
+                  <Text mt="24px" bold color="primary" fontSize="12px" textTransform="uppercase">
                     {t('Volume 24H')}
                   </Text>
                   <Text bold fontSize="24px" textTransform="uppercase">
@@ -194,14 +199,14 @@ const TokenPage: React.FC<{ routeAddress: string }> = ({ routeAddress }) => {
                   </Text>
                   <Percent value={tokenData.volumeUSDChange} />
 
-                  <Text mt="24px" bold color="secondary" fontSize="12px" textTransform="uppercase">
+                  <Text mt="24px" bold color="primary" fontSize="12px" textTransform="uppercase">
                     {t('Volume 7D')}
                   </Text>
                   <Text bold fontSize="24px">
                     ${formatAmount(tokenData.volumeUSDWeek)}
                   </Text>
 
-                  <Text mt="24px" bold color="secondary" fontSize="12px" textTransform="uppercase">
+                  <Text mt="24px" bold color="primary" fontSize="12px" textTransform="uppercase">
                     {t('Transactions 24H')}
                   </Text>
                   <Text bold fontSize="24px">
@@ -237,8 +242,6 @@ const TokenPage: React.FC<{ routeAddress: string }> = ({ routeAddress }) => {
           <Spinner />
         </Flex>
       )}
-    </>
+    </InfoPageLayout>
   )
 }
-
-export default TokenPage

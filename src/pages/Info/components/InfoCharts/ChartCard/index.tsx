@@ -79,14 +79,20 @@ const ChartCard: React.FC<ChartCardProps> = ({ variant, chartData, tokenData, to
     <Card>
       <TabToggleGroup>
         <TabToggle isActive={view === ChartView.VOLUME} onClick={() => setView(ChartView.VOLUME)}>
-          <Text>{t('Volume')}</Text>
+          <Text color={view === ChartView.VOLUME ? "primary" : "white"} bold={view === ChartView.VOLUME}>
+            {t('Volume')}
+          </Text>
         </TabToggle>
         <TabToggle isActive={view === ChartView.LIQUIDITY} onClick={() => setView(ChartView.LIQUIDITY)}>
-          <Text>{t('Liquidity')}</Text>
+          <Text color={view === ChartView.LIQUIDITY ? "primary" : "white"} bold={view === ChartView.LIQUIDITY}>
+            {t('Liquidity')}
+          </Text>
         </TabToggle>
         {variant === 'token' ? (
           <TabToggle isActive={view === ChartView.PRICE} onClick={() => setView(ChartView.PRICE)}>
-            <Text>{t('Price')}</Text>
+            <Text color={view === ChartView.PRICE ? "primary" : "white"} bold={view === ChartView.PRICE}>
+              {t('Price')}
+            </Text>
           </TabToggle>
         ) : (
           <></>

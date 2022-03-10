@@ -14,7 +14,7 @@ const Wrapper = styled(Flex)`
 
 const Inner = styled(Flex)`
   justify-content: space-between;
-  background-color: ${({ theme }) => theme.colors.input};
+  background-color: ${({ theme }) => theme.card.background};
   width: 100%;
 `
 
@@ -36,7 +36,7 @@ export const TabToggle = styled.button<TabProps>`
   font-size: 16px;
   font-weight: 600;
   color: ${({ theme, isActive }) => (isActive ? theme.colors.text : theme.colors.textSubtle)};
-  background-color: ${({ theme, isActive }) => (isActive ? theme.card.background : theme.colors.input)};
+  background-color: ${({ theme, isActive }) => (isActive ? theme.colors.borderColor : theme.card.background)};
 `
 
 interface TabToggleGroupProps {
