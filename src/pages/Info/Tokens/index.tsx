@@ -1,17 +1,30 @@
 import { Heading } from '@koda-finance/summitswap-uikit'
 import { useTranslation } from 'react-i18next'
-import React from 'react'
+import React, { useMemo } from 'react'
+import TokenTable from 'pages/Info/components/InfoTables/TokensTable'
+import TopTokenMovers from 'pages/Info/components/TopTokenMovers'
+import { useAllTokenData } from 'state/info/hooks'
+import InfoPageLayout from '../index'
 
 const TokensOverview: React.FC = () => {
   const { t } = useTranslation()
 
+  const allTokens = useAllTokenData()
+
+  const formattedTokens = useMemo(() => {
+    return Object.values(allTokens)
+      .map((token) => token.data)
+      .filter((token) => token)
+  }, [allTokens])
+
   return (
-    <>
-      <Heading size="lg" mb="16px">
-        {t('Your Watchlist')}
+    <InfoPageLayout>
+      <TopTokenMovers />
+      <Heading size="lg" mt="40px" mb="16px" id="info-tokens-title">
+        {t('All Tokens')}
       </Heading>
-      Watch List
-    </>
+      <TokenTable tokenDatas={formattedTokens} />
+    </InfoPageLayout>
   )
 }
 

@@ -18,7 +18,7 @@ const Container = styled.div`
 
 const StyledInput = styled(Input)`
   z-index: 9999;
-  border: 1px solid ${({ theme }) => theme.colors.inputSecondary};
+  border: 1px solid ${({ theme }) => theme.colors.primary};
 `
 
 const Menu = styled.div<{ hide: boolean }>`
@@ -37,7 +37,7 @@ const Menu = styled.div<{ hide: boolean }>`
   border-radius: 8px;
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.04), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
     0px 24px 32px rgba(0, 0, 0, 0.04);
-  border: 1px solid ${({ theme }) => theme.colors.secondary};
+  border: 1px solid ${({ theme }) => theme.colors.primary};
   margin-top: 4px;
   ${({ theme }) => theme.mediaQueries.sm} {
     margin-top: 0;
@@ -114,26 +114,6 @@ const OptionButton = styled.div<{ enabled: boolean }>`
     cursor: pointer;
   }
 `
-type BasicTokenData = {
-  address: string
-  symbol: string
-  name: string
-}
-const tokenIncludesSearchTerm = (token: BasicTokenData, value: string) => {
-  return (
-    token.address.toLowerCase().includes(value.toLowerCase()) ||
-    token.symbol.toLowerCase().includes(value.toLowerCase()) ||
-    token.name.toLowerCase().includes(value.toLowerCase())
-  )
-}
-
-const poolIncludesSearchTerm = (pool: PoolData, value: string) => {
-  return (
-    pool.address.toLowerCase().includes(value.toLowerCase()) ||
-    tokenIncludesSearchTerm(pool.token0, value) ||
-    tokenIncludesSearchTerm(pool.token1, value)
-  )
-}
 
 const Search = () => {
   const history = useHistory()
@@ -196,7 +176,6 @@ const Search = () => {
   }
 
   // filter on view
-  const [showWatchlist, setShowWatchlist] = useState(false)
   const tokensForList = useMemo(() => {
     return tokens.sort((t0, t1) => ((t0?.volumeUSD ?? 0) > (t1?.volumeUSD ?? 0) ? -1 : 1))
   }, [tokens])
@@ -209,14 +188,11 @@ const Search = () => {
     const isLoading = tokensLoading
     const noTokensFound =
       tokensForList.length === 0 && !isLoading && debouncedSearchTerm.length >= MINIMUM_SEARCH_CHARACTERS
-    const noWatchlistTokens = tokensForList.length === 0 && !isLoading
-    const showMessage = showWatchlist ? noWatchlistTokens : noTokensFound
-    const noTokensMessage = showWatchlist ? t('Saved tokens will appear here') : t('No results')
     return (
       <>
         {isLoading && <Skeleton />}
-        {showMessage && <Text>{noTokensMessage}</Text>}
-        {!showWatchlist && debouncedSearchTerm.length < MINIMUM_SEARCH_CHARACTERS && (
+        {noTokensFound && <Text>{t('No results')}</Text>}
+        {debouncedSearchTerm.length < MINIMUM_SEARCH_CHARACTERS && (
           <Text>{t('Search pools or tokens')}</Text>
         )}
       </>
@@ -227,14 +203,11 @@ const Search = () => {
     const isLoading = poolsLoading
     const noPoolsFound =
       poolForList.length === 0 && !poolsLoading && debouncedSearchTerm.length >= MINIMUM_SEARCH_CHARACTERS
-    const noWatchlistPools = poolForList.length === 0 && !isLoading
-    const showMessage = showWatchlist ? noWatchlistPools : noPoolsFound
-    const noPoolsMessage = showWatchlist ? t('Saved tokens will appear here') : t('No results')
     return (
       <>
         {isLoading && <Skeleton />}
-        {showMessage && <Text>{noPoolsMessage}</Text>}
-        {!showWatchlist && debouncedSearchTerm.length < MINIMUM_SEARCH_CHARACTERS && (
+        {noPoolsFound && <Text>{t('No results')}</Text>}
+        {debouncedSearchTerm.length < MINIMUM_SEARCH_CHARACTERS && (
           <Text>{t('Search pools or tokens')}</Text>
         )}
       </>
@@ -258,18 +231,10 @@ const Search = () => {
           }}
         />
         <Menu hide={!showMenu} ref={menuRef}>
-          <Flex mb="16px">
-            <OptionButton enabled={!showWatchlist} onClick={() => setShowWatchlist(false)}>
-              {t('Search')}
-            </OptionButton>
-            <OptionButton enabled={showWatchlist} onClick={() => setShowWatchlist(true)}>
-              {t('Watchlist')}
-            </OptionButton>
-          </Flex>
           {error && <Text color="failure">{t('Error occurred, please try again')}</Text>}
 
           <ResponsiveGrid>
-            <Text bold color="secondary">
+            <Text bold color="primary">
               {t('Tokens')}
             </Text>
             {!isXs && !isSm && (
@@ -319,7 +284,7 @@ const Search = () => {
 
           <Break />
           <ResponsiveGrid>
-            <Text bold color="secondary" mb="8px">
+            <Text bold color="primary" mb="8px">
               {t('Pools')}
             </Text>
             {!isXs && !isSm && (

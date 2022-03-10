@@ -1,25 +1,24 @@
 import React, { Box, ButtonMenu, ButtonMenuItem, Flex } from '@koda-finance/summitswap-uikit'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import Search from 'pages/Info/components/InfoSearch'
 
 const NavWrapper = styled(Flex)`
-  background: ${({ theme }) => theme.colors.gradients.bubblegum};
   justify-content: space-between;
-  padding: 20px 16px;
   flex-direction: column;
   gap: 8px;
+  margin-bottom: 40px;
   ${({ theme }) => theme.mediaQueries.sm} {
-    padding: 20px 40px;
     flex-direction: row;
   }
 `
 
 const InfoNav = () => {
   const { t } = useTranslation()
-  const isPools = window.location.pathname === '/info/pools'
-  const isTokens = window.location.pathname === '/info/tokens'
+  const location = useLocation()
+  const isPools = location.pathname === '/info/pools'
+  const isTokens = location.pathname === '/info/tokens'
   let activeIndex = 0
   if (isPools) {
     activeIndex = 1
@@ -30,7 +29,7 @@ const InfoNav = () => {
   return (
     <NavWrapper>
       <Box>
-        <ButtonMenu activeIndex={activeIndex} scale="sm" variant="subtle">
+        <ButtonMenu activeIndex={activeIndex} scale="sm" variant="primary">
           <ButtonMenuItem as={Link} to="/info">
             {t('Overview')}
           </ButtonMenuItem>
