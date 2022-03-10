@@ -5,6 +5,10 @@ import { Box } from '@koda-finance/summitswap-uikit'
 import TopLogoIcon from 'img/top_logo.png'
 import { useLocation } from 'react-router-dom'
 
+const StyledBox = styled(Box)`
+  text-align: center;
+`
+
 const TopLogo = styled.img`
   position: absolute;
   right: 40px;
@@ -42,7 +46,7 @@ export default function AppHeader() {
 
   return (
     <StyledContainer>
-      <Box>
+      <StyledBox>
         {location.pathname.search('/swap') !== -1 && 'Exchange'}
         {location.pathname === '/pool' && 'Liquidity'}
         {location.pathname.search('/add') !== -1 && 'Liquidity'}
@@ -50,8 +54,8 @@ export default function AppHeader() {
         {location.pathname === '/summitcheck' && 'Summit Check'}
         {location.pathname === '/referral' && 'Summit Referral'}
         {location.pathname === '/cross-chain-swap' && 'Cross-Chain Swap'}
-        {location.pathname.search('/info') !== -1 && 'SummitswapSwap Info & Analytics'}
-      </Box>
+        {location.pathname.search('/info') !== -1 && 'SummitSwap Info & Analytics'}
+      </StyledBox>
       <TopLogo src={TopLogoIcon} alt='' />
     </StyledContainer>
   )
