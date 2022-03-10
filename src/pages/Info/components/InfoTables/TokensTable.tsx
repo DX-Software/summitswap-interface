@@ -257,7 +257,7 @@ const TokenTable: React.FC<{
             >
               <ArrowBackIcon color={page === 1 ? 'textDisabled' : 'primary'} />
             </Arrow>
-            <Text>{t('Page %page% of %maxPage%', { page, maxPage })}</Text>
+            <Text>{t('Page {{ page }} of {{ maxPage }}', { page, maxPage })}</Text>
             <Arrow
               onClick={() => {
                 setPage(page === maxPage ? page : page + 1)

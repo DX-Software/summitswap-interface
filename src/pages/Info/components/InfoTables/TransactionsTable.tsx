@@ -107,10 +107,10 @@ const DataRow: React.FC<{ transaction: Transaction }> = ({ transaction }) => {
         <LinkExternal href={getBscScanLink(chainId, transaction.hash, 'transaction')}>
           <Text>
             {transaction.type === TransactionType.MINT
-              ? t('Add %token0% and %token1%', { token0: transaction.token0Symbol, token1: transaction.token1Symbol })
+              ? t('Add {{ token0 }} and {{ token1 }}', { token0: transaction.token0Symbol, token1: transaction.token1Symbol })
               : transaction.type === TransactionType.SWAP
-              ? t('Swap %token0% for %token1%', { token0: inputTokenSymbol, token1: outputTokenSymbol })
-              : t('Remove %token0% and %token1%', { token0: transaction.token0Symbol, token1: transaction.token1Symbol })}
+              ? t('Swap {{ token0 }} for {{ token1 }}', { token0: inputTokenSymbol, token1: outputTokenSymbol })
+              : t('Remove {{ token0 }} and {{ token1 }}', { token0: transaction.token0Symbol, token1: transaction.token1Symbol })}
           </Text>
         </LinkExternal>
       )}
@@ -315,7 +315,7 @@ const TransactionTable: React.FC<{
                 <ArrowBackIcon color={page === 1 ? 'textDisabled' : 'primary'} />
               </Arrow>
 
-              <Text>{t('Page %page% of %maxPage%', { page, maxPage })}</Text>
+              <Text>{t('Page {{ page }} of {{ maxPage }}', { page, maxPage })}</Text>
               <Arrow
                 onClick={() => {
                   setPage(page === maxPage ? page : page + 1)
