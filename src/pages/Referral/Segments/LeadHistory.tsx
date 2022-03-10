@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 import { Text, Box } from '@summitswap-uikit'
 import { Token } from '@summitswap-libs'
-import { ethers, BigNumber } from 'ethers'
+import { ethers } from 'ethers'
 
 import DropdownWrapper from 'components/DropdownWrapper'
 import { PaginatedRewards, ReferralReward } from '../types'

@@ -48,7 +48,6 @@ const SetFirstBuyFee: React.FC<SectionProps> = ({contract, selectedCoin}) => {
       } catch {
         alert("Can't run transaction!")
       }
-
   }})
 
   return <>
@@ -61,7 +60,7 @@ const SetFirstBuyFee: React.FC<SectionProps> = ({contract, selectedCoin}) => {
         Fee value
       </Text>
       <form onSubmit={formik.handleSubmit}>
-      <StyledInput value={formik.values.fee} onChange={formik.handleChange} id="fee" name="fee" min="0"/>
+      <StyledInput value={formik.values.fee} onChange={formik.handleChange} id="fee" name="fee" min="0" type="number"/>
       <Box style={{marginTop: '12px'}}>
         <Button type="submit" >Submit</Button>
       </Box>
@@ -144,7 +143,6 @@ const SetFeeInfo: React.FC<SectionProps> = ({contract, selectedCoin}) => {
       } catch {
         alert("Can't run transaction!")
       }
-
   }})
 
   return <>
@@ -238,7 +236,7 @@ const SetLeadManager: React.FC<SectionProps> = ({contract, selectedCoin}) => {
         <Text mb="4px" small>
           Lead fee
         </Text>
-        <StyledInput value={formik.values.fee} onChange={formik.handleChange} id="fee" name="fee"/>
+        <StyledInput value={formik.values.fee} onChange={formik.handleChange} id="fee" name="fee" type="number" />
         <Box style={{marginTop: '12px'}}>
           <Button type="submit">Submit</Button>
         </Box>
