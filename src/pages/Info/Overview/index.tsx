@@ -17,6 +17,7 @@ import {
 } from 'state/info/hooks'
 import TransactionTable from 'pages/Info/components/InfoTables/TransactionsTable'
 import getLocale from 'utils/getLocale'
+import InfoPageLayout from '../index'
 
 export const ChartCardsContainer = styled(Flex)`
   justify-content: space-between;
@@ -103,7 +104,7 @@ const Overview: React.FC = () => {
   }, [allPoolData])
 
   return (
-    <div className="main-content">
+    <InfoPageLayout>
       <ChartCardsContainer>
         <Card>
           <Box p={['16px', '16px', '24px']}>
@@ -158,7 +159,7 @@ const Overview: React.FC = () => {
         {t('Transactions')}
       </Heading>
       <TransactionTable transactions={transactions ?? []} />
-    </div>
+    </InfoPageLayout>
   )
 }
 

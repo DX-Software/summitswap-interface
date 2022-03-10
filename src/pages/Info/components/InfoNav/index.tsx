@@ -1,4 +1,4 @@
-import { Box, ButtonMenu, ButtonMenuItem, Flex } from '@koda-finance/summitswap-uikit'
+import React, { Box, ButtonMenu, ButtonMenuItem, Flex } from '@koda-finance/summitswap-uikit'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -18,8 +18,8 @@ const NavWrapper = styled(Flex)`
 
 const InfoNav = () => {
   const { t } = useTranslation()
-  const isPools = location.pathname === '/info/pools'
-  const isTokens = location.pathname === '/info/tokens'
+  const isPools = window.location.pathname === '/info/pools'
+  const isTokens = window.location.pathname === '/info/tokens'
   let activeIndex = 0
   if (isPools) {
     activeIndex = 1

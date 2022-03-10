@@ -83,7 +83,7 @@ const LineChart = ({ data, setHoverValue, setHoverDate }: LineChartProps) => {
             />
           )}
         />
-        <Area dataKey="value" type="monotone" stroke={theme.colors.secondary} fill="url(#gradient)" strokeWidth={2} />
+        <Area dataKey="value" type="monotone" stroke={theme.colors.primary} fill="url(#gradient)" strokeWidth={2} />
       </AreaChart>
     </ResponsiveContainer>
   )

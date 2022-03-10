@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useMemo } from 'react'
+import React, { useRef, useState, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import { Text, Input, Flex, Skeleton, useMatchBreakpoints } from '@koda-finance/summitswap-uikit'
 import useFetchSearchResults from 'state/info/queries/search'
@@ -199,11 +199,11 @@ const Search = () => {
   const [showWatchlist, setShowWatchlist] = useState(false)
   const tokensForList = useMemo(() => {
     return tokens.sort((t0, t1) => ((t0?.volumeUSD ?? 0) > (t1?.volumeUSD ?? 0) ? -1 : 1))
-  }, [showWatchlist, tokens, value])
+  }, [tokens])
 
   const poolForList = useMemo(() => {
     return pools.sort((p0, p1) => ((p0?.volumeUSD ?? 0) > (p1?.volumeUSD ?? 0) ? -1 : 1))
-  }, [pools, showWatchlist, value])
+  }, [pools])
 
   const contentUnderTokenList = () => {
     const isLoading = tokensLoading

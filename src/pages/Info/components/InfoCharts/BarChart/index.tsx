@@ -84,7 +84,7 @@ const Chart = ({ data, setHoverValue, setHoverDate }: LineChartProps) => {
           tick={{ dx: 10, fill: theme.colors.textSubtle }}
         />
         <Tooltip
-          cursor={{ fill: theme.colors.backgroundDisabled }}
+          cursor={{ fill: theme.colors.textSubtle }}
           contentStyle={{ display: 'none' }}
           formatter={(tooltipValue, name, props) => (
             <HoverUpdater
