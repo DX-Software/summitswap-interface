@@ -4,20 +4,18 @@ import { Token } from '@koda-finance/summitswap-sdk'
 import { Text, Box, Button, useWalletModal, Flex } from '@koda-finance/summitswap-uikit'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
-import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { TranslateString } from 'utils/translateTextHelpers'
 import { useAllTokens } from 'hooks/Tokens'
-import CurrencyLogo from 'components/CurrencyLogo'
 import ReferalLinkImage from '../../img/referral-link.png'
 import InviteImage from '../../img/invite.png'
 import CoinStackImage from '../../img/coinstack.png'
-import expandMore from '../../img/expandMore.svg'
 import RewardedTokens from './RewardedTokens'
 import copyText from '../../utils/copyText'
 import login from '../../utils/login'
 
 import './style.css'
 import SwapList from './SwapList'
+import TokenDropdown from '../../components/TokenDropdown'
 
 const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
   display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'block' : 'none')};
@@ -65,13 +63,14 @@ interface IProps {
 
 const Referral: React.FC<IProps> = () => {
   const { account, deactivate, activate } = useWeb3React()
-  const [modalOpen, setModalOpen] = useState(false)
-  const [selectedOutputCoin, setSelectedOutputCoin] = useState<Token | undefined>()
-  const [allTokens, setAllTokens] = useState<Array<Token>>([])
+  // const [modalOpen, setModalOpen] = useState(false)
+  const [selectedOutputCoin, setSelectedOutputCoin] = useState<Token>()
   const [referralURL, setReferralURL] = useState('')
   const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
-  const allTokensTemp = useAllTokens()
   const location = useLocation()
+
+  const allTokensTemp = useAllTokens()
+  const [allTokens, setAllTokens] = useState<Array<Token>>([])
 
   useEffect(() => {
     setAllTokens(Object.values(allTokensTemp))
@@ -100,10 +99,6 @@ const Referral: React.FC<IProps> = () => {
   const handleTokenSelect = useCallback((inputCurrency) => {
     setSelectedOutputCoin(inputCurrency)
   }, [])
-
-  const handleDismissSearch = useCallback(() => {
-    setModalOpen(false)
-  }, [setModalOpen])
 
   const displayCopiedTooltip = useCallback(() => {
     setIsTooltipDisplayed(true)
@@ -138,13 +133,15 @@ const Referral: React.FC<IProps> = () => {
             <Text mb="8px" bold>
               Output Coin
             </Text>
-            <LinkBox mb={4} onClick={() => setModalOpen(true)} style={{ cursor: 'pointer' }}>
-              <CurrencyLogo currency={selectedOutputCoin} size="24px" style={{ marginRight: '8px' }} />
-              <Box>
-                <Text>{`${selectedOutputCoin?.symbol} - ${selectedOutputCoin?.address}`}</Text>
-              </Box>
-              <img src={expandMore} alt="" width={24} height={24} style={{ marginLeft: '10px' }} />
-            </LinkBox>
+
+            <TokenDropdown
+              onCurrencySelect={handleTokenSelect}
+              selectedCurrency={selectedOutputCoin}
+              showETH={false}
+              showUnknownTokens={false}
+              tokens={allTokens.filter((token) => token.referralEnabled)}
+            />
+
             <Text mb="8px" bold>
               My Referral link
             </Text>
@@ -268,19 +265,9 @@ const Referral: React.FC<IProps> = () => {
       <p className="paragraph">
         The project may choose to remove fees from the reward pool contract so that rewards are paid in full to thier
         loyal community. Although our native investment token KODA and our utility token KAPEX does this, please note
-        that every project will have their own set up and may choose to keep the transactions with fees included. You can
-        find out this information on their whitelisting project profile through SummitCheck.
+        that every project will have their own set up and may choose to keep the transactions with fees included. You
+        can find out this information on their whitelisting project profile through SummitCheck.
       </p>
-      <CurrencySearchModal
-        isOpen={modalOpen}
-        onDismiss={handleDismissSearch}
-        onCurrencySelect={handleTokenSelect}
-        selectedCurrency={selectedOutputCoin}
-        otherSelectedCurrency={null}
-        showETH={false}
-        showUnknownTokens={false}
-        tokens={allTokens.filter((token) => token.referralEnabled)}
-      />
     </div>
   )
 }
