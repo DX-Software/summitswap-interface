@@ -1,14 +1,26 @@
 import TokenDropdown from 'components/TokenDropdown'
-import React, { useEffect } from 'react'
+import { Token } from '@koda-finance/summitswap-sdk'
+import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import AppBody from '../AppBody'
-// import AddLiquidity from '../AddLiquidity'
 
 export default function CrossChainSwap() {
+  const [selectedOutputCoin, setSelectedOutputCoin] = useState<Token>()
+
+  const handleTokenSelect = useCallback((inputCurrency) => {
+    setSelectedOutputCoin(inputCurrency)
+  }, [])
+
   return (
     <div className="main-content">
       <p className="paragraph">Select your token</p>
-      {/* <TokenDropdown/> */}
+      <TokenDropdown
+        onCurrencySelect={handleTokenSelect}
+        selectedCurrency={selectedOutputCoin}
+        showETH={false}
+        showUnknownTokens={false}
+        showOnlyUnknownTokens
+      />
       <h3>Requirements:</h3>
       <p className="paragraph">
         1. BNB to buy the liquidity. Suggest minimum £25k. This will be used to pair with the native token. (You can
