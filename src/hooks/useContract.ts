@@ -8,11 +8,12 @@ import { ERC20_BYTES32_ABI } from '../constants/abis/erc20'
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall'
 import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
-import { REFERRAL_ADDRESS } from '../constants'
+import { LOCKER_ADDRESS, REFERRAL_ADDRESS } from '../constants'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import WETH_ABI from '../constants/abis/weth.json'
 import REFERRAL_ABI from '../constants/abis/summitReferral.json'
 import FACTORY_ABI from '../constants/abis/summitswapFactory.json'
+import LOCKER_ABI from '../constants/abis/cryptExLpTokenLocker.json'
 
 // returns null on errors
 function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {
@@ -35,6 +36,10 @@ export function useReferralContract(withSignerIfPossible?: boolean): Contract | 
 
 export function useFactoryContract(withSignerIfPossible?: boolean): Contract | null {
   return useContract(FACTORY_ADDRESS, FACTORY_ABI, withSignerIfPossible)
+}
+
+export function useLockerContract(withSignerIfPossible?: boolean): Contract | null {
+  return useContract(LOCKER_ADDRESS, LOCKER_ABI, withSignerIfPossible)
 }
 
 export function useTokenContract(tokenAddress?: string, withSignerIfPossible?: boolean): Contract | null {
