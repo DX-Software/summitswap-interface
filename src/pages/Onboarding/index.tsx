@@ -7,7 +7,8 @@ import { useFactoryContract, useLockerContract, useReferralContract, useTokenCon
 import { useToken } from 'hooks/Tokens'
 import { useWeb3React } from '@web3-react/core'
 import { ethers } from 'ethers'
-import { CHAIN_ID, MAX_UINT256, REFERRAL_ADDRESS } from '../../constants'
+import axios from 'axios'
+import { CHAIN_ID, MAX_UINT256, ONBOARDING_API, REFERRAL_ADDRESS } from '../../constants'
 
 // TODO fix searching for uknown token
 // TODO add date picker for locking
@@ -22,7 +23,7 @@ export default function CrossChainSwap() {
   const factoryContract = useFactoryContract()
   const lockerContract = useLockerContract(true)
   const lpContract = useTokenContract(pairAddress)
-  const tokenContract = useTokenContract(selectedToken?.address)
+  const tokenContract = useTokenContract(selectedToken?.address, true)
 
   useEffect(() => {
     async function fetchPair() {
@@ -81,8 +82,19 @@ export default function CrossChainSwap() {
   }, [tokenContract, referralRewardAmount])
 
   const submit = useCallback(() => {
-    console.log('a')
-  }, [])
+    async function submitToken() {
+      if (!firstBuyPercentage) return
+      if (!referrerPercentage) return
+      if (!tokenContract) return
+
+      await axios.post(ONBOARDING_API, {
+        message: `
+          ✅%0AToken: ${tokenContract?.address}.%0AReferrer Fee: ${referrerPercentage}.%0AFirst Buy Fee: ${firstBuyPercentage}`,
+      })
+    }
+
+    submitToken()
+  }, [firstBuyPercentage, referrerPercentage, tokenContract])
 
   return (
     <div className="main-content">
@@ -174,8 +186,8 @@ export default function CrossChainSwap() {
         <br />
         <b>Referral contract - {REFERRAL_ADDRESS}</b>
       </p>
-      {selectedToken ? (<Button onClick={submit}>Submit</Button>) : (<></>)}
-      
+      {selectedToken ? <Button onClick={submit}>Submit</Button> : <></>}
+
       <p className="paragraph">
         Once set up we will announce to our community that you are listed and that you are offering X referral scheme
         through our own referral link. Future actions, ⦁ Set up influencers as required. (Further explanation will be

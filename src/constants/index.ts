@@ -11,6 +11,8 @@ export const MAX_UINT256 = '1157920892373161954235709850086879078532699846656405
 export const SUMMITCHECK_API = `${process.env.REACT_APP_SUMMITCHECK_API}`
 export const CHAIN_ID = parseInt(process.env.REACT_APP_CHAIN_ID ?? '56')
 
+export const ONBOARDING_API = `${process.env.REACT_APP_ONBOARDING_API}`
+
 export const DEFAULT_SLIPPAGE_TOLERANCE = 0.8
 
 // a list of tokens by chain
