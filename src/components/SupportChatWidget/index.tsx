@@ -7,6 +7,9 @@ import TelegramIcon from '../../img/telegram-logo.svg';
 import MessengerIcon from '../../img/messenger-logo.svg';
 import DiscordIcon from '../../img/discord-logo.svg';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const telegram = require('./browser/telegram');
+
 export const ChatButton = styled.div`
     @keyframes clickMe {
         from {
@@ -263,6 +266,59 @@ const SupportChatWidget = () => {
         }
     }
 
+    const [isOpen, setIsOpen] = useState(false);
+
+    const { TelegramClient, Api } = telegram;
+    const { StringSession } = telegram.sessions;
+
+    const apiId = Number(process.env.REACT_APP_API_ID);
+    const apiHash = process.env.REACT_APP_API_HASH;
+    const stringSession = new StringSession(process.env.REACT_APP_STRING_SESSION);
+
+    const init = async () => {
+        setIsOpen(true);
+
+        if (!isOpen) {
+            try {
+                const client = new TelegramClient(stringSession, apiId, apiHash, {useWSS: true});
+
+            const validDC = await client.getDC(client.session.dcId); 
+
+            client.session.setDC(validDC.id, validDC.ipAddress, validDC.port);
+
+            await client.connect();
+
+            const result = await client.invoke(
+            new Api.messages.CreateChat({
+                users: ["raw_data_bot"],
+                title: "SummitSwap Support",
+            })
+            );
+
+            const peerId = `-${result.chats[0].id.value.toString()}`
+
+            const result2 = await client.invoke(
+            new Api.messages.ExportChatInvite({
+                peer: peerId,
+                legacyRevokePermanent: true,
+            })
+            );
+
+            await client.invoke(
+            new Api.messages.SendMessage({
+                peer: peerId,
+                message: "Hi, how can I help you?",
+            })
+            );
+
+            window.open(result2.link, '_blank');
+            } catch(err) {
+                console.log(err);
+            }
+            
+        }
+    };
+
     return (
         <div>
             <ChatButton onClick={chatButtonClickHandler}/>
@@ -287,9 +343,9 @@ const SupportChatWidget = () => {
                 </MessageContainer>
                 <Buttons>
                     <h4>Start Chat with:</h4>
-                    <TelegramButton target="_blank" rel="nofollow" href="https://t.me/omerfurkansen"/>
-                    <MessengerButton target="_blank" rel="nofollow" href="https://m.me/108120867454749"/>
-                    <DiscordButton target="_blank" rel="nofollow" href="https://discord.gg/r3dYtAjk"/>
+                    <TelegramButton onClick={init}/>
+                    <MessengerButton target="_blank" rel="nofollow" href="https://m.me/103580315623378"/>
+                    <DiscordButton target="_blank" rel="nofollow" href="https://discord.gg/wEwrCyxte7"/>
                 </Buttons>
             </ChatBox>
         </div>
