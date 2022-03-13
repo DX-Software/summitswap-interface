@@ -1,7 +1,8 @@
 import React from 'react'
-import { Text, Box, Button } from '@summitswap-uikit'
+import { Text, Box, Button, Flex } from '@summitswap-uikit'
 import { Token } from '@summitswap-libs'
 import { useFormik } from 'formik';
+import styled from 'styled-components'
 
 import { useReferralContract } from 'hooks/useContract'
 import { Contract } from 'ethers'
@@ -10,6 +11,16 @@ import { isAddress } from '../../../utils'
 
 import { StyledBr, StyledWhiteBr } from '../StyledBr';
 import StyledInput from '../StyledInput'
+
+const InputWithPlaceholder = styled(StyledInput)`
+  ::placeholder,
+  ::-webkit-input-placeholder {
+    color: gray;
+  }
+  :-ms-input-placeholder {
+    color: gray;
+  }
+`
 
 interface CoinManagerSegmentProps {
   selectedCoin?: Token;
@@ -141,6 +152,8 @@ const SetFeeInfo: React.FC<SectionProps> = ({contract, selectedCoin}) => {
       }
   }})
 
+
+
   return <>
     <Text bold>
       Set Fee Information
@@ -154,15 +167,15 @@ const SetFeeInfo: React.FC<SectionProps> = ({contract, selectedCoin}) => {
       <Text mb="4px" small>
         Referral reward percentage
       </Text>
-      <StyledInput name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee} min="0"/>
+      <InputWithPlaceholder name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee} min="0" placeholder="0%"/>
       <Text mb="4px" small>
         Developer reward percentage 
       </Text>
-      <StyledInput name="devFee" type="number" onChange={formik.handleChange} value={formik.values.devFee} min="0"/>
+      <InputWithPlaceholder name="devFee" type="number" onChange={formik.handleChange} value={formik.values.devFee} min="0" placeholder="0%"/>
       <Text mb="4px" small>
         Promotion referral reward percentage
       </Text>
-      <StyledInput name="promRefFee" type="number" onChange={formik.handleChange} value={formik.values.promRefFee} min="0"/>
+      <InputWithPlaceholder name="promRefFee" type="number" onChange={formik.handleChange} value={formik.values.promRefFee} min="0" placeholder="0%"/>
       <Text mb="4px" small>
         Promotion start timestamp
       </Text>
