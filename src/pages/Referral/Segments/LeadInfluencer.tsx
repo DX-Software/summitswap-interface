@@ -9,8 +9,8 @@ import { useReferralContract } from 'hooks/useContract';
 import { isAddress } from 'utils'
 import checkIfUint256 from 'utils/checkUint256'
 import { PaginatedRewards, ReferralReward } from '../types'
-import StyledInput from '../StyledInput';
 import { StyledWhiteBr } from '../StyledBr';
+import StyledInput from '../StyledInput'
 import { REFERRAL_DEPLOYMENT_BLOCKNUMBER, MAX_QUERYING_BLOCK_AMOUNT } from '../../../constants'
 import LeadHistory from './LeadHistory'
 
@@ -89,22 +89,22 @@ const SetSubInfluencerSegment: React.FC<SetSubInfluencerSegmentProps> = ({contra
 
   return <>
     <Text bold>
-      Set Fee Information
+      Set Sub Influencer
     </Text>
     <StyledWhiteBr />
     <form onSubmit={formik.handleSubmit}>
       <Text mb="4px" small>
         Sub influncer wallet address
       </Text>
-      <StyledInput id="subWalletAdress" name="subWalletAdress" type="text" onChange={formik.handleChange} value={formik.values.subWalletAdress} />
+      <StyledInput name="subWalletAdress" type="text" onChange={formik.handleChange} value={formik.values.subWalletAdress} />
       <Text mb="4px" small>
         Lead influencer fee
       </Text>
-      <StyledInput id="leadFee" name="leadFee" type="number" onChange={formik.handleChange} value={formik.values.leadFee} min="0"/>
+      <StyledInput name="leadFee" type="number" onChange={formik.handleChange} value={formik.values.leadFee} min="0"/>
       <Text mb="4px" small>
         Sub influncer fee 
       </Text>
-      <StyledInput id="refFee" name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee} min="0"/>
+      <StyledInput name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee} min="0"/>
       <Box style={{marginTop: '12px'}}>
         <Button type="submit">Submit</Button>
       </Box>

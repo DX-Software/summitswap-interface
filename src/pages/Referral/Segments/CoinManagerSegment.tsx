@@ -8,8 +8,8 @@ import { Contract } from 'ethers'
 import checkIfUint256 from 'utils/checkUint256'
 import { isAddress } from '../../../utils'
 
-import StyledInput from '../StyledInput';
 import { StyledBr, StyledWhiteBr } from '../StyledBr';
+import StyledInput from '../StyledInput'
 
 interface CoinManagerSegmentProps {
   selectedCoin?: Token;
@@ -60,7 +60,7 @@ const SetFirstBuyFee: React.FC<SectionProps> = ({contract, selectedCoin}) => {
         Fee value
       </Text>
       <form onSubmit={formik.handleSubmit}>
-      <StyledInput value={formik.values.fee} onChange={formik.handleChange} id="fee" name="fee" min="0" type="number"/>
+      <StyledInput value={formik.values.fee} onChange={formik.handleChange} name="fee" min="0" type="number"/>
       <Box style={{marginTop: '12px'}}>
         <Button type="submit" >Submit</Button>
       </Box>
@@ -93,20 +93,13 @@ const SetFeeInfo: React.FC<SectionProps> = ({contract, selectedCoin}) => {
       return false 
     }
     
-    if (!values.promRefFee && checkIfUint256(`${values.promRefFee}`)) {
-      alert("Promotion referral reward is not valid!")
-      return false 
+    if (values.promRefFee) {
+      if (checkIfUint256(`${values.promRefFee}`)) {
+        alert("Promotion referral reward is not valid!")
+        return false 
+      }
     }
 
-    if (!values.promStart) {
-      alert("Promotion start timestamp is not valid!")
-      return false
-    }
-
-    if (!values.promEnd) {
-      alert("Promotion end timestamp is not valid!")
-      return false 
-    }
     return true
   }
 
@@ -125,20 +118,23 @@ const SetFeeInfo: React.FC<SectionProps> = ({contract, selectedCoin}) => {
 
       if (!validateInputs(values)) return
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const promStart = values.promStart!
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const promEnd = values.promEnd!
+      const { 
+        promStart, 
+        promEnd, 
+        refFee, 
+        devFee, 
+        promRefFee
+      } = values
 
       try {
         await contract.setFeeInfo(
           selectedCoin.address, 
           values.rewardToken, 
-          values.refFee, 
-          values.devFee, 
-          values.promRefFee, 
-          new Date(promStart).getTime(), 
-          new Date(promEnd).getTime())
+          refFee ? refFee * 10 ** 7 : null,
+          devFee ? devFee * 10 ** 7 : null,
+          promRefFee ?  promRefFee * 10 ** 7 : null,
+          promStart ? new Date(promStart).getTime() : null,
+          promEnd ? new Date(promEnd).getTime() : null)
         alert('Transaction succeeded!')
       } catch {
         alert("Can't run transaction!")
@@ -154,27 +150,27 @@ const SetFeeInfo: React.FC<SectionProps> = ({contract, selectedCoin}) => {
       <Text mb="4px" small>
         Reward token
       </Text>
-      <StyledInput id="rewardToken" name="rewardToken" type="text" onChange={formik.handleChange} value={formik.values.rewardToken} />
+      <StyledInput name="rewardToken" type="text" onChange={formik.handleChange} value={formik.values.rewardToken} />
       <Text mb="4px" small>
         Referral reward percentage
       </Text>
-      <StyledInput id="refFee" name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee} min="0"/>
+      <StyledInput name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee} min="0"/>
       <Text mb="4px" small>
         Developer reward percentage 
       </Text>
-      <StyledInput id="devFee" name="devFee" type="number" onChange={formik.handleChange} value={formik.values.devFee} min="0"/>
+      <StyledInput name="devFee" type="number" onChange={formik.handleChange} value={formik.values.devFee} min="0"/>
       <Text mb="4px" small>
-        Promotion referral reward
+        Promotion referral reward percentage
       </Text>
-      <StyledInput id="promRefFee" name="promRefFee" type="number" onChange={formik.handleChange} value={formik.values.promRefFee} min="0"/>
+      <StyledInput name="promRefFee" type="number" onChange={formik.handleChange} value={formik.values.promRefFee} min="0"/>
       <Text mb="4px" small>
         Promotion start timestamp
       </Text>
-      <StyledInput id="promStart" name="promStart" type="date" onChange={formik.handleChange} value={formik.values.promStart}/>
+      <StyledInput name="promStart" type="date" onChange={formik.handleChange} value={formik.values.promStart}/>
       <Text mb="4px" small>
         Promotion end timestamp
       </Text>
-      <StyledInput id="promEnd" name="promEnd" type="date" onChange={formik.handleChange} value={formik.values.promEnd}/>
+      <StyledInput name="promEnd" type="date" onChange={formik.handleChange} value={formik.values.promEnd}/>
       <Box style={{marginTop: '12px'}}>
         <Button type="submit" disabled={selectedCoin?.symbol === 'WBNB'}>Submit</Button>
       </Box>
@@ -185,36 +181,36 @@ const SetFeeInfo: React.FC<SectionProps> = ({contract, selectedCoin}) => {
 
 const SetLeadManager: React.FC<SectionProps> = ({contract, selectedCoin}) => {
   interface FormInputs {
-    influncerWallet?: string;
+    influencerWallet?: string;
     fee?: string;
   }
 
   const formik = useFormik<FormInputs>({
     initialValues: {
-      influncerWallet: undefined,
+      influencerWallet: undefined,
       fee: undefined
     },
     onSubmit: async (values) => {
 
-      const {fee, influncerWallet} = values
+      const {fee, influencerWallet} = values
 
       if (!selectedCoin) return
       if (!contract) return
       if (!fee) return
-      if (!influncerWallet) return
+      if (!influencerWallet) return
   
       if (!checkIfUint256(fee)) {
         alert(`Invalid fee!`)
         return
       }
   
-      if (!isAddress(influncerWallet)) {
+      if (!isAddress(influencerWallet)) {
         alert('Invalid wallet address!')
         return
       }
   
       try {
-        await contract.setLeadInfluencer(selectedCoin.address, influncerWallet, fee)
+        await contract.setLeadInfluencer(selectedCoin.address, influencerWallet, fee)
         alert('Transaction succeeded!')
       } catch {
         alert("Can't run transaction!")
@@ -232,11 +228,11 @@ const SetLeadManager: React.FC<SectionProps> = ({contract, selectedCoin}) => {
         Influencer wallet address
       </Text>
       <form onSubmit={formik.handleSubmit}>
-        <StyledInput value={formik.values.influncerWallet} onChange={formik.handleChange} id="influncerWallet" name="influncerWallet"/>
+        <StyledInput value={formik.values.influencerWallet} onChange={formik.handleChange} name="influencerWallet"/>
         <Text mb="4px" small>
           Lead fee
         </Text>
-        <StyledInput value={formik.values.fee} onChange={formik.handleChange} id="fee" name="fee" type="number" />
+        <StyledInput value={formik.values.fee} onChange={formik.handleChange} name="fee" type="number" />
         <Box style={{marginTop: '12px'}}>
           <Button type="submit">Submit</Button>
         </Box>
@@ -248,23 +244,23 @@ const SetLeadManager: React.FC<SectionProps> = ({contract, selectedCoin}) => {
 
 const RemoveLead: React.FC<SectionProps> = ({contract, selectedCoin}) => {
   interface FormInputs {
-    influncerWallet?: string;
+    influencerWallet?: string;
   }
 
   const formik = useFormik<FormInputs>({
     initialValues: {
-      influncerWallet: undefined,
+      influencerWallet: undefined,
     },
     onSubmit: async (values) => {
-      const { influncerWallet } = values
+      const { influencerWallet } = values
 
       if (!contract) return
       if (!selectedCoin) return
-      if (!influncerWallet) return
+      if (!influencerWallet) return
 
-      if (isAddress(influncerWallet)) {
+      if (isAddress(influencerWallet)) {
         try {
-          await contract.removeLeadInfluencer(selectedCoin.address, influncerWallet)
+          await contract.removeLeadInfluencer(selectedCoin.address, influencerWallet)
           alert('Transaction succeeded!')
         } catch {
           alert("Can't run transaction!")
@@ -286,7 +282,7 @@ const RemoveLead: React.FC<SectionProps> = ({contract, selectedCoin}) => {
         Influencer wallet address
       </Text>
       <form onSubmit={formik.handleSubmit}>
-        <StyledInput value={formik.values.influncerWallet} onChange={formik.handleChange}/>
+        <StyledInput value={formik.values.influencerWallet} onChange={formik.handleChange} name="influencerWallet"/>
         <Box style={{marginTop: '12px'}}>
           <Button type="submit">Submit</Button>
         </Box>

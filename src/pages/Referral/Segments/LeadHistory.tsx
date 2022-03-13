@@ -68,7 +68,7 @@ const LeadHistory: React.FC<LeadHistoryProps> = ({
         }}
         value={selectedAddress}
       />
-      ;
+      <StyledBr />
       <HistoryList history={paginatedRewards[selectedAddress]} />
       <StyledBr />
       <Text bold color="primary"> <span style={{ color: 'white' }}>Total bought: </span>{formatTotalSum()} <span style={{ color: 'white' }}>{outputToken?.symbol || ""}</span></Text>

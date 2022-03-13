@@ -15,22 +15,20 @@ const CenterDiv = styled.div`
   justify-content: center;
   width: 100%;
   margin-bottom: 24px;
-  > div {
+  /* > div {
     > button {
       @media (max-width: 680px) {
         height: 30px;
         font-size: 10px !important;
       }
       @media (max-width: 570px) {
-        font-size: 8px !important;
         padding: 2;
       }
       @media (max-width: 480px) {
         height: 25px;
-        font-size: 7px !important;
       }
     }
-  }
+  } */
 `
 
 const ReferralNavCard: React.FC<ReferralNavCardProps> = ({

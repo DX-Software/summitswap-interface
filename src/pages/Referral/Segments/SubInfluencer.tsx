@@ -7,10 +7,10 @@ import { AddressZero } from '@ethersproject/constants'
 import { useFormik } from 'formik';
 
 import { useReferralContract } from 'hooks/useContract';
+import StyledInput from '../StyledInput'
 import { InfInfo } from '../types';
 import CenterDiv from '../CenterDiv';
 import { StyledBr, StyledWhiteBr } from '../StyledBr';
-import StyledInput from '../StyledInput';
 import { isAddress } from '../../../utils';
 
 
@@ -66,7 +66,7 @@ const EnterLeadAddressSection: React.FC<EnterLeadAddressSectionProps> = ({ contr
         Lead influencer wallet address
       </Text>
       <form onSubmit={formik.handleSubmit}>
-        <StyledInput value={formik.values.leadAddress} onChange={formik.handleChange} />
+        <StyledInput value={formik.values.leadAddress} onChange={formik.handleChange} name="leadAddress"/>
         <Box style={{ marginTop: '12px' }}>
           <Button type="submit">Submit</Button>
         </Box>
