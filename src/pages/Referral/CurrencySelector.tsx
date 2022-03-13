@@ -1,8 +1,8 @@
 import React from 'react'
-import { Text, Box } from '@summitswap-uikit'
+import { Text, Box } from '@koda-finance/summitswap-uikit'
 import CurrencyLogo from 'components/CurrencyLogo'
 import LinkBox from 'components/LinkBox'
-import { Token } from '@summitswap-libs'
+import { Token } from '@koda-finance/summitswap-sdk'
 import expandMore from '../../img/expandMore.svg'
 
 interface CurrencySelectorProps {

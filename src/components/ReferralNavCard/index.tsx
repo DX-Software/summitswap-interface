@@ -1,5 +1,5 @@
 import React from 'react'
-import { ButtonMenu, ButtonMenuItem } from '@summitswap-uikit'
+import { ButtonMenu, ButtonMenuItem } from '@koda-finance/summitswap-uikit'
 import styled from 'styled-components'
 import { ReferralSements } from '../../constants/ReferralSegmentInitial'
 

@@ -1,7 +1,7 @@
 import React, { Suspense, useEffect, useState } from 'react'
 import { Route, Switch, Redirect, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
-import { useWalletModal } from '@summitswap-uikit'
+import { useWalletModal } from '@koda-finance/summitswap-uikit'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import login from 'utils/login'
 import Popups from '../components/Popups'
@@ -63,10 +63,10 @@ export default function App() {
   const { account, deactivate, activate, error } = useWeb3React()
 
   useEffect(() => {
-    if (error instanceof UnsupportedChainIdError) {
+    if (error instanceof UnsupportedChainIdError || !account) {
       localStorage.removeItem('walletconnect')
     }
-  }, [error])
+  }, [error, account])
 
   const [selectedLanguage, setSelectedLanguage] = useState<any>(undefined)
   const [translatedLanguage, setTranslatedLanguage] = useState<any>(undefined)
@@ -136,8 +136,8 @@ export default function App() {
             <Popups />
             <Web3ReactManager>
               <Switch>
-                <Route exact strict path="/">
-                  <Redirect to="/swap" />
+                <Route exact strict path={["/", "/send"]}>
+                  <Redirect to={`/swap${location.search}`} />
                 </Route>
                 <Menu>
                   <BodyWrapper>

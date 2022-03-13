@@ -1,7 +1,7 @@
-import { CurrencyAmount, JSBI, Token, Trade } from '@summitswap-libs'
+import { CurrencyAmount, JSBI, Token, Trade } from '@koda-finance/summitswap-sdk'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown } from 'react-feather'
-import { CardBody, Button, IconButton, Text } from '@summitswap-uikit'
+import { CardBody, Button, IconButton, Text } from '@koda-finance/summitswap-uikit'
 import { ThemeContext } from 'styled-components'
 import AddressInputPanel from 'components/AddressInputPanel'
 import { GreyCard } from 'components/Card'
@@ -27,13 +27,13 @@ import { useExpertModeManager, useUserDeadline, useUserSlippageTolerance } from 
 import { LinkStyledButton } from 'components/Shared'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from 'utils/prices'
-import Loader from 'components/Loader'
 import PageHeader from 'components/PageHeader'
 import ConnectWalletButtonSwap from 'components/ConnectWalletButtonSwap'
 import expandMore from 'img/expandMore.svg'
 import useGetTokenData from 'hooks/useGetTokenData'
 import useGetEthPrice from 'hooks/useGetEthPrice'
 import AppBody from '../AppBody'
+import { DEFAULT_SLIPPAGE_TOLERANCE } from '../../constants'
 
 interface IProps {
   isLanding?: boolean
@@ -74,11 +74,11 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
 
   // get custom setting values for user
   const [deadline] = useUserDeadline()
-  const [allowedSlippage] = useUserSlippageTolerance()
+  const [allowedSlippage, setAllowedSlippage] = useUserSlippageTolerance()
 
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
-  const { v2Trade, currencyBalances, parsedAmount, currencies, inputError: swapInputError } = useDerivedSwapInfo()
+  const { v2Trade, currencyBalances, parsedAmount, currencies, inputError: swapInputError, routerAddress } = useDerivedSwapInfo()
   const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
     currencies[Field.INPUT],
     currencies[Field.OUTPUT],
@@ -166,7 +166,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
   const noRoute = !route
 
   // check whether the user has approved the router on the input token
-  const [approval, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage)
+  const [approval, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage, routerAddress)
 
   // check if user has gone through approval process, used to show two step buttons, reset on token change
   const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false)
@@ -178,6 +178,34 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
     }
   }, [approval, approvalSubmitted])
 
+  useEffect(() => {
+    if (currencies[Field.INPUT] === undefined || currencies[Field.OUTPUT] === undefined) return
+
+    let _allowedSlippage = DEFAULT_SLIPPAGE_TOLERANCE
+
+    const hasMultipleRoutePath = Boolean(v2Trade && v2Trade.route.path.length > 2)
+
+    if (v2Trade && hasMultipleRoutePath) {
+      for (let i = 1; i < v2Trade.route.path.length; i++) {
+        const sellSlippageTolerance = (v2Trade.route.path[i - 1] as Token).sellSlippageTolerance || DEFAULT_SLIPPAGE_TOLERANCE
+        const buySlippageTolerance = (v2Trade.route.path[i] as Token).buySlippageTolerance || DEFAULT_SLIPPAGE_TOLERANCE
+
+        const newSlippageTolerance = sellSlippageTolerance > buySlippageTolerance ? sellSlippageTolerance : buySlippageTolerance
+        _allowedSlippage = newSlippageTolerance > _allowedSlippage ? newSlippageTolerance : _allowedSlippage
+      }
+    } else {
+      const sellSlippageTolerance = (currencies[Field.INPUT] as Token).sellSlippageTolerance || DEFAULT_SLIPPAGE_TOLERANCE
+      const buySlippageTolerance = (currencies[Field.OUTPUT] as Token).buySlippageTolerance || DEFAULT_SLIPPAGE_TOLERANCE
+      _allowedSlippage = sellSlippageTolerance > buySlippageTolerance ? sellSlippageTolerance : buySlippageTolerance
+    }
+
+    if (_allowedSlippage > 0) {
+      setAllowedSlippage(_allowedSlippage * 100)
+    }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currencies[Field.INPUT], currencies[Field.OUTPUT], v2Trade])
+
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT])
   // const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
 
@@ -186,7 +214,8 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
     trade,
     allowedSlippage,
     deadline,
-    recipient
+    recipient,
+    routerAddress
   )
 
   const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade)
@@ -304,9 +333,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
         onConfirm={handleConfirmSyrupWarning}
       />
       <AppBody>
-        <PageHeader
-        // title="Swap"
-        />
+        <PageHeader />
         {isLanding ? '' : <CardNav />}
         <Wrapper id="swap-page">
           <ConfirmSwapModal

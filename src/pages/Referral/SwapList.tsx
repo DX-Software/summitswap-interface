@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import { Box, Text } from '@koda-finance/summitswap-uikit'
 import _ from 'lodash'
-import { Box, Text } from '@summitswap-uikit'
 import { Event } from 'ethers'
 import CustomLightSpinner from '../../components/CustomLightSpinner'
 import { useReferralContract } from '../../hooks/useContract'

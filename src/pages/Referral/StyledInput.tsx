@@ -1,4 +1,4 @@
-import { Input } from '@summitswap-uikit'
+import { Input } from '@koda-finance/summitswap-uikit'
 import styled from 'styled-components'
 
 const StyledInput = styled(Input)`

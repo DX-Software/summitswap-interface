@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, Box } from '@summitswap-uikit'
+import { Text, Box } from '@koda-finance/summitswap-uikit'
 import styled from 'styled-components'
 
 import LinkBox from 'components/LinkBox'

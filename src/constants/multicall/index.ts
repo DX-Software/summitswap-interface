@@ -1,4 +1,4 @@
-import { ChainId } from '@summitswap-libs'
+import { ChainId } from '@koda-finance/summitswap-sdk'
 import MULTICALL_ABI from './abi.json'
 
 const MULTICALL_NETWORKS: { [chainId in ChainId]: string } = {

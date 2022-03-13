@@ -2,12 +2,10 @@ import { Web3Provider } from '@ethersproject/providers'
 import { InjectedConnector } from '@web3-react/injected-connector'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
-import { ChainId } from '@summitswap-libs'
+import { ChainId } from '@koda-finance/summitswap-sdk'
 import { NetworkConnector } from './NetworkConnector'
 import { BscConnector } from './bsc/bscConnector'
-import { CHAIN_ID } from '../constants'
-
-const NETWORK_URL = process.env.REACT_APP_NETWORK_URL
+import { CHAIN_ID, NETWORK_URL } from '../constants'
 
 export const nodes = [process.env.REACT_APP_NODE_1, process.env.REACT_APP_NODE_2, process.env.REACT_APP_NODE_3]
 

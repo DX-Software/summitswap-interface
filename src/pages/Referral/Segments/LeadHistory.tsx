@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
-import { Text, Box } from '@summitswap-uikit'
-import { Token } from '@summitswap-libs'
+import { Text, Box } from '@koda-finance/summitswap-uikit'
+import { Token } from '@koda-finance/summitswap-sdk'
 import { ethers } from 'ethers'
 
 import DropdownWrapper from 'components/DropdownWrapper'

@@ -1,6 +1,6 @@
 import React from 'react'
-import { Text, Box, Button, Flex } from '@summitswap-uikit'
-import { Token } from '@summitswap-libs'
+import { Text, Box, Button, Flex } from '@koda-finance/summitswap-uikit'
+import { Token } from '@koda-finance/summitswap-sdk'
 import { useFormik } from 'formik';
 import styled from 'styled-components'
 

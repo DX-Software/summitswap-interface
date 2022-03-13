@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { Box } from '@summitswap-uikit'
+import styled from "styled-components"
+import { Box } from '@koda-finance/summitswap-uikit'
 
 const LinkBox = styled(Box)`
   color: ${({ theme }) => theme.colors.invertedContrast};

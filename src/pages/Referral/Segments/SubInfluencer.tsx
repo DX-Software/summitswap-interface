@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Token } from '@summitswap-libs'
-import { Text, Box, Button } from '@summitswap-uikit'
+import { Token } from '@koda-finance/summitswap-sdk'
+import { Text, Box, Button } from '@koda-finance/summitswap-uikit'
 import { Contract, ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core';
 import { AddressZero } from '@ethersproject/constants'

@@ -1,4 +1,4 @@
-import { MenuEntry } from '@summitswap-uikit'
+import { MenuEntry } from '@koda-finance/summitswap-uikit'
 
 const config: MenuEntry[] = [
   // {

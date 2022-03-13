@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { Token } from '@summitswap-libs'
-import { Box, Button, useWalletModal, Flex } from '@summitswap-uikit'
+import { Token } from '@koda-finance/summitswap-sdk'
+import { Text, Box, Button, useWalletModal, Flex } from '@koda-finance/summitswap-uikit'
+import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
-
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { TranslateString } from 'utils/translateTextHelpers'
 import { useAllTokens } from 'hooks/Tokens'

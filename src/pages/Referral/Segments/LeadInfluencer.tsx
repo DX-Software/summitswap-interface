@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Text, Box, Button } from '@summitswap-uikit'
-import { Token } from '@summitswap-libs'
+import { Text, Box, Button } from '@koda-finance/summitswap-uikit'
+import { Token } from '@koda-finance/summitswap-sdk'
 import { Contract, Event } from 'ethers'
 import { useFormik } from 'formik'
 import { useWeb3React } from '@web3-react/core'

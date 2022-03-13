@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { ThemeProvider as SCThemeProvider } from 'styled-components'
-import { light, dark } from '@summitswap-uikit'
+import { light, dark } from '@koda-finance/summitswap-uikit'
 
 const CACHE_KEY = 'IS_DARK'
 
