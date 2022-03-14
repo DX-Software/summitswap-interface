@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Text, Box, Button, Flex } from '@koda-finance/summitswap-uikit'
 import { Token } from '@koda-finance/summitswap-sdk'
 import { useFormik } from 'formik';
 import styled from 'styled-components'
 
+import TransactionConfirmationModal from 'components/TransactionConfirmationModal';
 import { useReferralContract } from 'hooks/useContract'
 import { Contract } from 'ethers'
 import checkIfUint256 from 'utils/checkUint256'
@@ -12,18 +13,20 @@ import { isAddress } from '../../../utils'
 import { StyledBr, StyledWhiteBr } from '../StyledBr';
 import StyledInput from '../StyledInput'
 
-const InputWithPlaceholder = styled(StyledInput)`
-  ::placeholder,
-  ::-webkit-input-placeholder {
-    color: gray;
-  }
-  :-ms-input-placeholder {
-    color: gray;
-  }
-`
-
 const InputForDates = styled(StyledInput)`
   -webkit-appearance: none;
+  &::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+`
+
+const CenterSign = styled(Flex)`
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  margin-top: 8px;
+  margin-left: 8px;
 `
 
 interface CoinManagerSegmentProps {
@@ -171,15 +174,30 @@ const SetFeeInfo: React.FC<SectionProps> = ({contract, selectedCoin}) => {
       <Text mb="4px" small>
         Referral reward percentage
       </Text>
-      <InputWithPlaceholder name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee} min="0" placeholder="0%"/>
+      <Flex>
+        <StyledInput name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee} min="0"/>
+        <CenterSign>
+          <Text bold>%</Text>
+        </CenterSign>
+      </Flex>
       <Text mb="4px" small>
         Developer reward percentage 
       </Text>
-      <InputWithPlaceholder name="devFee" type="number" onChange={formik.handleChange} value={formik.values.devFee} min="0" placeholder="0%"/>
+      <Flex>
+        <StyledInput name="devFee" type="number" onChange={formik.handleChange} value={formik.values.devFee} min="0"/>
+        <CenterSign>
+          <Text bold>%</Text>
+        </CenterSign>
+      </Flex>
       <Text mb="4px" small>
         Promotion referral reward percentage
       </Text>
-      <InputWithPlaceholder name="promRefFee" type="number" onChange={formik.handleChange} value={formik.values.promRefFee} min="0" placeholder="0%"/>
+      <Flex>
+        <StyledInput name="promRefFee" type="number" onChange={formik.handleChange} value={formik.values.promRefFee} min="0"/>
+        <CenterSign>
+          <Text bold>%</Text>
+        </CenterSign>
+      </Flex>
       <Text mb="4px" small>
         Promotion start timestamp
       </Text>
@@ -312,12 +330,26 @@ const RemoveLead: React.FC<SectionProps> = ({contract, selectedCoin}) => {
 
 const CoinManagerSegment: React.FC<CoinManagerSegmentProps> = ({selectedCoin}) => {
   const refContract = useReferralContract(true)
+  const [isOpen, setIsOpen] = useState(false)
+  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirm
+  const [hash, setHash] = useState<string | undefined>("oooooooo")
+
+  const onDismiss = () => {
+    setIsOpen(false)
+  }
 
   return <>
     <SetFirstBuyFee contract={refContract} selectedCoin={selectedCoin} />
     <SetLeadManager contract={refContract} selectedCoin={selectedCoin} />
     <RemoveLead contract={refContract} selectedCoin={selectedCoin} />
     <SetFeeInfo contract={refContract} selectedCoin={selectedCoin} />
+    <TransactionConfirmationModal 
+      isOpen={isOpen} 
+      onDismiss={onDismiss} 
+      attemptingTxn={attemptingTxn} 
+      hash={hash} 
+      pendingText="Shit happaning" 
+      content={() => (<p>OK</p>)}/>
   </>
 }
 
