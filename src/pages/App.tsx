@@ -22,7 +22,6 @@ import { TranslationsContext } from '../hooks/TranslationsContext'
 import langSrc from '../constants/localisation/translate/index'
 import AppHeader from './AppHeader'
 import Menu from '../components/Menu'
-import SupportChatWidget from '../components/SupportChatWidget'
 import Banner from '../components/Banner'
 
 
@@ -162,7 +161,6 @@ export default function App() {
                     <Route exact path="/summitcheck" component={SummitCheck} />
 
                     {/* <Route component={RedirectPathToSwapOnly} /> */}
-                    <SupportChatWidget/>
                   </BodyWrapper>
                 </Menu>
               </Switch>
