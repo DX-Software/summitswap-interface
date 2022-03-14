@@ -3,7 +3,7 @@ import { Menu as UikitMenu } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
 import useTheme from 'hooks/useTheme'
 import useGetPriceData from 'hooks/useGetPriceData'
-import useGetKodaPriceData from 'hooks/useGetKodaPriceData'
+import useGetTokenPrice from 'hooks/useGetTokenPrice'
 import { useLocation } from 'react-router-dom'
 import config from './config'
 import login from '../../utils/login'
@@ -15,8 +15,8 @@ const Menu: React.FC = (props) => {
   const location = useLocation()
   const priceData = useGetPriceData()
   const cakePriceUsd = priceData ? Number(priceData.prices.Cake) : undefined
-  const kodaPriceData = useGetKodaPriceData()
-  const kodaPriceUsd = kodaPriceData ? Number(kodaPriceData['koda-finance'].usd) : undefined
+  const kodaPriceData = useGetTokenPrice(["koda-finance"], ["usd"])
+  const kodaPriceUsd = kodaPriceData ? Number(kodaPriceData["koda-finance"].usd) : undefined
   // const { selectedLanguage, setSelectedLanguage } = useContext(LanguageContext)
 
   const [showConnectButton, setShowConnectButton] = useState(true)

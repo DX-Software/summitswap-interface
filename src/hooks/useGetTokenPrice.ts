@@ -11,9 +11,9 @@ type ApiResponse = {
  * Due to Cors the api was forked and a proxy was created
  * @see https://github.com/pancakeswap/gatsby-pancake-api/commit/e811b67a43ccc41edd4a0fa1ee704b2f510aa0ba
  */
-const api = `https://api.coingecko.com/api/v3/simple/price?ids=koda-finance&vs_currencies=usd`
 
-const useGetKodaPriceData = () => {
+const useGetTokenPrice = (ids: string[], currencies: string[]) => {
+  const api = `https://api.coingecko.com/api/v3/simple/price?ids=${ids.toString()}&vs_currencies=${currencies.toString()}`
   const [data, setData] = useState<ApiResponse | null>(null)
 
   useEffect(() => {
@@ -29,9 +29,10 @@ const useGetKodaPriceData = () => {
     }
 
     fetchData()
+    // eslint-disable-next-line 
   }, [setData])
 
   return data
 }
 
-export default useGetKodaPriceData
+export default useGetTokenPrice
