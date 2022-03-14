@@ -15,7 +15,7 @@ const Menu: React.FC = (props) => {
   const location = useLocation()
   const priceData = useGetPriceData()
   const cakePriceUsd = priceData ? Number(priceData.prices.Cake) : undefined
-  const kodaPriceData = useGetTokenPrice(["koda-finance"], ["usd"])
+  const kodaPriceData = useGetTokenPrice(["koda-finance"])
   const kodaPriceUsd = kodaPriceData ? Number(kodaPriceData["koda-finance"].usd) : undefined
   // const { selectedLanguage, setSelectedLanguage } = useContext(LanguageContext)
 

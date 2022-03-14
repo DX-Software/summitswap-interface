@@ -7,9 +7,14 @@ import { useReferralContract } from 'hooks/useContract'
 import { useWeb3React } from '@web3-react/core'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import CurrencyLogo from 'components/CurrencyLogo'
+import useGetTokenPrice from 'hooks/useGetTokenPrice'
 import TokenCard from './TokenCard'
-import { BUSDs, CHAIN_ID, KAPEXs } from '../../constants'
+import { BNB_COINGECKO_ID, BUSDs, CHAIN_ID, KAPEXs } from '../../constants'
 import { useClaimingFeeModal } from './useClaimingFeeModal'
+
+interface RewardedTokensProps {
+  tokens?: Array<Token>
+}
 
 const StyledContainer = styled(Box)`
   display: grid;
@@ -33,8 +38,18 @@ const CurrencyLogoWrapper = styled(Box)`
   background: ${({ theme }) => `${theme.colors.sidebarBackground}99`};
 `
 
-const RewardedTokens: React.FC = () => {
+const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
   const { account } = useWeb3React()
+
+  const geckoIds: string[] = [BNB_COINGECKO_ID]
+
+  tokens?.forEach((token) => {
+    if (token.coingeckoId !== undefined) {
+      geckoIds.push(token.coingeckoId)
+    }
+  })
+
+  const tokenPrices = useGetTokenPrice(geckoIds)
 
   const [hasClaimedAll, setHasClaimedAll] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -151,6 +166,8 @@ const RewardedTokens: React.FC = () => {
                 key={x}
                 tokenAddress={x}
                 hasClaimedAll={hasClaimedAll}
+                tokenPrices={tokenPrices}
+                selectedToken={tokens?.find((o) => o.address === x)}
                 isLoading={isLoading}
                 setIsLoading={setIsLoading}
                 setCanClaimAll={setCanClaimAll}

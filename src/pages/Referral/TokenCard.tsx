@@ -8,13 +8,19 @@ import CurrencyLogo from 'components/CurrencyLogo'
 import { Token, WETH } from '@koda-finance/summitswap-sdk'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { useToken } from 'hooks/Tokens'
-import { REFERRAL_ADDRESS, BUSDs, CHAIN_ID, KAPEXs, NULL_ADDRESS } from '../../constants'
+import { REFERRAL_ADDRESS, BUSDs, CHAIN_ID, KAPEXs, NULL_ADDRESS, BNB_COINGECKO_ID } from '../../constants'
 import { useClaimingFeeModal } from './useClaimingFeeModal'
 
 interface Props {
   tokenAddress: string
   hasClaimedAll: boolean
   isLoading: boolean
+  selectedToken?: Token
+  tokenPrices: null | {
+    [geckoId: string]: {
+      [price: string]: number
+    }
+  }
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
   setCanClaimAll: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -48,11 +54,14 @@ const ClaimWrapper = styled.div`
   align-items: center;
 `
 
-const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, setIsLoading, setCanClaimAll }) => {
+const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, tokenPrices, hasClaimedAll, isLoading, setIsLoading, setCanClaimAll }) => {
   const { account } = useWeb3React()
+  const bnbPriceInUsd = tokenPrices ? tokenPrices[BNB_COINGECKO_ID].usd : 0
 
   const [balance, setBalance] = useState<BigNumber | undefined>(undefined)
   const [tokenSymbol, setTokenSymbol] = useState('')
+  const [isTokenPriceValid, setIsTokenPriceValid] = useState(true);
+  const [tokenDecimals, setTokenDecimals] = useState(0);
   const [hasReferralEnough, setHasReferralEnough] = useState(true)
   const [claimed, setClaimed] = useState(false)
 
@@ -105,9 +114,11 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
       const referralAddressBalance = await tokenContract.balanceOf(REFERRAL_ADDRESS)
       const hasReferralEnoughBalance = referralAddressBalance.gte(newBalance)
 
-      setTokenSymbol(await tokenContract.symbol())
+      setTokenSymbol(selectedToken?.symbol ?? "")
+      setTokenDecimals(selectedToken?.decimals ?? 0)
       setBalance(newBalance)
       setHasReferralEnough(hasReferralEnoughBalance)
+      setIsTokenPriceValid(await isClaimTokenPriceHigherThanGasFee())
 
       if (!hasReferralEnoughBalance) {
         setCanClaimAll(false)
@@ -117,7 +128,33 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
     }
 
     handleGetBasicInfo()
-  }, [tokenContract, refContract, tokenAddress, account, setIsLoading, setCanClaimAll])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tokenContract, refContract, tokenAddress, account, setIsLoading, setCanClaimAll, selectedToken])
+
+  async function isClaimTokenPriceHigherThanGasFee() {
+    if (!refContract) return false
+    if (!claimToken) return false
+    if (!balance || !tokenDecimals) return false
+    if (!selectedToken || !tokenPrices) return false
+
+    try {
+      const estimatedGasInBNB = await refContract.estimateGas
+        .claimRewardIn(tokenAddress, claimToken.address ?? WETH[CHAIN_ID].address)
+      
+      const estimatedGas = ethers.utils.formatUnits(estimatedGasInBNB, tokenDecimals)
+      const estimatedGasInUsd = Number(estimatedGas) * bnbPriceInUsd;
+
+      const tokenPriceInUsd = selectedToken.coingeckoId ? tokenPrices[selectedToken.coingeckoId].usd : 0
+      const tokenPrice = ethers.utils.formatUnits(balance, tokenDecimals)
+      const totalTokenPriceInUsd = Number(tokenPrice) * tokenPriceInUsd
+
+      return totalTokenPriceInUsd > estimatedGasInUsd;
+    
+    } catch (err) {
+      console.log("Error: ", err)
+      return false
+    }
+  }
 
   async function claim() {
     if (!tokenContract) return
@@ -126,6 +163,11 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
 
     closeClaimingFeeModal();
     setIsLoading(true)
+
+    if (!(await isClaimTokenPriceHigherThanGasFee())) {
+      setIsTokenPriceValid(false);
+      return;
+    }
 
     try {
       await refContract.claimRewardIn(tokenAddress, claimToken.address ?? WETH[CHAIN_ID].address)
@@ -174,11 +216,11 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
             </Text>
 
             <ClaimWrapper>
-              <Button onClick={handleClaim} disabled={isLoading || !hasReferralEnough || claimed || hasClaimedAll}>
+              <Button onClick={handleClaim} disabled={isLoading || !hasReferralEnough || !isTokenPriceValid || claimed || hasClaimedAll}>
                 CLAIM IN&nbsp;
                 <CurrencyLogoWrapper
                   onClick={(e) => {
-                    if (isLoading || !hasReferralEnough || claimed || hasClaimedAll) return
+                    if (isLoading || !hasReferralEnough || !isTokenPriceValid || claimed || hasClaimedAll) return
 
                     setModalOpen(true)
                     e.stopPropagation()
@@ -194,6 +236,12 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
           {!hasReferralEnough && (
             <Text color="primary" fontSize="14px">
               Doesn&apos;t have enough reward tokens in pool, please contact the project owners
+            </Text>
+          )}
+
+          {!isTokenPriceValid && (
+            <Text color="primary" fontSize="14px">
+              Token estimated gas fee is greater than the token price.
             </Text>
           )}
         </>

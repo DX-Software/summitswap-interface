@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
 
 type ApiResponse = {
-  ['koda-finance']: {
-    [key: string]: string
+  [geckoId: string]: {
+    [price: string]: number
   }
-  update_at: string
 }
 
 /**
@@ -12,7 +11,7 @@ type ApiResponse = {
  * @see https://github.com/pancakeswap/gatsby-pancake-api/commit/e811b67a43ccc41edd4a0fa1ee704b2f510aa0ba
  */
 
-const useGetTokenPrice = (ids: string[], currencies: string[]) => {
+const useGetTokenPrice = (ids: string[], currencies: string[] = ["usd"]): null | ApiResponse => {
   const api = `https://api.coingecko.com/api/v3/simple/price?ids=${ids.toString()}&vs_currencies=${currencies.toString()}`
   const [data, setData] = useState<ApiResponse | null>(null)
 
@@ -30,7 +29,7 @@ const useGetTokenPrice = (ids: string[], currencies: string[]) => {
 
     fetchData()
     // eslint-disable-next-line 
-  }, [setData])
+  }, [setData, ids.length])
 
   return data
 }
