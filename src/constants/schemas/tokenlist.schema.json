@@ -223,6 +223,14 @@
               20.12
             ]
           },
+          "coingeckoId": {
+            "type": "string",
+            "description": "The unique identifier of the token on Coingecko",
+            "examples": [
+              "koda-finance",
+              "binancecoin"
+            ]
+          },
           "tags": {
             "type": "array",
             "description": "An array of tag identifiers associated with the token; tags are defined at the list level",
