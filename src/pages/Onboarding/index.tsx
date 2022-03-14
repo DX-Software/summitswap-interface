@@ -103,7 +103,6 @@ export default function CrossChainSwap() {
         onCurrencySelect={handleTokenSelect}
         selectedCurrency={selectedToken}
         showETH={false}
-        showUnknownTokens={false}
         showOnlyUnknownTokens
       />
       <h3>Requirements:</h3>
