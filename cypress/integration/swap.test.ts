@@ -32,9 +32,9 @@ describe('Swap', () => {
       .should('have.value', '0.0')
   })
 
-  it('can swap BNB for ADA', () => {
+  it('can swap BNB for KODA', () => {
     cy.get('#swap-currency-output .open-currency-select-button').click()
-    cy.get('.token-item-0x3EE2200Efb3400fAbB9AacF31297cBdD1d435D47').click({ force: true })
+    cy.get('.token-item-0x8094e772fA4A60bdEb1DfEC56AB040e17DD608D5').click({ force: true })
     cy.get('#swap-currency-input .token-amount-input').should('be.visible')
     cy.get('#swap-currency-input .token-amount-input').type('0.001', { force: true, delay: 200 })
     cy.get('#swap-currency-output .token-amount-input').should('not.equal', '')
