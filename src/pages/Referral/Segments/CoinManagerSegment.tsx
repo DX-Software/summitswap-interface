@@ -22,6 +22,10 @@ const InputWithPlaceholder = styled(StyledInput)`
   }
 `
 
+const InputForDates = styled(StyledInput)`
+  -webkit-appearance: none;
+`
+
 interface CoinManagerSegmentProps {
   selectedCoin?: Token;
 }
@@ -179,11 +183,11 @@ const SetFeeInfo: React.FC<SectionProps> = ({contract, selectedCoin}) => {
       <Text mb="4px" small>
         Promotion start timestamp
       </Text>
-      <StyledInput name="promStart" type="date" onChange={formik.handleChange} value={formik.values.promStart}/>
+      <InputForDates name="promStart" type="date" onChange={formik.handleChange} value={formik.values.promStart}/>
       <Text mb="4px" small>
         Promotion end timestamp
       </Text>
-      <StyledInput name="promEnd" type="date" onChange={formik.handleChange} value={formik.values.promEnd}/>
+      <InputForDates name="promEnd" type="date" onChange={formik.handleChange} value={formik.values.promEnd}/>
       <Box style={{marginTop: '12px'}}>
         <Button type="submit" disabled={selectedCoin?.symbol === 'WBNB'}>Submit</Button>
       </Box>
