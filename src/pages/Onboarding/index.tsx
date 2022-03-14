@@ -1,21 +1,30 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import TokenDropdown from 'components/TokenDropdown'
 import { Token, WETH } from '@koda-finance/summitswap-sdk'
 import { Link } from 'react-router-dom'
 import { Button, Input } from '@koda-finance/summitswap-uikit'
-import { useFactoryContract, useLockerContract, useReferralContract, useTokenContract } from 'hooks/useContract'
-import { useToken } from 'hooks/Tokens'
+import { useFactoryContract, useLockerContract, useTokenContract } from 'hooks/useContract'
 import { useWeb3React } from '@web3-react/core'
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import axios from 'axios'
-import { CHAIN_ID, MAX_UINT256, ONBOARDING_API, REFERRAL_ADDRESS } from '../../constants'
+import {
+  CHAIN_ID,
+  MAX_UINT256,
+  MINIMUM_BNB_FOR_ONBOARDING,
+  NULL_ADDRESS,
+  ONBOARDING_API,
+  REFERRAL_ADDRESS,
+} from '../../constants'
 
-// TODO fix searching for uknown token
 // TODO add date picker for locking
+// TODO add token as a path parameter
 export default function CrossChainSwap() {
-  const { account } = useWeb3React()
-  const [selectedToken, setSelectedToken] = useState<Token>()
+  const { account, library } = useWeb3React()
+  const [tokenAddress, setSelectedToken] = useState<Token>()
   const [pairAddress, setPairAddress] = useState<string>()
+
+  const [isEnoughBnbInPool, setIsEnoughBnbInPool] = useState(false)
+
   const [referralRewardAmount, setReferralRewardAmount] = useState<string>()
   const [referrerPercentage, setReferrerPercentage] = useState<string>()
   const [firstBuyPercentage, setFirstBuyPercentage] = useState<string>()
@@ -23,22 +32,42 @@ export default function CrossChainSwap() {
   const factoryContract = useFactoryContract()
   const lockerContract = useLockerContract(true)
   const lpContract = useTokenContract(pairAddress)
-  const tokenContract = useTokenContract(selectedToken?.address, true)
+  const tokenContract = useTokenContract(tokenAddress?.address, true)
+
+  useEffect(() => {
+    async function fetchBnbBalance() {
+      if (!pairAddress) return
+      if (!tokenContract) return
+      if (!library) return
+
+      const bnbBalance = (await library.getBalance(pairAddress)) as BigNumber
+
+      console.log(bnbBalance)
+
+      setIsEnoughBnbInPool(bnbBalance.gte(ethers.utils.parseUnits(`${MINIMUM_BNB_FOR_ONBOARDING}`)))
+    }
+
+    fetchBnbBalance()
+  }, [library, pairAddress, tokenContract])
 
   useEffect(() => {
     async function fetchPair() {
-      if (!selectedToken || !factoryContract) {
+      if (!tokenAddress || !factoryContract) {
         setPairAddress(undefined)
         return
       }
 
-      const fetchedPair = await factoryContract.getPair(WETH[CHAIN_ID].address, selectedToken.address)
+      const fetchedPair = (await factoryContract.getPair(WETH[CHAIN_ID].address, tokenAddress.address)) as string
 
-      setPairAddress(fetchedPair)
+      if (fetchedPair === NULL_ADDRESS) {
+        setPairAddress(undefined)
+      } else {
+        setPairAddress(fetchedPair)
+      }
     }
 
     fetchPair()
-  }, [selectedToken, factoryContract])
+  }, [tokenAddress, factoryContract])
 
   const handleTokenSelect = useCallback((inputCurrency) => {
     setSelectedToken(inputCurrency)
@@ -101,41 +130,48 @@ export default function CrossChainSwap() {
       <p className="paragraph">Select your token</p>
       <TokenDropdown
         onCurrencySelect={handleTokenSelect}
-        selectedCurrency={selectedToken}
+        selectedCurrency={tokenAddress}
         showETH={false}
         showOnlyUnknownTokens
       />
       <h3>Requirements:</h3>
       <p className="paragraph">
-        1. Add liquidity on <b>BNB/{selectedToken?.symbol ?? 'YOUR COIN'}</b>. Suggest minimum £25k. This will be used
-        to pair with the native token
+        1. Add liquidity on <b>BNB/{tokenAddress?.symbol ?? 'YOUR COIN'}</b>. Suggest minimum <b>75 BNB</b>. This will
+        be used to pair with the native token
       </p>
-      {selectedToken ? (
-        <Button as={Link} to={`/add/ETH/${selectedToken?.address}`}>
-          Add Liquidity
-        </Button>
+      {tokenAddress ? (
+        <>
+          <Button as={Link} to={`/add/ETH/${tokenAddress?.address}`}>
+            Add Liquidity
+          </Button>
+          <p className="paragraph">
+            {!lpContract && <p className="paragraph">❌ Pair not found, please add liquidity first</p>}
+            {!isEnoughBnbInPool && lpContract && <p className="paragraph">❌ Not enough liquidity, please add more</p>}
+          </p>
+        </>
       ) : (
         <></>
       )}
-      <p className="paragraph">2. Lock your liquidity for minimum 12 months</p>
-      {selectedToken ? (
-        pairAddress ? (
-          <>
-            <Button onClick={approveLiquidity}>Approve Liquidity</Button>
-            <Button onClick={lockLiquidity}>Lock Liquidity</Button>
-          </>
-        ) : (
-          <p>Pair not found, please add liquidity first</p>
-        )
+      <p className="paragraph">2. Lock your liquidity for 1 year</p>
+      {tokenAddress ? (
+        <>
+          <Button disabled={!isEnoughBnbInPool || !lpContract} onClick={approveLiquidity}>
+            Approve Liquidity
+          </Button>
+          &nbsp;
+          <Button disabled={!isEnoughBnbInPool || !lpContract} onClick={lockLiquidity}>
+            Lock Liquidity
+          </Button>
+        </>
       ) : (
         <></>
       )}
       <p className="paragraph">
-        3. Send some of <b>{selectedToken?.symbol ?? 'YOUR TOKEN'}</b> to the referral contract for referral rewards
+        3. Send some of <b>{tokenAddress?.symbol ?? 'YOUR TOKEN'}</b> to the referral contract for referral rewards
         <br />
         (Up to you how much but each time you load it you can use as a bit of a PR stunt to the community - Note: these
         tokens are unrecoverable other than through referral scheme)
-        {selectedToken ? (
+        {tokenAddress ? (
           <>
             <Input
               type="number"
@@ -154,7 +190,7 @@ export default function CrossChainSwap() {
         <ul>
           <li>
             How much % do you want the referrers to earn?
-            {selectedToken ? (
+            {tokenAddress ? (
               <Input
                 type="number"
                 placeholder="Referrer %"
@@ -167,7 +203,7 @@ export default function CrossChainSwap() {
           </li>
           <li>
             How much % do you want the referees to earn on their first buy?
-            {selectedToken ? (
+            {tokenAddress ? (
               <Input
                 type="number"
                 placeholder="First buy referree %"
@@ -185,7 +221,7 @@ export default function CrossChainSwap() {
         <br />
         <b>Referral contract - {REFERRAL_ADDRESS}</b>
       </p>
-      {selectedToken ? <Button onClick={submit}>Submit</Button> : <></>}
+      {tokenAddress ? <Button onClick={submit}>Submit</Button> : <></>}
 
       <p className="paragraph">
         Once set up we will announce to our community that you are listed and that you are offering X referral scheme

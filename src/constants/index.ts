@@ -22,6 +22,8 @@ export const ONBOARDING_API = `${process.env.REACT_APP_ONBOARDING_API}`
 
 export const DEFAULT_SLIPPAGE_TOLERANCE = 0.8
 
+export const MINIMUM_BNB_FOR_ONBOARDING = 75
+
 // a list of tokens by chain
 type ChainTokenList = {
   readonly [chainId in ChainId]: Token[]
