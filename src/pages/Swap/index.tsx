@@ -52,6 +52,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
     useCurrency(loadedUrlParams?.outputCurrencyId),
   ]
 
+  const [appliedTokenSlippage, setAppliedTokenSlippage] = useState<string>('')
   const [dismissTokenWarning, setDismissTokenWarning] = useState<boolean>(false)
   const [isSyrup, setIsSyrup] = useState<boolean>(false)
   const [syrupTransactionType, setSyrupTransactionType] = useState<string>('')
@@ -183,20 +184,26 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
     if (!(v2Trade && hasMultipleRoutePath)) return;
 
     let _allowedSlippage = 0
+    let _appliedSlippageToken = ""
     for (let i = 1; i < v2Trade.route.path.length; i++) {
       const sellSlippageTolerance = (v2Trade.route.path[i - 1] as Token).sellSlippageTolerance || 0.1
       const buySlippageTolerance = (v2Trade.route.path[i] as Token).buySlippageTolerance || 0.1
 
       const newSlippageTolerance = sellSlippageTolerance > buySlippageTolerance ? sellSlippageTolerance : buySlippageTolerance
-      _allowedSlippage = newSlippageTolerance > _allowedSlippage ? newSlippageTolerance : _allowedSlippage
+
+      if (newSlippageTolerance > _allowedSlippage) {
+        _allowedSlippage = newSlippageTolerance
+        _appliedSlippageToken = sellSlippageTolerance > buySlippageTolerance ? (v2Trade.route.path[i - 1] as Token).symbol! : (v2Trade.route.path[i] as Token).symbol!
+      }
     }
 
     _allowedSlippage *= 100
-    if (_allowedSlippage > 0 && _allowedSlippage > allowedSlippage) {
+    if (_allowedSlippage > 0 && _appliedSlippageToken !== appliedTokenSlippage) {
       setAllowedSlippage(_allowedSlippage)
+      setAppliedTokenSlippage(_appliedSlippageToken)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [v2Trade, allowedSlippage])
+  }, [v2Trade, appliedTokenSlippage])
 
   useEffect(() => {
     if (currencies[Field.INPUT] === undefined || currencies[Field.OUTPUT] === undefined) return
@@ -206,6 +213,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
     const _allowedSlippage = sellSlippageTolerance > buySlippageTolerance ? sellSlippageTolerance : buySlippageTolerance
     if (_allowedSlippage > 0) {
       setAllowedSlippage(_allowedSlippage * 100)
+      setAppliedTokenSlippage("")
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currencies[Field.INPUT], currencies[Field.OUTPUT]])
