@@ -8,6 +8,7 @@ import {
   DEFAULT_DEADLINE_FROM_NOW,
   INITIAL_ALLOWED_SLIPPAGE,
   NULL_ADDRESS,
+  ROUTER_ADDRESS,
 } from '../constants'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { calculateGasMargin, getRouterContract, isAddress, shortenAddress } from '../utils'
@@ -51,7 +52,8 @@ function useSwapCallArguments(
   trade: Trade | undefined, // trade to execute, required
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
   deadline: number = DEFAULT_DEADLINE_FROM_NOW, // in seconds from now
-  recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
+  recipientAddressOrName: string | null, // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
+  routerAddress: string = ROUTER_ADDRESS
 ): SwapCall[] {
   const { account, chainId, library } = useActiveWeb3React()
   const referralContract = useReferralContract(true)
@@ -76,7 +78,7 @@ function useSwapCallArguments(
   return useMemo(() => {
     if (!trade || !recipient || !library || !account || !chainId) return []
 
-    const routerContract: Contract | null = getRouterContract(chainId, library, account)
+    const routerContract: Contract | null = getRouterContract(chainId, library, account, routerAddress)
     if (!routerContract || !referralContract) {
       return []
     }
@@ -114,7 +116,7 @@ function useSwapCallArguments(
     }
 
     return swapMethods.map((parameters) => ({ parameters, contract: routerContract }))
-  }, [trade, recipient, library, account, chainId, referralContract, referrer, allowedSlippage, deadline])
+  }, [trade, recipient, library, account, chainId, referralContract, referrer, allowedSlippage, deadline, routerAddress])
 }
 
 const playFailMusic = (audioPlay) => {
@@ -132,11 +134,12 @@ export function useSwapCallback(
   trade: Trade | undefined, // trade to execute, required
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
   deadline: number = DEFAULT_DEADLINE_FROM_NOW, // in seconds from now
-  recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
+  recipientAddressOrName: string | null, // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
+  routerAddress = ROUTER_ADDRESS
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
   const { account, chainId, library } = useActiveWeb3React()
 
-  const swapCalls = useSwapCallArguments(trade, allowedSlippage, deadline, recipientAddressOrName)
+  const swapCalls = useSwapCallArguments(trade, allowedSlippage, deadline, recipientAddressOrName, routerAddress)
 
   const addTransaction = useTransactionAdder()
 

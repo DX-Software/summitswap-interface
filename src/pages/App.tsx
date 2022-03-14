@@ -64,10 +64,10 @@ export default function App() {
   const { account, deactivate, activate, error } = useWeb3React()
 
   useEffect(() => {
-    if (error instanceof UnsupportedChainIdError) {
+    if (error instanceof UnsupportedChainIdError || !account) {
       localStorage.removeItem('walletconnect')
     }
-  }, [error])
+  }, [error, account])
 
   const [selectedLanguage, setSelectedLanguage] = useState<any>(undefined)
   const [translatedLanguage, setTranslatedLanguage] = useState<any>(undefined)
@@ -137,8 +137,8 @@ export default function App() {
             <Popups />
             <Web3ReactManager>
               <Switch>
-                <Route exact strict path="/">
-                  <Redirect to="/swap" />
+                <Route exact strict path={["/", "/send"]}>
+                  <Redirect to={`/swap${location.search}`} />
                 </Route>
                 <Menu>
                   <BodyWrapper>
