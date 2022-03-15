@@ -192,11 +192,11 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
     }
 
     _allowedSlippage *= 100
-    if (_allowedSlippage > 0 && _allowedSlippage > allowedSlippage) {
+    if (_allowedSlippage > 0) {
       setAllowedSlippage(_allowedSlippage)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [v2Trade, allowedSlippage])
+  }, [v2Trade?.route.path[0], v2Trade?.route.path[v2Trade?.route.path.length-1]])
 
   useEffect(() => {
     if (currencies[Field.INPUT] === undefined || currencies[Field.OUTPUT] === undefined) return
