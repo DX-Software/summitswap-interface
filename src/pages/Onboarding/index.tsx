@@ -2,11 +2,13 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import TokenDropdown from 'components/TokenDropdown'
 import { Token, WETH } from '@koda-finance/summitswap-sdk'
 import { Link } from 'react-router-dom'
-import { Button, Input } from '@koda-finance/summitswap-uikit'
+import { Button, Flex, Input, useWalletModal } from '@koda-finance/summitswap-uikit'
 import { useFactoryContract, useLockerContract, useTokenContract } from 'hooks/useContract'
 import { useWeb3React } from '@web3-react/core'
 import { BigNumber, ethers } from 'ethers'
 import axios from 'axios'
+import { TranslateString } from 'utils/translateTextHelpers'
+import login from 'utils/login'
 import {
   CHAIN_ID,
   LOCKER_ADDRESS,
@@ -21,7 +23,7 @@ import {
 // TODO add token as a path parameter
 // TODO add connet wallet button
 export default function CrossChainSwap() {
-  const { account, library } = useWeb3React()
+  const { account, library, activate, deactivate } = useWeb3React()
   const [tokenAddress, setSelectedToken] = useState<Token>()
   const [pairAddress, setPairAddress] = useState<string>()
 
@@ -36,6 +38,15 @@ export default function CrossChainSwap() {
   const lockerContract = useLockerContract(true)
   const lpContract = useTokenContract(pairAddress)
   const tokenContract = useTokenContract(tokenAddress?.address, true)
+
+  const handleLogin = useCallback(
+    (connectorId: string) => {
+      login(connectorId, activate)
+    },
+    [activate]
+  )
+
+  const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
 
   useEffect(() => {
     async function fetchUserApproved() {
@@ -144,13 +155,24 @@ export default function CrossChainSwap() {
 
   return (
     <div className="main-content">
-      <p className="paragraph">Select your token</p>
-      <TokenDropdown
-        onCurrencySelect={handleTokenSelect}
-        selectedCurrency={tokenAddress}
-        showETH={false}
-        showOnlyUnknownTokens
-      />
+      {!account && (
+        <Flex mb={3} justifyContent="center">
+          <Button style={{ fontFamily: 'Poppins' }} onClick={onPresentConnectModal}>
+            {TranslateString(292, 'CONNECT WALLET')}
+          </Button>
+        </Flex>
+      )}
+      {account && (
+        <>
+          <p className="paragraph">Select your token</p>
+          <TokenDropdown
+            onCurrencySelect={handleTokenSelect}
+            selectedCurrency={tokenAddress}
+            showETH={false}
+            showOnlyUnknownTokens
+          />
+        </>
+      )}
       <h3>Requirements:</h3>
       <p className="paragraph">
         1. Add liquidity on <b>BNB/{tokenAddress?.symbol ?? 'YOUR COIN'}</b>. Suggest minimum <b>75 BNB</b>. This will
