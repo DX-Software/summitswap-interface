@@ -107,7 +107,17 @@ export default function CrossChainSwap() {
 
       const lpBalance = (await lpContract.balanceOf(account).then((o) => o.toString())) as string
 
-      await lockerContract.lockTokens(lpContract.address, lpBalance, '1646997906', account, '2')
+      const unlockDate = new Date()
+
+      unlockDate.setFullYear(unlockDate.getFullYear() + 1)
+
+      await lockerContract.lockTokens(
+        lpContract.address,
+        lpBalance,
+        Math.floor(unlockDate.valueOf() / 1000),
+        account,
+        '2'
+      )
     }
 
     lock()
