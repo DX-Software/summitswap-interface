@@ -2,12 +2,11 @@
 This project contains the interface of the [summitswap](https://summitswap.finance/) application.
 
 # Setup local app
-1. Make sure you are connected to `github` on terminal using Personal access tokens
-2. Install [node lts](https://tecadmin.net/install-nvm-macos-with-homebrew/) 
-3. Run `nvm install 14`
-4. Run `nvm use 14`
-5. Run `yarn install`
-6. Run `yarn start`
+1. Install [node lts](https://tecadmin.net/install-nvm-macos-with-homebrew/) 
+2. Run `nvm install 14`
+3. Run `nvm use 14`
+4. Run `yarn install`
+5. Run `yarn start`
 
 # Setup [summitswap-uikit](https://github.com/Koda-Finance/summitswap-uikit)
 1. Choose the version of [summitswap-uikit](https://www.npmjs.com/package/@koda-finance/summitswap-uikit)
