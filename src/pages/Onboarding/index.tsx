@@ -25,7 +25,7 @@ import {
 // TODO fix input negative values
 export default function CrossChainSwap() {
   const { account, activate, deactivate } = useWeb3React()
-  const [tokenAddress, setSelectedToken] = useState<Token>()
+  const [selectedToken, setSelectedToken] = useState<Token>()
   const [pairAddress, setPairAddress] = useState<string>()
 
   const [isEnoughBnbInPool, setIsEnoughBnbInPool] = useState(false)
@@ -41,7 +41,7 @@ export default function CrossChainSwap() {
   const factoryContract = useFactoryContract()
   const lockerContract = useLockerContract(true)
   const lpContract = useTokenContract(pairAddress)
-  const tokenContract = useTokenContract(tokenAddress?.address, true)
+  const tokenContract = useTokenContract(selectedToken?.address, true)
   const wbnbContract = useTokenContract(WETH[CHAIN_ID].address)
 
   const handleLogin = useCallback(
@@ -121,12 +121,12 @@ export default function CrossChainSwap() {
 
   useEffect(() => {
     async function fetchPair() {
-      if (!tokenAddress || !factoryContract) {
+      if (!selectedToken || !factoryContract) {
         setPairAddress(undefined)
         return
       }
 
-      const fetchedPair = (await factoryContract.getPair(WETH[CHAIN_ID].address, tokenAddress.address)) as string
+      const fetchedPair = (await factoryContract.getPair(WETH[CHAIN_ID].address, selectedToken.address)) as string
 
       if (fetchedPair === NULL_ADDRESS) {
         setPairAddress(undefined)
@@ -136,7 +136,7 @@ export default function CrossChainSwap() {
     }
 
     fetchPair()
-  }, [tokenAddress, factoryContract])
+  }, [selectedToken, factoryContract])
 
   const handleTokenSelect = useCallback((inputCurrency) => {
     setSelectedToken(inputCurrency)
@@ -199,16 +199,18 @@ export default function CrossChainSwap() {
     async function submitToken() {
       if (!firstBuyPercentage) return
       if (!referrerPercentage) return
-      if (!tokenContract) return
+      if (!selectedToken) return
 
       await axios.post(ONBOARDING_API, {
         message: `
-          ✅%0AToken: ${tokenContract?.address}.%0AReferrer Fee: ${referrerPercentage}.%0AFirst Buy Fee: ${firstBuyPercentage}`,
+          Token: ${selectedToken.address}
+          %0AReferrer Fee: ${referrerPercentage}
+          %0AFirst Buy Fee: ${firstBuyPercentage}`,
       })
     }
 
     submitToken()
-  }, [firstBuyPercentage, referrerPercentage, tokenContract])
+  }, [firstBuyPercentage, referrerPercentage, selectedToken])
 
   return (
     <div className="main-content">
@@ -224,7 +226,7 @@ export default function CrossChainSwap() {
           <p className="paragraph">Select your token</p>
           <TokenDropdown
             onCurrencySelect={handleTokenSelect}
-            selectedCurrency={tokenAddress}
+            selectedCurrency={selectedToken}
             showETH={false}
             showOnlyUnknownTokens
           />
@@ -232,12 +234,12 @@ export default function CrossChainSwap() {
       )}
       <h3>Requirements:</h3>
       <p className="paragraph">
-        1. Add liquidity on <b>BNB/{tokenAddress?.symbol ?? 'YOUR COIN'}</b>. Suggest minimum <b>75 BNB</b>. This will
+        1. Add liquidity on <b>BNB/{selectedToken?.symbol ?? 'YOUR COIN'}</b>. Suggest minimum <b>75 BNB</b>. This will
         be used to pair with the native token
       </p>
-      {tokenAddress ? (
+      {selectedToken ? (
         <>
-          <Button as={Link} to={`/add/ETH/${tokenAddress?.address}`}>
+          <Button as={Link} to={`/add/ETH/${selectedToken?.address}`}>
             Add Liquidity
           </Button>
           <p className="paragraph">
@@ -250,7 +252,7 @@ export default function CrossChainSwap() {
         <></>
       )}
       <p className="paragraph">2. Lock your liquidity for 1 year</p>
-      {tokenAddress ? (
+      {selectedToken ? (
         <>
           {!isLiquidityApproved && (
             <>
@@ -269,11 +271,11 @@ export default function CrossChainSwap() {
         <></>
       )}
       <p className="paragraph">
-        3. Send some of <b>{tokenAddress?.symbol ?? 'YOUR TOKEN'}</b> to the referral contract for referral rewards
+        3. Send some of <b>{selectedToken?.symbol ?? 'YOUR TOKEN'}</b> to the referral contract for referral rewards
         <br />
         (Up to you how much but each time you load it you can use as a bit of a PR stunt to the community - Note: these
         tokens are unrecoverable other than through referral scheme)
-        {tokenAddress ? (
+        {selectedToken ? (
           <>
             <Input
               disabled={!isLiquidityLocked}
@@ -298,7 +300,7 @@ export default function CrossChainSwap() {
         <ul>
           <li>
             How much % do you want the referrers to earn?
-            {tokenAddress ? (
+            {selectedToken ? (
               <Input
                 disabled={!isTokensInReferral}
                 type="number"
@@ -312,7 +314,7 @@ export default function CrossChainSwap() {
           </li>
           <li>
             How much % do you want the referees to earn on their first buy?
-            {tokenAddress ? (
+            {selectedToken ? (
               <Input
                 disabled={!isTokensInReferral}
                 type="number"
@@ -330,7 +332,7 @@ export default function CrossChainSwap() {
         5. If your token has fees remove referral contract from them
         <br />
         <b>Referral contract - {REFERRAL_ADDRESS}</b>
-        {tokenAddress && (
+        {selectedToken && (
           <p className="paragraph">
             <Checkbox
               id="agree"
@@ -343,7 +345,7 @@ export default function CrossChainSwap() {
           </p>
         )}
       </p>
-      {tokenAddress ? (
+      {selectedToken ? (
         <Button
           disabled={
             !isTokensInReferral || !firstBuyPercentage || !referrerPercentage || !isReferralContractRemovedFromFees
