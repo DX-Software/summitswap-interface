@@ -146,6 +146,8 @@ export default function CrossChainSwap() {
         account,
         '2'
       )
+
+      setIsLiquidityLocked(true)
     }
 
     lock()
@@ -235,13 +237,13 @@ export default function CrossChainSwap() {
         <>
           {!isLiquidityApproved && (
             <>
-              <Button disabled={!isEnoughBnbInPool || !lpContract} onClick={approveLiquidity}>
+              <Button disabled={!isEnoughBnbInPool} onClick={approveLiquidity}>
                 Approve Liquidity
               </Button>
               &nbsp;
             </>
           )}
-          <Button disabled={!isEnoughBnbInPool || !lpContract} onClick={lockLiquidity}>
+          <Button disabled={!isEnoughBnbInPool} onClick={lockLiquidity}>
             Lock Liquidity
           </Button>
           {isLiquidityLocked && <p className="paragraph">✅ Liquidity is locked already</p>}
@@ -257,12 +259,15 @@ export default function CrossChainSwap() {
         {tokenAddress ? (
           <>
             <Input
+              disabled={!isLiquidityLocked}
               type="number"
               placeholder="Enter token amount"
               onChange={(o) => setReferralRewardAmount(o.target.value)}
               style={{ marginTop: '10px', marginBottom: '10px' }}
             />
-            <Button onClick={sendTokensToReferralContract}>Transfer</Button>
+            <Button disabled={!isLiquidityLocked} onClick={sendTokensToReferralContract}>
+              Transfer
+            </Button>
           </>
         ) : (
           <></>
