@@ -22,6 +22,7 @@ import {
 // TODO add date picker for locking
 // TODO add token as a path parameter
 // TODO add connet wallet button
+// TODO check if enough liquidity is locked
 export default function CrossChainSwap() {
   const { account, library, activate, deactivate } = useWeb3React()
   const [tokenAddress, setSelectedToken] = useState<Token>()
@@ -29,6 +30,7 @@ export default function CrossChainSwap() {
 
   const [isEnoughBnbInPool, setIsEnoughBnbInPool] = useState(false)
   const [isLiquidityApproved, setIsLiquidityApproved] = useState(false)
+  const [isLiquidityLocked, setIsLiquidityLocked] = useState(false)
 
   const [referralRewardAmount, setReferralRewardAmount] = useState<string>()
   const [referrerPercentage, setReferrerPercentage] = useState<string>()
@@ -47,6 +49,32 @@ export default function CrossChainSwap() {
   )
 
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
+
+  useEffect(() => {
+    async function fetchUserLocked() {
+      if (!tokenContract) return
+      if (!lockerContract) return
+      if (!account) return
+      if (!pairAddress) return
+
+      const userLocksLength = (await lockerContract.userLocksLength(account).then((o) => o.toNumber())) as number
+
+      const totalAmountOfLpLocked = (await Promise.all(
+        [...Array(userLocksLength).keys()].map(async (userLockId) => {
+          const lockId = await lockerContract.userLockAt(account, userLockId)
+          const lock = await lockerContract.tokenLocks(lockId)
+
+          return lock.lpToken === pairAddress ? lock : undefined
+        })
+      )
+        .then((locks) => locks.filter(Boolean))
+        .then((locks) => locks.reduce((acc, cur) => acc.add(cur.tokenAmount), BigNumber.from(0)))) as BigNumber
+
+      setIsLiquidityLocked(!totalAmountOfLpLocked.isZero())
+    }
+
+    fetchUserLocked()
+  }, [tokenContract, lockerContract, account, pairAddress])
 
   useEffect(() => {
     async function fetchUserApproved() {
@@ -216,6 +244,7 @@ export default function CrossChainSwap() {
           <Button disabled={!isEnoughBnbInPool || !lpContract} onClick={lockLiquidity}>
             Lock Liquidity
           </Button>
+          {isLiquidityLocked && <p className="paragraph">✅ Liquidity is locked already</p>}
         </>
       ) : (
         <></>
