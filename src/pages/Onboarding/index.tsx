@@ -24,7 +24,7 @@ import {
 // TODO check if enough liquidity is locked
 // TODO fix input negative values
 export default function CrossChainSwap() {
-  const { account, library, activate, deactivate } = useWeb3React()
+  const { account, activate, deactivate } = useWeb3React()
   const [tokenAddress, setSelectedToken] = useState<Token>()
   const [pairAddress, setPairAddress] = useState<string>()
 
@@ -42,6 +42,7 @@ export default function CrossChainSwap() {
   const lockerContract = useLockerContract(true)
   const lpContract = useTokenContract(pairAddress)
   const tokenContract = useTokenContract(tokenAddress?.address, true)
+  const wbnbContract = useTokenContract(WETH[CHAIN_ID].address)
 
   const handleLogin = useCallback(
     (connectorId: string) => {
@@ -108,15 +109,15 @@ export default function CrossChainSwap() {
     async function fetchBnbBalance() {
       if (!pairAddress) return
       if (!tokenContract) return
-      if (!library) return
+      if (!wbnbContract) return
 
-      const bnbBalance = (await library.getBalance(pairAddress)) as BigNumber
+      const wbnbBalance = await wbnbContract.balanceOf(pairAddress) as BigNumber
 
-      setIsEnoughBnbInPool(bnbBalance.gte(ethers.utils.parseUnits(`${MINIMUM_BNB_FOR_ONBOARDING}`)))
+      setIsEnoughBnbInPool(wbnbBalance.gte(ethers.utils.parseUnits(`${MINIMUM_BNB_FOR_ONBOARDING}`)))
     }
 
     fetchBnbBalance()
-  }, [library, pairAddress, tokenContract])
+  }, [pairAddress, tokenContract, wbnbContract])
 
   useEffect(() => {
     async function fetchPair() {
@@ -334,6 +335,7 @@ export default function CrossChainSwap() {
             <Checkbox
               id="agree"
               scale="sm"
+              disabled={!isTokensInReferral || !firstBuyPercentage || !referrerPercentage}
               defaultChecked={isReferralContractRemovedFromFees}
               onChange={(o) => setIsReferralContractRemovedFromFees(o.target.checked)}
             />
@@ -342,7 +344,12 @@ export default function CrossChainSwap() {
         )}
       </p>
       {tokenAddress ? (
-        <Button disabled={!isTokensInReferral || !firstBuyPercentage || !referrerPercentage || !isReferralContractRemovedFromFees} onClick={submit}>
+        <Button
+          disabled={
+            !isTokensInReferral || !firstBuyPercentage || !referrerPercentage || !isReferralContractRemovedFromFees
+          }
+          onClick={submit}
+        >
           Submit
         </Button>
       ) : (
