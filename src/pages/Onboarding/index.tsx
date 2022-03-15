@@ -274,7 +274,7 @@ export default function CrossChainSwap() {
               &nbsp;
             </>
           )}
-          <Button disabled={!isEnoughBnbInPool} onClick={lockLiquidity}>
+          <Button disabled={!isEnoughBnbInPool || !isLiquidityApproved} onClick={lockLiquidity}>
             Lock Liquidity
           </Button>
           {isLiquidityLocked && <p className="paragraph">✅ Liquidity is locked already</p>}
@@ -353,7 +353,7 @@ export default function CrossChainSwap() {
               defaultChecked={isReferralContractRemovedFromFees}
               onChange={(o) => setIsReferralContractRemovedFromFees(o.target.checked)}
             />
-            &nbsp; I confirm that if token trasnfer fees exist referral contract is removed from those
+            &nbsp; If token transfer fees exist, I confirm that referral contract is excluded
           </p>
         )}
       </p>
