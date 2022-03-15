@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { Token } from '@koda-finance/summitswap-sdk'
 import { Text, Box, Button } from '@koda-finance/summitswap-uikit'
 import { Contract, ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core';
@@ -12,11 +11,11 @@ import { InfInfo } from '../types';
 import CenterDiv from '../CenterDiv';
 import { StyledBr, StyledWhiteBr } from '../StyledBr';
 import { isAddress } from '../../../utils';
+import { SegmentsProps } from './SegmentsProps';
 
 
-interface SubInfluencerProps {
+interface SubInfluencerProps extends SegmentsProps {
   myLeadInfluencerAddress?: string;
-  selectedCoin?: Token;
 }
 
 interface InfoBoxProps {
@@ -25,12 +24,17 @@ interface InfoBoxProps {
   refFee: string;
 }
 
-interface EnterLeadAddressSectionProps {
+interface EnterLeadAddressSectionProps extends SegmentsProps {
   contract: Contract | null;
-  selectedCoin?: Token;
 }
 
-const EnterLeadAddressSection: React.FC<EnterLeadAddressSectionProps> = ({ contract, selectedCoin }) => {
+const EnterLeadAddressSection: React.FC<EnterLeadAddressSectionProps> = ({ 
+  contract, 
+  outputToken,    
+  openModel,
+  transactionSubmitted,
+  transactionFailed
+}) => {
   interface FormInputs {
     leadAddress?: string;
   }
@@ -43,19 +47,21 @@ const EnterLeadAddressSection: React.FC<EnterLeadAddressSectionProps> = ({ contr
       const { leadAddress } = values
 
       if (!contract) return
-      if (!selectedCoin) return
+      if (!outputToken) return
       if (!leadAddress) return
 
+      openModel('Request add as sub influencer')
+
       if (!isAddress(leadAddress)) {
-        alert("Invalid lead wallet address")
+        transactionFailed('Invalid lead wallet address')
         return
       }
 
       try {
-        await contract.acceptLeadInfluencer(selectedCoin.address, leadAddress)
-        alert('Transaction succeeded!')
-      } catch {
-        alert("Can't run transaction!")
+        const transaction = await contract.acceptLeadInfluencer(outputToken.address, leadAddress)
+        transactionSubmitted(transaction.hash, 'Request succeeded!')
+      } catch (err){
+        transactionFailed(err.message as string)
       }
     }
   })
@@ -90,7 +96,13 @@ const InfoBox: React.FC<InfoBoxProps> = ({ address, leadFee, refFee }) => {
   </Box>
 }
 
-const SubInfluencer: React.FC<SubInfluencerProps> = ({ myLeadInfluencerAddress, selectedCoin }) => {
+const SubInfluencer: React.FC<SubInfluencerProps> = ({ 
+  myLeadInfluencerAddress, 
+  outputToken,
+  openModel,
+  transactionSubmitted,
+  transactionFailed
+}) => {
   const refContract = useReferralContract(true)
   const [leadInfo, setLeadInfo] = useState<InfoBoxProps | undefined>()
   const [subInfo, setSubInfo] = useState<InfoBoxProps | undefined>()
@@ -100,12 +112,12 @@ const SubInfluencer: React.FC<SubInfluencerProps> = ({ myLeadInfluencerAddress, 
   useEffect(() => {
     const getLeadInfo = async () => {
       if (!refContract) return
-      if (!selectedCoin) return
+      if (!outputToken) return
       if (!myLeadInfluencerAddress) return
       if (!account) return
 
-      const subInfluncerInfo = await refContract.influencers(selectedCoin.address, account) as InfInfo
-      const leadInfluncerInfo = await refContract.influencers(selectedCoin.address, subInfluncerInfo.lead) as InfInfo
+      const subInfluncerInfo = await refContract.influencers(outputToken.address, account) as InfInfo
+      const leadInfluncerInfo = await refContract.influencers(outputToken.address, subInfluncerInfo.lead) as InfInfo
 
       if (subInfluncerInfo.lead !== AddressZero) {
         setSubInfo({ address: account, leadFee: ethers.utils.formatUnits(subInfluncerInfo.leadFee), refFee: ethers.utils.formatUnits(subInfluncerInfo.refFee) })
@@ -114,7 +126,13 @@ const SubInfluencer: React.FC<SubInfluencerProps> = ({ myLeadInfluencerAddress, 
 
     }
     getLeadInfo()
-  }, [myLeadInfluencerAddress, refContract, selectedCoin, account])
+  }, [myLeadInfluencerAddress, refContract, outputToken, account])
+
+  const modelFunctions = {
+    openModel,
+    transactionSubmitted,
+    transactionFailed
+  }
 
   return (
     <Box>
@@ -132,7 +150,7 @@ const SubInfluencer: React.FC<SubInfluencerProps> = ({ myLeadInfluencerAddress, 
             <Text bold>Want to become a sub influencer?</Text>
           </CenterDiv>
           <StyledWhiteBr />
-          <EnterLeadAddressSection contract={refContract} selectedCoin={selectedCoin} />
+          <EnterLeadAddressSection contract={refContract} outputToken={outputToken} {...modelFunctions}/>
         </Box>
       )}
     </Box>

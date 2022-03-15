@@ -33,19 +33,6 @@ const CenterDiv = styled.div`
 
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
-
-    /* > button {
-      @media (max-width: 680px) {
-        height: 30px;
-        font-size: 10px !important;
-      }
-      @media (max-width: 570px) {
-        padding: 2;
-      }
-      @media (max-width: 480px) {
-        height: 25px;
-      } */
-    }
   }
 `
 

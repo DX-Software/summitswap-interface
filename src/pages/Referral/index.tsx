@@ -8,6 +8,9 @@ import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { TranslateString } from 'utils/translateTextHelpers'
 import { useAllTokens } from 'hooks/Tokens'
 import { useReferralContract } from 'hooks/useContract'
+import { PopupContent } from 'state/application/actions';
+import { useAddPopup } from 'state/application/hooks';
+import TransactionConfirmationModal, { TransactionErrorContent } from 'components/TransactionConfirmationModal';
 import ReferalLinkImage from '../../img/referral-link.png'
 import InviteImage from '../../img/invite.png'
 import CoinStackImage from '../../img/coinstack.png'
@@ -47,6 +50,48 @@ const Referral: React.FC<IProps> = () => {
     checkManager: false,
     checkLeadOrSub: false,
   })
+
+  const [isOpen, setIsOpen] = useState(false)
+  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
+  const [hash, setHash] = useState<string | undefined>()
+  const [pendingText, setPendingText] = useState<string>('')
+  const [errorMessage, setErrorMessage] = useState<string | undefined>()
+
+  const addPopup = useAddPopup()
+
+  const onDismiss = () => {
+    setHash(undefined)
+    setPendingText('')
+    setErrorMessage('')
+    setAttemptingTxn(false)
+    setIsOpen(false)
+  }
+
+  const openModel = useCallback((pendingMess: string) => {
+    setIsOpen(true)
+    setPendingText(pendingMess)
+    setAttemptingTxn(true)
+  }, [])
+
+  const transactionSubmitted = useCallback((hashText: string, summary: string) => {
+    setIsOpen(true)
+    setAttemptingTxn(false)
+    setHash(hashText)
+    addPopup({ txn: { hash: hashText, summary, success: true } }, hashText)
+  }, [addPopup])
+
+  const transactionFailed = useCallback((messFromError: string) => {
+    setIsOpen(true)
+    setAttemptingTxn(false)
+    setHash(undefined)
+    setErrorMessage(messFromError)
+  }, [])
+
+  const modelFunctions = {
+    openModel,
+    transactionSubmitted,
+    transactionFailed
+  }
 
   useEffect(() => {
     setAllTokens(Object.values(allTokensTemp))
@@ -186,11 +231,11 @@ const Referral: React.FC<IProps> = () => {
           />
         )
       case 'coinManager':
-        return <CoinManagerSegment selectedCoin={selectedOutputCoin} />
+        return <CoinManagerSegment outputToken={selectedOutputCoin} {...modelFunctions}/>
       case 'leadInfluencer':
-        return <LeadInfluencer selectedCoin={selectedOutputCoin} />
+        return <LeadInfluencer outputToken={selectedOutputCoin} {...modelFunctions} />
       case 'subInfluencer':
-        return <SubInfluencer myLeadInfluencerAddress={myLeadInfluencerAddress} selectedCoin={selectedOutputCoin} />
+        return <SubInfluencer myLeadInfluencerAddress={myLeadInfluencerAddress} outputToken={selectedOutputCoin} {...modelFunctions} />
       case 'history':
         return <SwapList />
       default:
@@ -236,6 +281,14 @@ const Referral: React.FC<IProps> = () => {
         showUnknownTokens={false}
         tokens={allTokens.filter((token) => token.referralEnabled)}
       />
+
+      <TransactionConfirmationModal
+        isOpen={isOpen}
+        onDismiss={onDismiss}
+        attemptingTxn={attemptingTxn}
+        hash={hash}
+        pendingText={pendingText}
+        content={() => (<TransactionErrorContent onDismiss={onDismiss} message={errorMessage || ''} />)} />
     </div>
   )
 }

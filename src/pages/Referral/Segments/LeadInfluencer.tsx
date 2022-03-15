@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Text, Box, Button } from '@koda-finance/summitswap-uikit'
-import { Token } from '@koda-finance/summitswap-sdk'
 import { Contract, Event } from 'ethers'
 import { useFormik } from 'formik'
 import { useWeb3React } from '@web3-react/core'
@@ -13,14 +12,10 @@ import { StyledWhiteBr } from '../StyledBr';
 import StyledInput from '../StyledInput'
 import { REFERRAL_DEPLOYMENT_BLOCKNUMBER, MAX_QUERYING_BLOCK_AMOUNT } from '../../../constants'
 import LeadHistory from './LeadHistory'
+import { SegmentsProps } from './SegmentsProps'
 
-interface LeadInfluencerProps {
-  selectedCoin?: Token
-}
-
-interface SetSubInfluencerSegmentProps {
+interface SetSubInfluencerSegmentProps extends SegmentsProps {
   contract: Contract | null
-  selectedCoin?: Token
 }
 
 const getRewardsPaginated = (rewards: ReferralReward[]) => {
@@ -36,7 +31,13 @@ const getRewardsPaginated = (rewards: ReferralReward[]) => {
   }, pagination)
 }
 
-const SetSubInfluencerSegment: React.FC<SetSubInfluencerSegmentProps> = ({contract, selectedCoin}) => {
+const SetSubInfluencerSegment: React.FC<SetSubInfluencerSegmentProps> = ({
+  contract, 
+  outputToken,
+  openModel,
+  transactionSubmitted,
+  transactionFailed
+}) => {
 
   interface FormInputs {
     subWalletAdress?: string
@@ -47,16 +48,17 @@ const SetSubInfluencerSegment: React.FC<SetSubInfluencerSegmentProps> = ({contra
   const validateInputs = (inputs: FormInputs) => {
     if (!isAddress(inputs.subWalletAdress)) {
       alert('Sub influencers wallet adresses is not valid!')
+      transactionFailed('Sub influencers wallet adresses is not valid!')
       return false
     }
 
     if (!inputs.leadFee && checkIfUint256(inputs.leadFee || '')) {
-      alert('Lead influencers fee is not a valid value!')
+      transactionFailed('Lead influencers fee is not a valid value!')
       return false
     }
 
     if (!inputs.refFee && checkIfUint256(inputs.refFee || '')) {
-      alert('Sub influencers fee is not a valid value!')
+      transactionFailed('Sub influencers fee is not a valid value!')
       return false
     }
 
@@ -71,19 +73,22 @@ const SetSubInfluencerSegment: React.FC<SetSubInfluencerSegmentProps> = ({contra
     },
     onSubmit: async (values) => {
       if (!contract) return
-      if (!selectedCoin) return
+      if (!outputToken) return
+
+      openModel('Set Sub Influencer')
+
       if (!validateInputs(values)) return
 
       try {
-        await contract.setSubInfluencer(
-          selectedCoin.address, 
+        const transaction = await contract.setSubInfluencer(
+          outputToken.address, 
           values.subWalletAdress, 
           values.leadFee, 
           values.refFee
         )
-        alert('Transaction succeeded!')
-      } catch {
-        alert("Can't run transaction!")
+        transactionSubmitted(transaction.hash, 'Sub influencer set successfully')
+      } catch (err){
+        transactionFailed(err.message as string)
       }
   }})
 
@@ -113,7 +118,12 @@ const SetSubInfluencerSegment: React.FC<SetSubInfluencerSegmentProps> = ({contra
 }
 
 
-const LeadInfluencer: React.FC<LeadInfluencerProps> = ({selectedCoin}) => {
+const LeadInfluencer: React.FC<SegmentsProps> = ({
+  outputToken,
+  openModel,
+  transactionSubmitted,
+  transactionFailed
+}) => {
   const refContract = useReferralContract(true)
   const [subReward, setSubReward] = useState<PaginatedRewards>({})
   const { account, library } = useWeb3React()
@@ -121,7 +131,7 @@ const LeadInfluencer: React.FC<LeadInfluencerProps> = ({selectedCoin}) => {
   
   useEffect(() => {
     async function fetchReferralData() {
-      if (!account || !refContract || !library || !selectedCoin) return
+      if (!account || !refContract || !library || !outputToken) return
       
       const referralsRewardEvents = refContract.filters.ReferralReward(null, account)
 
@@ -146,7 +156,7 @@ const LeadInfluencer: React.FC<LeadInfluencerProps> = ({selectedCoin}) => {
 
       const subInfluencerReward = referrerEvents.map(event => event.args) as ReferralReward[]
 
-      const filteredRewards = subInfluencerReward.filter(reward => reward.outputToken === selectedCoin?.address)
+      const filteredRewards = subInfluencerReward.filter(reward => reward.outputToken === outputToken?.address)
 
       const rewards = getRewardsPaginated(filteredRewards)
 
@@ -159,17 +169,23 @@ const LeadInfluencer: React.FC<LeadInfluencerProps> = ({selectedCoin}) => {
       setSubReward(rewards)
     }
     fetchReferralData()
-  }, [account, refContract, library, selectedCoin])
+  }, [account, refContract, library, outputToken])
+
+  const modelFunctions = {
+    openModel,
+    transactionSubmitted,
+    transactionFailed
+  }
 
   return <>
     <SetSubInfluencerSegment 
       contract={refContract} 
-      selectedCoin={selectedCoin} />
+      outputToken={outputToken} {...modelFunctions}/>
     <LeadHistory 
       paginatedRewards={subReward} 
       selectedAddress={selectedAddress} 
       setSelectedAddress={setSelectedAddress} 
-      outputToken={selectedCoin} />
+      outputToken={outputToken} />
   </>
 }
 
