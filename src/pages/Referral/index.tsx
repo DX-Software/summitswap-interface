@@ -163,11 +163,11 @@ const Referral: React.FC<IProps> = () => {
                 <Tooltip isTooltipDisplayed={isTooltipDisplayed}>Copied</Tooltip>
               </Box>
             </LinkBox>
+            {/* TODO: Display swaplist using lambda x blockchain events */}
+            <SwapList />
+            <RewardedTokens tokens={allTokens} />
           </>
         )}
-        {/* TODO: Display swaplist using lambda x blockchain events */}
-        <SwapList />
-        <RewardedTokens tokens={allTokens} />
       </Box>
 
       <div className="invite-friends-area">

@@ -40,14 +40,7 @@ const CurrencyLogoWrapper = styled(Box)`
 
 const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
   const { account } = useWeb3React()
-
-  const geckoIds: string[] = [BNB_COINGECKO_ID]
-
-  tokens?.forEach((token) => {
-    if (token.coingeckoId !== undefined) {
-      geckoIds.push(token.coingeckoId)
-    }
-  })
+  const [geckoIds, setGeckoIds] = useState<string[]>([BNB_COINGECKO_ID])
 
   const tokenPrices = useGetTokenPrice(geckoIds)
 
@@ -81,6 +74,16 @@ const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
 
     fetchRewardTokens()
   }, [account, refContract])
+
+  useEffect(() => {
+    if (!tokens?.length) return
+    const newGeckoIds: string[] = [
+      BNB_COINGECKO_ID,
+      ...tokens.map((token) => token.coingeckoId ?? ""),
+    ]
+    setGeckoIds(newGeckoIds)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tokens?.length])
 
   useEffect(() => {
     const tokenList: Token[] = [BUSDs[CHAIN_ID], KAPEXs[CHAIN_ID]].filter((o) => !!o)

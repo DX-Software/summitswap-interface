@@ -29,7 +29,7 @@ const useGetTokenPrice = (ids: string[], currencies: string[] = ["usd"]): null |
 
     fetchData()
     // eslint-disable-next-line 
-  }, [setData, ids.length])
+  }, [setData, ids])
 
   return data
 }

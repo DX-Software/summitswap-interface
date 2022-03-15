@@ -56,11 +56,10 @@ const ClaimWrapper = styled.div`
 
 const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, tokenPrices, hasClaimedAll, isLoading, setIsLoading, setCanClaimAll }) => {
   const { account } = useWeb3React()
-  const bnbPriceInUsd = tokenPrices ? tokenPrices[BNB_COINGECKO_ID].usd : 0
 
   const [balance, setBalance] = useState<BigNumber | undefined>(undefined)
-  const [tokenSymbol, setTokenSymbol] = useState('')
-  const [isTokenPriceValid, setIsTokenPriceValid] = useState(true);
+  const [tokenSymbol, setTokenSymbol] = useState<string>('')
+  const [isTokenPriceValid, setIsTokenPriceValid] = useState<boolean>(true);
   const [tokenDecimals, setTokenDecimals] = useState(0);
   const [hasReferralEnough, setHasReferralEnough] = useState(true)
   const [claimed, setClaimed] = useState(false)
@@ -104,7 +103,6 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, tokenPrices, 
 
     fetchRewardToken()
   }, [tokenAddress, refContract])
-
   useEffect(() => {
     const handleGetBasicInfo = async () => {
       if (!tokenContract) return
@@ -118,7 +116,6 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, tokenPrices, 
       setTokenDecimals(selectedToken?.decimals ?? 0)
       setBalance(newBalance)
       setHasReferralEnough(hasReferralEnoughBalance)
-      setIsTokenPriceValid(await isClaimTokenPriceHigherThanGasFee())
 
       if (!hasReferralEnoughBalance) {
         setCanClaimAll(false)
@@ -131,7 +128,17 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, tokenPrices, 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokenContract, refContract, tokenAddress, account, setIsLoading, setCanClaimAll, selectedToken])
 
-  async function isClaimTokenPriceHigherThanGasFee() {
+  useEffect(() => {
+    const handleSetIsTokenPriceValid = async () => {
+      setIsTokenPriceValid(await isClaimTokenPriceHigherThanGasFee())
+    }
+
+    handleSetIsTokenPriceValid()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account, refContract, claimToken, balance, selectedToken, tokenDecimals, tokenPrices?.length])
+
+  async function isClaimTokenPriceHigherThanGasFee(): Promise<boolean> {
+    if (!account) return false
     if (!refContract) return false
     if (!claimToken) return false
     if (!balance || !tokenDecimals) return false
@@ -142,9 +149,9 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, tokenPrices, 
         .claimRewardIn(tokenAddress, claimToken.address ?? WETH[CHAIN_ID].address)
       
       const estimatedGas = ethers.utils.formatUnits(estimatedGasInBNB, tokenDecimals)
-      const estimatedGasInUsd = Number(estimatedGas) * bnbPriceInUsd;
+      const estimatedGasInUsd = Number(estimatedGas) * tokenPrices[BNB_COINGECKO_ID].usd
 
-      const tokenPriceInUsd = selectedToken.coingeckoId ? tokenPrices[selectedToken.coingeckoId].usd : 0
+      const tokenPriceInUsd = selectedToken.coingeckoId ? tokenPrices[selectedToken.coingeckoId]?.usd ?? 0 : 0
       const tokenPrice = ethers.utils.formatUnits(balance, tokenDecimals)
       const totalTokenPriceInUsd = Number(tokenPrice) * tokenPriceInUsd
 
@@ -233,17 +240,15 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, tokenPrices, 
             </ClaimWrapper>
           </StyledContainer>
 
-          {!hasReferralEnough && (
+          {!hasReferralEnough ? (
             <Text color="primary" fontSize="14px">
               Doesn&apos;t have enough reward tokens in pool, please contact the project owners
             </Text>
-          )}
-
-          {!isTokenPriceValid && (
+          ) : !isTokenPriceValid ? (
             <Text color="primary" fontSize="14px">
               Token estimated gas fee is greater than the token price.
             </Text>
-          )}
+          ) : ""}
         </>
       )}
       <CurrencySearchModal
