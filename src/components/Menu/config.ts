@@ -24,7 +24,7 @@ const config: MenuEntry[] = [
   },
   {
     label: "Onboarding",
-    icon: "FarmIcon",
+    icon: "OnboardingIcon",
     href: "/onboarding",
   },
   // {
