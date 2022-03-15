@@ -148,7 +148,7 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, tokenPrices, 
       const estimatedGasInBNB = await refContract.estimateGas
         .claimRewardIn(tokenAddress, claimToken.address ?? WETH[CHAIN_ID].address)
       
-      const estimatedGas = ethers.utils.formatUnits(estimatedGasInBNB, tokenDecimals)
+      const estimatedGas = ethers.utils.formatUnits(estimatedGasInBNB.mul(2), tokenDecimals)
       const estimatedGasInUsd = Number(estimatedGas) * tokenPrices[BNB_COINGECKO_ID].usd
 
       const tokenPriceInUsd = selectedToken.coingeckoId ? tokenPrices[selectedToken.coingeckoId]?.usd ?? 0 : 0
@@ -246,7 +246,7 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, tokenPrices, 
             </Text>
           ) : !isTokenPriceValid ? (
             <Text color="primary" fontSize="14px">
-              Token estimated gas fee is greater than the token price.
+              Claim token price must at least double the estimated gas fee.
             </Text>
           ) : ""}
         </>
