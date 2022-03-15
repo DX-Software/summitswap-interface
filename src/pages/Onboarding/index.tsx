@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import TokenDropdown from 'components/TokenDropdown'
 import { Token, WETH } from '@koda-finance/summitswap-sdk'
 import { Link } from 'react-router-dom'
-import { Button, Flex, Input, useWalletModal } from '@koda-finance/summitswap-uikit'
+import { Button, Checkbox, Flex, Input, Toggle, useWalletModal } from '@koda-finance/summitswap-uikit'
 import { useFactoryContract, useLockerContract, useTokenContract } from 'hooks/useContract'
 import { useWeb3React } from '@web3-react/core'
 import { BigNumber, ethers } from 'ethers'
@@ -32,6 +32,7 @@ export default function CrossChainSwap() {
   const [isLiquidityApproved, setIsLiquidityApproved] = useState(false)
   const [isLiquidityLocked, setIsLiquidityLocked] = useState(false)
   const [isTokensInReferral, setIsTokensInReferral] = useState(false)
+  const [isReferralContractRemovedFromFees, setIsReferralContractRemovedFromFees] = useState(false)
 
   const [referralRewardAmount, setReferralRewardAmount] = useState<string>()
   const [referrerPercentage, setReferrerPercentage] = useState<string>()
@@ -328,9 +329,20 @@ export default function CrossChainSwap() {
         5. If your token has fees remove referral contract from them
         <br />
         <b>Referral contract - {REFERRAL_ADDRESS}</b>
+        {tokenAddress && (
+          <p className="paragraph">
+            <Checkbox
+              id="agree"
+              scale="sm"
+              defaultChecked={isReferralContractRemovedFromFees}
+              onChange={(o) => setIsReferralContractRemovedFromFees(o.target.checked)}
+            />
+            &nbsp; I confirm that if token trasnfer fees exist referral contract is removed from those
+          </p>
+        )}
       </p>
       {tokenAddress ? (
-        <Button disabled={!isTokensInReferral || !referralRewardAmount || !referrerPercentage} onClick={submit}>
+        <Button disabled={!isTokensInReferral || !firstBuyPercentage || !referrerPercentage || !isReferralContractRemovedFromFees} onClick={submit}>
           Submit
         </Button>
       ) : (
