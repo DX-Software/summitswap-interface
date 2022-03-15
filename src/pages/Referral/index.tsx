@@ -288,7 +288,7 @@ const Referral: React.FC<IProps> = () => {
         attemptingTxn={attemptingTxn}
         hash={hash}
         pendingText={pendingText}
-        content={() => (<TransactionErrorContent onDismiss={onDismiss} message={errorMessage || ''} />)} />
+        content={() => (errorMessage ? <TransactionErrorContent onDismiss={onDismiss} message={errorMessage || ''} /> : null) } />
     </div>
   )
 }
