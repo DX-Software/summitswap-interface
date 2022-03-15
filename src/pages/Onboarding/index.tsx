@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import TokenDropdown from 'components/TokenDropdown'
 import { Token, WETH } from '@koda-finance/summitswap-sdk'
 import { Link } from 'react-router-dom'
-import { Button, Checkbox, Flex, Input, Toggle, useWalletModal } from '@koda-finance/summitswap-uikit'
+import { Button, Checkbox, Flex, Input, Toggle, useModal, useWalletModal } from '@koda-finance/summitswap-uikit'
 import { useFactoryContract, useLockerContract, useTokenContract } from 'hooks/useContract'
 import { useWeb3React } from '@web3-react/core'
 import { BigNumber, ethers } from 'ethers'
@@ -18,6 +18,7 @@ import {
   ONBOARDING_API,
   REFERRAL_ADDRESS,
 } from '../../constants'
+import SuccessModal from "./SuccessModal"
 
 // TODO add date picker for locking
 // TODO add token as a path parameter
@@ -52,6 +53,8 @@ export default function CrossChainSwap() {
   )
 
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
+
+  const [onMoonpayClick] = useModal(<SuccessModal title="Success" />)
 
   useEffect(() => {
     async function fetchIfReferralHasSomeBalance() {
@@ -219,10 +222,12 @@ export default function CrossChainSwap() {
           %0AReferrer Fee: ${referrerPercentage}
           %0AFirst Buy Fee: ${firstBuyPercentage}`,
       })
+
+      onMoonpayClick()
     }
 
     submitToken()
-  }, [firstBuyPercentage, referrerPercentage, selectedToken])
+  }, [firstBuyPercentage, referrerPercentage, selectedToken, onMoonpayClick])
 
   return (
     <div className="main-content">
