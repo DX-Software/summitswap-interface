@@ -21,8 +21,8 @@ import {
 
 // TODO add date picker for locking
 // TODO add token as a path parameter
-// TODO add connet wallet button
 // TODO check if enough liquidity is locked
+// TODO fix input negative values
 export default function CrossChainSwap() {
   const { account, library, activate, deactivate } = useWeb3React()
   const [tokenAddress, setSelectedToken] = useState<Token>()
@@ -31,6 +31,7 @@ export default function CrossChainSwap() {
   const [isEnoughBnbInPool, setIsEnoughBnbInPool] = useState(false)
   const [isLiquidityApproved, setIsLiquidityApproved] = useState(false)
   const [isLiquidityLocked, setIsLiquidityLocked] = useState(false)
+  const [isTokensInReferral, setIsTokensInReferral] = useState(false)
 
   const [referralRewardAmount, setReferralRewardAmount] = useState<string>()
   const [referrerPercentage, setReferrerPercentage] = useState<string>()
@@ -49,6 +50,18 @@ export default function CrossChainSwap() {
   )
 
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
+
+  useEffect(() => {
+    async function fetchIfReferralHasSomeBalance() {
+      if (!tokenContract) return
+
+      const referralBalance = (await tokenContract.balanceOf(REFERRAL_ADDRESS)) as BigNumber
+
+      setIsTokensInReferral(!referralBalance.isZero())
+    }
+
+    fetchIfReferralHasSomeBalance()
+  }, [tokenContract])
 
   useEffect(() => {
     async function fetchUserLocked() {
@@ -173,6 +186,8 @@ export default function CrossChainSwap() {
       if (!referralRewardAmount) return
 
       await tokenContract.transfer(REFERRAL_ADDRESS, ethers.utils.parseEther(referralRewardAmount))
+
+      setIsTokensInReferral(true)
     }
 
     send()
@@ -268,6 +283,9 @@ export default function CrossChainSwap() {
             <Button disabled={!isLiquidityLocked} onClick={sendTokensToReferralContract}>
               Transfer
             </Button>
+            {isLiquidityLocked && isTokensInReferral && (
+              <p className="paragraph">✅ Reward tokens are in referral contract</p>
+            )}
           </>
         ) : (
           <></>
@@ -280,6 +298,7 @@ export default function CrossChainSwap() {
             How much % do you want the referrers to earn?
             {tokenAddress ? (
               <Input
+                disabled={!isTokensInReferral}
                 type="number"
                 placeholder="Referrer %"
                 onChange={(o) => setReferrerPercentage(o.target.value)}
@@ -293,6 +312,7 @@ export default function CrossChainSwap() {
             How much % do you want the referees to earn on their first buy?
             {tokenAddress ? (
               <Input
+                disabled={!isTokensInReferral}
                 type="number"
                 placeholder="First buy referree %"
                 onChange={(o) => setFirstBuyPercentage(o.target.value)}
@@ -309,7 +329,13 @@ export default function CrossChainSwap() {
         <br />
         <b>Referral contract - {REFERRAL_ADDRESS}</b>
       </p>
-      {tokenAddress ? <Button onClick={submit}>Submit</Button> : <></>}
+      {tokenAddress ? (
+        <Button disabled={!isTokensInReferral || !referralRewardAmount || !referrerPercentage} onClick={submit}>
+          Submit
+        </Button>
+      ) : (
+        <></>
+      )}
 
       <p className="paragraph">
         Once set up we will announce to our community that you are listed and that you are offering X referral scheme
