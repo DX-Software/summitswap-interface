@@ -24,7 +24,7 @@ import {
 // TODO check if enough liquidity is locked
 // TODO fix input negative values
 export default function CrossChainSwap() {
-  const { account, activate, deactivate } = useWeb3React()
+  const { account, activate, deactivate, library } = useWeb3React()
   const [selectedToken, setSelectedToken] = useState<Token>()
   const [pairAddress, setPairAddress] = useState<string>()
 
@@ -70,7 +70,11 @@ export default function CrossChainSwap() {
       if (!tokenContract) return
       if (!lockerContract) return
       if (!account) return
-      if (!pairAddress) return
+
+      if (!pairAddress) {
+        setIsLiquidityLocked(false)
+        return
+      }
 
       const userLocksLength = (await lockerContract.userLocksLength(account).then((o) => o.toNumber())) as number
 
@@ -82,7 +86,10 @@ export default function CrossChainSwap() {
           return lock.lpToken === pairAddress ? lock : undefined
         })
       )
-        .then((locks) => locks.filter(Boolean))
+        .then((locks) => {
+          console.log(locks.filter(Boolean))
+          return locks.filter(Boolean)
+        })
         .then((locks) => locks.reduce((acc, cur) => acc.add(cur.tokenAmount), BigNumber.from(0)))) as BigNumber
 
       setIsLiquidityLocked(!totalAmountOfLpLocked.isZero())
@@ -107,11 +114,15 @@ export default function CrossChainSwap() {
 
   useEffect(() => {
     async function fetchBnbBalance() {
-      if (!pairAddress) return
       if (!tokenContract) return
       if (!wbnbContract) return
 
-      const wbnbBalance = await wbnbContract.balanceOf(pairAddress) as BigNumber
+      if (!pairAddress) {
+        setIsEnoughBnbInPool(false)
+        return
+      }
+
+      const wbnbBalance = (await wbnbContract.balanceOf(pairAddress)) as BigNumber
 
       setIsEnoughBnbInPool(wbnbBalance.gte(ethers.utils.parseUnits(`${MINIMUM_BNB_FOR_ONBOARDING}`)))
     }
@@ -147,6 +158,7 @@ export default function CrossChainSwap() {
       if (!lpContract) return
       if (!account) return
       if (!lockerContract) return
+      if (!library) return
 
       const lpBalance = (await lpContract.balanceOf(account).then((o) => o.toString())) as string
 
@@ -154,7 +166,7 @@ export default function CrossChainSwap() {
 
       unlockDate.setFullYear(unlockDate.getFullYear() + 1)
 
-      await lockerContract.lockTokens(
+      const receipt = await lockerContract.lockTokens(
         lpContract.address,
         lpBalance,
         Math.floor(unlockDate.valueOf() / 1000),
@@ -162,38 +174,46 @@ export default function CrossChainSwap() {
         '2'
       )
 
+      await library.waitForTransaction(receipt)
+
       setIsLiquidityLocked(true)
     }
 
     lock()
-  }, [lpContract, account, lockerContract])
+  }, [lpContract, account, lockerContract, library])
 
   const approveLiquidity = useCallback(() => {
     async function approve() {
       if (!lpContract) return
       if (!account) return
       if (!lockerContract) return
+      if (!library) return
 
-      await lpContract.approve(lockerContract.address, MAX_UINT256)
+      const receipt = await lpContract.approve(lockerContract.address, MAX_UINT256)
+
+      await library.waitForTransaction(receipt.hash)
 
       setIsLiquidityApproved(true)
     }
 
     approve()
-  }, [lpContract, account, lockerContract])
+  }, [lpContract, account, lockerContract, library])
 
   const sendTokensToReferralContract = useCallback(() => {
     async function send() {
       if (!tokenContract) return
       if (!referralRewardAmount) return
+      if (!library) return
 
-      await tokenContract.transfer(REFERRAL_ADDRESS, ethers.utils.parseEther(referralRewardAmount))
+      const receipt = await tokenContract.transfer(REFERRAL_ADDRESS, ethers.utils.parseEther(referralRewardAmount))
+
+      await library.waitForTransaction(receipt.hash)
 
       setIsTokensInReferral(true)
     }
 
     send()
-  }, [tokenContract, referralRewardAmount])
+  }, [tokenContract, referralRewardAmount, library])
 
   const submit = useCallback(() => {
     async function submitToken() {
