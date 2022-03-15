@@ -9,6 +9,7 @@ import { BigNumber, ethers } from 'ethers'
 import axios from 'axios'
 import {
   CHAIN_ID,
+  LOCKER_ADDRESS,
   MAX_UINT256,
   MINIMUM_BNB_FOR_ONBOARDING,
   NULL_ADDRESS,
@@ -18,12 +19,14 @@ import {
 
 // TODO add date picker for locking
 // TODO add token as a path parameter
+// TODO add connet wallet button
 export default function CrossChainSwap() {
   const { account, library } = useWeb3React()
   const [tokenAddress, setSelectedToken] = useState<Token>()
   const [pairAddress, setPairAddress] = useState<string>()
 
   const [isEnoughBnbInPool, setIsEnoughBnbInPool] = useState(false)
+  const [isLiquidityApproved, setIsLiquidityApproved] = useState(false)
 
   const [referralRewardAmount, setReferralRewardAmount] = useState<string>()
   const [referrerPercentage, setReferrerPercentage] = useState<string>()
@@ -35,14 +38,26 @@ export default function CrossChainSwap() {
   const tokenContract = useTokenContract(tokenAddress?.address, true)
 
   useEffect(() => {
+    async function fetchUserApproved() {
+      if (!lpContract) return
+
+      const userBalance = (await lpContract.balanceOf(account)) as BigNumber
+
+      const userApprovedAlready = (await lpContract.allowance(account, LOCKER_ADDRESS)) as BigNumber
+
+      setIsLiquidityApproved(userApprovedAlready.gte(userBalance))
+    }
+
+    fetchUserApproved()
+  }, [account, lpContract])
+
+  useEffect(() => {
     async function fetchBnbBalance() {
       if (!pairAddress) return
       if (!tokenContract) return
       if (!library) return
 
       const bnbBalance = (await library.getBalance(pairAddress)) as BigNumber
-
-      console.log(bnbBalance)
 
       setIsEnoughBnbInPool(bnbBalance.gte(ethers.utils.parseUnits(`${MINIMUM_BNB_FOR_ONBOARDING}`)))
     }
@@ -94,6 +109,8 @@ export default function CrossChainSwap() {
       if (!lockerContract) return
 
       await lpContract.approve(lockerContract.address, MAX_UINT256)
+
+      setIsLiquidityApproved(true)
     }
 
     approve()
@@ -147,6 +164,7 @@ export default function CrossChainSwap() {
           <p className="paragraph">
             {!lpContract && <p className="paragraph">❌ Pair not found, please add liquidity first</p>}
             {!isEnoughBnbInPool && lpContract && <p className="paragraph">❌ Not enough liquidity, please add more</p>}
+            {isEnoughBnbInPool && <p className="paragraph">✅ There are enough liquidity</p>}
           </p>
         </>
       ) : (
@@ -155,10 +173,14 @@ export default function CrossChainSwap() {
       <p className="paragraph">2. Lock your liquidity for 1 year</p>
       {tokenAddress ? (
         <>
-          <Button disabled={!isEnoughBnbInPool || !lpContract} onClick={approveLiquidity}>
-            Approve Liquidity
-          </Button>
-          &nbsp;
+          {!isLiquidityApproved && (
+            <>
+              <Button disabled={!isEnoughBnbInPool || !lpContract} onClick={approveLiquidity}>
+                Approve Liquidity
+              </Button>
+              &nbsp;
+            </>
+          )}
           <Button disabled={!isEnoughBnbInPool || !lpContract} onClick={lockLiquidity}>
             Lock Liquidity
           </Button>
