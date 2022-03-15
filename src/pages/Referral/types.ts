@@ -27,4 +27,13 @@ export interface InfInfo {
   isLead: boolean;
 }
 
+export interface FeeInfo {
+  tokenR: string;
+  refFee: BigNumber;
+  devFee: BigNumber;
+  promRefFee: BigNumber;
+  promStart: BigNumber;
+  promEnd: BigNumber;
+}
+
 export type PaginatedRewards = { [key: string]: ReferralReward[] }
