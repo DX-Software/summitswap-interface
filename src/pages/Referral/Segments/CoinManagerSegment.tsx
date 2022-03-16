@@ -212,11 +212,11 @@ const SetFeeInfo: React.FC<SectionProps> = ({
         const transaction = await contract.setFeeInfo(
           selectedCoin.address,
           values.rewardToken,
-          refFee ? refFee * 10 ** 7 : null,
-          devFee ? devFee * 10 ** 7 : null,
-          promRefFee ? promRefFee * 10 ** 7 : null,
-          promStart ? new Date(promStart).getTime() : null,
-          promEnd ? new Date(promEnd).getTime() : null)
+          refFee ? `${refFee * 10 ** 7}` : '0',
+          devFee ? `${devFee * 10 ** 7}` : '0',
+          promRefFee ? `${promRefFee * 10 ** 7}` : '0',
+          promStart ? `${new Date(promStart).getTime()}` : '0',
+          promEnd ? `${new Date(promEnd).getTime()}` : '0')
         transactionSubmitted(transaction.hash, 'Set fee information succeeded')
       } catch (err) {
         transactionFailed(err.message as string)
@@ -424,6 +424,7 @@ const RemoveLead: React.FC<SectionProps> = ({
   </>
 
 }
+
 
 const CoinManagerSegment: React.FC<SegmentsProps> = ({ outputToken, openModel, transactionSubmitted, transactionFailed }) => {
   const refContract = useReferralContract(true)
