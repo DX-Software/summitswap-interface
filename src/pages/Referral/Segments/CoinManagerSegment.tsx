@@ -5,9 +5,11 @@ import { useFormik } from 'formik';
 import styled from 'styled-components'
 import { BigNumber, Contract, ethers} from 'ethers'
 import { AddressZero } from '@ethersproject/constants'
+import web3 from 'web3'
 
 import { useReferralContract } from 'hooks/useContract'
 import checkIfUint256 from 'utils/checkUint256'
+import DateInput from '../DateInput'
 import { isAddress } from '../../../utils'
 import { StyledBr, StyledWhiteBr } from '../StyledBr';
 import StyledInput from '../StyledInput'
@@ -27,14 +29,6 @@ const InputWithPlaceHolder = styled(StyledInput)`
   &::-ms-input-placeholder { /* Microsoft Edge */
     color: gray;
   }
-`
-
-const InputForDates = styled(InputWithPlaceHolder)`
-  -webkit-appearance: none;
-  &::-webkit-calendar-picker-indicator {
-    filter: invert(1);
-  }
-
 `
 
 const CenterSign = styled(Flex)`
@@ -145,20 +139,26 @@ const SetFeeInfo: React.FC<SectionProps> = ({
     promEnd?: string;
   }
 
+  const isPercentage = (value?: number): boolean => {
+    if (!value) return false
+
+    return value >= 0 && value <= 100
+  }
+
   const validateInputs = (values: FormInputs) => {
 
-    if (!values.refFee && checkIfUint256(`${values.refFee}`)) {
+    if (!values.refFee && checkIfUint256(`${values.refFee}`) && !isPercentage(values.refFee)) {
       transactionFailed('Referral reward percentage is not valid!')
       return false
     }
 
-    if (!values.devFee && checkIfUint256(`${values.devFee}`)) {
+    if (!values.devFee && checkIfUint256(`${values.devFee}`) && !isPercentage(values.devFee)) {
       transactionFailed('Developer reward percentage is not valid!')
       return false
     }
 
     if (values.promRefFee) {
-      if (checkIfUint256(`${values.promRefFee}`)) {
+      if (!checkIfUint256(`${values.promRefFee}`) && !isPercentage(values.promRefFee)) {
         transactionFailed('Promotion referral reward is not valid!')
         return false
       }
@@ -178,8 +178,6 @@ const SetFeeInfo: React.FC<SectionProps> = ({
         setFormHolder(undefined)
       } else {
         setFormHolder(transaction)
-        console.log(ethers.utils.formatUnits(transaction.promStart))
-        // console.log(new Date(ethers.utils.formatUnits(transaction.promStart)))
       }
     }
     fetchFirstBuyRefereeFee()
@@ -226,10 +224,21 @@ const SetFeeInfo: React.FC<SectionProps> = ({
     }
   })
 
-  const formatAmount = (amount?: BigNumber): string | undefined => {
-    if (!amount) return undefined;
-    if (!selectedCoin) return undefined;
+  const formatAmount = (amount?: BigNumber) => {
+    if (!amount) return undefined
+    if (!selectedCoin) return undefined
     return ethers.utils.formatUnits(amount, selectedCoin.decimals)
+  }
+
+  const formatDate = (timestamp?: BigNumber) => {
+    if (!timestamp) return undefined
+    const date = new Date(web3.utils.hexToNumber(timestamp._hex))
+    
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const yyyy = date.getFullYear();
+    
+    return `${dd}.${mm}.${yyyy}`;
   }
 
   return <>
@@ -246,7 +255,7 @@ const SetFeeInfo: React.FC<SectionProps> = ({
         Referral reward percentage
       </Text>
       <Flex>
-        <InputWithPlaceHolder name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee} min="0" placeholder={formatAmount(formHolder?.refFee)}/>
+        <InputWithPlaceHolder name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee}  placeholder={formatAmount(formHolder?.refFee)}/>
         <CenterSign>
           <Text bold>%</Text>
         </CenterSign>
@@ -255,7 +264,7 @@ const SetFeeInfo: React.FC<SectionProps> = ({
         Developer reward percentage
       </Text>
       <Flex>
-        <InputWithPlaceHolder name="devFee" type="number" onChange={formik.handleChange} value={formik.values.devFee} min="0" placeholder={formatAmount(formHolder?.devFee)}/>
+        <InputWithPlaceHolder name="devFee" type="number" onChange={formik.handleChange} value={formik.values.devFee} placeholder={formatAmount(formHolder?.devFee)}/>
         <CenterSign>
           <Text bold>%</Text>
         </CenterSign>
@@ -264,7 +273,7 @@ const SetFeeInfo: React.FC<SectionProps> = ({
         Promotion referral reward percentage
       </Text>
       <Flex>
-        <InputWithPlaceHolder name="promRefFee" type="number" onChange={formik.handleChange} value={formik.values.promRefFee} min="0" placeholder={formatAmount(formHolder?.promRefFee)}/>
+        <InputWithPlaceHolder name="promRefFee" type="number" onChange={formik.handleChange} value={formik.values.promRefFee} placeholder={formatAmount(formHolder?.promRefFee)}/>
         <CenterSign>
           <Text bold>%</Text>
         </CenterSign>
@@ -272,11 +281,11 @@ const SetFeeInfo: React.FC<SectionProps> = ({
       <Text mb="4px" small>
         Promotion start timestamp
       </Text>
-      <InputForDates name="promStart" type="date" onChange={formik.handleChange} value={formik.values.promStart} />
+      <DateInput name="promStart" type="date" onChange={formik.handleChange} value={formik.values.promStart || ''} placeholder={formatDate(formHolder?.promStart)}/>
       <Text mb="4px" small>
         Promotion end timestamp
       </Text>
-      <InputForDates name="promEnd" type="date" onChange={formik.handleChange} value={formik.values.promEnd} />
+      <DateInput name="promEnd" type="date" onChange={formik.handleChange} value={formik.values.promEnd || ''} placeholder={formatDate(formHolder?.promEnd)}/>
       <Box style={{ marginTop: '12px' }}>
         <Button type="submit" disabled={selectedCoin?.symbol === 'WBNB'}>Submit</Button>
       </Box>
