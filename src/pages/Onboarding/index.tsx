@@ -447,8 +447,14 @@ export default function CrossChainSwap() {
 
       <p className="paragraph">
         Once set up we will announce to our community that you are listed and that you are offering X referral scheme
-        through our own referral link. Future actions, ⦁ Set up influencers as required. (Further explanation will be
-        required after you have successfully launched on SummitSwap).
+        through our own referral link.
+      </p>
+      <p className="paragraph">
+        <b>Future actions:</b>
+        <p className="paragraph">
+          ⦁ Set up influencers as required. (Further explanation will be required after you have successfully launched
+          on SummitSwap).
+        </p>
       </p>
     </div>
   )
