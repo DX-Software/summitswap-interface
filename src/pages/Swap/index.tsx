@@ -211,7 +211,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
   }, [currencies[Field.INPUT], currencies[Field.OUTPUT]])
 
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT])
-  // const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
+  const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
 
   // the callback to execute the swap
   const { callback: swapCallback, error: swapCallbackError } = useSwapCallback(
@@ -358,7 +358,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
               <CurrencyInputPanel
                 label={`From ${parsedAmounts.INPUT ? parsedAmounts.INPUT.currency.name : ''}`}
                 value={formattedAmounts[Field.INPUT]}
-                // showMaxButton={!atMaxAmountInput}
+                showMaxButton={!atMaxAmountInput}
                 currency={currencies[Field.INPUT]}
                 onUserInput={handleTypeInput}
                 onMax={handleMaxInput}
@@ -394,7 +394,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
                 value={formattedAmounts[Field.OUTPUT]}
                 onUserInput={handleTypeOutput}
                 label={`To ${parsedAmounts.OUTPUT ? parsedAmounts.OUTPUT?.currency.name : ''}`}
-                // showMaxButton={false}
+                showMaxButton={false}
                 currency={currencies[Field.OUTPUT]}
                 onCurrencySelect={handleOutputSelect}
                 otherCurrency={currencies[Field.INPUT]}
