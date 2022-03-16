@@ -208,18 +208,27 @@ const SetFeeInfo: React.FC<SectionProps> = ({
         promRefFee
       } = values      
 
+      const _refFee = refFee ? ethers.utils.parseUnits(refFee.toString(), 7) : "0"
+      const _devFee = devFee ? ethers.utils.parseUnits(devFee.toString(), 7) : "0"
+      const _promRefFee = promRefFee ? ethers.utils.parseUnits(promRefFee.toString(), 7) : "0"
+      const _promStart = promStart ? `${Math.floor(new Date(promStart).getTime() / 100)}` : "0"
+      const _promEnd = promEnd ? `${Math.floor(new Date(promEnd).getTime() / 100)}` : "0"
+
       try {
         const transaction = await contract.setFeeInfo(
           selectedCoin.address,
           values.rewardToken,
-          refFee ? ethers.utils.formatUnits(refFee, 9) : '0',
-          devFee ? ethers.utils.formatUnits(devFee, 9) : '0',
-          promRefFee ? ethers.utils.formatUnits(promRefFee, 9) : '0',
-          promStart ? `${new Date(promStart).getTime()}` : '0',
-          promEnd ? `${new Date(promEnd).getTime()}` : '0')
+          _refFee.toString(),
+          _devFee.toString(),
+          _promRefFee.toString(),
+          _promStart.toString(),
+          _promEnd.toString(),
+        )
         transactionSubmitted(transaction.hash, 'Set fee information succeeded')
       } catch (err) {
-        transactionFailed(err.message as string)
+        const callError = err as any
+        const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message
+        transactionFailed(callErrorMessage)
       }
     }
   })
