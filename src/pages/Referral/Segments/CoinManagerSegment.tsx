@@ -3,7 +3,7 @@ import { Text, Box, Button, Flex } from '@koda-finance/summitswap-uikit'
 import { Token } from '@koda-finance/summitswap-sdk'
 import { useFormik } from 'formik';
 import styled from 'styled-components'
-import { BigNumber, Contract, ethers} from 'ethers'
+import { BigNumber, Contract, ethers } from 'ethers'
 import { AddressZero } from '@ethersproject/constants'
 import web3 from 'web3'
 
@@ -14,7 +14,7 @@ import { isAddress } from '../../../utils'
 import { StyledBr, StyledWhiteBr } from '../StyledBr';
 import StyledInput from '../StyledInput'
 import { SegmentsProps } from './SegmentsProps';
-import { FeeInfo } from '../types';
+import { FeeInfo, InfInfo } from '../types';
 
 const InputWithPlaceHolder = styled(StyledInput)`
   &::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
@@ -45,6 +45,7 @@ interface SectionProps {
   openModel: (pendingMess: string) => void
   transactionSubmitted: (hashText: string, summary: string) => void
   transactionFailed: (messFromError: string) => void
+  onDismiss: () => void
 }
 
 const SetFirstBuyFee: React.FC<SectionProps> = ({
@@ -206,7 +207,7 @@ const SetFeeInfo: React.FC<SectionProps> = ({
         refFee,
         devFee,
         promRefFee
-      } = values      
+      } = values
 
       const _refFee = refFee ? ethers.utils.parseUnits(refFee.toString(), 7) : "0"
       const _devFee = devFee ? ethers.utils.parseUnits(devFee.toString(), 7) : "0"
@@ -242,11 +243,11 @@ const SetFeeInfo: React.FC<SectionProps> = ({
   const formatDate = (timestamp?: BigNumber) => {
     if (!timestamp) return undefined
     const date = new Date(web3.utils.hexToNumber(timestamp._hex))
-    
+
     const dd = String(date.getDate()).padStart(2, '0');
     const mm = String(date.getMonth() + 1).padStart(2, '0');
     const yyyy = date.getFullYear();
-    
+
     return `${dd}.${mm}.${yyyy}`;
   }
 
@@ -259,12 +260,12 @@ const SetFeeInfo: React.FC<SectionProps> = ({
       <Text mb="4px" small>
         Reward token
       </Text>
-      <InputWithPlaceHolder name="rewardToken" type="text" onChange={formik.handleChange} value={formik.values.rewardToken} placeholder={formHolder?.tokenR}/>
+      <InputWithPlaceHolder name="rewardToken" type="text" onChange={formik.handleChange} value={formik.values.rewardToken} placeholder={formHolder?.tokenR} />
       <Text mb="4px" small>
         Referral reward percentage
       </Text>
       <Flex>
-        <InputWithPlaceHolder name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee}  placeholder={formatAmount(formHolder?.refFee)}/>
+        <InputWithPlaceHolder name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee} placeholder={formatAmount(formHolder?.refFee)} />
         <CenterSign>
           <Text bold>%</Text>
         </CenterSign>
@@ -273,7 +274,7 @@ const SetFeeInfo: React.FC<SectionProps> = ({
         Developer reward percentage
       </Text>
       <Flex>
-        <InputWithPlaceHolder name="devFee" type="number" onChange={formik.handleChange} value={formik.values.devFee} placeholder={formatAmount(formHolder?.devFee)}/>
+        <InputWithPlaceHolder name="devFee" type="number" onChange={formik.handleChange} value={formik.values.devFee} placeholder={formatAmount(formHolder?.devFee)} />
         <CenterSign>
           <Text bold>%</Text>
         </CenterSign>
@@ -282,7 +283,7 @@ const SetFeeInfo: React.FC<SectionProps> = ({
         Promotion referral reward percentage
       </Text>
       <Flex>
-        <InputWithPlaceHolder name="promRefFee" type="number" onChange={formik.handleChange} value={formik.values.promRefFee} placeholder={formatAmount(formHolder?.promRefFee)}/>
+        <InputWithPlaceHolder name="promRefFee" type="number" onChange={formik.handleChange} value={formik.values.promRefFee} placeholder={formatAmount(formHolder?.promRefFee)} />
         <CenterSign>
           <Text bold>%</Text>
         </CenterSign>
@@ -290,11 +291,11 @@ const SetFeeInfo: React.FC<SectionProps> = ({
       <Text mb="4px" small>
         Promotion start timestamp
       </Text>
-      <DateInput name="promStart" type="date" onChange={formik.handleChange} value={formik.values.promStart || ''} placeholder={formatDate(formHolder?.promStart)}/>
+      <DateInput name="promStart" type="date" onChange={formik.handleChange} value={formik.values.promStart || ''} placeholder={formatDate(formHolder?.promStart)} />
       <Text mb="4px" small>
         Promotion end timestamp
       </Text>
-      <DateInput name="promEnd" type="date" onChange={formik.handleChange} value={formik.values.promEnd || ''} placeholder={formatDate(formHolder?.promEnd)}/>
+      <DateInput name="promEnd" type="date" onChange={formik.handleChange} value={formik.values.promEnd || ''} placeholder={formatDate(formHolder?.promEnd)} />
       <Box style={{ marginTop: '12px' }}>
         <Button type="submit" disabled={selectedCoin?.symbol === 'WBNB'}>Submit</Button>
       </Box>
@@ -434,8 +435,92 @@ const RemoveLead: React.FC<SectionProps> = ({
 
 }
 
+const CheckRole: React.FC<SectionProps> = ({
+  contract,
+  selectedCoin,
+  openModel,
+  transactionFailed,
+  onDismiss
+}) => {
+  interface FormInputs {
+    influencerWallet?: string;
+  }
 
-const CoinManagerSegment: React.FC<SegmentsProps> = ({ outputToken, openModel, transactionSubmitted, transactionFailed }) => {
+  const [infInfo, setInfInfo] = useState<InfInfo | undefined>()
+
+
+  const formik = useFormik<FormInputs>({
+    initialValues: {
+      influencerWallet: undefined,
+    },
+    onSubmit: async (values) => {
+      const { influencerWallet } = values
+
+      if (!contract) return
+      if (!selectedCoin) return
+      if (!influencerWallet) return
+
+      openModel('Check address role')
+
+      if (!isAddress(influencerWallet)) {
+        transactionFailed('Invalid wallet address!')
+        return
+      }
+
+      try {
+        const transaction = await contract.influencers(selectedCoin.address, influencerWallet) as InfInfo
+        onDismiss()
+        setInfInfo(transaction)
+      } catch (err) {
+        transactionFailed(err.message as string)
+      }
+    }
+  }
+  )
+
+  return <>
+    <Text bold>
+      Check role for address
+    </Text>
+    <StyledWhiteBr />
+    <Box>
+      <Text mb="4px" small>
+        Wallet address
+      </Text>
+      <form onSubmit={formik.handleSubmit}>
+        <StyledInput value={formik.values.influencerWallet} onChange={formik.handleChange} name="influencerWallet" />
+        <Box style={{ marginTop: '12px' }}>
+          <Button type="submit">Submit</Button>
+        </Box>
+      </form>
+      {infInfo && (infInfo.isActive ? (
+        <Box>
+          <StyledBr />
+          {
+            (infInfo.lead !== AddressZero) ? (
+              <Text>
+                Lead address - {infInfo.lead}
+              </Text>
+            ) : null
+          }
+          <Text>
+            Lead Fee - {ethers.utils.formatUnits(infInfo.leadFee)}
+          </Text>
+          <Text>
+            Referral Fee - {ethers.utils.formatUnits(infInfo.refFee)}
+          </Text>
+        </Box>
+      ) : (
+        <Text bold> No influencer found with this addresse</Text>
+      ))}
+    </Box>
+    <StyledBr />
+  </>
+
+}
+
+
+const CoinManagerSegment: React.FC<SegmentsProps> = ({ outputToken, openModel, transactionSubmitted, transactionFailed, onDismiss }) => {
   const refContract = useReferralContract(true)
 
   const forwardedProps = {
@@ -443,7 +528,8 @@ const CoinManagerSegment: React.FC<SegmentsProps> = ({ outputToken, openModel, t
     selectedCoin: outputToken,
     openModel,
     transactionSubmitted,
-    transactionFailed
+    transactionFailed,
+    onDismiss
   }
 
   return <>
@@ -451,6 +537,7 @@ const CoinManagerSegment: React.FC<SegmentsProps> = ({ outputToken, openModel, t
     <SetLeadManager {...forwardedProps} />
     <RemoveLead {...forwardedProps} />
     <SetFeeInfo {...forwardedProps} />
+    <CheckRole {...forwardedProps} />
   </>
 }
 

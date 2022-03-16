@@ -90,7 +90,8 @@ const Referral: React.FC<IProps> = () => {
   const modelFunctions = {
     openModel,
     transactionSubmitted,
-    transactionFailed
+    transactionFailed,
+    onDismiss
   }
 
   useEffect(() => {
