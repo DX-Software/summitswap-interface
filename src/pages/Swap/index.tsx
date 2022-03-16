@@ -33,7 +33,7 @@ import expandMore from 'img/expandMore.svg'
 import useGetTokenData from 'hooks/useGetTokenData'
 import useGetEthPrice from 'hooks/useGetEthPrice'
 import AppBody from '../AppBody'
-import { DEFAULT_SLIPPAGE_TOLERANCE } from '../../constants'
+import { DEFAULT_SLIPPAGE_TOLERANCE, KODA } from '../../constants'
 
 interface IProps {
   isLanding?: boolean
@@ -171,6 +171,11 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
 
   // check if user has gone through approval process, used to show two step buttons, reset on token change
   const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false)
+
+  useEffect(() => {
+    handleOutputSelect(KODA)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // mark when a user has submitted an approval, reset onTokenSelection for input field
   useEffect(() => {
