@@ -31,7 +31,6 @@ interface ILpLock {
   lockId: number
 }
 
-// TODO add date picker for locking
 // TODO add token as a path parameter
 // TODO check if enough liquidity is locked
 // TODO fix input negative values
@@ -39,7 +38,8 @@ export default function CrossChainSwap() {
   const { account, activate, deactivate, library } = useWeb3React()
   const [selectedToken, setSelectedToken] = useState<Token>()
   const [pairAddress, setPairAddress] = useState<string>()
-  const [lpLocks, setLpLocks] = useState<ILpLock[]>([])
+
+  const [isLoading, setIsLoading] = useState(false)
 
   const [isEnoughBnbInPool, setIsEnoughBnbInPool] = useState(false)
   const [isLiquidityApproved, setIsLiquidityApproved] = useState(false)
@@ -103,8 +103,6 @@ export default function CrossChainSwap() {
         return lock.lpToken === pairAddress ? { lock, lockId } : undefined
       })
     ).then((locks) => locks.filter(Boolean))) as ILpLock[]
-
-    setLpLocks(fetchedLpLocks)
 
     const totalAmountOfLpLocked = fetchedLpLocks.reduce(
       (acc, cur) => acc.add(cur.lock.tokenAmount),
@@ -190,7 +188,9 @@ export default function CrossChainSwap() {
         '2' // Fee type
       )
 
+      setIsLoading(true)
       await library.waitForTransaction(receipt.hash)
+      setIsLoading(false)
 
       setIsLiquidityLocked(true)
     }
@@ -207,7 +207,9 @@ export default function CrossChainSwap() {
 
       const receipt = await lpContract.approve(lockerContract.address, MAX_UINT256)
 
+      setIsLoading(true)
       await library.waitForTransaction(receipt.hash)
+      setIsLoading(false)
 
       setIsLiquidityApproved(true)
     }
@@ -222,9 +224,15 @@ export default function CrossChainSwap() {
         return
       }
 
+      if (parseInt(referralRewardAmount) <= 0) {
+        return
+      }
+
       const receipt = await tokenContract.transfer(REFERRAL_ADDRESS, ethers.utils.parseEther(referralRewardAmount))
 
+      setIsLoading(true)
       await library.waitForTransaction(receipt.hash)
+      setIsLoading(false)
 
       setIsTokensInReferral(true)
     }
@@ -283,7 +291,7 @@ export default function CrossChainSwap() {
       </p>
       {selectedToken ? (
         <>
-          <Button as={Link} to={`/add/ETH/${selectedToken?.address}`}>
+          <Button as={Link} to={`/add/ETH/${selectedToken?.address}`} disabled={isLoading}>
             Add Liquidity
           </Button>
           <p className="paragraph">
@@ -300,7 +308,7 @@ export default function CrossChainSwap() {
         <>
           <DatePicker
             label="Unlock date"
-            disabled={!isEnoughBnbInPool}
+            disabled={!isEnoughBnbInPool || isLoading}
             value={selectedUnlockDate}
             onChange={(newValue: Date | null) => {
               setSelectedUnlockDate(newValue)
@@ -310,13 +318,16 @@ export default function CrossChainSwap() {
           &nbsp;
           {!isLiquidityApproved && (
             <>
-              <Button disabled={!isEnoughBnbInPool} onClick={approveLiquidity}>
+              <Button disabled={!isEnoughBnbInPool || isLoading} onClick={approveLiquidity}>
                 Approve Liquidity
               </Button>
               &nbsp;
             </>
           )}
-          <Button disabled={!isEnoughBnbInPool || !isLiquidityApproved || !isSelectedDateGood} onClick={lockLiquidity}>
+          <Button
+            disabled={!isEnoughBnbInPool || !isLiquidityApproved || !isSelectedDateGood || isLoading}
+            onClick={lockLiquidity}
+          >
             Lock Liquidity
           </Button>
           {!isSelectedDateGood && <p className="paragraph">❌ Please select unlock date minimum 1 year from now</p>}
@@ -333,15 +344,21 @@ export default function CrossChainSwap() {
         {selectedToken ? (
           <>
             <Input
-              disabled={!isLiquidityLocked}
+              disabled={!isLiquidityLocked || isLoading}
               type="number"
               placeholder="Enter token amount"
               onChange={(o) => setReferralRewardAmount(o.target.value)}
               style={{ marginTop: '10px', marginBottom: '10px' }}
             />
-            <Button disabled={!isLiquidityLocked} onClick={sendTokensToReferralContract}>
+            <Button
+              disabled={!isLiquidityLocked || isLoading || (parseInt(referralRewardAmount ?? '') || 0) <= 0}
+              onClick={sendTokensToReferralContract}
+            >
               Transfer
             </Button>
+            {!(parseInt(referralRewardAmount ?? '') > 0) && isLiquidityLocked && isTokensInReferral && (
+              <p className="paragraph">❌ Please enter positive number</p>
+            )}
             {isLiquidityLocked && isTokensInReferral && (
               <p className="paragraph">✅ Reward tokens are in referral contract</p>
             )}
@@ -357,13 +374,14 @@ export default function CrossChainSwap() {
             How much % do you want the referrers to earn?
             {selectedToken ? (
               <Input
-                disabled={!isTokensInReferral}
+                disabled={!isTokensInReferral || isLoading}
                 type="number"
                 placeholder="Referrer %"
                 onChange={(o) => setReferrerPercentage(o.target.value)}
                 style={{ marginTop: '10px', marginBottom: '10px' }}
               />
             ) : (
+              // {parseInt(referrerPercentage) > 0  &&}
               <></>
             )}
           </li>
@@ -371,7 +389,7 @@ export default function CrossChainSwap() {
             How much % do you want the referees to earn on their first buy?
             {selectedToken ? (
               <Input
-                disabled={!isTokensInReferral}
+                disabled={!isTokensInReferral || isLoading}
                 type="number"
                 placeholder="First buy referree %"
                 onChange={(o) => setFirstBuyPercentage(o.target.value)}
@@ -392,7 +410,7 @@ export default function CrossChainSwap() {
             <Checkbox
               id="agree"
               scale="sm"
-              disabled={!isTokensInReferral || !firstBuyPercentage || !referrerPercentage}
+              disabled={!isTokensInReferral || !firstBuyPercentage || !referrerPercentage || isLoading}
               defaultChecked={isReferralContractRemovedFromFees}
               onChange={(o) => setIsReferralContractRemovedFromFees(o.target.checked)}
             />
@@ -403,7 +421,11 @@ export default function CrossChainSwap() {
       {selectedToken ? (
         <Button
           disabled={
-            !isTokensInReferral || !firstBuyPercentage || !referrerPercentage || !isReferralContractRemovedFromFees
+            !isTokensInReferral ||
+            !firstBuyPercentage ||
+            !referrerPercentage ||
+            !isReferralContractRemovedFromFees ||
+            isLoading
           }
           onClick={submit}
         >

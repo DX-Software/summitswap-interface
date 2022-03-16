@@ -12,3 +12,8 @@
   opacity: 1;
   -webkit-text-fill-color: gray;
 }
+
+.onboarding-page .paragraph {
+  margin-block-end: 20px;
+  margin-block-start: 20px;
+}
