@@ -19,7 +19,7 @@ const GlobalStyle = createGlobalStyle`
   }
   /* Scrollbar */
   ::-webkit-scrollbar {
-    width: 0px;
+    width: 8px;
   }
   ::-webkit-scrollbar-thumb {
     background: ${({ theme }) => theme.colors.primary}; 
