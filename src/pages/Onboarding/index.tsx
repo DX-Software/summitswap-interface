@@ -356,7 +356,7 @@ export default function CrossChainSwap() {
             >
               Transfer
             </Button>
-            {!(parseInt(referralRewardAmount ?? '') > 0) && isLiquidityLocked && isTokensInReferral && (
+            {!(parseInt(referralRewardAmount ?? '') > 0) && isLiquidityLocked && (
               <p className="paragraph">❌ Please enter positive number</p>
             )}
             {isLiquidityLocked && isTokensInReferral && (
@@ -373,28 +373,37 @@ export default function CrossChainSwap() {
           <li>
             How much % do you want the referrers to earn?
             {selectedToken ? (
-              <Input
-                disabled={!isTokensInReferral || isLoading}
-                type="number"
-                placeholder="Referrer %"
-                onChange={(o) => setReferrerPercentage(o.target.value)}
-                style={{ marginTop: '10px', marginBottom: '10px' }}
-              />
+              <>
+                <Input
+                  disabled={!isTokensInReferral || isLoading}
+                  type="number"
+                  placeholder="Referrer %"
+                  onChange={(o) => setReferrerPercentage(o.target.value)}
+                  style={{ marginTop: '10px', marginBottom: '10px' }}
+                />
+                {!(parseInt(referrerPercentage ?? '') > 0) && isTokensInReferral && (
+                  <p className="paragraph">❌ Please enter positive number</p>
+                )}
+              </>
             ) : (
-              // {parseInt(referrerPercentage) > 0  &&}
               <></>
             )}
           </li>
           <li>
             How much % do you want the referees to earn on their first buy?
             {selectedToken ? (
-              <Input
-                disabled={!isTokensInReferral || isLoading}
-                type="number"
-                placeholder="First buy referree %"
-                onChange={(o) => setFirstBuyPercentage(o.target.value)}
-                style={{ marginTop: '10px', marginBottom: '10px' }}
-              />
+              <>
+                <Input
+                  disabled={!isTokensInReferral || isLoading}
+                  type="number"
+                  placeholder="First buy referree %"
+                  onChange={(o) => setFirstBuyPercentage(o.target.value)}
+                  style={{ marginTop: '10px', marginBottom: '10px' }}
+                />
+                {!(+(firstBuyPercentage ?? '') > 0) && isTokensInReferral && (
+                  <p className="paragraph">❌ Please enter positive number</p>
+                )}
+              </>
             ) : (
               <></>
             )}
@@ -425,7 +434,9 @@ export default function CrossChainSwap() {
             !firstBuyPercentage ||
             !referrerPercentage ||
             !isReferralContractRemovedFromFees ||
-            isLoading
+            isLoading ||
+            +(firstBuyPercentage ?? '') <= 0 ||
+            +(referrerPercentage ?? '') <= 0
           }
           onClick={submit}
         >
