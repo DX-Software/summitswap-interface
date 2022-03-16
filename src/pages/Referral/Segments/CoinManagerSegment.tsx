@@ -206,15 +206,15 @@ const SetFeeInfo: React.FC<SectionProps> = ({
         refFee,
         devFee,
         promRefFee
-      } = values
+      } = values      
 
       try {
         const transaction = await contract.setFeeInfo(
           selectedCoin.address,
           values.rewardToken,
-          refFee ? `${refFee * 10 ** 7}` : '0',
-          devFee ? `${devFee * 10 ** 7}` : '0',
-          promRefFee ? `${promRefFee * 10 ** 7}` : '0',
+          refFee ? ethers.utils.formatUnits(refFee, 9) : '0',
+          devFee ? ethers.utils.formatUnits(devFee, 9) : '0',
+          promRefFee ? ethers.utils.formatUnits(promRefFee, 9) : '0',
           promStart ? `${new Date(promStart).getTime()}` : '0',
           promEnd ? `${new Date(promEnd).getTime()}` : '0')
         transactionSubmitted(transaction.hash, 'Set fee information succeeded')
