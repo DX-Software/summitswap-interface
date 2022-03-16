@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import TokenDropdown from 'components/TokenDropdown'
 import { Token, WETH } from '@koda-finance/summitswap-sdk'
 import { Link } from 'react-router-dom'
-import { Button, Checkbox, Flex, Input, Toggle, useModal, useWalletModal } from '@koda-finance/summitswap-uikit'
+import { Button, Checkbox, Flex, Input, Text, useModal, useWalletModal } from '@koda-finance/summitswap-uikit'
 import { useFactoryContract, useLockerContract, useTokenContract } from 'hooks/useContract'
 import { useWeb3React } from '@web3-react/core'
 import { BigNumber, ethers } from 'ethers'
@@ -33,7 +33,6 @@ interface ILpLock {
 
 // TODO add token as a path parameter
 // TODO check if enough liquidity is locked
-// TODO fix input negative values
 export default function CrossChainSwap() {
   const { account, activate, deactivate, library } = useWeb3React()
   const [selectedToken, setSelectedToken] = useState<Token>()
@@ -295,9 +294,9 @@ export default function CrossChainSwap() {
             Add Liquidity
           </Button>
           <p className="paragraph">
-            {!lpContract && <p className="paragraph">❌ Pair not found, please add liquidity first</p>}
-            {!isEnoughBnbInPool && lpContract && <p className="paragraph">❌ Not enough liquidity, please add more</p>}
-            {isEnoughBnbInPool && <p className="paragraph">✅ There are enough liquidity</p>}
+            {!lpContract && <Text color="red">❌ Pair not found, please add liquidity first</Text>}
+            {!isEnoughBnbInPool && lpContract && <Text color="red">❌ Not enough liquidity, please add more</Text>}
+            {isEnoughBnbInPool && <Text color="primary">✅ There are enough liquidity</Text>}
           </p>
         </>
       ) : (
@@ -330,8 +329,8 @@ export default function CrossChainSwap() {
           >
             Lock Liquidity
           </Button>
-          {!isSelectedDateGood && <p className="paragraph">❌ Please select unlock date minimum 1 year from now</p>}
-          {isLiquidityLocked && <p className="paragraph">✅ Liquidity is locked already</p>}
+          {!isSelectedDateGood && <Text color="red">❌ Please select unlock date minimum 1 year from now</Text>}
+          {isLiquidityLocked && <Text color="primary">✅ Liquidity is locked already</Text>}
         </>
       ) : (
         <></>
@@ -356,12 +355,14 @@ export default function CrossChainSwap() {
             >
               Transfer
             </Button>
-            {!(parseInt(referralRewardAmount ?? '') > 0) && isLiquidityLocked && (
-              <p className="paragraph">❌ Please enter positive number</p>
-            )}
-            {isLiquidityLocked && isTokensInReferral && (
-              <p className="paragraph">✅ Reward tokens are in referral contract</p>
-            )}
+            <p className="paragraph">
+              {!(parseInt(referralRewardAmount ?? '') > 0) && isLiquidityLocked && (
+                <Text color="red">❌ Please enter positive number</Text>
+              )}
+              {isLiquidityLocked && isTokensInReferral && (
+                <Text color="primary">✅ Reward tokens are in referral contract</Text>
+              )}
+            </p>
           </>
         ) : (
           <></>
@@ -369,46 +370,44 @@ export default function CrossChainSwap() {
       </p>
       <p className="paragraph">
         4. Specify details
-        <ul>
-          <li>
-            How much % do you want the referrers to earn?
-            {selectedToken ? (
-              <>
-                <Input
-                  disabled={!isTokensInReferral || isLoading}
-                  type="number"
-                  placeholder="Referrer %"
-                  onChange={(o) => setReferrerPercentage(o.target.value)}
-                  style={{ marginTop: '10px', marginBottom: '10px' }}
-                />
-                {!(parseInt(referrerPercentage ?? '') > 0) && isTokensInReferral && (
-                  <p className="paragraph">❌ Please enter positive number</p>
-                )}
-              </>
-            ) : (
-              <></>
-            )}
-          </li>
-          <li>
-            How much % do you want the referees to earn on their first buy?
-            {selectedToken ? (
-              <>
-                <Input
-                  disabled={!isTokensInReferral || isLoading}
-                  type="number"
-                  placeholder="First buy referree %"
-                  onChange={(o) => setFirstBuyPercentage(o.target.value)}
-                  style={{ marginTop: '10px', marginBottom: '10px' }}
-                />
-                {!(+(firstBuyPercentage ?? '') > 0) && isTokensInReferral && (
-                  <p className="paragraph">❌ Please enter positive number</p>
-                )}
-              </>
-            ) : (
-              <></>
-            )}
-          </li>
-        </ul>
+        <p className="paragraph">
+          How much % do you want the referrers to earn?
+          {selectedToken ? (
+            <>
+              <Input
+                disabled={!isTokensInReferral || isLoading}
+                type="number"
+                placeholder="Referrer %"
+                onChange={(o) => setReferrerPercentage(o.target.value)}
+                style={{ marginTop: '10px', marginBottom: '10px' }}
+              />
+              {!(parseInt(referrerPercentage ?? '') > 0) && isTokensInReferral && (
+                <Text color="red">❌ Please enter positive number</Text>
+              )}
+            </>
+          ) : (
+            <></>
+          )}
+        </p>
+        <p className="paragraph">
+          How much % do you want the referees to earn on their first buy?
+          {selectedToken ? (
+            <>
+              <Input
+                disabled={!isTokensInReferral || isLoading}
+                type="number"
+                placeholder="First buy referree %"
+                onChange={(o) => setFirstBuyPercentage(o.target.value)}
+                style={{ marginTop: '10px', marginBottom: '10px' }}
+              />
+              {!(+(firstBuyPercentage ?? '') > 0) && isTokensInReferral && (
+                <Text color="red">❌ Please enter positive number</Text>
+              )}
+            </>
+          ) : (
+            <></>
+          )}
+        </p>
       </p>
       <p className="paragraph">
         5. If your token has fees remove referral contract from them
