@@ -2,6 +2,8 @@ import React from 'react'
 import { createWeb3ReactRoot, Web3ReactProvider } from '@web3-react/core'
 import { Provider } from 'react-redux'
 import { ModalProvider } from '@koda-finance/summitswap-uikit'
+import AdapterDateFns from '@mui/lab/AdapterDateFns'
+import { LocalizationProvider } from '@mui/lab'
 import { NetworkContextName } from './constants'
 import store from './state'
 import getLibrary from './utils/getLibrary'
@@ -15,7 +17,9 @@ const Providers: React.FC = ({ children }) => {
       <Web3ProviderNetwork getLibrary={getLibrary}>
         <Provider store={store}>
           <ThemeContextProvider>
-            <ModalProvider>{children}</ModalProvider>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <ModalProvider>{children}</ModalProvider>
+            </LocalizationProvider>
           </ThemeContextProvider>
         </Provider>
       </Web3ProviderNetwork>

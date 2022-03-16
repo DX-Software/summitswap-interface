@@ -9,6 +9,9 @@ import { BigNumber, ethers } from 'ethers'
 import axios from 'axios'
 import { TranslateString } from 'utils/translateTextHelpers'
 import login from 'utils/login'
+import DatePicker from '@mui/lab/DatePicker'
+import { TextField } from '@mui/material'
+import { addYears, subDays } from 'date-fns/esm'
 import {
   CHAIN_ID,
   LOCKER_ADDRESS,
@@ -18,7 +21,10 @@ import {
   ONBOARDING_API,
   REFERRAL_ADDRESS,
 } from '../../constants'
-import SuccessModal from "./SuccessModal"
+import SuccessModal from './SuccessModal'
+import './styles.css'
+
+const yearFromNowDate = subDays(addYears(Date.now(), 1), 1)
 
 // TODO add date picker for locking
 // TODO add token as a path parameter
@@ -35,6 +41,7 @@ export default function CrossChainSwap() {
   const [isTokensInReferral, setIsTokensInReferral] = useState(false)
   const [isReferralContractRemovedFromFees, setIsReferralContractRemovedFromFees] = useState(false)
 
+  const [selectedUnlockDate, setSelectedUnlockDate] = useState<Date | null>(yearFromNowDate)
   const [referralRewardAmount, setReferralRewardAmount] = useState<string>()
   const [referrerPercentage, setReferrerPercentage] = useState<string>()
   const [firstBuyPercentage, setFirstBuyPercentage] = useState<string>()
@@ -44,6 +51,12 @@ export default function CrossChainSwap() {
   const lpContract = useTokenContract(pairAddress)
   const tokenContract = useTokenContract(selectedToken?.address, true)
   const wbnbContract = useTokenContract(WETH[CHAIN_ID].address)
+
+  const isSelectedDateGood = useMemo(() => {
+    if (!selectedUnlockDate) return false
+
+    return selectedUnlockDate > yearFromNowDate
+  }, [selectedUnlockDate])
 
   const handleLogin = useCallback(
     (connectorId: string) => {
@@ -132,7 +145,6 @@ export default function CrossChainSwap() {
 
       const fetchedPair = (await factoryContract.getPair(WETH[CHAIN_ID].address, selectedToken.address)) as string
 
-      console.log('fetchedPair', fetchedPair)
       if (fetchedPair === NULL_ADDRESS) {
         setPairAddress(undefined)
       } else {
@@ -149,21 +161,17 @@ export default function CrossChainSwap() {
 
   const lockLiquidity = useCallback(() => {
     async function lock() {
-      if (!lpContract || !account || !lockerContract || !library) {
+      if (!lpContract || !account || !lockerContract || !library || !selectedUnlockDate) {
         setIsLiquidityLocked(false)
         return
       }
 
       const lpBalance = (await lpContract.balanceOf(account).then((o) => o.toString())) as string
 
-      const unlockDate = new Date()
-
-      unlockDate.setFullYear(unlockDate.getFullYear() + 1)
-
       const receipt = await lockerContract.lockTokens(
         lpContract.address,
         lpBalance,
-        Math.floor(unlockDate.valueOf() / 1000),
+        Math.floor(selectedUnlockDate.valueOf() / 1000),
         account,
         '2' // Fee type
       )
@@ -174,7 +182,7 @@ export default function CrossChainSwap() {
     }
 
     lock()
-  }, [lpContract, account, lockerContract, library])
+  }, [lpContract, account, lockerContract, library, selectedUnlockDate])
 
   const approveLiquidity = useCallback(() => {
     async function approve() {
@@ -230,7 +238,7 @@ export default function CrossChainSwap() {
   }, [firstBuyPercentage, referrerPercentage, selectedToken, onMoonpayClick])
 
   return (
-    <div className="main-content">
+    <div className="main-content onboarding-page">
       {!account && (
         <Flex mb={3} justifyContent="center">
           <Button style={{ fontFamily: 'Poppins' }} onClick={onPresentConnectModal}>
@@ -271,6 +279,15 @@ export default function CrossChainSwap() {
       <p className="paragraph">2. Lock your liquidity for 1 year</p>
       {selectedToken ? (
         <>
+          <DatePicker
+            label="Unlock date"
+            value={selectedUnlockDate}
+            onChange={(newValue: Date | null) => {
+              setSelectedUnlockDate(newValue)
+            }}
+            renderInput={(params) => <TextField {...params} />}
+          />
+          &nbsp;
           {!isLiquidityApproved && (
             <>
               <Button disabled={!isEnoughBnbInPool} onClick={approveLiquidity}>
@@ -279,9 +296,10 @@ export default function CrossChainSwap() {
               &nbsp;
             </>
           )}
-          <Button disabled={!isEnoughBnbInPool || !isLiquidityApproved} onClick={lockLiquidity}>
+          <Button disabled={!isEnoughBnbInPool || !isLiquidityApproved || !isSelectedDateGood} onClick={lockLiquidity}>
             Lock Liquidity
           </Button>
+          {!isSelectedDateGood && <p className="paragraph">❌ Please select unlock date minimum 1 year from now</p>}
           {isLiquidityLocked && <p className="paragraph">✅ Liquidity is locked already</p>}
         </>
       ) : (
