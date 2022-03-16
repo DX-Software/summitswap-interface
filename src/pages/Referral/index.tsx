@@ -8,6 +8,7 @@ import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { TranslateString } from 'utils/translateTextHelpers'
 import { useAllTokens } from 'hooks/Tokens'
 import CurrencyLogo from 'components/CurrencyLogo'
+import useReferralLinkQrModal from './useReferralLinkQrModal'
 import ReferalLinkImage from '../../img/referral-link.png'
 import InviteImage from '../../img/invite.png'
 import CoinStackImage from '../../img/coinstack.png'
@@ -18,6 +19,7 @@ import login from '../../utils/login'
 
 import './style.css'
 import SwapList from './SwapList'
+import { useClaimingFeeModal } from './useClaimingFeeModal'
 
 const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
   display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'block' : 'none')};
@@ -52,7 +54,7 @@ const LinkBox = styled(Box)`
       word-break: break-all;
     }
   }
-  > div:last-of-type {
+  > div:not(:first-of-type) {
     cursor: pointer;
     position: relative;
   }
@@ -72,6 +74,8 @@ const Referral: React.FC<IProps> = () => {
   const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
   const allTokensTemp = useAllTokens()
   const location = useLocation()
+
+  const [openReferralLinkQrModal] = useReferralLinkQrModal(referralURL)
 
   useEffect(() => {
     setAllTokens(Object.values(allTokensTemp))
@@ -151,6 +155,17 @@ const Referral: React.FC<IProps> = () => {
             <LinkBox mb={3}>
               <Box>
                 <Text style={{ whiteSpace: isCopySupported ? 'nowrap' : 'normal' }}>{referralURL}</Text>
+              </Box>
+              <Box onClick={openReferralLinkQrModal} mr="10px">
+                <svg width="22" height="23" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 0H9C9.26522 0 9.51957 0.105357 9.70711 0.292893C9.89464 0.48043 10 0.734784 10 1V9C10 9.26522 9.89464 9.51957 9.70711 9.70711C9.51957 9.89464 9.26522 10 9 10H1C0.734784 10 0.48043 9.89464 0.292893 9.70711C0.105357 9.51957 0 9.26522 0 9V1C0 0.734784 0.105357 0.48043 0.292893 0.292893C0.48043 0.105357 0.734784 0 1 0V0ZM2 2V8H8V2H2Z" fill="white"/>
+                  <path fillRule="evenodd" clipRule="evenodd" d="M4 10H6V12H4V10Z" fill="white"/>
+                  <path d="M13 0H21C21.2652 0 21.5196 0.105357 21.7071 0.292893C21.8946 0.48043 22 0.734784 22 1V9C22 9.26522 21.8946 9.51957 21.7071 9.70711C21.5196 9.89464 21.2652 10 21 10H13C12.7348 10 12.4804 9.89464 12.2929 9.70711C12.1054 9.51957 12 9.26522 12 9V1C12 0.734784 12.1054 0.48043 12.2929 0.292893C12.4804 0.105357 12.7348 0 13 0V0ZM14 2V8H20V2H14Z" fill="white"/>
+                  <path fillRule="evenodd" clipRule="evenodd" d="M16 10H18V12H16V10Z" fill="white"/>
+                  <path d="M1 12H9C9.26522 12 9.51957 12.1054 9.70711 12.2929C9.89464 12.4804 10 12.7348 10 13V21C10 21.2652 9.89464 21.5196 9.70711 21.7071C9.51957 21.8946 9.26522 22 9 22H1C0.734784 22 0.48043 21.8946 0.292893 21.7071C0.105357 21.5196 0 21.2652 0 21V13C0 12.7348 0.105357 12.4804 0.292893 12.2929C0.48043 12.1054 0.734784 12 1 12V12ZM2 14V20H8V14H2Z" fill="white"/>
+                  <path fillRule="evenodd" clipRule="evenodd" d="M4 22H6V24H4V22Z" fill="white"/>
+                  <path d="M22 18H18V22H13C12.7348 22 12.4804 21.8946 12.2929 21.7071C12.1054 21.5196 12 21.2652 12 21V13V18H14V20H16V14H14V12H13H16V14H18V16H20V12H21C21.2652 12 21.5196 12.1054 21.7071 12.2929C21.8946 12.4804 22 12.7348 22 13V18ZM22 20V21C22 21.2652 21.8946 21.5196 21.7071 21.7071C21.5196 21.8946 21.2652 22 21 22H20V20H22Z" fill="white"/>
+                </svg>
               </Box>
               <Box style={{ display: isCopySupported ? 'block' : 'none' }} onClick={copyReferralLink}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="19" height="22" viewBox="0 0 19 22" fill="none">
