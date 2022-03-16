@@ -241,7 +241,7 @@ export default function CrossChainSwap() {
 
   const submit = useCallback(() => {
     async function submitToken() {
-      if (!firstBuyPercentage || !referrerPercentage || !selectedToken || !pairAddress) {
+      if (!firstBuyPercentage || !referrerPercentage || !selectedToken || !pairAddress || !account) {
         return
       }
 
@@ -250,6 +250,7 @@ export default function CrossChainSwap() {
       await axios.post(ONBOARDING_API, {
         message: `
           Token: ${selectedToken.address}
+          %0AUser: ${account}
           %0APair: ${pairAddress}
           %0ALockIds: ${fetchedLpLocks?.map((o) => o.lockId)}
           %0ATotalLocked: ${totalAmountOfLpLocked}
@@ -261,7 +262,7 @@ export default function CrossChainSwap() {
     }
 
     submitToken()
-  }, [firstBuyPercentage, referrerPercentage, selectedToken, pairAddress, fetchUserLocked, displaySucessModal])
+  }, [firstBuyPercentage, referrerPercentage, selectedToken, pairAddress, fetchUserLocked, account, displaySucessModal])
 
   return (
     <div className="main-content onboarding-page">
@@ -285,8 +286,8 @@ export default function CrossChainSwap() {
       )}
       <h3>Requirements:</h3>
       <p className="paragraph">
-        1. Add liquidity on <b>BNB/{selectedToken?.symbol ?? 'YOUR COIN'}</b>. Suggest minimum <b>75 BNB</b>. This will
-        be used to pair with the native token
+        1. Add liquidity on <b>BNB/{selectedToken?.symbol ?? 'YOUR COIN'}</b>. Suggest minimum{' '}
+        <b>{MINIMUM_BNB_FOR_ONBOARDING} BNB</b>. This will be used to pair with the native token
       </p>
       {selectedToken ? (
         <>
