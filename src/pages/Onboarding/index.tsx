@@ -120,7 +120,7 @@ export default function CrossChainSwap() {
 
   useEffect(() => {
     async function fetchUserApproved() {
-      if (!lpContract) return
+      if (!lpContract || !account) return
 
       const userBalance = (await lpContract.balanceOf(account)) as BigNumber
 
@@ -289,7 +289,7 @@ export default function CrossChainSwap() {
         1. Add liquidity on <b>BNB/{selectedToken?.symbol ?? 'YOUR COIN'}</b>. Suggest minimum{' '}
         <b>{MINIMUM_BNB_FOR_ONBOARDING} BNB</b>. This will be used to pair with the native token
       </p>
-      {selectedToken ? (
+      {selectedToken && account ? (
         <>
           <Button as={Link} to={`/add/ETH/${selectedToken?.address}`} disabled={isLoading}>
             Add Liquidity
@@ -304,7 +304,7 @@ export default function CrossChainSwap() {
         <></>
       )}
       <p className="paragraph">2. Lock your liquidity for 1 year</p>
-      {selectedToken ? (
+      {selectedToken && account ? (
         <>
           <DatePicker
             label="Unlock date"
@@ -341,7 +341,7 @@ export default function CrossChainSwap() {
         <br />
         (Up to you how much but each time you load it you can use as a bit of a PR stunt to the community - Note: these
         tokens are unrecoverable other than through referral scheme)
-        {selectedToken ? (
+        {selectedToken && account ? (
           <>
             <Input
               disabled={!isLiquidityLocked || isLoading}
@@ -373,7 +373,7 @@ export default function CrossChainSwap() {
         4. Specify details
         <p className="paragraph">
           How much % do you want the referrers to earn?
-          {selectedToken ? (
+          {selectedToken && account ? (
             <>
               <Input
                 disabled={!isTokensInReferral || isLoading}
@@ -392,7 +392,7 @@ export default function CrossChainSwap() {
         </p>
         <p className="paragraph">
           How much % do you want the referees to earn on their first buy?
-          {selectedToken ? (
+          {selectedToken && account ? (
             <>
               <Input
                 disabled={!isTokensInReferral || isLoading}
@@ -414,7 +414,7 @@ export default function CrossChainSwap() {
         5. If your token has fees remove referral contract from them
         <br />
         <b>Referral contract - {REFERRAL_ADDRESS}</b>
-        {selectedToken && (
+        {selectedToken && account && (
           <p className="paragraph">
             <Checkbox
               id="agree"
@@ -427,7 +427,7 @@ export default function CrossChainSwap() {
           </p>
         )}
       </p>
-      {selectedToken ? (
+      {selectedToken && account ? (
         <Button
           disabled={
             !isTokensInReferral ||
