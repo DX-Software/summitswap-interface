@@ -101,7 +101,8 @@ const SubInfluencer: React.FC<SubInfluencerProps> = ({
   outputToken,
   openModel,
   transactionSubmitted,
-  transactionFailed
+  transactionFailed,
+  onDismiss
 }) => {
   const refContract = useReferralContract(true)
   const [leadInfo, setLeadInfo] = useState<InfoBoxProps | undefined>()
@@ -131,7 +132,8 @@ const SubInfluencer: React.FC<SubInfluencerProps> = ({
   const modelFunctions = {
     openModel,
     transactionSubmitted,
-    transactionFailed
+    transactionFailed,
+    onDismiss
   }
 
   return (

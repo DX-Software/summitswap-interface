@@ -122,7 +122,8 @@ const LeadInfluencer: React.FC<SegmentsProps> = ({
   outputToken,
   openModel,
   transactionSubmitted,
-  transactionFailed
+  transactionFailed,
+  onDismiss
 }) => {
   const refContract = useReferralContract(true)
   const [subReward, setSubReward] = useState<PaginatedRewards>({})
@@ -174,7 +175,8 @@ const LeadInfluencer: React.FC<SegmentsProps> = ({
   const modelFunctions = {
     openModel,
     transactionSubmitted,
-    transactionFailed
+    transactionFailed,
+    onDismiss
   }
 
   return <>

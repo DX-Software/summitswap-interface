@@ -5,4 +5,5 @@ export interface SegmentsProps {
     openModel: (pendingMess: string) => void
     transactionSubmitted: (hashText: string, summary: string) => void
     transactionFailed: (messFromError: string) => void
+    onDismiss: () => void
 }
