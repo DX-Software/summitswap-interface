@@ -140,8 +140,8 @@ export default function CurrencyInputPanel({
               </Text>
               {account && isSwap && (
                 <Text color='sidebarColor' onClick={onMax} fontSize="14px" style={{ display: 'inline', cursor: 'pointer' }}>
-                  {!hideBalance && !!currency && selectedCurrencyBalance
-                    ? `Balance: ${selectedCurrencyBalance?.toSignificant(6)}`
+                  {!hideBalance && !!currency
+                    ? `Balance: ${selectedCurrencyBalance?.toSignificant(6) ?? "Loading..."}`
                     : ' -'}
                 </Text>
               )}

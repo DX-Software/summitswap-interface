@@ -1,4 +1,4 @@
-import { CurrencyAmount, JSBI, Token, Trade } from '@koda-finance/summitswap-sdk'
+import { Currency, CurrencyAmount, JSBI, Token, Trade } from '@koda-finance/summitswap-sdk'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown } from 'react-feather'
 import { CardBody, Button, IconButton, Text } from '@koda-finance/summitswap-uikit'
@@ -52,6 +52,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
     useCurrency(loadedUrlParams?.outputCurrencyId),
   ]
 
+  const [isAllowSellMax, setIsAllowSellMax] = useState<boolean>(true)
   const [dismissTokenWarning, setDismissTokenWarning] = useState<boolean>(false)
   const [isSyrup, setIsSyrup] = useState<boolean>(false)
   const [syrupTransactionType, setSyrupTransactionType] = useState<string>('')
@@ -210,6 +211,16 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currencies[Field.INPUT], currencies[Field.OUTPUT]])
 
+  useEffect(() => {
+    if (currencies[Field.INPUT] instanceof Token) {
+      const token = currencies[Field.INPUT] as Token
+      setIsAllowSellMax(token.allowSellMax)
+    } else if (currencies[Field.INPUT] instanceof Currency) {
+      setIsAllowSellMax(true)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currencies[Field.INPUT]])
+
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT])
   const atMaxAmountInput = Boolean(maxAmountInput && parsedAmounts[Field.INPUT]?.equalTo(maxAmountInput))
 
@@ -303,10 +314,10 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
   )
 
   const handleMaxInput = useCallback(() => {
-    if (maxAmountInput) {
+    if (maxAmountInput && isAllowSellMax) {
       onUserInput(Field.INPUT, maxAmountInput.toExact())
     }
-  }, [maxAmountInput, onUserInput])
+  }, [maxAmountInput, onUserInput, isAllowSellMax])
 
   const handleOutputSelect = useCallback(
     (outputCurrency) => {
@@ -358,7 +369,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
               <CurrencyInputPanel
                 label={`From ${parsedAmounts.INPUT ? parsedAmounts.INPUT.currency.name : ''}`}
                 value={formattedAmounts[Field.INPUT]}
-                showMaxButton={!atMaxAmountInput}
+                showMaxButton={!atMaxAmountInput && isAllowSellMax}
                 currency={currencies[Field.INPUT]}
                 onUserInput={handleTypeInput}
                 onMax={handleMaxInput}
