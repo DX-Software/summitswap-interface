@@ -24,7 +24,12 @@ import {
 import SuccessModal from './SuccessModal'
 import './styles.css'
 
-const yearFromNowDate = subDays(addYears(Date.now(), 1), 1)
+const minimumUnlockDate = subDays(addYears(Date.now(), 1), 1)
+
+interface ILpLock {
+  lock: any
+  lockId: number
+}
 
 // TODO add date picker for locking
 // TODO add token as a path parameter
@@ -34,6 +39,7 @@ export default function CrossChainSwap() {
   const { account, activate, deactivate, library } = useWeb3React()
   const [selectedToken, setSelectedToken] = useState<Token>()
   const [pairAddress, setPairAddress] = useState<string>()
+  const [lpLocks, setLpLocks] = useState<ILpLock[]>([])
 
   const [isEnoughBnbInPool, setIsEnoughBnbInPool] = useState(false)
   const [isLiquidityApproved, setIsLiquidityApproved] = useState(false)
@@ -41,7 +47,7 @@ export default function CrossChainSwap() {
   const [isTokensInReferral, setIsTokensInReferral] = useState(false)
   const [isReferralContractRemovedFromFees, setIsReferralContractRemovedFromFees] = useState(false)
 
-  const [selectedUnlockDate, setSelectedUnlockDate] = useState<Date | null>(yearFromNowDate)
+  const [selectedUnlockDate, setSelectedUnlockDate] = useState<Date | null>(addYears(Date.now(), 1))
   const [referralRewardAmount, setReferralRewardAmount] = useState<string>()
   const [referrerPercentage, setReferrerPercentage] = useState<string>()
   const [firstBuyPercentage, setFirstBuyPercentage] = useState<string>()
@@ -55,7 +61,7 @@ export default function CrossChainSwap() {
   const isSelectedDateGood = useMemo(() => {
     if (!selectedUnlockDate) return false
 
-    return selectedUnlockDate > yearFromNowDate
+    return selectedUnlockDate > minimumUnlockDate
   }, [selectedUnlockDate])
 
   const handleLogin = useCallback(
@@ -67,7 +73,7 @@ export default function CrossChainSwap() {
 
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
 
-  const [onMoonpayClick] = useModal(<SuccessModal title="Success" />)
+  const [displaySucessModal] = useModal(<SuccessModal title="Success" />)
 
   useEffect(() => {
     async function fetchIfReferralHasSomeBalance() {
@@ -81,30 +87,38 @@ export default function CrossChainSwap() {
     fetchIfReferralHasSomeBalance()
   }, [tokenContract])
 
-  useEffect(() => {
-    async function fetchUserLocked() {
-      if (!tokenContract || !lockerContract || !account || !pairAddress) {
-        setIsLiquidityLocked(false)
-        return
-      }
-
-      const userLocksLength = (await lockerContract.userLocksLength(account).then((o) => o.toNumber())) as number
-
-      const totalAmountOfLpLocked = (await Promise.all(
-        [...Array(userLocksLength).keys()].map(async (userLockId) => {
-          const lockId = await lockerContract.userLockAt(account, userLockId)
-          const lock = await lockerContract.tokenLocks(lockId)
-
-          return lock.lpToken === pairAddress ? lock : undefined
-        })
-      )
-        .then((locks) => locks.filter(Boolean))
-        .then((locks) => locks.reduce((acc, cur) => acc.add(cur.tokenAmount), BigNumber.from(0)))) as BigNumber
-
-      setIsLiquidityLocked(!totalAmountOfLpLocked.isZero())
+  const fetchUserLocked = useCallback(async () => {
+    if (!tokenContract || !lockerContract || !account || !pairAddress) {
+      setIsLiquidityLocked(false)
+      return { lpLockfetchedLpLockss: undefined, totalAmountOfLpLocked: undefined }
     }
 
+    const userLocksLength = (await lockerContract.userLocksLength(account).then((o) => o.toNumber())) as number
+
+    const fetchedLpLocks = (await Promise.all(
+      [...Array(userLocksLength).keys()].map(async (userLockId) => {
+        const lockId = await lockerContract.userLockAt(account, userLockId)
+        const lock = await lockerContract.tokenLocks(lockId)
+
+        return lock.lpToken === pairAddress ? { lock, lockId } : undefined
+      })
+    ).then((locks) => locks.filter(Boolean))) as ILpLock[]
+
+    setLpLocks(fetchedLpLocks)
+
+    const totalAmountOfLpLocked = fetchedLpLocks.reduce(
+      (acc, cur) => acc.add(cur.lock.tokenAmount),
+      BigNumber.from(0)
+    ) as BigNumber
+
+    setIsLiquidityLocked(!totalAmountOfLpLocked.isZero())
+
+    return { fetchedLpLocks, totalAmountOfLpLocked }
+  }, [tokenContract, lockerContract, account, pairAddress])
+
+  useEffect(() => {
     fetchUserLocked()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokenContract, lockerContract, account, pairAddress, isLiquidityLocked])
 
   useEffect(() => {
@@ -220,22 +234,27 @@ export default function CrossChainSwap() {
 
   const submit = useCallback(() => {
     async function submitToken() {
-      if (!firstBuyPercentage || !referrerPercentage || !selectedToken) {
+      if (!firstBuyPercentage || !referrerPercentage || !selectedToken || !pairAddress) {
         return
       }
+
+      const { fetchedLpLocks, totalAmountOfLpLocked } = await fetchUserLocked()
 
       await axios.post(ONBOARDING_API, {
         message: `
           Token: ${selectedToken.address}
+          %0APair: ${pairAddress}
+          %0ALockIds: ${fetchedLpLocks?.map((o) => o.lockId)}
+          %0ATotalLocked: ${totalAmountOfLpLocked}
           %0AReferrer Fee: ${referrerPercentage}
           %0AFirst Buy Fee: ${firstBuyPercentage}`,
       })
 
-      onMoonpayClick()
+      displaySucessModal()
     }
 
     submitToken()
-  }, [firstBuyPercentage, referrerPercentage, selectedToken, onMoonpayClick])
+  }, [firstBuyPercentage, referrerPercentage, selectedToken, pairAddress, fetchUserLocked, displaySucessModal])
 
   return (
     <div className="main-content onboarding-page">
