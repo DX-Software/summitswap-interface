@@ -1,6 +1,14 @@
 /* TODO: Style using material theming */
-.onboarding-page .MuiSvgIcon-root,
+.onboarding-page .MuiButtonBase-root,
 .onboarding-page .MuiOutlinedInput-input,
 .onboarding-page .MuiInputLabel-root {
-  color: white !important;
+  color: white;
+}
+
+.onboarding-page .MuiButtonBase-root.Mui-disabled,
+.onboarding-page .MuiOutlinedInput-input.Mui-disabled,
+.onboarding-page .MuiInputLabel-root.Mui-disabled {
+  color: gray;
+  opacity: 1;
+  -webkit-text-fill-color: gray;
 }

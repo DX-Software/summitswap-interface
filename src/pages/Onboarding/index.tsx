@@ -281,6 +281,7 @@ export default function CrossChainSwap() {
         <>
           <DatePicker
             label="Unlock date"
+            disabled={!isEnoughBnbInPool}
             value={selectedUnlockDate}
             onChange={(newValue: Date | null) => {
               setSelectedUnlockDate(newValue)
