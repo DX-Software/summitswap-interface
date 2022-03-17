@@ -1,14 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Token } from '@koda-finance/summitswap-sdk'
-import { Text, Box, Button, useWalletModal, Flex } from '@koda-finance/summitswap-uikit'
-import styled from 'styled-components'
+import { Box, Button, useWalletModal, Flex } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { TranslateString } from 'utils/translateTextHelpers'
 import { useAllTokens } from 'hooks/Tokens'
 import { useReferralContract } from 'hooks/useContract'
-import { PopupContent } from 'state/application/actions';
 import { useAddPopup } from 'state/application/hooks';
 import TransactionConfirmationModal, { TransactionErrorContent } from 'components/TransactionConfirmationModal';
 import ReferalLinkImage from '../../img/referral-link.png'

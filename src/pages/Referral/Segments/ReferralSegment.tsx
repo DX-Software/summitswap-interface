@@ -2,7 +2,9 @@ import React from 'react'
 import { Text, Box } from '@koda-finance/summitswap-uikit'
 import styled from 'styled-components'
 
+import qrCode from 'img/qrCode.svg'
 import LinkBox from 'components/LinkBox'
+import useReferralLinkQrModal from '../useReferralLinkQrModal'
 
 
 const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
@@ -22,18 +24,21 @@ const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
 `
 
 interface ReferralSegmentProps {
-	copyReferralLink: () => void;
-	isTooltipDisplayed: boolean;
-	isCopySupported: boolean;
-	referralURL: string;
+  copyReferralLink: () => void;
+  isTooltipDisplayed: boolean;
+  isCopySupported: boolean;
+  referralURL: string;
 }
 
 const ReferralSegment: React.FC<ReferralSegmentProps> = ({
-	isCopySupported, 
-	referralURL, 
-	copyReferralLink, 
-	isTooltipDisplayed
+  isCopySupported,
+  referralURL,
+  copyReferralLink,
+  isTooltipDisplayed
 }) => {
+
+  const [openReferralLinkQrModal] = useReferralLinkQrModal(referralURL)
+
   return (
     <>
       <Text mb="8px" bold>
@@ -42,6 +47,9 @@ const ReferralSegment: React.FC<ReferralSegmentProps> = ({
       <LinkBox mb={3}>
         <Box>
           <Text style={{ whiteSpace: isCopySupported ? 'nowrap' : 'normal' }}>{referralURL}</Text>
+        </Box>
+        <Box onClick={openReferralLinkQrModal} mr="10px">
+          <img src={qrCode} alt="" width={22} height={22} />
         </Box>
         <Box style={{ display: isCopySupported ? 'block' : 'none' }} onClick={copyReferralLink}>
           <svg xmlns="http://www.w3.org/2000/svg" width="19" height="22" viewBox="0 0 19 22" fill="none">
@@ -53,7 +61,6 @@ const ReferralSegment: React.FC<ReferralSegmentProps> = ({
           <Tooltip isTooltipDisplayed={isTooltipDisplayed}>Copied</Tooltip>
         </Box>
       </LinkBox>
-      {/* TODO: Display swaplist using lambda x blockchain events */}
     </>
   )
 }
