@@ -2,13 +2,21 @@ import { Currency, CurrencyAmount, Pair, Token, Trade } from '@koda-finance/summ
 import flatMap from 'lodash.flatmap'
 import { useMemo } from 'react'
 
-import { BASES_TO_CHECK_TRADES_AGAINST, CUSTOM_BASES } from '../constants'
+import { BASES_TO_CHECK_TRADES_AGAINST, CUSTOM_BASES, FACTORY_ADDRESS, INIT_CODE_HASH } from '../constants'
 import { PairState, usePairs } from '../data/Reserves'
 import { wrappedCurrency } from '../utils/wrappedCurrency'
 
 import { useActiveWeb3React } from './index'
 
-function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
+function useAllCommonPairs(
+  currencyA?: Currency,
+  currencyB?: Currency,
+  factoryAddress: string = FACTORY_ADDRESS,
+  initCodeHash = INIT_CODE_HASH
+): {
+  isLoading: boolean
+  pairs: Pair[]
+} {
   const { chainId } = useActiveWeb3React()
 
   // Base tokens for building intermediary trading routes
@@ -62,54 +70,82 @@ function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
     [tokenA, tokenB, bases, basePairs, chainId]
   )
 
-  const allPairs = usePairs(allPairCombinations)
+  const allPairs = usePairs(allPairCombinations, factoryAddress, initCodeHash)
+
+  const filteredAllPairs = allPairs
+    // filter out invalid pairs
+    .filter((result): result is [PairState.EXISTS, Pair] => Boolean(result[0] === PairState.EXISTS && result[1]))
+    // filter out duplicated pairs
+    .reduce<{ [pairAddress: string]: Pair }>((memo, [, curr]) => {
+      memo[curr.liquidityToken.address] = memo[curr.liquidityToken.address] ?? curr
+      return memo
+    }, {})
 
   // only pass along valid pairs, non-duplicated pairs
   return useMemo(
-    () =>
-      Object.values(
-        allPairs
-          // filter out invalid pairs
-          .filter((result): result is [PairState.EXISTS, Pair] => Boolean(result[0] === PairState.EXISTS && result[1]))
-          // filter out duplicated pairs
-          .reduce<{ [pairAddress: string]: Pair }>((memo, [, curr]) => {
-            memo[curr.liquidityToken.address] = memo[curr.liquidityToken.address] ?? curr
-            return memo
-          }, {})
-      ),
-    [allPairs]
+    () => (
+      {
+        isLoading: !!allPairs.find((allPair) => allPair[0] === PairState.LOADING),
+        pairs: Object.values(filteredAllPairs)
+      }
+    ),
+    [allPairs, filteredAllPairs]
   )
 }
 
 /**
  * Returns the best trade for the exact amount of tokens in to the given token out
  */
-export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?: Currency): Trade | null {
-  const allowedPairs = useAllCommonPairs(currencyAmountIn?.currency, currencyOut)
+export function useTradeExactIn(
+  currencyAmountIn?: CurrencyAmount,
+  currencyOut?: Currency,
+  factoryAddress: string = FACTORY_ADDRESS,
+  initCodeHash: string = INIT_CODE_HASH
+): {
+  isLoading: boolean,
+  trade: Trade | null
+} {
+  const allowedPairs = useAllCommonPairs(currencyAmountIn?.currency, currencyOut, factoryAddress, initCodeHash)
 
   return useMemo(() => {
-    if (currencyAmountIn && currencyOut && allowedPairs.length > 0) {
-      return (
-        Trade.bestTradeExactIn(allowedPairs, currencyAmountIn, currencyOut, { maxHops: 3, maxNumResults: 1 })[0] ?? null
-      )
+    if (currencyAmountIn && currencyOut && allowedPairs.pairs.length > 0 && !allowedPairs.isLoading) {
+      return {
+        isLoading: allowedPairs.isLoading,
+        trade: Trade.bestTradeExactIn(allowedPairs.pairs, currencyAmountIn, currencyOut, { maxHops: 3, maxNumResults: 1 }, [], currencyAmountIn, [], factoryAddress)[0] ?? null
+      }
     }
-    return null
-  }, [allowedPairs, currencyAmountIn, currencyOut])
+    return {
+      isLoading: allowedPairs.isLoading,
+      trade: null
+    }
+  }, [allowedPairs, currencyAmountIn, currencyOut, factoryAddress])
 }
 
 /**
  * Returns the best trade for the token in to the exact amount of token out
  */
-export function useTradeExactOut(currencyIn?: Currency, currencyAmountOut?: CurrencyAmount): Trade | null {
-  const allowedPairs = useAllCommonPairs(currencyIn, currencyAmountOut?.currency)
+export function useTradeExactOut(
+  currencyIn?: Currency,
+  currencyAmountOut?: CurrencyAmount,
+  factoryAddress: string = FACTORY_ADDRESS,
+  initCodeHash: string = INIT_CODE_HASH
+): {
+  isLoading: boolean,
+  trade: Trade | null
+} {
+  const allowedPairs = useAllCommonPairs(currencyIn, currencyAmountOut?.currency, factoryAddress, initCodeHash)
 
   return useMemo(() => {
-    if (currencyIn && currencyAmountOut && allowedPairs.length > 0) {
-      return (
-        Trade.bestTradeExactOut(allowedPairs, currencyIn, currencyAmountOut, { maxHops: 3, maxNumResults: 1 })[0] ??
+    if (currencyIn && currencyAmountOut && allowedPairs.pairs.length > 0 && !allowedPairs.isLoading) {
+      return {
+        isLoading: allowedPairs.isLoading,
+        trade: Trade.bestTradeExactOut(allowedPairs.pairs, currencyIn, currencyAmountOut, { maxHops: 3, maxNumResults: 1 }, [], currencyAmountOut, [], factoryAddress)[0] ??
         null
-      )
+      }
     }
-    return null
-  }, [allowedPairs, currencyIn, currencyAmountOut])
+  return {
+    isLoading: allowedPairs.isLoading,
+    trade: null
+  }
+  }, [allowedPairs, currencyIn, currencyAmountOut, factoryAddress])
 }
