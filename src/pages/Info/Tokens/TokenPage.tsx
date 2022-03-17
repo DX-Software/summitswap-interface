@@ -100,6 +100,8 @@ export default function TokenPage({
     return undefined
   }, [priceData, tokenData])
 
+  console.log("tokenData_123", tokenData)
+
   return (
     <InfoPageLayout>
       {tokenData ? (

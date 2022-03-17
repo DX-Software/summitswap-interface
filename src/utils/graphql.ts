@@ -6,7 +6,9 @@ import { BIT_QUERY_ENDPOINT, INFO_CLIENT } from 'constants/endpoints'
 // No production env check since production preview might also need them
 export const getGQLHeaders = (endpoint: string) => {
   if (endpoint === INFO_CLIENT) {
-    return { 'X-Sf': process.env.NEXT_PUBLIC_SF_HEADER ?? '' }
+    return {
+      // 'X-Sf': process.env.NEXT_PUBLIC_SF_HEADER ?? ''
+    }
   }
   return undefined
 }
@@ -15,7 +17,7 @@ export const infoClient = new GraphQLClient(INFO_CLIENT, { headers: getGQLHeader
 
 export const infoServerClient = new GraphQLClient(INFO_CLIENT, {
   headers: {
-    'X-Sf': process.env.SF_HEADER ?? '',
+    // 'X-Sf': process.env.SF_HEADER ?? '',
   },
   timeout: 5000,
 })
