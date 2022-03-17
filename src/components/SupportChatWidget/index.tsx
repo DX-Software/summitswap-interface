@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import ChatIcon from '../../img/chat.svg'
 import CloseIcon from '../../img/close.svg'
@@ -6,18 +6,19 @@ import ProfileImage from '../../img/pp.png'
 import TelegramIcon from '../../img/telegram-logo.svg'
 import MessengerIcon from '../../img/messenger-logo.svg'
 import DiscordIcon from '../../img/discord-logo.svg'
+import SpinnerIcon from '../../img/spinner.svg'
 
 const ChatButton = styled.div`
   z-index: 10;
 	user-select: none;
-	position: absolute;
+	position: fixed;
 	right: 0;
 	bottom: 0;
 	width: 60px;
 	height: 60px;
 	border-radius: 50%;
 	background: white url(${ChatIcon}) center/50% no-repeat;
-	margin: 20px;
+	margin: 30px;
 	cursor: pointer;
 	box-shadow: 0 0 10px;
   transition: background-color 0.3s ease-in;
@@ -47,7 +48,7 @@ const ChatBox = styled.div`
 
   z-index: 10;
   font-size: 14px;
-  position: absolute;
+  position: fixed;
   width: 340px;
   height: 340px;
   bottom: 80px;
@@ -208,6 +209,14 @@ const Buttons = styled.div`
   }
 `
 
+const Spinner = styled.a`
+  background: #0088cc url(${SpinnerIcon}) center/50% no-repeat;
+
+  &:hover {
+    background-color: #0088cce0;
+  }
+`
+
 const TelegramButton = styled.a`
   background: #0088cc url(${TelegramIcon}) center/30% no-repeat;
 
@@ -259,19 +268,30 @@ const SupportChatWidget = () => {
     }
   }
 
-  const [isOpen, setIsOpen] = useState(false)
+  const [isTgClicked, setIsTgClicked] = useState(false)
+  const [showLoader, setShowLoader] = useState(false)
 
-  const { TelegramClient, Api } = (window as any).telegram
-  const { StringSession } = (window as any).telegram.sessions
+  const { TelegramClient, Api } = window.telegram
+  const { StringSession } = window.telegram.sessions
 
   const apiId = Number(process.env.REACT_APP_TELEGRAM_API_ID)
   const apiHash = process.env.REACT_APP_TELEGRAM_API_HASH
   const stringSession = new StringSession(process.env.REACT_APP_TELEGRAM_STRING_SESSION)
 
-  const init = async () => {
-    setIsOpen(true)
+  const [directionLink, setDirectionLink] = useState('')
 
-    if (!isOpen) {
+  useEffect(() => {
+    if (directionLink) {
+      window.open(directionLink, '_blank')
+    }
+  }, [directionLink])
+
+  const init = async () => {
+    setIsTgClicked(true)
+
+    if (!isTgClicked) {
+      setShowLoader(true)
+
       try {
         const client = new TelegramClient(stringSession, apiId, apiHash, {useWSS: true})
 
@@ -288,27 +308,29 @@ const SupportChatWidget = () => {
           })
         )
 
-        const peerId = `-${result.chats[0].id.value.toString()}`
-
         const result2 = await client.invoke(
           new Api.messages.ExportChatInvite({
-            peer: peerId,
+            peer: result.chats[0],
             legacyRevokePermanent: true,
           })
         )
 
         await client.invoke(
           new Api.messages.SendMessage({
-            peer: peerId,
+            peer: result.chats[0],
             message: "Hi, how can I help you?",
           })
         )
 
-        window.open(result2.link, '_blank')
+        setDirectionLink(result2.link)
+        setShowLoader(false)
+
         } catch(err) {
           // eslint-disable-next-line no-console
           console.log(err)
         }
+      } else if (directionLink) {
+          window.open(directionLink, '_blank')
       }
     }
 
@@ -336,7 +358,7 @@ const SupportChatWidget = () => {
           </MessageContainer>
           <Buttons>
             <h4>Start Chat with:</h4>
-            <TelegramButton onClick={init}/>
+            {showLoader ? <Spinner/> : <TelegramButton onClick={init}/>}
             <MessengerButton target="_blank" rel="nofollow" href="https://m.me/103580315623378"/>
             <DiscordButton target="_blank" rel="nofollow" href="https://discord.gg/wEwrCyxte7"/>
           </Buttons>

@@ -134,6 +134,7 @@ export default function App() {
           value={{ selectedLanguage, setSelectedLanguage, translatedLanguage, setTranslatedLanguage }}
         >
           <TranslationsContext.Provider value={{ translations, setTranslations }}>
+            <SupportChatWidget/>
             <Popups />
             <Web3ReactManager>
               <Switch>
@@ -159,7 +160,6 @@ export default function App() {
                     <Route exact path="/summitcheck" component={SummitCheck} />
 
                     {/* <Route component={RedirectPathToSwapOnly} /> */}
-                    <SupportChatWidget/>
                   </BodyWrapper>
                 </Menu>
               </Switch>
