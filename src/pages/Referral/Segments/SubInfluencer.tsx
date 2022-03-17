@@ -60,7 +60,7 @@ const EnterLeadAddressSection: React.FC<EnterLeadAddressSectionProps> = ({
       try {
         const transaction = await contract.acceptLeadInfluencer(outputToken.address, leadAddress)
         transactionSubmitted(transaction.hash, 'Request succeeded!')
-      } catch (err){
+      } catch (err) {
         transactionFailed(err.message as string)
       }
     }
@@ -72,7 +72,7 @@ const EnterLeadAddressSection: React.FC<EnterLeadAddressSectionProps> = ({
         Lead influencer wallet address
       </Text>
       <form onSubmit={formik.handleSubmit}>
-        <StyledInput value={formik.values.leadAddress} onChange={formik.handleChange} name="leadAddress"/>
+        <StyledInput value={formik.values.leadAddress} onChange={formik.handleChange} name="leadAddress" autoComplete="off"/>
         <Box style={{ marginTop: '12px' }}>
           <Button type="submit">Submit</Button>
         </Box>

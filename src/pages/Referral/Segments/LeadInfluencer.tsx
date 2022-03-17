@@ -101,7 +101,7 @@ const SetSubInfluencerSegment: React.FC<SetSubInfluencerSegmentProps> = ({
       <Text mb="4px" small>
         Sub influncer wallet address
       </Text>
-      <StyledInput name="subWalletAdress" type="text" onChange={formik.handleChange} value={formik.values.subWalletAdress} />
+      <StyledInput name="subWalletAdress" type="text" onChange={formik.handleChange} value={formik.values.subWalletAdress} autoComplete="off"/>
       <Text mb="4px" small>
         Lead influencer fee
       </Text>

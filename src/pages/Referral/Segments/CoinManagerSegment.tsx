@@ -112,7 +112,7 @@ const SetFirstBuyFee: React.FC<SectionProps> = ({
         Fee value
       </Text>
       <form onSubmit={formik.handleSubmit}>
-        <InputWithPlaceHolder value={formik.values.fee} onChange={formik.handleChange} name="fee" min="0" type="number" placeholder={feePlaceholder} />
+        <InputWithPlaceHolder value={formik.values.fee} onChange={formik.handleChange} name="fee" min="0" type="number" placeholder={feePlaceholder} autoComplete="off"/>
         <Box style={{ marginTop: '12px' }}>
           <Button type="submit" >Submit</Button>
         </Box>
@@ -260,7 +260,7 @@ const SetFeeInfo: React.FC<SectionProps> = ({
       <Text mb="4px" small>
         Reward token
       </Text>
-      <InputWithPlaceHolder name="rewardToken" type="text" onChange={formik.handleChange} value={formik.values.rewardToken} placeholder={formHolder?.tokenR} />
+      <InputWithPlaceHolder name="rewardToken" type="text" onChange={formik.handleChange} value={formik.values.rewardToken} placeholder={formHolder?.tokenR} autoComplete="off" />
       <Text mb="4px" small>
         Referral reward percentage
       </Text>
@@ -280,7 +280,7 @@ const SetFeeInfo: React.FC<SectionProps> = ({
         </CenterSign>
       </Flex>
       <Text mb="4px" small>
-        Promotion referral reward percentage
+        Promotion referral reward percentage (optional)
       </Text>
       <Flex>
         <InputWithPlaceHolder name="promRefFee" type="number" onChange={formik.handleChange} value={formik.values.promRefFee} placeholder={formatAmount(formHolder?.promRefFee)} />
@@ -289,11 +289,11 @@ const SetFeeInfo: React.FC<SectionProps> = ({
         </CenterSign>
       </Flex>
       <Text mb="4px" small>
-        Promotion start timestamp
+        Promotion start timestamp (optional)
       </Text>
       <DateInput name="promStart" type="date" onChange={formik.handleChange} value={formik.values.promStart || ''} placeholder={formatDate(formHolder?.promStart)} />
       <Text mb="4px" small>
-        Promotion end timestamp
+        Promotion end timestamp (optional)
       </Text>
       <DateInput name="promEnd" type="date" onChange={formik.handleChange} value={formik.values.promEnd || ''} placeholder={formatDate(formHolder?.promEnd)} />
       <Box style={{ marginTop: '12px' }}>
@@ -361,7 +361,7 @@ const SetLeadManager: React.FC<SectionProps> = ({
         Influencer wallet address
       </Text>
       <form onSubmit={formik.handleSubmit}>
-        <StyledInput value={formik.values.influencerWallet} onChange={formik.handleChange} name="influencerWallet" />
+        <StyledInput value={formik.values.influencerWallet} onChange={formik.handleChange} name="influencerWallet" autoComplete="off"/>
         <Text mb="4px" small>
           Lead fee
         </Text>
@@ -424,7 +424,7 @@ const RemoveLead: React.FC<SectionProps> = ({
         Influencer wallet address
       </Text>
       <form onSubmit={formik.handleSubmit}>
-        <StyledInput value={formik.values.influencerWallet} onChange={formik.handleChange} name="influencerWallet" />
+        <StyledInput value={formik.values.influencerWallet} onChange={formik.handleChange} name="influencerWallet" autoComplete="off"/>
         <Box style={{ marginTop: '12px' }}>
           <Button type="submit">Submit</Button>
         </Box>
@@ -488,7 +488,7 @@ const CheckRole: React.FC<SectionProps> = ({
         Wallet address
       </Text>
       <form onSubmit={formik.handleSubmit}>
-        <StyledInput value={formik.values.influencerWallet} onChange={formik.handleChange} name="influencerWallet" />
+        <StyledInput value={formik.values.influencerWallet} onChange={formik.handleChange} name="influencerWallet" autoComplete="off"/>
         <Box style={{ marginTop: '12px' }}>
           <Button type="submit">Submit</Button>
         </Box>
