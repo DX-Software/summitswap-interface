@@ -8,6 +8,8 @@ import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { TranslateString } from 'utils/translateTextHelpers'
 import { useAllTokens } from 'hooks/Tokens'
 import CurrencyLogo from 'components/CurrencyLogo'
+import qrCode from 'img/qrCode.svg'
+import useReferralLinkQrModal from './useReferralLinkQrModal'
 import ReferalLinkImage from '../../img/referral-link.png'
 import InviteImage from '../../img/invite.png'
 import CoinStackImage from '../../img/coinstack.png'
@@ -52,7 +54,7 @@ const LinkBox = styled(Box)`
       word-break: break-all;
     }
   }
-  > div:last-of-type {
+  > div:not(:first-of-type) {
     cursor: pointer;
     position: relative;
   }
@@ -72,6 +74,8 @@ const Referral: React.FC<IProps> = () => {
   const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
   const allTokensTemp = useAllTokens()
   const location = useLocation()
+
+  const [openReferralLinkQrModal] = useReferralLinkQrModal(referralURL)
 
   useEffect(() => {
     setAllTokens(Object.values(allTokensTemp))
@@ -151,6 +155,9 @@ const Referral: React.FC<IProps> = () => {
             <LinkBox mb={3}>
               <Box>
                 <Text style={{ whiteSpace: isCopySupported ? 'nowrap' : 'normal' }}>{referralURL}</Text>
+              </Box>
+              <Box onClick={openReferralLinkQrModal} mr="10px">
+                <img src={qrCode} alt="" width={22} height={22} />
               </Box>
               <Box style={{ display: isCopySupported ? 'block' : 'none' }} onClick={copyReferralLink}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="19" height="22" viewBox="0 0 19 22" fill="none">
