@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import { Currency, Pair } from '@koda-finance/summitswap-sdk'
-import { Text, Flex } from '@koda-finance/summitswap-uikit'
+import { Text, Flex, Button } from '@koda-finance/summitswap-uikit'
 import styled from 'styled-components'
 import { darken } from 'polished'
 import expandMore from 'img/expandMore.svg'
@@ -9,15 +9,20 @@ import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import CurrencyLogo from '../CurrencyLogo'
 import DoubleCurrencyLogo from '../DoubleLogo'
 import { RowBetween } from '../Row'
-import { Input as NumericalInput } from '../NumericalInput'
+import { Input } from '../NumericalInput'
 import { useActiveWeb3React } from '../../hooks'
 import TranslatedText from '../TranslatedText'
 import { TranslateString } from '../../utils/translateTextHelpers'
 
+const NumericalInput = styled(Input)`
+  text-align: left;
+  padding: 20px 0px;
+  width: 100%;
+`
+
 const InputRow = styled.div<{ selected: boolean }>`
   display: flex;
   flex-flow: row nowrap;
-  align-items: center;
   padding: ${({ selected }) => (selected ? '0.75rem 0.5rem 0.75rem 0.5rem' : '0rem 1.5rem 1.5rem 2rem')};
 `
 
@@ -83,6 +88,7 @@ interface CurrencyInputPanelProps {
   value: string
   onUserInput: (value: string) => void
   onMax?: () => void
+  showMaxButton: boolean
   label?: string
   onCurrencySelect?: (currency: Currency) => void
   currency?: Currency | null
@@ -101,6 +107,7 @@ export default function CurrencyInputPanel({
   value,
   onUserInput,
   onMax,
+  showMaxButton,
   label = TranslateString(132, 'Input'),
   onCurrencySelect,
   currency,
@@ -133,8 +140,8 @@ export default function CurrencyInputPanel({
               </Text>
               {account && isSwap && (
                 <Text color='sidebarColor' onClick={onMax} fontSize="14px" style={{ display: 'inline', cursor: 'pointer' }}>
-                  {!hideBalance && !!currency && selectedCurrencyBalance
-                    ? `Balance: ${selectedCurrencyBalance?.toSignificant(6)}`
+                  {!hideBalance && !!currency
+                    ? `Balance: ${selectedCurrencyBalance?.toSignificant(6) ?? "Loading..."}`
                     : ' -'}
                 </Text>
               )}
@@ -148,23 +155,25 @@ export default function CurrencyInputPanel({
         )}
         <InputRow
           style={
-            hideInput
-              ? { padding: '0', borderRadius: '8px', justifyContent: 'space-between' }
-              : { justifyContent: 'space-between' }
+            hideInput ? { padding: '0', borderRadius: '8px' } : {}
           }
           selected={disableCurrencySelect}
         >
           {!hideInput && (
-            <>
+            <div style={{ flex: 1 }}>
               <NumericalInput
                 className="token-amount-input"
                 value={value}
                 onUserInput={(val) => {
                   onUserInput(val)
                 }}
-                style={{ textAlign: 'left' }}
               />
-            </>
+              {account && currency && showMaxButton && label !== 'To' && (
+                <Button onClick={onMax} scale="xxs" variant="tertiary">
+                  MAX
+                </Button>
+              )}
+            </div>
           )}
           <CurrencySelect
             selected={!!currency}
