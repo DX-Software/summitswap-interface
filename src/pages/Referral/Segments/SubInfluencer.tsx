@@ -8,7 +8,7 @@ import { useFormik } from 'formik';
 import { useReferralContract } from 'hooks/useContract';
 import StyledInput from '../StyledInput'
 import { InfInfo } from '../types';
-import CenterDiv from '../CenterDiv';
+import { CenterDiv } from '../CenterDiv';
 import { StyledBr, StyledWhiteBr } from '../StyledBr';
 import { isAddress } from '../../../utils';
 import { SegmentsProps } from './SegmentsProps';
@@ -88,10 +88,10 @@ const InfoBox: React.FC<InfoBoxProps> = ({ address, leadFee, refFee }) => {
       Address - {address}
     </Text>
     <Text>
-      Fee - {leadFee}
+      Fee - {leadFee} %
     </Text>
     <Text>
-      Referral Fee - {refFee}
+      Referral Fee - {refFee} %
     </Text>
   </Box>
 }

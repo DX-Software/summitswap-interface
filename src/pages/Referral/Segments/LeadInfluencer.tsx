@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Text, Box, Button } from '@koda-finance/summitswap-uikit'
-import { Contract, Event } from 'ethers'
+import { Text, Box, Button, Flex } from '@koda-finance/summitswap-uikit'
+import { Contract, Event, ethers } from 'ethers'
 import { useFormik } from 'formik'
 import { useWeb3React } from '@web3-react/core'
 import { AddressZero } from '@ethersproject/constants'
@@ -14,6 +14,7 @@ import StyledInput from '../StyledInput'
 import { REFERRAL_DEPLOYMENT_BLOCKNUMBER, MAX_QUERYING_BLOCK_AMOUNT } from '../../../constants'
 import LeadHistory from './LeadHistory'
 import { SegmentsProps } from './SegmentsProps'
+import { CenterSign } from '../CenterDiv'
 
 interface SetSubInfluencerSegmentProps extends SegmentsProps {
   contract: Contract | null
@@ -83,8 +84,8 @@ const SetSubInfluencerSegment: React.FC<SetSubInfluencerSegmentProps> = ({
         const transaction = await contract.setSubInfluencer(
           outputToken.address, 
           values.subWalletAdress, 
-          values.leadFee, 
-          values.refFee
+          ethers.utils.parseUnits(values.leadFee || '0', 7),
+          ethers.utils.parseUnits(values.refFee || '0', 7)
         )
         transactionSubmitted(transaction.hash, 'Sub influencer set successfully')
       } catch (err){
@@ -105,11 +106,21 @@ const SetSubInfluencerSegment: React.FC<SetSubInfluencerSegmentProps> = ({
       <Text mb="4px" small>
         Lead influencer fee
       </Text>
-      <StyledInput name="leadFee" type="number" onChange={formik.handleChange} value={formik.values.leadFee} min="0" max="100" placeholder="0"/>
+      <Flex>
+        <StyledInput name="leadFee" type="number" onChange={formik.handleChange} value={formik.values.leadFee} min="0" max="100" placeholder="0"/>
+        <CenterSign>
+          <Text bold>%</Text>
+        </CenterSign>
+      </Flex>
       <Text mb="4px" small>
         Sub influencer fee 
       </Text>
-      <StyledInput name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee} min="0" max="100" placeholder="0"/>
+      <Flex>
+        <StyledInput name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee} min="0" max="100" placeholder="0"/>
+        <CenterSign>
+          <Text bold>%</Text>
+        </CenterSign>
+      </Flex>
       <Box style={{marginTop: '12px'}}>
         <Button type="submit">Submit</Button>
       </Box>

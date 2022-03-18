@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { Text, Box, Button, Flex } from '@koda-finance/summitswap-uikit'
 import { Token } from '@koda-finance/summitswap-sdk'
 import { useFormik } from 'formik';
-import styled from 'styled-components'
 import { BigNumber, Contract, ethers } from 'ethers'
 import { AddressZero } from '@ethersproject/constants'
 import web3 from 'web3'
@@ -10,19 +9,13 @@ import web3 from 'web3'
 import { useReferralContract } from 'hooks/useContract'
 import checkIfUint256 from 'utils/checkUint256'
 import DateInput from '../DateInput'
+import isPercentage from '../utility';
 import { isAddress } from '../../../utils'
 import { StyledBr, StyledWhiteBr } from '../StyledBr';
 import StyledInput from '../StyledInput'
 import { SegmentsProps } from './SegmentsProps';
 import { FeeInfo, InfInfo } from '../types';
-
-const CenterSign = styled(Flex)`
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 16px;
-  margin-top: 8px;
-  margin-left: 8px;
-`
+import { CenterSign } from '../CenterDiv';
 
 interface SectionProps {
   contract: Contract | null
@@ -69,6 +62,7 @@ const SetFirstBuyFee: React.FC<SectionProps> = ({
       try {
         const transaction = await contract.setFirstBuyFee(selectedCoin.address, _fee)
         transactionSubmitted(transaction.hash, 'Set first buy fee succeeded')
+        setFeePlaceholder(ethers.utils.formatUnits(_fee, 7))
       } catch (err) {
         transactionFailed(err.message as string)
       }
@@ -82,9 +76,9 @@ const SetFirstBuyFee: React.FC<SectionProps> = ({
 
       const transaction = await contract.firstBuyRefereeFee(selectedCoin.address) as BigNumber
 
-      const holder = transaction.toString()
-
-      setFeePlaceholder(holder !== '0' ? holder : undefined)
+      const holder = ethers.utils.formatUnits(transaction, 7)
+      
+      setFeePlaceholder(holder)
     }
     fetchFirstBuyRefereeFee()
   }, [selectedCoin, contract])
@@ -99,7 +93,12 @@ const SetFirstBuyFee: React.FC<SectionProps> = ({
         Fee value
       </Text>
       <form onSubmit={formik.handleSubmit}>
-        <StyledInput value={formik.values.fee} onChange={formik.handleChange} name="fee" min="0" max="100" type="number" placeholder={feePlaceholder} autoComplete="off" />
+        <Flex>          
+          <StyledInput value={formik.values.fee} onChange={formik.handleChange} name="fee" min="0" max="100" type="number" placeholder={feePlaceholder} autoComplete="off" />
+          <CenterSign>
+            <Text bold>%</Text>
+          </CenterSign>
+        </Flex>
         <Box style={{ marginTop: '12px' }}>
           <Button type="submit" >Submit</Button>
         </Box>
@@ -127,12 +126,6 @@ const SetFeeInfo: React.FC<SectionProps> = ({
     promEnd?: string;
   }
 
-  const isPercentage = (value?: number): boolean => {
-    if (!value) return false
-
-    return value >= 0 && value <= 100
-  }
-
   const validateInputs = (values: FormInputs) => {
 
     if (!values.refFee && checkIfUint256(`${values.refFee}`) && !isPercentage(values.refFee)) {
@@ -155,17 +148,49 @@ const SetFeeInfo: React.FC<SectionProps> = ({
     return true
   }
 
+  const formatDateFromNumber = (timestamp?: BigNumber) => {
+    if (!timestamp) return ""
+
+    const fromHexToNumber = web3.utils.hexToNumber(timestamp._hex)
+
+    const date = new Date(fromHexToNumber)
+
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const yyyy = date.getFullYear();
+
+    return `${dd}.${mm}.${yyyy}`;
+  }
+
+  const formatDate = (timestamp?: string) => {
+    if (!timestamp) return ""
+    const date = new Date(Number(timestamp))
+
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const yyyy = date.getFullYear();
+
+    return `${dd}.${mm}.${yyyy}`;
+  }
+
   useEffect(() => {
     const fetchFirstBuyRefereeFee = async () => {
       if (!selectedCoin) return
       if (!contract) return
 
-      const transaction = await contract.feeInfo(selectedCoin.address) as FeeInfo
+      const transaction = await contract.feeInfo(selectedCoin.address)
 
       if (transaction.tokenR === AddressZero) {
         setFormHolder(undefined)
       } else {
-        setFormHolder(transaction)
+        setFormHolder({
+          tokenR: transaction.tokenR,
+          refFee: transaction.refFee as BigNumber,
+          devFee: transaction.devFee as BigNumber,
+          promRefFee: transaction.promRefFee as BigNumber,
+          promStart: formatDateFromNumber(transaction.promStart as BigNumber),
+          promEnd: formatDateFromNumber(transaction.promEnd as BigNumber),
+        })
       }
     }
     fetchFirstBuyRefereeFee()
@@ -196,11 +221,11 @@ const SetFeeInfo: React.FC<SectionProps> = ({
         promRefFee
       } = values
 
-      const _refFee = refFee ? ethers.utils.parseUnits(refFee.toString(), 7) : "0"
-      const _devFee = devFee ? ethers.utils.parseUnits(devFee.toString(), 7) : "0"
-      const _promRefFee = promRefFee ? ethers.utils.parseUnits(promRefFee.toString(), 7) : "0"
-      const _promStart = promStart ? `${Math.floor(new Date(promStart).getTime() / 1000)}` : "0"
-      const _promEnd = promEnd ? `${Math.floor(new Date(promEnd).getTime() / 1000)}` : "0"
+      const _refFee = refFee ? ethers.utils.parseUnits(refFee.toString(), 7) : BigNumber.from(0)
+      const _devFee = devFee ? ethers.utils.parseUnits(devFee.toString(), 7) : BigNumber.from(0)
+      const _promRefFee = promRefFee ? ethers.utils.parseUnits(promRefFee.toString(), 7) : BigNumber.from(0)
+      const _promStart = promStart ? `${new Date(promStart).getTime()}` : '0'
+      const _promEnd = promEnd ? `${new Date(promEnd).getTime()}` : '0'
 
       try {
         const transaction = await contract.setFeeInfo(
@@ -213,6 +238,16 @@ const SetFeeInfo: React.FC<SectionProps> = ({
           _promEnd.toString(),
         )
         transactionSubmitted(transaction.hash, 'Set fee information succeeded')
+
+        setFormHolder({
+          tokenR: values.rewardToken,
+          refFee: _refFee,
+          devFee: _devFee,
+          promRefFee: _promRefFee,
+          promStart: formatDate(_promStart),
+          promEnd: formatDate(_promEnd),
+        })
+
       } catch (err) {
         const callError = err as any
         const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message
@@ -224,18 +259,7 @@ const SetFeeInfo: React.FC<SectionProps> = ({
   const formatAmount = (amount?: BigNumber) => {
     if (!amount) return undefined
     if (!selectedCoin) return undefined
-    return ethers.utils.formatUnits(amount, selectedCoin.decimals)
-  }
-
-  const formatDate = (timestamp?: BigNumber) => {
-    if (!timestamp) return undefined
-    const date = new Date(web3.utils.hexToNumber(timestamp._hex))
-
-    const dd = String(date.getDate()).padStart(2, '0');
-    const mm = String(date.getMonth() + 1).padStart(2, '0');
-    const yyyy = date.getFullYear();
-
-    return `${dd}.${mm}.${yyyy}`;
+    return ethers.utils.formatUnits(amount, 7)
   }
 
   return <>
@@ -278,11 +302,11 @@ const SetFeeInfo: React.FC<SectionProps> = ({
       <Text mb="4px" small>
         Promotion start timestamp (optional)
       </Text>
-      <DateInput name="promStart" type="date" onChange={formik.handleChange} value={formik.values.promStart || ''} placeholder={formatDate(formHolder?.promStart)} />
+      <DateInput name="promStart" type="date" onChange={formik.handleChange} value={formik.values.promStart || ''} placeholder={formHolder?.promStart} />
       <Text mb="4px" small>
         Promotion end timestamp (optional)
       </Text>
-      <DateInput name="promEnd" type="date" onChange={formik.handleChange} value={formik.values.promEnd || ''} placeholder={formatDate(formHolder?.promEnd)} />
+      <DateInput name="promEnd" type="date" onChange={formik.handleChange} value={formik.values.promEnd || ''} placeholder={formHolder?.promEnd} />
       <Box style={{ marginTop: '12px' }}>
         <Button type="submit" disabled={selectedCoin?.symbol === 'WBNB'}>Submit</Button>
       </Box>
@@ -354,7 +378,12 @@ const SetLeadManager: React.FC<SectionProps> = ({
         <Text mb="4px" small>
           Lead fee
         </Text>
-        <StyledInput value={formik.values.fee} onChange={formik.handleChange} name="fee" type="number" placeholder="0" min="0" max="100"/>
+        <Flex>
+          <StyledInput value={formik.values.fee} onChange={formik.handleChange} name="fee" type="number" placeholder="0" min="0" max="100"/>
+          <CenterSign>
+            <Text bold>%</Text>
+          </CenterSign>
+        </Flex>
         <Box style={{ marginTop: '12px' }}>
           <Button type="submit">Submit</Button>
         </Box>
@@ -508,10 +537,10 @@ const CheckRole: React.FC<SectionProps> = ({
             ) : null
           }
           <Text>
-            Lead Fee - {ethers.utils.formatUnits(infInfo.leadFee, 7)}
+            Lead Fee - {ethers.utils.formatUnits(infInfo.leadFee, 7)} %
           </Text>
           <Text>
-            Referral Fee - {ethers.utils.formatUnits(infInfo.refFee, 7)}
+            Referral Fee - {ethers.utils.formatUnits(infInfo.refFee, 7)} %
           </Text>
         </Box>
       ) : (
