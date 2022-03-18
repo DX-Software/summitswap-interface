@@ -31,9 +31,9 @@ export interface FeeInfo {
   tokenR: string;
   refFee: BigNumber;
   devFee: BigNumber;
-  promRefFee: BigNumber;
-  promStart: string;
-  promEnd: string;
+  promRefFee?: BigNumber;
+  promStart?: string;
+  promEnd?: string;
 }
 
 export type PaginatedRewards = { [key: string]: ReferralReward[] }

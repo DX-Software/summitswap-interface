@@ -181,7 +181,14 @@ const SetFeeInfo: React.FC<SectionProps> = ({
       const transaction = await contract.feeInfo(selectedCoin.address)
 
       if (transaction.tokenR === AddressZero) {
-        setFormHolder(undefined)
+        setFormHolder({
+          tokenR: AddressZero,
+          refFee: BigNumber.from(0),
+          devFee: BigNumber.from(0),
+          promRefFee: undefined,
+          promStart: undefined,
+          promEnd: undefined
+        })
       } else {
         setFormHolder({
           tokenR: transaction.tokenR,
@@ -544,7 +551,10 @@ const CheckRole: React.FC<SectionProps> = ({
           </Text>
         </Box>
       ) : (
-        <Text bold> No influencer found with this addresse</Text>
+        <>
+          <StyledBr />
+          <Text bold> No influencer found with this address</Text>
+        </>
       ))}
     </Box>
     <StyledBr />
