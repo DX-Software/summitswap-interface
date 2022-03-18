@@ -2634,10 +2634,10 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@koda-finance/summitswap-sdk@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@koda-finance/summitswap-sdk/-/summitswap-sdk-1.1.0.tgz#ba42ec811eafd6fac3eb8a12c77fd0fd49fe1fd4"
-  integrity sha512-ZoWlK45QktlYBjtlbf/0eikzew6krGF10QGbJm1kAjuMUEgcdaEpFgzOdlaUDEuCnbEKPprgNDM5MuFW6MZhRQ==
+"@koda-finance/summitswap-sdk@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@koda-finance/summitswap-sdk/-/summitswap-sdk-1.3.0.tgz#fc90cd782986cf42f336d20a574f125b0464a1f9"
+  integrity sha512-UJ0LphEECRQYj/5KvCPtJU5cQSHgDZCFqxi88kT5f/WF5QN/KmrOo2mbVp+tYkuUizH2e0k40qJWaUkIkBBEPw==
   dependencies:
     "@pancakeswap-libs/pancake-swap-core" "^0.1.0"
     big.js "^5.2.2"
