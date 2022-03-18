@@ -2,11 +2,15 @@ name: deploy testnet
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "feat/support-chat-widget" ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      REACT_APP_TELEGRAM_API_ID: ${{ secrets.REACT_APP_TELEGRAM_API_ID }}
+      REACT_APP_TELEGRAM_API_HASH: ${{ secrets.REACT_APP_TELEGRAM_API_HASH }}
+      REACT_APP_TELEGRAM_STRING_SESSION: ${{ secrets.REACT_APP_TELEGRAM_STRING_SESSION }}
     steps:
       - name: clone repo
         uses: actions/checkout@v2
@@ -34,4 +38,4 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           # forceSsl: # optional, default is false
           localDir: "./build"
-          remoteDir: "./testnet.summitswap.finance"
+          remoteDir: "./app.summitswap.finance"
