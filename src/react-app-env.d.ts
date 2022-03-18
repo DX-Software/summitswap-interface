@@ -9,8 +9,11 @@ declare module 'fortmatic'
 interface Window {
   ethereum?: {
     isMetaMask?: true
+    providers?: any[]
     on?: (...args: any[]) => void
     removeListener?: (...args: any[]) => void
+    request?: (...args: any[]) => Promise<void>
+
   }
   web3?: any
   BinanceChain?: BinanceChain

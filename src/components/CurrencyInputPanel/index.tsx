@@ -16,6 +16,7 @@ import { useActiveWeb3React } from '../../hooks'
 import TranslatedText from '../TranslatedText'
 import { TranslateString } from '../../utils/translateTextHelpers'
 import CopyButton  from '../CopyButton'
+import { registerToken } from '../../connectors/index'
 
 const InputRow = styled.div<{ selected: boolean }>`
   display: flex;
@@ -222,6 +223,7 @@ export default function CurrencyInputPanel({
                 tooltipTop={-20}
                 tooltipRight={40}
                 tooltipFontSize={12}
+                
               />
               {/* {library?.provider?.isMetaMask && (
                 <MetamaskIcon

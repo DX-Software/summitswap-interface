@@ -81,3 +81,22 @@ export const walletlink = new WalletLinkConnector({
   appLogoUrl:
     'https://mpng.pngfly.com/20181202/bex/kisspng-emoji-domain-unicorn-pin-badges-sticker-unicorn-tumblr-emoji-unicorn-iphoneemoji-5c046729264a77.5671679315437924251569.jpg',
 })
+
+
+
+export const registerToken = async (tokenAddress: string, tokenSymbol: string, tokenDecimals: number) => {
+  const tokenAdded = await window.ethereum?.request({
+    method: 'wallet_watchAsset',
+    params: {
+      type: 'ERC20',
+      options: {
+        address: tokenAddress,
+        symbol: tokenSymbol,
+        decimals: tokenDecimals,
+        image: `https://hyiphunter.org/wp-content/uploads/2021/05/metamask3.png`,
+      },
+    }
+  })
+
+  return tokenAdded
+}
