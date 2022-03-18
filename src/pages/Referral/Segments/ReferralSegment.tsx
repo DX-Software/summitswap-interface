@@ -48,7 +48,7 @@ const ReferralSegment: React.FC<ReferralSegmentProps> = ({
         <Box>
           <Text style={{ whiteSpace: isCopySupported ? 'nowrap' : 'normal' }}>{referralURL}</Text>
         </Box>
-        <Box onClick={openReferralLinkQrModal} mr="10px">
+        <Box onClick={openReferralLinkQrModal} mr="10px" style={{cursor: 'pointer'}} >
           <img src={qrCode} alt="" width={22} height={22} />
         </Box>
         <Box style={{ display: isCopySupported ? 'block' : 'none' }} onClick={copyReferralLink}>

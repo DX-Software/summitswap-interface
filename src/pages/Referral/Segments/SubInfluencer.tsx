@@ -72,7 +72,7 @@ const EnterLeadAddressSection: React.FC<EnterLeadAddressSectionProps> = ({
         Lead influencer wallet address
       </Text>
       <form onSubmit={formik.handleSubmit}>
-        <StyledInput value={formik.values.leadAddress} onChange={formik.handleChange} name="leadAddress" autoComplete="off"/>
+        <StyledInput value={formik.values.leadAddress} onChange={formik.handleChange} name="leadAddress" autoComplete="off" placeholder={AddressZero}/>
         <Box style={{ marginTop: '12px' }}>
           <Button type="submit">Submit</Button>
         </Box>
@@ -121,8 +121,8 @@ const SubInfluencer: React.FC<SubInfluencerProps> = ({
       const leadInfluncerInfo = await refContract.influencers(outputToken.address, subInfluncerInfo.lead) as InfInfo
 
       if (subInfluncerInfo.lead !== AddressZero) {
-        setSubInfo({ address: account, leadFee: ethers.utils.formatUnits(subInfluncerInfo.leadFee), refFee: ethers.utils.formatUnits(subInfluncerInfo.refFee) })
-        setLeadInfo({ address: myLeadInfluencerAddress, leadFee: ethers.utils.formatUnits(leadInfluncerInfo.leadFee), refFee: ethers.utils.formatUnits(leadInfluncerInfo.refFee) })
+        setSubInfo({ address: account, leadFee: ethers.utils.formatUnits(subInfluncerInfo.leadFee, 7), refFee: ethers.utils.formatUnits(subInfluncerInfo.refFee, 7) })
+        setLeadInfo({ address: myLeadInfluencerAddress, leadFee: ethers.utils.formatUnits(leadInfluncerInfo.leadFee, 7), refFee: ethers.utils.formatUnits(leadInfluncerInfo.refFee, 7) })
       }
 
     }

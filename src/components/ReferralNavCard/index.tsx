@@ -20,11 +20,8 @@ const CenterDiv = styled.div`
     @media (max-width: 600px) {
       margin: 4px, 4px;
       padding: 4px;
-      /* background-color: #08c708; */
-      /* width: 300px; */
       overflow: auto;
       white-space: nowrap;
-      /* overflow: hidden; */
     }
 
     &::-webkit-scrollbar {

@@ -3,6 +3,7 @@ import { Text, Box, Button } from '@koda-finance/summitswap-uikit'
 import { Contract, Event } from 'ethers'
 import { useFormik } from 'formik'
 import { useWeb3React } from '@web3-react/core'
+import { AddressZero } from '@ethersproject/constants'
 
 import { useReferralContract } from 'hooks/useContract';
 import { isAddress } from 'utils'
@@ -47,7 +48,6 @@ const SetSubInfluencerSegment: React.FC<SetSubInfluencerSegmentProps> = ({
 
   const validateInputs = (inputs: FormInputs) => {
     if (!isAddress(inputs.subWalletAdress)) {
-      alert('Sub influencers wallet adresses is not valid!')
       transactionFailed('Sub influencers wallet adresses is not valid!')
       return false
     }
@@ -99,17 +99,17 @@ const SetSubInfluencerSegment: React.FC<SetSubInfluencerSegmentProps> = ({
     <StyledWhiteBr />
     <form onSubmit={formik.handleSubmit}>
       <Text mb="4px" small>
-        Sub influncer wallet address
+        Sub influencer wallet address
       </Text>
-      <StyledInput name="subWalletAdress" type="text" onChange={formik.handleChange} value={formik.values.subWalletAdress} autoComplete="off"/>
+      <StyledInput name="subWalletAdress" type="text" onChange={formik.handleChange} value={formik.values.subWalletAdress} autoComplete="off" placeholder={AddressZero}/>
       <Text mb="4px" small>
         Lead influencer fee
       </Text>
-      <StyledInput name="leadFee" type="number" onChange={formik.handleChange} value={formik.values.leadFee} min="0"/>
+      <StyledInput name="leadFee" type="number" onChange={formik.handleChange} value={formik.values.leadFee} min="0" max="100" placeholder="0"/>
       <Text mb="4px" small>
-        Sub influncer fee 
+        Sub influencer fee 
       </Text>
-      <StyledInput name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee} min="0"/>
+      <StyledInput name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee} min="0" max="100" placeholder="0"/>
       <Box style={{marginTop: '12px'}}>
         <Button type="submit">Submit</Button>
       </Box>

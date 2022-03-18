@@ -118,7 +118,7 @@ const Referral: React.FC<IProps> = () => {
     })
     const getIfLead = async () => {
       if (!account || !refContract || !selectedOutputCoin) return
-      const influncerInfo = (await refContract.influencers(selectedOutputCoin.address, account)) as InfInfo
+      const influencerInfo = (await refContract.influencers(selectedOutputCoin.address, account)) as InfInfo
       setIsSegmentDisabled((prevState) => {
         const nextValue = {...prevState}
         nextValue.checkLeadOrSub = true
@@ -126,10 +126,10 @@ const Referral: React.FC<IProps> = () => {
       })
       setEnabledSegments((prevState) => {
         const nextValue = { ...prevState }
-        nextValue.leadInfluencer.isActive = influncerInfo.isLead
-        nextValue.subInfluencer.isActive = !influncerInfo.isLead
-        if (!influncerInfo.isLead && influncerInfo.lead) {
-          setMyLeadInfluencerAddress(influncerInfo.lead)
+        nextValue.leadInfluencer.isActive = influencerInfo.isLead
+        nextValue.subInfluencer.isActive = !influencerInfo.isLead
+        if (!influencerInfo.isLead && influencerInfo.lead) {
+          setMyLeadInfluencerAddress(influencerInfo.lead)
         }
         return nextValue
       })

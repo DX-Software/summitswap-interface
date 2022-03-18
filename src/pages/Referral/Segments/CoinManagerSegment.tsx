@@ -16,21 +16,6 @@ import StyledInput from '../StyledInput'
 import { SegmentsProps } from './SegmentsProps';
 import { FeeInfo, InfInfo } from '../types';
 
-const InputWithPlaceHolder = styled(StyledInput)`
-  &::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-    color: gray;
-    opacity: 1; /* Firefox */
-  }
-
-  &:-ms-input-placeholder { /* Internet Explorer 10-11 */
-    color: gray;
-  }
-
-  &::-ms-input-placeholder { /* Microsoft Edge */
-    color: gray;
-  }
-`
-
 const CenterSign = styled(Flex)`
   align-items: center;
   justify-content: center;
@@ -79,8 +64,10 @@ const SetFirstBuyFee: React.FC<SectionProps> = ({
         return
       }
 
+      const _fee = fee ? ethers.utils.parseUnits(fee.toString(), 7) : "0"
+
       try {
-        const transaction = await contract.setFirstBuyFee(selectedCoin.address, fee)
+        const transaction = await contract.setFirstBuyFee(selectedCoin.address, _fee)
         transactionSubmitted(transaction.hash, 'Set first buy fee succeeded')
       } catch (err) {
         transactionFailed(err.message as string)
@@ -112,7 +99,7 @@ const SetFirstBuyFee: React.FC<SectionProps> = ({
         Fee value
       </Text>
       <form onSubmit={formik.handleSubmit}>
-        <InputWithPlaceHolder value={formik.values.fee} onChange={formik.handleChange} name="fee" min="0" type="number" placeholder={feePlaceholder} autoComplete="off"/>
+        <StyledInput value={formik.values.fee} onChange={formik.handleChange} name="fee" min="0" max="100" type="number" placeholder={feePlaceholder} autoComplete="off" />
         <Box style={{ marginTop: '12px' }}>
           <Button type="submit" >Submit</Button>
         </Box>
@@ -212,8 +199,8 @@ const SetFeeInfo: React.FC<SectionProps> = ({
       const _refFee = refFee ? ethers.utils.parseUnits(refFee.toString(), 7) : "0"
       const _devFee = devFee ? ethers.utils.parseUnits(devFee.toString(), 7) : "0"
       const _promRefFee = promRefFee ? ethers.utils.parseUnits(promRefFee.toString(), 7) : "0"
-      const _promStart = promStart ? `${Math.floor(new Date(promStart).getTime() / 100)}` : "0"
-      const _promEnd = promEnd ? `${Math.floor(new Date(promEnd).getTime() / 100)}` : "0"
+      const _promStart = promStart ? `${Math.floor(new Date(promStart).getTime() / 1000)}` : "0"
+      const _promEnd = promEnd ? `${Math.floor(new Date(promEnd).getTime() / 1000)}` : "0"
 
       try {
         const transaction = await contract.setFeeInfo(
@@ -260,12 +247,12 @@ const SetFeeInfo: React.FC<SectionProps> = ({
       <Text mb="4px" small>
         Reward token
       </Text>
-      <InputWithPlaceHolder name="rewardToken" type="text" onChange={formik.handleChange} value={formik.values.rewardToken} placeholder={formHolder?.tokenR} autoComplete="off" />
+      <StyledInput name="rewardToken" type="text" onChange={formik.handleChange} value={formik.values.rewardToken} placeholder={formHolder?.tokenR} autoComplete="off" />
       <Text mb="4px" small>
         Referral reward percentage
       </Text>
       <Flex>
-        <InputWithPlaceHolder name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee} placeholder={formatAmount(formHolder?.refFee)} />
+        <StyledInput name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee} placeholder={formatAmount(formHolder?.refFee)} />
         <CenterSign>
           <Text bold>%</Text>
         </CenterSign>
@@ -274,7 +261,7 @@ const SetFeeInfo: React.FC<SectionProps> = ({
         Developer reward percentage
       </Text>
       <Flex>
-        <InputWithPlaceHolder name="devFee" type="number" onChange={formik.handleChange} value={formik.values.devFee} placeholder={formatAmount(formHolder?.devFee)} />
+        <StyledInput name="devFee" type="number" onChange={formik.handleChange} value={formik.values.devFee} placeholder={formatAmount(formHolder?.devFee)} />
         <CenterSign>
           <Text bold>%</Text>
         </CenterSign>
@@ -283,7 +270,7 @@ const SetFeeInfo: React.FC<SectionProps> = ({
         Promotion referral reward percentage (optional)
       </Text>
       <Flex>
-        <InputWithPlaceHolder name="promRefFee" type="number" onChange={formik.handleChange} value={formik.values.promRefFee} placeholder={formatAmount(formHolder?.promRefFee)} />
+        <StyledInput name="promRefFee" type="number" onChange={formik.handleChange} value={formik.values.promRefFee} placeholder={formatAmount(formHolder?.promRefFee)} />
         <CenterSign>
           <Text bold>%</Text>
         </CenterSign>
@@ -342,8 +329,10 @@ const SetLeadManager: React.FC<SectionProps> = ({
         return
       }
 
+      const _fee = fee ? ethers.utils.parseUnits(fee.toString(), 7) : "0"
+
       try {
-        const transaction = await contract.setLeadInfluencer(selectedCoin.address, influencerWallet, fee)
+        const transaction = await contract.setLeadInfluencer(selectedCoin.address, influencerWallet, _fee)
         transactionSubmitted(transaction.hash, 'Set lead influencer succeeded')
       } catch (err) {
         transactionFailed(err.message as string)
@@ -361,11 +350,11 @@ const SetLeadManager: React.FC<SectionProps> = ({
         Influencer wallet address
       </Text>
       <form onSubmit={formik.handleSubmit}>
-        <StyledInput value={formik.values.influencerWallet} onChange={formik.handleChange} name="influencerWallet" autoComplete="off"/>
+        <StyledInput value={formik.values.influencerWallet} onChange={formik.handleChange} name="influencerWallet" autoComplete="off" placeholder={AddressZero}/>
         <Text mb="4px" small>
           Lead fee
         </Text>
-        <StyledInput value={formik.values.fee} onChange={formik.handleChange} name="fee" type="number" />
+        <StyledInput value={formik.values.fee} onChange={formik.handleChange} name="fee" type="number" placeholder="0" min="0" max="100"/>
         <Box style={{ marginTop: '12px' }}>
           <Button type="submit">Submit</Button>
         </Box>
@@ -424,7 +413,7 @@ const RemoveLead: React.FC<SectionProps> = ({
         Influencer wallet address
       </Text>
       <form onSubmit={formik.handleSubmit}>
-        <StyledInput value={formik.values.influencerWallet} onChange={formik.handleChange} name="influencerWallet" autoComplete="off"/>
+        <StyledInput value={formik.values.influencerWallet} onChange={formik.handleChange} name="influencerWallet" autoComplete="off" placeholder={AddressZero}/>
         <Box style={{ marginTop: '12px' }}>
           <Button type="submit">Submit</Button>
         </Box>
@@ -478,6 +467,20 @@ const CheckRole: React.FC<SectionProps> = ({
   }
   )
 
+  const getRole = (info?: InfInfo) => {
+    if (!info) return null
+
+    if (info.isLead && info.isActive) {
+      return <Text bold>This is a Lead Influencer</Text>
+    } 
+    
+    if (info.lead !== AddressZero && info.isActive){ 
+      return <Text bold>This is a Sub Influencer</Text>
+    } 
+      
+    return <Text bold>This is not an Influencer</Text>
+  }
+
   return <>
     <Text bold>
       Check role for address
@@ -488,7 +491,7 @@ const CheckRole: React.FC<SectionProps> = ({
         Wallet address
       </Text>
       <form onSubmit={formik.handleSubmit}>
-        <StyledInput value={formik.values.influencerWallet} onChange={formik.handleChange} name="influencerWallet" autoComplete="off"/>
+        <StyledInput value={formik.values.influencerWallet} onChange={formik.handleChange} name="influencerWallet" autoComplete="off" placeholder={AddressZero}/>
         <Box style={{ marginTop: '12px' }}>
           <Button type="submit">Submit</Button>
         </Box>
@@ -496,6 +499,7 @@ const CheckRole: React.FC<SectionProps> = ({
       {infInfo && (infInfo.isActive ? (
         <Box>
           <StyledBr />
+          {getRole(infInfo)}
           {
             (infInfo.lead !== AddressZero) ? (
               <Text>
@@ -504,10 +508,10 @@ const CheckRole: React.FC<SectionProps> = ({
             ) : null
           }
           <Text>
-            Lead Fee - {ethers.utils.formatUnits(infInfo.leadFee)}
+            Lead Fee - {ethers.utils.formatUnits(infInfo.leadFee, 7)}
           </Text>
           <Text>
-            Referral Fee - {ethers.utils.formatUnits(infInfo.refFee)}
+            Referral Fee - {ethers.utils.formatUnits(infInfo.refFee, 7)}
           </Text>
         </Box>
       ) : (
