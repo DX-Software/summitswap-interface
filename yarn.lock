@@ -2634,10 +2634,10 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@koda-finance/summitswap-sdk@^1.0.6":
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/@koda-finance/summitswap-sdk/-/summitswap-sdk-1.0.6.tgz#07a28af7171acac6c9039fbbb3a5417c4a4948c5"
-  integrity sha512-1jH3pq/AS4rQaXyDQSb2lMysp0z+VMK+cZeKywy4H80WRkLAT68gaCc4s2eNrawgcp4B1xms4VKk1qcZ6h0oXg==
+"@koda-finance/summitswap-sdk@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@koda-finance/summitswap-sdk/-/summitswap-sdk-1.1.0.tgz#ba42ec811eafd6fac3eb8a12c77fd0fd49fe1fd4"
+  integrity sha512-ZoWlK45QktlYBjtlbf/0eikzew6krGF10QGbJm1kAjuMUEgcdaEpFgzOdlaUDEuCnbEKPprgNDM5MuFW6MZhRQ==
   dependencies:
     "@pancakeswap-libs/pancake-swap-core" "^0.1.0"
     big.js "^5.2.2"
@@ -16631,6 +16631,11 @@ q@^1.1.2, q@^1.5.1:
   resolved "https://registry.yarnpkg.com/q/-/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
   integrity sha1-fjL3W0E4EpHQRhHxvxQQmsAGUdc=
 
+qr.js@0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/qr.js/-/qr.js-0.0.0.tgz#cace86386f59a0db8050fa90d9b6b0e88a1e364f"
+  integrity sha1-ys6GOG9ZoNuAUPqQ2baw6IoeNk8=
+
 qrcode@1.4.4:
   version "1.4.4"
   resolved "https://registry.yarnpkg.com/qrcode/-/qrcode-1.4.4.tgz#f0c43568a7e7510a55efc3b88d9602f71963ea83"
@@ -16922,6 +16927,14 @@ react-popper@^2.2.3:
   dependencies:
     react-fast-compare "^3.0.1"
     warning "^4.0.2"
+
+react-qr-code@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/react-qr-code/-/react-qr-code-2.0.3.tgz#cc80785e08f817d1ab066ca4035262f77d049648"
+  integrity sha512-6GDH0l53lksf2JgZwwcoS0D60a1OAal/GQRyNFkMBW19HjSqvtD5S20scmSQsKl+BgWM85Wd5DCcUYoHd+PZnQ==
+  dependencies:
+    prop-types "^15.7.2"
+    qr.js "0.0.0"
 
 react-redux@^7.2.0:
   version "7.2.2"
