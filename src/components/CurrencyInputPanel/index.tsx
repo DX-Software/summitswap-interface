@@ -118,14 +118,14 @@ export default function CurrencyInputPanel({
   price,
 }: CurrencyInputPanelProps) {
   const [modalOpen, setModalOpen] = useState(false)
-  const { account } = useActiveWeb3React()
+  const { account,library } = useActiveWeb3React()
   const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
   // const {
   //   t,
   //   currentLanguage: { locale },
   // } = useTranslation()
-  const token = pair ? pair.liquidityToken : currency instanceof Token ? currency : null
-  const tokenAddress = token ? isAddress(token.address) : null
+  const token = pair ? pair.liquidityToken : currency instanceof Token ? currency: null
+  const tokenAddress = token ? currency?.name : null
 
   const handleDismissSearch = useCallback(() => {
     setModalOpen(false)
@@ -217,7 +217,7 @@ export default function CurrencyInputPanel({
               <CopyButton
                 width="16px"
                 buttonColor="textSubtle"
-                text={tokenAddress}
+                text={token.address}
                 tooltipMessage="Token address copied"
                 tooltipTop={-20}
                 tooltipRight={40}

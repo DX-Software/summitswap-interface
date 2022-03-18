@@ -24,7 +24,7 @@ const Tooltip = styled.div<{
 `
 
 interface CopyButtonProps extends SvgProps {
-  text: string
+  text: string 
   tooltipMessage: string
   tooltipTop: number
   tooltipRight?: number
