@@ -86,7 +86,7 @@ const SetSubInfluencerSegment: React.FC<SetSubInfluencerSegmentProps> = ({
           values.leadFee, 
           values.refFee
         )
-        transactionSubmitted(transaction.hash, 'Sub influencer set successfully')
+        transactionSubmitted(transaction, 'Sub influencer set successfully')
       } catch (err){
         transactionFailed(err.message as string)
       }

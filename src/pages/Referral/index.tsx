@@ -3,12 +3,13 @@ import { useLocation } from 'react-router-dom'
 import { Token } from '@koda-finance/summitswap-sdk'
 import { Box, Button, useWalletModal, Flex } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
+import { TransactionResponse } from '@ethersproject/providers'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { TranslateString } from 'utils/translateTextHelpers'
 import { useAllTokens } from 'hooks/Tokens'
 import { useReferralContract } from 'hooks/useContract'
-import { useAddPopup } from 'state/application/hooks';
 import TransactionConfirmationModal, { TransactionErrorContent } from 'components/TransactionConfirmationModal';
+import { useTransactionAdder } from 'state/transactions/hooks'
 import ReferalLinkImage from '../../img/referral-link.png'
 import InviteImage from '../../img/invite.png'
 import CoinStackImage from '../../img/coinstack.png'
@@ -32,6 +33,7 @@ interface IProps {
 }
 
 const Referral: React.FC<IProps> = () => {
+  const addTransaction = useTransactionAdder()
   const { account, deactivate, activate } = useWeb3React()
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedOutputCoin, setSelectedOutputCoin] = useState<Token | undefined>()
@@ -55,8 +57,6 @@ const Referral: React.FC<IProps> = () => {
   const [pendingText, setPendingText] = useState<string>('')
   const [errorMessage, setErrorMessage] = useState<string | undefined>()
 
-  const addPopup = useAddPopup()
-
   const onDismiss = () => {
     setHash(undefined)
     setPendingText('')
@@ -71,12 +71,14 @@ const Referral: React.FC<IProps> = () => {
     setAttemptingTxn(true)
   }, [])
 
-  const transactionSubmitted = useCallback((hashText: string, summary: string) => {
+  const transactionSubmitted = useCallback((response: TransactionResponse, summary: string) => {
     setIsOpen(true)
     setAttemptingTxn(false)
-    setHash(hashText)
-    addPopup({ txn: { hash: hashText, summary, success: true } }, hashText)
-  }, [addPopup])
+    setHash(response.hash)
+    addTransaction(response, {
+      summary
+    })
+  }, [addTransaction])
 
   const transactionFailed = useCallback((messFromError: string) => {
     setIsOpen(true)
