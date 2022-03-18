@@ -2,7 +2,7 @@ name: deploy testnet
 
 on:
   push:
-    branches: [ "feat/support-chat-widget" ]
+    branches: [ "develop" ]
 
 jobs:
   deploy:
@@ -38,4 +38,4 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           # forceSsl: # optional, default is false
           localDir: "./build"
-          remoteDir: "./app.summitswap.finance"
+          remoteDir: "./testnet.summitswap.finance"
