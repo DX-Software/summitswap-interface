@@ -87,7 +87,7 @@ const SetSubInfluencerSegment: React.FC<SetSubInfluencerSegmentProps> = ({
           ethers.utils.parseUnits(values.leadFee || '0', 7),
           ethers.utils.parseUnits(values.refFee || '0', 7)
         )
-        transactionSubmitted(transaction.hash, 'Sub influencer set successfully')
+        transactionSubmitted(transaction, 'Sub influencer set successfully')
       } catch (err){
         transactionFailed(err.message as string)
       }

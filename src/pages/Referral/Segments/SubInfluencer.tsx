@@ -59,7 +59,7 @@ const EnterLeadAddressSection: React.FC<EnterLeadAddressSectionProps> = ({
 
       try {
         const transaction = await contract.acceptLeadInfluencer(outputToken.address, leadAddress)
-        transactionSubmitted(transaction.hash, 'Request succeeded!')
+        transactionSubmitted(transaction, 'Request succeeded!')
       } catch (err) {
         transactionFailed(err.message as string)
       }

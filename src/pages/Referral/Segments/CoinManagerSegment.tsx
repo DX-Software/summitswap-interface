@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Text, Box, Button, Flex } from '@koda-finance/summitswap-uikit'
 import { Token } from '@koda-finance/summitswap-sdk'
+import { TransactionResponse } from '@ethersproject/providers'
 import { useFormik } from 'formik';
 import { BigNumber, Contract, ethers } from 'ethers'
 import { AddressZero } from '@ethersproject/constants'
@@ -21,7 +22,7 @@ interface SectionProps {
   contract: Contract | null
   selectedCoin?: Token
   openModel: (pendingMess: string) => void
-  transactionSubmitted: (hashText: string, summary: string) => void
+  transactionSubmitted: (response: TransactionResponse, summary: string) => void
   transactionFailed: (messFromError: string) => void
   onDismiss: () => void
 }
@@ -61,8 +62,8 @@ const SetFirstBuyFee: React.FC<SectionProps> = ({
 
       try {
         const transaction = await contract.setFirstBuyFee(selectedCoin.address, _fee)
-        transactionSubmitted(transaction.hash, 'Set first buy fee succeeded')
         setFeePlaceholder(ethers.utils.formatUnits(_fee, 7))
+        transactionSubmitted(transaction, 'Set first buy fee succeeded')
       } catch (err) {
         transactionFailed(err.message as string)
       }
@@ -244,7 +245,6 @@ const SetFeeInfo: React.FC<SectionProps> = ({
           _promStart.toString(),
           _promEnd.toString(),
         )
-        transactionSubmitted(transaction.hash, 'Set fee information succeeded')
 
         setFormHolder({
           tokenR: values.rewardToken,
@@ -255,6 +255,7 @@ const SetFeeInfo: React.FC<SectionProps> = ({
           promEnd: formatDate(_promEnd),
         })
 
+        transactionSubmitted(transaction, 'Set fee information succeeded')
       } catch (err) {
         const callError = err as any
         const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message
@@ -364,7 +365,7 @@ const SetLeadManager: React.FC<SectionProps> = ({
 
       try {
         const transaction = await contract.setLeadInfluencer(selectedCoin.address, influencerWallet, _fee)
-        transactionSubmitted(transaction.hash, 'Set lead influencer succeeded')
+        transactionSubmitted(transaction, 'Set lead influencer succeeded')
       } catch (err) {
         transactionFailed(err.message as string)
       }
@@ -431,7 +432,7 @@ const RemoveLead: React.FC<SectionProps> = ({
 
       try {
         const transaction = await contract.removeLeadInfluencer(selectedCoin.address, influencerWallet)
-        transactionSubmitted(transaction.hash, 'Remove lead influencer succeeded')
+        transactionSubmitted(transaction, 'Remove lead influencer succeeded')
       } catch (err) {
         transactionFailed(err.message as string)
       }
