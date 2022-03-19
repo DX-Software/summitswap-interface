@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import { Currency, Pair, Token  } from '@koda-finance/summitswap-sdk'
 import { Text, Flex } from '@koda-finance/summitswap-uikit'
+import { MetamaskIcon } from 'components/Svg'
 import styled from 'styled-components'
 import { darken } from 'polished'
 import expandMore from 'img/expandMore.svg'
@@ -126,7 +127,10 @@ export default function CurrencyInputPanel({
   //   currentLanguage: { locale },
   // } = useTranslation()
   const token = pair ? pair.liquidityToken : currency instanceof Token ? currency: null
-  const tokenAddress = token ? currency?.name : null
+  const tokenAddress = token ? isAddress(token.address) : null
+  const tokenSymbol= token? currency?.symbol :null 
+
+
 
   const handleDismissSearch = useCallback(() => {
     setModalOpen(false)
@@ -186,6 +190,7 @@ export default function CurrencyInputPanel({
               }
             }}
           >
+            
             <Aligner>
               <Flex minWidth='75px'>
                 {pair ? (
@@ -213,7 +218,7 @@ export default function CurrencyInputPanel({
               )}
             </Aligner>
           </CurrencySelect>
-          {token && tokenAddress ? (
+          {token && tokenAddress && tokenSymbol ? (
             <Flex style={{ gap: '4px' }} alignItems="center">
               <CopyButton
                 width="16px"
@@ -224,14 +229,14 @@ export default function CurrencyInputPanel({
                 tooltipRight={40}
                 tooltipFontSize={12}
                 
-              />
-              {/* {library?.provider?.isMetaMask && (
-                <MetamaskIcon
+              /> 
+              <MetamaskIcon
                   style={{ cursor: 'pointer' }}
                   width="16px"
-                  onClick={() => registerToken(tokenAddress, token.symbol, token.decimals)}
-                />
-              )} */}
+                  // onClick={() => registerToken(tokenAddress, token.symbol, token.decimals)}
+            />      
+            
+             
             </Flex>
           ) : null}
         </InputRow>

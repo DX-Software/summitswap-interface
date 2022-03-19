@@ -85,18 +85,18 @@ export const walletlink = new WalletLinkConnector({
 
 
 export const registerToken = async (tokenAddress: string, tokenSymbol: string, tokenDecimals: number) => {
-  const tokenAdded = await window.ethereum?.request({
-    method: 'wallet_watchAsset',
-    params: {
-      type: 'ERC20',
-      options: {
-        address: tokenAddress,
-        symbol: tokenSymbol,
-        decimals: tokenDecimals,
-        image: `https://hyiphunter.org/wp-content/uploads/2021/05/metamask3.png`,
-      },
-    }
-  })
+  // const tokenAdded = await window.ethereum?.request({
+  //   method: 'wallet_watchAsset',
+  //   params: {
+  //     type: 'ERC20',
+  //     options: {
+  //       address: tokenAddress,
+  //       symbol: tokenSymbol,
+  //       decimals: tokenDecimals,
+  //       image: `https://hyiphunter.org/wp-content/uploads/2021/05/metamask3.png`,
+  //     },
+  //   }
+  // })
 
-  return tokenAdded
+  // return tokenAdded
 }
