@@ -127,7 +127,7 @@ export default function CurrencyInputPanel({
   //   currentLanguage: { locale },
   // } = useTranslation()
   const token = pair ? pair.liquidityToken : currency instanceof Token ? currency: null
-  const tokenAddress = token ? isAddress(token.address) : null
+  const tokenAddress = token ? currency?.name : null
   const tokenSymbol= token? currency?.symbol :null 
 
 
