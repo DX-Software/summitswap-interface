@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { darken } from 'polished'
 import expandMore from 'img/expandMore.svg'
 import { isAddress } from 'utils'
-// import  useTranslation  from 'contexts/Localization/useTranslation'
+
 import { useCurrencyBalance } from '../../state/wallet/hooks'
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import CurrencyLogo from '../CurrencyLogo'
@@ -122,13 +122,11 @@ export default function CurrencyInputPanel({
   const [modalOpen, setModalOpen] = useState(false)
   const { account,library } = useActiveWeb3React()
   const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
-  // const {
-  //   t,
-  //   currentLanguage: { locale },
-  // } = useTranslation()
+ 
   const token = pair ? pair.liquidityToken : currency instanceof Token ? currency: null
-  const tokenAddress = token ? currency?.name : null
-  const tokenSymbol= token? currency?.symbol :null 
+
+  const tokenAddress = token ? isAddress(token.address) : null
+  const tokenSymbol= token ? currency?.symbol :null 
 
 
 
@@ -230,11 +228,14 @@ export default function CurrencyInputPanel({
                 tooltipFontSize={12}
                 
               /> 
+                {library?.provider?.isMetaMask && (
+
               <MetamaskIcon
                   style={{ cursor: 'pointer' }}
                   width="16px"
-                  // onClick={() => registerToken(tokenAddress, token.symbol, token.decimals)}
-            />      
+                  onClick={() => registerToken(tokenAddress, tokenSymbol, token.decimals)}
+            /> 
+                 )}
             
              
             </Flex>
