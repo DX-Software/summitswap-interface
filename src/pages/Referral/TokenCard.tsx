@@ -112,8 +112,8 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, tokenPrices, 
       const referralAddressBalance = await tokenContract.balanceOf(REFERRAL_ADDRESS)
       const hasReferralEnoughBalance = referralAddressBalance.gte(newBalance)
 
-      setTokenSymbol(selectedToken?.symbol ?? "")
-      setTokenDecimals(selectedToken?.decimals ?? 0)
+      setTokenSymbol(await tokenContract.symbol())
+      setTokenDecimals(await tokenContract.decimals())
       setBalance(newBalance)
       setHasReferralEnough(hasReferralEnoughBalance)
 
@@ -149,13 +149,13 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, tokenPrices, 
         .claimRewardIn(tokenAddress, claimToken.address ?? WETH[CHAIN_ID].address)
       
       const estimatedGas = ethers.utils.formatUnits(estimatedGasInBNB.mul(2), tokenDecimals)
-      const estimatedGasInUsd = Number(estimatedGas) * tokenPrices[BNB_COINGECKO_ID].usd
+      const estimatedGasInUsd = Number(estimatedGas) * (tokenPrices[BNB_COINGECKO_ID]?.usd ?? 0)
 
       const tokenPriceInUsd = selectedToken.coingeckoId ? tokenPrices[selectedToken.coingeckoId]?.usd ?? 0 : 0
       const tokenPrice = ethers.utils.formatUnits(balance, tokenDecimals)
       const totalTokenPriceInUsd = Number(tokenPrice) * tokenPriceInUsd
 
-      return totalTokenPriceInUsd > estimatedGasInUsd;
+      return totalTokenPriceInUsd >= estimatedGasInUsd
     
     } catch (err) {
       console.log("Error: ", err)
