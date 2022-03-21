@@ -277,6 +277,7 @@ const SupportChatWidget = () => {
   const apiId = Number(process.env.REACT_APP_TELEGRAM_API_ID)
   const apiHash = process.env.REACT_APP_TELEGRAM_API_HASH
   const stringSession = new StringSession(process.env.REACT_APP_TELEGRAM_STRING_SESSION)
+  const supportMembers = [process.env.REACT_APP_TELEGRAM_SUPPORT_MEMBER_1, process.env.REACT_APP_TELEGRAM_SUPPORT_MEMBER_2, process.env.REACT_APP_TELEGRAM_SUPPORT_MEMBER_3]
 
   const [directionLink, setDirectionLink] = useState('')
 
@@ -303,7 +304,7 @@ const SupportChatWidget = () => {
 
         const result = await client.invoke(
           new Api.messages.CreateChat({
-            users: ["raw_data_bot"],
+            users: [supportMembers[0], supportMembers[1], supportMembers[2]],
             title: "SummitSwap Support",
           })
         )
@@ -312,13 +313,6 @@ const SupportChatWidget = () => {
           new Api.messages.ExportChatInvite({
             peer: result.chats[0],
             legacyRevokePermanent: true,
-          })
-        )
-
-        await client.invoke(
-          new Api.messages.SendMessage({
-            peer: result.chats[0],
-            message: "Hi, how can I help you?",
           })
         )
 
