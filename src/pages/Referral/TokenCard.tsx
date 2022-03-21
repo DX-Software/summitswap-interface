@@ -142,7 +142,7 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, tokenPrices, 
     if (!refContract) return false
     if (!claimToken) return false
     if (!balance || !tokenDecimals) return false
-    if (!selectedToken || !tokenPrices) return false
+    if (!selectedToken || !tokenPrices) return true
 
     try {
       const estimatedGasInBNB = await refContract.estimateGas
