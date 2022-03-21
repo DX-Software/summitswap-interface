@@ -60,7 +60,6 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, tokenPrices, 
   const [balance, setBalance] = useState<BigNumber | undefined>(undefined)
   const [tokenSymbol, setTokenSymbol] = useState<string>('')
   const [isTokenPriceValid, setIsTokenPriceValid] = useState<boolean>(true);
-  const [tokenDecimals, setTokenDecimals] = useState(0);
   const [hasReferralEnough, setHasReferralEnough] = useState(true)
   const [claimed, setClaimed] = useState(false)
 
@@ -113,7 +112,6 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, tokenPrices, 
       const hasReferralEnoughBalance = referralAddressBalance.gte(newBalance)
 
       setTokenSymbol(await tokenContract.symbol())
-      setTokenDecimals(await tokenContract.decimals())
       setBalance(newBalance)
       setHasReferralEnough(hasReferralEnoughBalance)
 
@@ -135,24 +133,23 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, tokenPrices, 
 
     handleSetIsTokenPriceValid()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, refContract, claimToken, balance, selectedToken, tokenDecimals, tokenPrices?.length])
+  }, [account, refContract, claimToken, balance, selectedToken, tokenPrices?.length])
 
   async function isClaimTokenPriceHigherThanGasFee(): Promise<boolean> {
     if (!account) return false
     if (!refContract) return false
-    if (!claimToken) return false
-    if (!balance || !tokenDecimals) return false
+    if (!balance) return false
     if (!selectedToken || !tokenPrices) return true
 
     try {
       const estimatedGasInBNB = await refContract.estimateGas
-        .claimRewardIn(tokenAddress, claimToken.address ?? WETH[CHAIN_ID].address)
+        .claimRewardIn(tokenAddress, claimToken?.address ?? outputToken?.address ?? WETH[CHAIN_ID].address)
       
-      const estimatedGas = ethers.utils.formatUnits(estimatedGasInBNB.mul(2), tokenDecimals)
+      const estimatedGas = ethers.utils.formatUnits(estimatedGasInBNB.mul(2), outputToken?.decimals)
       const estimatedGasInUsd = Number(estimatedGas) * (tokenPrices[BNB_COINGECKO_ID]?.usd ?? 0)
 
       const tokenPriceInUsd = selectedToken.coingeckoId ? tokenPrices[selectedToken.coingeckoId]?.usd ?? 0 : 0
-      const tokenPrice = ethers.utils.formatUnits(balance, tokenDecimals)
+      const tokenPrice = ethers.utils.formatUnits(balance, outputToken?.decimals)
       const totalTokenPriceInUsd = Number(tokenPrice) * tokenPriceInUsd
 
       return totalTokenPriceInUsd >= estimatedGasInUsd
