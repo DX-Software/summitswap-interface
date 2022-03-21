@@ -16,6 +16,7 @@ const useGetTokenPrice = (ids: string[], currencies: string[] = ["usd"]): null |
   const [data, setData] = useState<ApiResponse | null>(null)
 
   useEffect(() => {
+    if (ids.length === 0) return
     const fetchData = async () => {
       try {
         const response = await fetch(api)
@@ -29,7 +30,7 @@ const useGetTokenPrice = (ids: string[], currencies: string[] = ["usd"]): null |
 
     fetchData()
     // eslint-disable-next-line 
-  }, [setData, ids])
+  }, [setData, ids.length])
 
   return data
 }

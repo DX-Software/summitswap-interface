@@ -40,7 +40,7 @@ const CurrencyLogoWrapper = styled(Box)`
 
 const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
   const { account } = useWeb3React()
-  const [geckoIds, setGeckoIds] = useState<string[]>([BNB_COINGECKO_ID])
+  const [geckoIds, setGeckoIds] = useState<string[]>([])
 
   const tokenPrices = useGetTokenPrice(geckoIds)
 
