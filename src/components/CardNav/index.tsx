@@ -34,7 +34,7 @@ const Nav = ({ activeIndex = 0 }: { activeIndex?: number }) => (
   <StyledNav>
     <ButtonMenu activeIndex={activeIndex} variant="awesome">
       <ButtonMenuItem id="swap-nav-link" to="/swap" as={Link}>
-        <TranslatedText translationId={8}>EXCHANGE</TranslatedText>
+        <TranslatedText translationId={8}>SWAP</TranslatedText>
       </ButtonMenuItem>
       <ButtonMenuItem id="pool-nav-link" to="/pool" as={Link}>
         <TranslatedText translationId={262}>LIQUIDITY</TranslatedText>

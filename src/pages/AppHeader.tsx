@@ -43,7 +43,7 @@ export default function AppHeader() {
   return (
     <StyledContainer>
       <Box>
-        {location.pathname.search('/swap') !== -1 && 'Exchange'}
+        {location.pathname.search('/swap') !== -1 && 'Swap'}
         {location.pathname === '/pool' && 'Liquidity'}
         {location.pathname.search('/add') !== -1 && 'Liquidity'}
         {location.pathname === '/find' && 'Liquidity'}
