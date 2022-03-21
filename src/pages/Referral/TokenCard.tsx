@@ -145,14 +145,14 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, tokenPrices, 
       const estimatedGasInBNB = await refContract.estimateGas
         .claimRewardIn(tokenAddress, claimToken?.address ?? outputToken?.address ?? WETH[CHAIN_ID].address)
       
-      const estimatedGas = ethers.utils.formatUnits(estimatedGasInBNB.mul(2), outputToken?.decimals)
+      const estimatedGas = ethers.utils.formatUnits(estimatedGasInBNB.mul(2), 8)
       const estimatedGasInUsd = Number(estimatedGas) * (tokenPrices[BNB_COINGECKO_ID]?.usd ?? 0)
 
       const tokenPriceInUsd = selectedToken.coingeckoId ? tokenPrices[selectedToken.coingeckoId]?.usd ?? 0 : 0
-      const tokenPrice = ethers.utils.formatUnits(balance, outputToken?.decimals)
+      const tokenPrice = ethers.utils.formatUnits(balance, claimToken?.decimals ?? outputToken?.decimals ?? 0)
       const totalTokenPriceInUsd = Number(tokenPrice) * tokenPriceInUsd
 
-      return totalTokenPriceInUsd >= estimatedGasInUsd
+      return totalTokenPriceInUsd === 0 || estimatedGasInUsd === 0 || totalTokenPriceInUsd >= estimatedGasInUsd
     
     } catch (err) {
       console.log("Error: ", err)
