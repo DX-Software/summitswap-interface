@@ -7,7 +7,7 @@ import { useReferralContract } from 'hooks/useContract'
 import { useWeb3React } from '@web3-react/core'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import CurrencyLogo from 'components/CurrencyLogo'
-import useGetTokenPrice from 'hooks/useGetTokenPrice'
+import useTokenPrice from 'hooks/useTokenPrice'
 import TokenCard from './TokenCard'
 import { BNB_COINGECKO_ID, BUSDs, CHAIN_ID, KAPEXs } from '../../constants'
 import { useClaimingFeeModal } from './useClaimingFeeModal'
@@ -42,7 +42,7 @@ const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
   const { account } = useWeb3React()
   const [geckoIds, setGeckoIds] = useState<string[]>([])
 
-  const tokenPrices = useGetTokenPrice(geckoIds)
+  const tokenPrices = useTokenPrice(geckoIds)
 
   const [hasClaimedAll, setHasClaimedAll] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
