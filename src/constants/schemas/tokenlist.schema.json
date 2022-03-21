@@ -231,6 +231,13 @@
               "binancecoin"
             ]
           },
+          "allowSellMax": {
+            "type": "boolean",
+            "description": "A flag indicating whether the token can be sold for the maximum amount of the token",
+            "examples": [
+              true
+            ]
+          },
           "tags": {
             "type": "array",
             "description": "An array of tag identifiers associated with the token; tags are defined at the list level",
