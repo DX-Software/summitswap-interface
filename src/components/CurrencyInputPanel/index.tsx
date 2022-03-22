@@ -1,9 +1,12 @@
 import React, { useState, useCallback } from 'react'
-import { Currency, Pair } from '@koda-finance/summitswap-sdk'
 import { Text, Flex, Button } from '@koda-finance/summitswap-uikit'
+import { Currency, Pair, Token  } from '@koda-finance/summitswap-sdk'
+import { MetamaskIcon } from 'components/Svg'
 import styled from 'styled-components'
 import { darken } from 'polished'
 import expandMore from 'img/expandMore.svg'
+import { isAddress } from 'utils'
+
 import { useCurrencyBalance } from '../../state/wallet/hooks'
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import CurrencyLogo from '../CurrencyLogo'
@@ -13,6 +16,8 @@ import { Input } from '../NumericalInput'
 import { useActiveWeb3React } from '../../hooks'
 import TranslatedText from '../TranslatedText'
 import { TranslateString } from '../../utils/translateTextHelpers'
+import CopyButton  from '../CopyButton'
+import { registerToken } from '../../connectors/index'
 
 const NumericalInput = styled(Input)`
   text-align: left;
@@ -122,12 +127,20 @@ export default function CurrencyInputPanel({
   price,
 }: CurrencyInputPanelProps) {
   const [modalOpen, setModalOpen] = useState(false)
-  const { account } = useActiveWeb3React()
+  const { account,library } = useActiveWeb3React()
   const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
+ 
+  const token = pair ? pair.liquidityToken : currency instanceof Token ? currency: null
+
+  const tokenAddress = token ? isAddress(token.address) : null
+  const tokenSymbol= token ? currency?.symbol :null 
+
+
 
   const handleDismissSearch = useCallback(() => {
     setModalOpen(false)
   }, [setModalOpen])
+
 
   return (
     <InputPanel id={id}>
@@ -184,6 +197,7 @@ export default function CurrencyInputPanel({
               }
             }}
           >
+            
             <Aligner>
               <Flex minWidth='75px'>
                 {pair ? (
@@ -211,6 +225,30 @@ export default function CurrencyInputPanel({
               )}
             </Aligner>
           </CurrencySelect>
+          {token && tokenAddress && tokenSymbol ? (
+            <Flex style={{ gap: '4px' }} alignItems="center">
+              <CopyButton
+                width="16px"
+                buttonColor="textSubtle"
+                text={token.address}
+                tooltipMessage="Token address copied"
+                tooltipTop={-20}
+                tooltipRight={40}
+                tooltipFontSize={12}
+                
+              /> 
+                {library?.provider?.isMetaMask && (
+
+              <MetamaskIcon
+                  style={{ cursor: 'pointer' }}
+                  width="16px"
+                  onClick={() => registerToken(token)}
+            /> 
+                 )}
+            
+             
+            </Flex>
+          ) : null}
         </InputRow>
       </Container>
       {!disableCurrencySelect && onCurrencySelect && (
