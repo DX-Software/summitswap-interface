@@ -87,12 +87,14 @@ const SetSubInfluencerSegment: React.FC<SetSubInfluencerSegmentProps> = ({
         const transaction = await contract.setSubInfluencer(
           outputToken.address, 
           values.subWalletAdress, 
-          ethers.utils.parseUnits(values.leadFee || '0', 7),
-          ethers.utils.parseUnits(values.refFee || '0', 7)
+          ethers.utils.parseUnits(values.leadFee?.toString() || '0', 7),
+          ethers.utils.parseUnits(values.refFee?.toString() || '0', 7)
         )
         transactionSubmitted(transaction, 'Sub influencer set successfully')
       } catch (err){
-        transactionFailed(err.message as string)
+        const callError = err as any
+        const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message
+        transactionFailed(callErrorMessage)
       }
   }})
 
@@ -110,7 +112,7 @@ const SetSubInfluencerSegment: React.FC<SetSubInfluencerSegmentProps> = ({
         Lead influencer fee
       </Text>
       <Flex>
-        <StyledInput name="leadFee" type="number" onChange={formik.handleChange} value={formik.values.leadFee} min="0" max="100" placeholder="0"/>
+        <StyledInput name="leadFee" type="number" onChange={formik.handleChange} value={formik.values.leadFee} min="0" max="100" placeholder="0" step={0.01} />
         <CenterSign>
           <Text bold>%</Text>
         </CenterSign>
@@ -119,7 +121,7 @@ const SetSubInfluencerSegment: React.FC<SetSubInfluencerSegmentProps> = ({
         Sub influencer fee 
       </Text>
       <Flex>
-        <StyledInput name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee} min="0" max="100" placeholder="0"/>
+        <StyledInput name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee} min="0" max="100" placeholder="0" step={0.01} />
         <CenterSign>
           <Text bold>%</Text>
         </CenterSign>

@@ -19,6 +19,7 @@ interface SubInfluencerProps extends SegmentsProps {
 }
 
 interface InfoBoxProps {
+  isSubInf: boolean;
   address: string;
   leadFee: string;
   refFee: string;
@@ -61,7 +62,9 @@ const EnterLeadAddressSection: React.FC<EnterLeadAddressSectionProps> = ({
         const transaction = await contract.acceptLeadInfluencer(outputToken.address, leadAddress)
         transactionSubmitted(transaction, 'Request succeeded!')
       } catch (err) {
-        transactionFailed(err.message as string)
+        const callError = err as any
+        const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message
+        transactionFailed(callErrorMessage)
       }
     }
   })
@@ -82,18 +85,16 @@ const EnterLeadAddressSection: React.FC<EnterLeadAddressSectionProps> = ({
   </>
 }
 
-const InfoBox: React.FC<InfoBoxProps> = ({ address, leadFee, refFee }) => {
-  return <Box>
-    <Text>
-      Address - {address}
-    </Text>
-    <Text>
-      Fee - {leadFee} %
-    </Text>
-    <Text>
-      Referral Fee - {refFee} %
-    </Text>
-  </Box>
+const InfoBox: React.FC<InfoBoxProps> = ({ address, isSubInf, leadFee, refFee }) => {
+  return (
+    <Box>
+      <Text>Address - {address}</Text>
+      <Text>Lead Inf Reward - {leadFee} %</Text>
+      {isSubInf && (
+        <Text>Sub Inf Reward - {refFee} %</Text>
+      )}
+    </Box>
+  )
 }
 
 const SubInfluencer: React.FC<SubInfluencerProps> = ({ 
@@ -122,12 +123,14 @@ const SubInfluencer: React.FC<SubInfluencerProps> = ({
 
       if (subInfluncerInfo.lead !== AddressZero) {
         setSubInfo({ 
-          address: account, 
+          address: account,
+          isSubInf: true,
           leadFee: ethers.utils.formatUnits(subInfluncerInfo.leadFee, 7), 
           refFee: ethers.utils.formatUnits(subInfluncerInfo.refFee, 7) 
         })
         setLeadInfo({ 
-          address: myLeadInfluencerAddress, 
+          address: myLeadInfluencerAddress,
+          isSubInf: false,
           leadFee: ethers.utils.formatUnits(leadInfluncerInfo.leadFee, 7), 
           refFee: ethers.utils.formatUnits(leadInfluncerInfo.refFee, 7) 
         })

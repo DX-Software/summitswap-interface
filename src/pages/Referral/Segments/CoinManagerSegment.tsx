@@ -18,6 +18,12 @@ import { FeeInfo, InfInfo } from '../types';
 import { CenterSign } from '../CenterDiv';
 import { isdecimals, isPercentage } from '../utility';
 
+enum Role {
+  LEAD_INFLUENCER,
+  SUB_INFLUENCER,
+  USER,
+}
+
 interface SectionProps {
   contract: Contract | null
   selectedCoin?: Token
@@ -65,7 +71,9 @@ const SetFirstBuyFee: React.FC<SectionProps> = ({
         setFeePlaceholder(ethers.utils.formatUnits(_fee, 7))
         transactionSubmitted(transaction, 'Set first buy fee succeeded')
       } catch (err) {
-        transactionFailed(err.message as string)
+        const callError = err as any
+        const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message
+        transactionFailed(callErrorMessage)
       }
     }
   })
@@ -95,7 +103,7 @@ const SetFirstBuyFee: React.FC<SectionProps> = ({
       </Text>
       <form onSubmit={formik.handleSubmit}>
         <Flex>          
-          <StyledInput value={formik.values.fee} onChange={formik.handleChange} name="fee" min="0" max="100" type="number" placeholder={feePlaceholder} autoComplete="off" />
+          <StyledInput value={formik.values.fee} onChange={formik.handleChange} name="fee" min="0" max="100" step={0.01} type="number" placeholder={feePlaceholder} autoComplete="off" />
           <CenterSign>
             <Text bold>%</Text>
           </CenterSign>
@@ -196,8 +204,8 @@ const SetFeeInfo: React.FC<SectionProps> = ({
           refFee: transaction.refFee as BigNumber,
           devFee: transaction.devFee as BigNumber,
           promRefFee: transaction.promRefFee as BigNumber,
-          promStart: formatDateFromNumber(transaction.promStart as BigNumber),
-          promEnd: formatDateFromNumber(transaction.promEnd as BigNumber),
+          promStart: formatDateFromNumber((transaction.promStart as BigNumber).mul(1000)),
+          promEnd: formatDateFromNumber((transaction.promEnd as BigNumber).mul(1000)),
         })
       }
     }
@@ -232,8 +240,8 @@ const SetFeeInfo: React.FC<SectionProps> = ({
       const _refFee = refFee ? ethers.utils.parseUnits(refFee.toString(), 7) : BigNumber.from(0)
       const _devFee = devFee ? ethers.utils.parseUnits(devFee.toString(), 7) : BigNumber.from(0)
       const _promRefFee = promRefFee ? ethers.utils.parseUnits(promRefFee.toString(), 7) : BigNumber.from(0)
-      const _promStart = promStart ? `${new Date(promStart).getTime()}` : '0'
-      const _promEnd = promEnd ? `${new Date(promEnd).getTime()}` : '0'
+      const _promStart = promStart ? `${Math.floor(new Date(promStart).getTime() / 1000)}` : '0'
+      const _promEnd = promEnd ? `${Math.floor(new Date(promEnd).getTime() / 1000)}` : '0'
 
       try {
         const transaction = await contract.setFeeInfo(
@@ -284,7 +292,7 @@ const SetFeeInfo: React.FC<SectionProps> = ({
         Referral reward percentage
       </Text>
       <Flex>
-        <StyledInput name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee} placeholder={formatAmount(formHolder?.refFee)} />
+        <StyledInput name="refFee" type="number" step={0.01} onChange={formik.handleChange} value={formik.values.refFee} placeholder={formatAmount(formHolder?.refFee)} />
         <CenterSign>
           <Text bold>%</Text>
         </CenterSign>
@@ -293,7 +301,7 @@ const SetFeeInfo: React.FC<SectionProps> = ({
         Developer reward percentage
       </Text>
       <Flex>
-        <StyledInput name="devFee" type="number" onChange={formik.handleChange} value={formik.values.devFee} placeholder={formatAmount(formHolder?.devFee)} />
+        <StyledInput name="devFee" type="number" step={0.01} onChange={formik.handleChange} value={formik.values.devFee} placeholder={formatAmount(formHolder?.devFee)} />
         <CenterSign>
           <Text bold>%</Text>
         </CenterSign>
@@ -302,7 +310,7 @@ const SetFeeInfo: React.FC<SectionProps> = ({
         Promotion referral reward percentage (optional)
       </Text>
       <Flex>
-        <StyledInput name="promRefFee" type="number" onChange={formik.handleChange} value={formik.values.promRefFee} placeholder={formatAmount(formHolder?.promRefFee)} />
+        <StyledInput name="promRefFee" type="number" step={0.01} onChange={formik.handleChange} value={formik.values.promRefFee} placeholder={formatAmount(formHolder?.promRefFee)} />
         <CenterSign>
           <Text bold>%</Text>
         </CenterSign>
@@ -367,7 +375,9 @@ const SetLeadManager: React.FC<SectionProps> = ({
         const transaction = await contract.setLeadInfluencer(selectedCoin.address, influencerWallet, _fee)
         transactionSubmitted(transaction, 'Set lead influencer succeeded')
       } catch (err) {
-        transactionFailed(err.message as string)
+        const callError = err as any
+        const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message
+        transactionFailed(callErrorMessage)
       }
     }
   })
@@ -387,7 +397,7 @@ const SetLeadManager: React.FC<SectionProps> = ({
           Lead fee
         </Text>
         <Flex>
-          <StyledInput value={formik.values.fee} onChange={formik.handleChange} name="fee" type="number" placeholder="0" min="0" max="100"/>
+          <StyledInput value={formik.values.fee} onChange={formik.handleChange} name="fee" type="number" placeholder="0" min="0" max="100" step={0.01} />
           <CenterSign>
             <Text bold>%</Text>
           </CenterSign>
@@ -434,7 +444,9 @@ const RemoveLead: React.FC<SectionProps> = ({
         const transaction = await contract.removeLeadInfluencer(selectedCoin.address, influencerWallet)
         transactionSubmitted(transaction, 'Remove lead influencer succeeded')
       } catch (err) {
-        transactionFailed(err.message as string)
+        const callError = err as any
+        const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message
+        transactionFailed(callErrorMessage)
       }
     }
   }
@@ -472,7 +484,16 @@ const CheckRole: React.FC<SectionProps> = ({
     influencerWallet?: string;
   }
 
+  const [role, setRole] = useState<Role>(Role.USER)
   const [infInfo, setInfInfo] = useState<InfInfo | undefined>()
+
+  useEffect(() => {
+    if (!infInfo) return
+
+    if (infInfo.isLead && infInfo.isActive) setRole(Role.LEAD_INFLUENCER)
+    else if (infInfo.lead !== AddressZero && infInfo.isActive) setRole(Role.SUB_INFLUENCER)
+    else setRole(Role.USER)
+  }, [infInfo])
 
 
   const formik = useFormik<FormInputs>({
@@ -498,26 +519,13 @@ const CheckRole: React.FC<SectionProps> = ({
         onDismiss()
         setInfInfo(transaction)
       } catch (err) {
-        transactionFailed(err.message as string)
+        const callError = err as any
+        const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message
+        transactionFailed(callErrorMessage)
       }
     }
   }
   )
-
-  const getRole = (info?: InfInfo) => {
-    if (!info) return null
-
-    if (info.isLead && info.isActive) {
-      return <Text bold>This is a Lead Influencer</Text>
-    } 
-    
-    if (info.lead !== AddressZero && info.isActive){ 
-      return <Text bold>This is a Sub Influencer</Text>
-    } 
-      
-    return <Text bold>This is not an Influencer</Text>
-  }
-
   return <>
     <Text bold>
       Check role for address
@@ -536,7 +544,15 @@ const CheckRole: React.FC<SectionProps> = ({
       {infInfo && (infInfo.isActive ? (
         <Box>
           <StyledBr />
-          {getRole(infInfo)}
+          <Text bold>
+            This is a&nbsp;
+            {role === Role.LEAD_INFLUENCER
+              ? "Lead Influencer"
+              : role === Role.SUB_INFLUENCER
+              ? "Sub Influencer"
+              : "not an Influencer"
+            }
+          </Text>
           {
             (infInfo.lead !== AddressZero) ? (
               <Text>
@@ -545,11 +561,13 @@ const CheckRole: React.FC<SectionProps> = ({
             ) : null
           }
           <Text>
-            Lead Fee - {ethers.utils.formatUnits(infInfo.leadFee, 7)} %
+            Lead Inf Reward - {ethers.utils.formatUnits(infInfo.leadFee, 7)} %
           </Text>
-          <Text>
-            Referral Fee - {ethers.utils.formatUnits(infInfo.refFee, 7)} %
-          </Text>
+          {role === Role.SUB_INFLUENCER && (
+            <Text>
+              Sub Inf Reward - {ethers.utils.formatUnits(infInfo.refFee, 7)} %
+            </Text>
+          )}
         </Box>
       ) : (
         <>
