@@ -89,7 +89,9 @@ const SetSubInfluencerSegment: React.FC<SetSubInfluencerSegmentProps> = ({
         )
         transactionSubmitted(transaction, 'Sub influencer set successfully')
       } catch (err){
-        transactionFailed(err.message as string)
+        const callError = err as any
+        const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message
+        transactionFailed(callErrorMessage)
       }
   }})
 

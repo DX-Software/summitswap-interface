@@ -65,7 +65,9 @@ const SetFirstBuyFee: React.FC<SectionProps> = ({
         setFeePlaceholder(ethers.utils.formatUnits(_fee, 7))
         transactionSubmitted(transaction, 'Set first buy fee succeeded')
       } catch (err) {
-        transactionFailed(err.message as string)
+        const callError = err as any
+        const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message
+        transactionFailed(callErrorMessage)
       }
     }
   })
@@ -367,7 +369,9 @@ const SetLeadManager: React.FC<SectionProps> = ({
         const transaction = await contract.setLeadInfluencer(selectedCoin.address, influencerWallet, _fee)
         transactionSubmitted(transaction, 'Set lead influencer succeeded')
       } catch (err) {
-        transactionFailed(err.message as string)
+        const callError = err as any
+        const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message
+        transactionFailed(callErrorMessage)
       }
     }
   })
@@ -434,7 +438,9 @@ const RemoveLead: React.FC<SectionProps> = ({
         const transaction = await contract.removeLeadInfluencer(selectedCoin.address, influencerWallet)
         transactionSubmitted(transaction, 'Remove lead influencer succeeded')
       } catch (err) {
-        transactionFailed(err.message as string)
+        const callError = err as any
+        const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message
+        transactionFailed(callErrorMessage)
       }
     }
   }
@@ -498,7 +504,9 @@ const CheckRole: React.FC<SectionProps> = ({
         onDismiss()
         setInfInfo(transaction)
       } catch (err) {
-        transactionFailed(err.message as string)
+        const callError = err as any
+        const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message
+        transactionFailed(callErrorMessage)
       }
     }
   }
