@@ -3,32 +3,24 @@ import KapexSmallBanner from '../../img/kapex_small.gif'
 import KapexMediumBanner from '../../img/kapex_medium.gif'
 import KapexLargeBanner from '../../img/kapex_large.gif'
 
-const Banner = styled.div`
-  background: url(${KapexLargeBanner}) center/100% 100%;
+const Banner = styled.img`
+  content:url(${KapexLargeBanner});
   border-radius: 10px;
-  margin-top: 20px;   
-  width: 970px;
-  height: 90px;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 970px;
 
   @media (max-width: 1230px) {
-    & {
-      width: 94%;
-    }
+    width: 94%;
+    content:url(${KapexMediumBanner});
   }
 
   @media (max-width: 968px) {
-    & {
-      max-width: 780px;
-      background: url(${KapexMediumBanner}) center/100% 100%;
-    }
+    content:url(${KapexMediumBanner});
   }
 
   @media (max-width: 440px) {
-    & {
-      max-width: 320px;
-      height: 100px;
-      background: url(${KapexSmallBanner}) center/100% 100%;
-    }
+    content:url(${KapexSmallBanner});
   }
 `
 
