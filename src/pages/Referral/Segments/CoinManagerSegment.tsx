@@ -196,8 +196,8 @@ const SetFeeInfo: React.FC<SectionProps> = ({
           refFee: transaction.refFee as BigNumber,
           devFee: transaction.devFee as BigNumber,
           promRefFee: transaction.promRefFee as BigNumber,
-          promStart: formatDateFromNumber(transaction.promStart as BigNumber),
-          promEnd: formatDateFromNumber(transaction.promEnd as BigNumber),
+          promStart: formatDateFromNumber((transaction.promStart as BigNumber).mul(1000)),
+          promEnd: formatDateFromNumber((transaction.promEnd as BigNumber).mul(1000)),
         })
       }
     }
