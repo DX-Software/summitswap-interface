@@ -84,8 +84,8 @@ const SetSubInfluencerSegment: React.FC<SetSubInfluencerSegmentProps> = ({
         const transaction = await contract.setSubInfluencer(
           outputToken.address, 
           values.subWalletAdress, 
-          ethers.utils.parseUnits(values.leadFee || '0', 7),
-          ethers.utils.parseUnits(values.refFee || '0', 7)
+          ethers.utils.parseUnits(values.leadFee?.toString() || '0', 7),
+          ethers.utils.parseUnits(values.refFee?.toString() || '0', 7)
         )
         transactionSubmitted(transaction, 'Sub influencer set successfully')
       } catch (err){
