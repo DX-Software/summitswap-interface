@@ -232,8 +232,8 @@ const SetFeeInfo: React.FC<SectionProps> = ({
       const _refFee = refFee ? ethers.utils.parseUnits(refFee.toString(), 7) : BigNumber.from(0)
       const _devFee = devFee ? ethers.utils.parseUnits(devFee.toString(), 7) : BigNumber.from(0)
       const _promRefFee = promRefFee ? ethers.utils.parseUnits(promRefFee.toString(), 7) : BigNumber.from(0)
-      const _promStart = promStart ? `${new Date(promStart).getTime()}` : '0'
-      const _promEnd = promEnd ? `${new Date(promEnd).getTime()}` : '0'
+      const _promStart = promStart ? `${Math.floor(new Date(promStart).getTime() / 1000)}` : '0'
+      const _promEnd = promEnd ? `${Math.floor(new Date(promEnd).getTime() / 1000)}` : '0'
 
       try {
         const transaction = await contract.setFeeInfo(
