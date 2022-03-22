@@ -8,7 +8,8 @@ import CurrencyLogo from 'components/CurrencyLogo'
 import { Token, WETH } from '@koda-finance/summitswap-sdk'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { useToken } from 'hooks/Tokens'
-import { REFERRAL_ADDRESS, BUSDs, CHAIN_ID, KAPEXs, NULL_ADDRESS, BNB_COINGECKO_ID } from '../../constants'
+import useTokenPrice from 'hooks/useTokenPrice'
+import { REFERRAL_ADDRESS, BUSDs, CHAIN_ID, KAPEXs, NULL_ADDRESS } from '../../constants'
 import { useClaimingFeeModal } from './useClaimingFeeModal'
 
 interface Props {
@@ -16,11 +17,7 @@ interface Props {
   hasClaimedAll: boolean
   isLoading: boolean
   selectedToken?: Token
-  tokenPrices: null | {
-    [geckoId: string]: {
-      [price: string]: number
-    }
-  }
+  bnbPriceInUsd: number
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
   setCanClaimAll: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -54,7 +51,7 @@ const ClaimWrapper = styled.div`
   align-items: center;
 `
 
-const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, tokenPrices, hasClaimedAll, isLoading, setIsLoading, setCanClaimAll }) => {
+const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, bnbPriceInUsd, hasClaimedAll, isLoading, setIsLoading, setCanClaimAll }) => {
   const { account } = useWeb3React()
 
   const [balance, setBalance] = useState<BigNumber | undefined>(undefined)
@@ -72,6 +69,7 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, tokenPrices, 
   const rewardToken = useToken(rewardTokenAddress)
   const tokenContract = useTokenContract(tokenAddress, true)
   const refContract = useReferralContract(true)
+  const tokenPriceInUsd = useTokenPrice(claimToken)
 
   useEffect(() => {
     if (!outputToken) return
@@ -133,22 +131,21 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, tokenPrices, 
 
     handleSetIsTokenPriceValid()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, refContract, claimToken, balance, selectedToken, tokenPrices?.length])
+  }, [account, refContract, claimToken, balance, selectedToken, tokenPriceInUsd])
 
   async function isClaimTokenPriceHigherThanGasFee(): Promise<boolean> {
     if (!account) return false
     if (!refContract) return false
     if (!balance) return false
-    if (!selectedToken || !tokenPrices) return true
+    if (!selectedToken) return true
 
     try {
       const estimatedGasInBNB = await refContract.estimateGas
         .claimRewardIn(tokenAddress, claimToken?.address ?? outputToken?.address ?? WETH[CHAIN_ID].address)
       
       const estimatedGas = ethers.utils.formatUnits(estimatedGasInBNB.mul(2), 8)
-      const estimatedGasInUsd = Number(estimatedGas) * (tokenPrices[BNB_COINGECKO_ID]?.usd ?? 0)
+      const estimatedGasInUsd = Number(estimatedGas) * bnbPriceInUsd
 
-      const tokenPriceInUsd = selectedToken.coingeckoId ? tokenPrices[selectedToken.coingeckoId]?.usd ?? 0 : 0
       const tokenPrice = ethers.utils.formatUnits(balance, claimToken?.decimals ?? outputToken?.decimals ?? 0)
       const totalTokenPriceInUsd = Number(tokenPrice) * tokenPriceInUsd
 

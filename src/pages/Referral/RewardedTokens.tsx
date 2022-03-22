@@ -9,7 +9,7 @@ import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import CurrencyLogo from 'components/CurrencyLogo'
 import useTokenPrice from 'hooks/useTokenPrice'
 import TokenCard from './TokenCard'
-import { BNB_COINGECKO_ID, BUSDs, CHAIN_ID, KAPEXs } from '../../constants'
+import { BUSDs, CHAIN_ID, KAPEXs, WBNB } from '../../constants'
 import { useClaimingFeeModal } from './useClaimingFeeModal'
 
 interface RewardedTokensProps {
@@ -40,10 +40,7 @@ const CurrencyLogoWrapper = styled(Box)`
 
 const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
   const { account } = useWeb3React()
-  const [geckoIds, setGeckoIds] = useState<string[]>([])
-
-  const tokenPrices = useTokenPrice(geckoIds)
-
+  const bnbPriceInUsd = useTokenPrice(WBNB)
   const [hasClaimedAll, setHasClaimedAll] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [rewardTokens, setRewardTokens] = useState<string[]>([])
@@ -74,16 +71,6 @@ const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
 
     fetchRewardTokens()
   }, [account, refContract])
-
-  useEffect(() => {
-    if (!tokens?.length) return
-    const newGeckoIds: string[] = [
-      BNB_COINGECKO_ID,
-      ...tokens.map((token) => token.coingeckoId ?? ""),
-    ]
-    setGeckoIds(newGeckoIds)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tokens?.length])
 
   useEffect(() => {
     const tokenList: Token[] = [BUSDs[CHAIN_ID], KAPEXs[CHAIN_ID]].filter((o) => !!o)
@@ -169,7 +156,7 @@ const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
                 key={x}
                 tokenAddress={x}
                 hasClaimedAll={hasClaimedAll}
-                tokenPrices={tokenPrices}
+                bnbPriceInUsd={bnbPriceInUsd}
                 selectedToken={tokens?.find((o) => o.address === x)}
                 isLoading={isLoading}
                 setIsLoading={setIsLoading}

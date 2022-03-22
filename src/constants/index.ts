@@ -23,10 +23,11 @@ type ChainTokenList = {
   readonly [chainId in ChainId]: Token[]
 }
 
-export const KODA = new Token(ChainId.MAINNET, '0x8094e772fA4A60bdEb1DfEC56AB040e17DD608D5', 9, 'KODA', 'KODA Token', 100, true, 11.25, 11.23)
+export const KODA = new Token(ChainId.MAINNET, '0x8094e772fA4A60bdEb1DfEC56AB040e17DD608D5', 9, 'KODA', 'KODA Token', 100, true, 11.25, 11.23, 'koda-finance', false)
 export const DAI = new Token(ChainId.MAINNET, '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3', 18, 'DAI', 'Dai Stablecoin')
 export const BUSD = new Token(ChainId.MAINNET, '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56', 18, 'BUSD', 'Binance USD')
 export const USDT = new Token(ChainId.MAINNET, '0x55d398326f99059fF775485246999027B3197955', 18, 'USDT', 'Tether USD')
+export const WBNB = new Token(ChainId.MAINNET, '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', 18, 'WBNB', 'Wrapped BNB', undefined, undefined, undefined, undefined, 'binancecoin', undefined)
 
 export const UST = new Token(
   ChainId.MAINNET,
@@ -35,6 +36,11 @@ export const UST = new Token(
   'UST',
   'Wrapped UST Token'
   )
+
+export const KODAs = {
+  [ChainId.MAINNET]: KODA,
+  [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0x063646d9c4ecb1c341becdee162958f072c43561', 9, 'KODA', 'KODA Token', 100, true, 11.25, 11.23, 'koda-finance', false),
+}
 
 export const BUSDs = {
   [ChainId.MAINNET]: BUSD,
@@ -80,10 +86,7 @@ export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
 
 export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } = {
   [ChainId.MAINNET]: [
-    [
-      KODA,
-      new Token(ChainId.MAINNET, '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', 18, 'WBNB', 'Wrapped BNB'),
-    ],
+    [KODA, WBNB],
     [BUSD, USDT],
     [DAI, USDT],
   ],
@@ -111,7 +114,6 @@ export const BLOCKED_PRICE_IMPACT_NON_EXPERT: Percent = new Percent(JSBI.BigInt(
 // used to ensure the user doesn't send so much ETH so they end up with <.01
 export const MIN_ETH: JSBI = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(16)) // .01 ETH
 
-export const BNB_COINGECKO_ID = 'binancecoin'
 // Telegram API Constants
 export const TELEGRAM_API_ID = Number(process.env.REACT_APP_TELEGRAM_API_ID)
 export const TELEGRAM_API_HASH = process.env.REACT_APP_TELEGRAM_API_HASH
