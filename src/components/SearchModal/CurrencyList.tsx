@@ -3,9 +3,6 @@ import React, { CSSProperties, MutableRefObject, useCallback, useEffect, useMemo
 import { VariableSizeList } from 'react-window'
 import styled from 'styled-components'
 import { Flex, Text  } from '@koda-finance/summitswap-uikit'
-
-
-// import { MetaMaskInpageProvider } from '@metamask/providers'
 import { useActiveWeb3React } from '../../hooks'
 import { useSelectedTokenList, WrappedTokenInfo } from '../../state/lists/hooks'
 import { useAddUserToken, useRemoveUserAddedToken } from '../../state/user/hooks'
@@ -23,8 +20,6 @@ import { isTokenOnList } from '../../utils'
 function currencyKey(currency: Currency): string {
   return currency instanceof Token ? currency.address : currency === ETHER ? 'ETHER' : ''
 }
-// const ethereum = window.ethereum as MetaMaskInpageProvider;
-
 const StyledBalanceText = styled(Text)`
   white-space: nowrap;
   overflow: hidden;
