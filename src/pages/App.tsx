@@ -23,6 +23,7 @@ import { TranslationsContext } from '../hooks/TranslationsContext'
 import langSrc from '../constants/localisation/translate/index'
 import AppHeader from './AppHeader'
 import Menu from '../components/Menu'
+import SupportChatWidget from '../components/SupportChatWidget'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -134,6 +135,7 @@ export default function App() {
           value={{ selectedLanguage, setSelectedLanguage, translatedLanguage, setTranslatedLanguage }}
         >
           <TranslationsContext.Provider value={{ translations, setTranslations }}>
+            <SupportChatWidget/>
             <Popups />
             <Web3ReactManager>
               <Switch>

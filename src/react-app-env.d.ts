@@ -14,6 +14,7 @@ interface Window {
   }
   web3?: any
   BinanceChain?: BinanceChain
+  telegram?: any
 }
 
 declare const rubicWidget: any; 
