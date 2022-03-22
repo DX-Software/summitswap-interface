@@ -95,7 +95,7 @@ const SetFirstBuyFee: React.FC<SectionProps> = ({
       </Text>
       <form onSubmit={formik.handleSubmit}>
         <Flex>          
-          <StyledInput value={formik.values.fee} onChange={formik.handleChange} name="fee" min="0" max="100" type="number" placeholder={feePlaceholder} autoComplete="off" />
+          <StyledInput value={formik.values.fee} onChange={formik.handleChange} name="fee" min="0" max="100" step={0.01} type="number" placeholder={feePlaceholder} autoComplete="off" />
           <CenterSign>
             <Text bold>%</Text>
           </CenterSign>
@@ -284,7 +284,7 @@ const SetFeeInfo: React.FC<SectionProps> = ({
         Referral reward percentage
       </Text>
       <Flex>
-        <StyledInput name="refFee" type="number" onChange={formik.handleChange} value={formik.values.refFee} placeholder={formatAmount(formHolder?.refFee)} />
+        <StyledInput name="refFee" type="number" step={0.01} onChange={formik.handleChange} value={formik.values.refFee} placeholder={formatAmount(formHolder?.refFee)} />
         <CenterSign>
           <Text bold>%</Text>
         </CenterSign>
@@ -293,7 +293,7 @@ const SetFeeInfo: React.FC<SectionProps> = ({
         Developer reward percentage
       </Text>
       <Flex>
-        <StyledInput name="devFee" type="number" onChange={formik.handleChange} value={formik.values.devFee} placeholder={formatAmount(formHolder?.devFee)} />
+        <StyledInput name="devFee" type="number" step={0.01} onChange={formik.handleChange} value={formik.values.devFee} placeholder={formatAmount(formHolder?.devFee)} />
         <CenterSign>
           <Text bold>%</Text>
         </CenterSign>
@@ -302,7 +302,7 @@ const SetFeeInfo: React.FC<SectionProps> = ({
         Promotion referral reward percentage (optional)
       </Text>
       <Flex>
-        <StyledInput name="promRefFee" type="number" onChange={formik.handleChange} value={formik.values.promRefFee} placeholder={formatAmount(formHolder?.promRefFee)} />
+        <StyledInput name="promRefFee" type="number" step={0.01} onChange={formik.handleChange} value={formik.values.promRefFee} placeholder={formatAmount(formHolder?.promRefFee)} />
         <CenterSign>
           <Text bold>%</Text>
         </CenterSign>
@@ -387,7 +387,7 @@ const SetLeadManager: React.FC<SectionProps> = ({
           Lead fee
         </Text>
         <Flex>
-          <StyledInput value={formik.values.fee} onChange={formik.handleChange} name="fee" type="number" placeholder="0" min="0" max="100"/>
+          <StyledInput value={formik.values.fee} onChange={formik.handleChange} name="fee" type="number" placeholder="0" min="0" max="100" step={0.01} />
           <CenterSign>
             <Text bold>%</Text>
           </CenterSign>
