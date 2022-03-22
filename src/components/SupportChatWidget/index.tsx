@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import {
+  REACT_APP_TELEGRAM_API_HASH,
+  REACT_APP_TELEGRAM_API_ID,
+  REACT_APP_TELEGRAM_STRING_SESSION,
+  REACT_APP_TELEGRAM_SUPPORT_MEMBERS
+} from 'constants/telegram'
 import ChatIcon from '../../img/chat.svg'
 import CloseIcon from '../../img/close.svg'
 import ProfileImage from '../../img/pp.png'
@@ -274,10 +280,9 @@ const SupportChatWidget = () => {
   const { TelegramClient, Api } = window.telegram
   const { StringSession } = window.telegram.sessions
 
-  const apiId = Number(process.env.REACT_APP_TELEGRAM_API_ID)
-  const apiHash = process.env.REACT_APP_TELEGRAM_API_HASH
-  const stringSession = new StringSession(process.env.REACT_APP_TELEGRAM_STRING_SESSION)
-  const supportMembers = [process.env.REACT_APP_TELEGRAM_SUPPORT_MEMBER_1, process.env.REACT_APP_TELEGRAM_SUPPORT_MEMBER_2, process.env.REACT_APP_TELEGRAM_SUPPORT_MEMBER_3]
+  const apiId = Number(REACT_APP_TELEGRAM_API_ID)
+  const apiHash = REACT_APP_TELEGRAM_API_HASH
+  const stringSession = new StringSession(REACT_APP_TELEGRAM_STRING_SESSION)
 
   const [directionLink, setDirectionLink] = useState('')
 
@@ -304,7 +309,7 @@ const SupportChatWidget = () => {
 
         const result = await client.invoke(
           new Api.messages.CreateChat({
-            users: [supportMembers[0], supportMembers[1], supportMembers[2]],
+            users: REACT_APP_TELEGRAM_SUPPORT_MEMBERS,
             title: "SummitSwap Support",
           })
         )
