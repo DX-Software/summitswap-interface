@@ -18,6 +18,12 @@ import { SegmentsProps } from './SegmentsProps';
 import { FeeInfo, InfInfo } from '../types';
 import { CenterSign } from '../CenterDiv';
 
+enum Role {
+  LEAD_INFLUENCER,
+  SUB_INFLUENCER,
+  USER,
+}
+
 interface SectionProps {
   contract: Contract | null
   selectedCoin?: Token
@@ -478,7 +484,16 @@ const CheckRole: React.FC<SectionProps> = ({
     influencerWallet?: string;
   }
 
+  const [role, setRole] = useState<Role>(Role.USER)
   const [infInfo, setInfInfo] = useState<InfInfo | undefined>()
+
+  useEffect(() => {
+    if (!infInfo) return
+
+    if (infInfo.isLead && infInfo.isActive) setRole(Role.LEAD_INFLUENCER)
+    else if (infInfo.lead !== AddressZero && infInfo.isActive) setRole(Role.SUB_INFLUENCER)
+    else setRole(Role.USER)
+  }, [infInfo])
 
 
   const formik = useFormik<FormInputs>({
@@ -511,21 +526,6 @@ const CheckRole: React.FC<SectionProps> = ({
     }
   }
   )
-
-  const getRole = (info?: InfInfo) => {
-    if (!info) return null
-
-    if (info.isLead && info.isActive) {
-      return <Text bold>This is a Lead Influencer</Text>
-    } 
-    
-    if (info.lead !== AddressZero && info.isActive){ 
-      return <Text bold>This is a Sub Influencer</Text>
-    } 
-      
-    return <Text bold>This is not an Influencer</Text>
-  }
-
   return <>
     <Text bold>
       Check role for address
@@ -544,7 +544,15 @@ const CheckRole: React.FC<SectionProps> = ({
       {infInfo && (infInfo.isActive ? (
         <Box>
           <StyledBr />
-          {getRole(infInfo)}
+          <Text bold>
+            This is a&nbsp;
+            {role === Role.LEAD_INFLUENCER
+              ? "Lead Influencer"
+              : role === Role.SUB_INFLUENCER
+              ? "Sub Influencer"
+              : "not an Influencer"
+            }
+          </Text>
           {
             (infInfo.lead !== AddressZero) ? (
               <Text>
@@ -553,11 +561,13 @@ const CheckRole: React.FC<SectionProps> = ({
             ) : null
           }
           <Text>
-            Lead Fee - {ethers.utils.formatUnits(infInfo.leadFee, 7)} %
+            Lead Inf Reward - {ethers.utils.formatUnits(infInfo.leadFee, 7)} %
           </Text>
-          <Text>
-            Referral Fee - {ethers.utils.formatUnits(infInfo.refFee, 7)} %
-          </Text>
+          {role === Role.SUB_INFLUENCER && (
+            <Text>
+              Sub Inf Reward - {ethers.utils.formatUnits(infInfo.refFee, 7)} %
+            </Text>
+          )}
         </Box>
       ) : (
         <>
