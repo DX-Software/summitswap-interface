@@ -10,13 +10,13 @@ import web3 from 'web3'
 import { useReferralContract } from 'hooks/useContract'
 import checkIfUint256 from 'utils/checkUint256'
 import DateInput from '../DateInput'
-import isPercentage from '../utility';
 import { isAddress } from '../../../utils'
 import { StyledBr, StyledWhiteBr } from '../StyledBr';
 import StyledInput from '../StyledInput'
 import { SegmentsProps } from './SegmentsProps';
 import { FeeInfo, InfInfo } from '../types';
 import { CenterSign } from '../CenterDiv';
+import { isdecimals, isPercentage } from '../utility';
 
 interface SectionProps {
   contract: Contract | null
@@ -53,7 +53,7 @@ const SetFirstBuyFee: React.FC<SectionProps> = ({
 
       openModel('Set first buy fee')
 
-      if (!checkIfUint256(`${fee}`)) {
+      if (!isdecimals(fee) || !isPercentage(fee)) {
         transactionFailed('Invalid Fee!')
         return
       }
@@ -129,18 +129,18 @@ const SetFeeInfo: React.FC<SectionProps> = ({
 
   const validateInputs = (values: FormInputs) => {
 
-    if (!values.refFee && checkIfUint256(`${values.refFee}`) && !isPercentage(values.refFee)) {
+    if (!values.refFee || !isdecimals(values.refFee) || !isPercentage(values.refFee)) {
       transactionFailed('Referral reward percentage is not valid!')
       return false
     }
 
-    if (!values.devFee && checkIfUint256(`${values.devFee}`) && !isPercentage(values.devFee)) {
+    if (!values.devFee || !isdecimals(values.devFee) || !isPercentage(values.devFee)) {
       transactionFailed('Developer reward percentage is not valid!')
       return false
     }
 
     if (values.promRefFee) {
-      if (!checkIfUint256(`${values.promRefFee}`) && !isPercentage(values.promRefFee)) {
+      if (!isdecimals(values.promRefFee) || !isPercentage(values.promRefFee)) {
         transactionFailed('Promotion referral reward is not valid!')
         return false
       }
@@ -351,7 +351,7 @@ const SetLeadManager: React.FC<SectionProps> = ({
 
       openModel('Set lead influencer')
 
-      if (!checkIfUint256(fee)) {
+      if (!isdecimals(Number(fee)) || !isPercentage(Number(fee))) {
         transactionFailed('Invalid fee!')
         return
       }

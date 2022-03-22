@@ -15,6 +15,7 @@ import { REFERRAL_DEPLOYMENT_BLOCKNUMBER, MAX_QUERYING_BLOCK_AMOUNT } from '../.
 import LeadHistory from './LeadHistory'
 import { SegmentsProps } from './SegmentsProps'
 import { CenterSign } from '../CenterDiv'
+import { isdecimals, isPercentage } from '../utility'
 
 interface SetSubInfluencerSegmentProps extends SegmentsProps {
   contract: Contract | null
@@ -53,12 +54,14 @@ const SetSubInfluencerSegment: React.FC<SetSubInfluencerSegmentProps> = ({
       return false
     }
 
-    if (!inputs.leadFee && checkIfUint256(inputs.leadFee || '')) {
+    const _leadFee = Number(inputs.leadFee)
+    const _refFee = Number(inputs.refFee)
+    if (!inputs.leadFee || !isdecimals(_leadFee) || !isPercentage(_leadFee)) {
       transactionFailed('Lead influencers fee is not a valid value!')
       return false
     }
 
-    if (!inputs.refFee && checkIfUint256(inputs.refFee || '')) {
+    if (!inputs.refFee || !isdecimals(_refFee) || !isPercentage(_refFee)) {
       transactionFailed('Sub influencers fee is not a valid value!')
       return false
     }
