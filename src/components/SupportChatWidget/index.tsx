@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import {
-  REACT_APP_TELEGRAM_API_HASH,
-  REACT_APP_TELEGRAM_API_ID,
-  REACT_APP_TELEGRAM_STRING_SESSION,
-  REACT_APP_TELEGRAM_SUPPORT_MEMBERS
+  TELEGRAM_API_HASH,
+  TELEGRAM_API_ID,
+  TELEGRAM_STRING_SESSION,
+  TELEGRAM_SUPPORT_MEMBERS
 } from 'constants/telegram'
 import ChatIcon from '../../img/chat.svg'
 import CloseIcon from '../../img/close.svg'
@@ -280,9 +280,9 @@ const SupportChatWidget = () => {
   const { TelegramClient, Api } = window.telegram
   const { StringSession } = window.telegram.sessions
 
-  const apiId = Number(REACT_APP_TELEGRAM_API_ID)
-  const apiHash = REACT_APP_TELEGRAM_API_HASH
-  const stringSession = new StringSession(REACT_APP_TELEGRAM_STRING_SESSION)
+  const apiId = Number(TELEGRAM_API_ID)
+  const apiHash = TELEGRAM_API_HASH
+  const stringSession = new StringSession(TELEGRAM_STRING_SESSION)
 
   const [directionLink, setDirectionLink] = useState('')
 
@@ -309,7 +309,7 @@ const SupportChatWidget = () => {
 
         const result = await client.invoke(
           new Api.messages.CreateChat({
-            users: REACT_APP_TELEGRAM_SUPPORT_MEMBERS,
+            users: TELEGRAM_SUPPORT_MEMBERS,
             title: "SummitSwap Support",
           })
         )
