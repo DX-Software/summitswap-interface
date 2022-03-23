@@ -83,7 +83,6 @@ const Referral: React.FC<IProps> = () => {
   }, [allTokensTemp])
 
   useEffect(() => {
-    console.log("allTokens", allTokens)
     if (!selectedOutputCoin) {
       setSelectedOutputCoin(allTokens.find((token) => token.symbol === 'KODA'))
     }
@@ -128,7 +127,6 @@ const Referral: React.FC<IProps> = () => {
     }
     return false
   }, [])
-  console.log("selectedOutputCoin", selectedOutputCoin)
   return (
     <div className="main-content">
       <Box>

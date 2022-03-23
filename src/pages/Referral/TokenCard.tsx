@@ -9,6 +9,7 @@ import { Token, WETH } from '@koda-finance/summitswap-sdk'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { useToken } from 'hooks/Tokens'
 import useTokenPrice from 'hooks/useTokenPrice'
+import convertOutputToReward from 'utils/convertOutputToReward'
 import { REFERRAL_ADDRESS, BUSDs, CHAIN_ID, KAPEXs, NULL_ADDRESS } from '../../constants'
 import { useClaimingFeeModal } from './useClaimingFeeModal'
 
@@ -22,13 +23,14 @@ interface Props {
   setCanClaimAll: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const CurrencyLogoWrapper = styled(Box)`
+const CurrencyLogoWrapper = styled(Box)<{ disabled: boolean }>`
   color: ${({ theme }) => theme.colors.invertedContrast};
   border-radius: 5px;
   padding: 3px;
   display: inline-flex;
   align-items: center;
   background: ${({ theme }) => `${theme.colors.sidebarBackground}99`};
+  cursor: ${({ disabled }) => disabled ? "not-allowed" : "pointer"};
 `
 
 const StyledContainer = styled(Box)`
@@ -52,7 +54,7 @@ const ClaimWrapper = styled.div`
 `
 
 const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, bnbPriceInUsd, hasClaimedAll, isLoading, setIsLoading, setCanClaimAll }) => {
-  const { account } = useWeb3React()
+  const { account, library } = useWeb3React()
 
   const [balance, setBalance] = useState<BigNumber | undefined>(undefined)
   const [tokenSymbol, setTokenSymbol] = useState<string>('')
@@ -69,7 +71,7 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, bnbPriceInUsd
   const rewardToken = useToken(rewardTokenAddress)
   const tokenContract = useTokenContract(tokenAddress, true)
   const refContract = useReferralContract(true)
-  const tokenPriceInUsd = useTokenPrice(claimToken)
+  const tokenPriceInUsd = useTokenPrice(claimToken ?? outputToken ?? selectedToken)
 
   useEffect(() => {
     if (!outputToken) return
@@ -137,23 +139,30 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, bnbPriceInUsd
     if (!account) return false
     if (!refContract) return false
     if (!balance) return false
-    if (!selectedToken) return true
+    if (!selectedToken || !outputToken) return true
 
     try {
-      const estimatedGasInBNB = await refContract.estimateGas
-        .claimRewardIn(tokenAddress, claimToken?.address ?? outputToken?.address ?? WETH[CHAIN_ID].address)
+      const claimTokenAddress = claimToken?.address ?? outputToken.address ?? WETH[CHAIN_ID].address
       
-      const estimatedGas = ethers.utils.formatUnits(estimatedGasInBNB.mul(2), 8)
-      const estimatedGasInUsd = Number(estimatedGas) * bnbPriceInUsd
+      const estimatedGasInBNB = await refContract.estimateGas.claimRewardIn(tokenAddress, claimTokenAddress)
+      const estimatedGasFormatted = ethers.utils.formatUnits(estimatedGasInBNB.mul(2), 8)
+      const estimatedGasInUsd = Number(estimatedGasFormatted) * bnbPriceInUsd
+      
+      const tokenAmount = outputToken ? await convertOutputToReward(
+        library,
+        refContract,
+        outputToken,
+        balance,
+        claimToken ?? outputToken
+      ) : 0
 
-      const tokenPrice = ethers.utils.formatUnits(balance, claimToken?.decimals ?? outputToken?.decimals ?? 0)
-      const totalTokenPriceInUsd = Number(tokenPrice) * tokenPriceInUsd
+      const totalTokenPriceInUsd = tokenAmount * (claimToken?.symbol === "BNB" ? bnbPriceInUsd : tokenPriceInUsd)
 
       return totalTokenPriceInUsd === 0 || estimatedGasInUsd === 0 || totalTokenPriceInUsd >= estimatedGasInUsd
     
     } catch (err) {
       console.log("Error: ", err)
-      return false
+      return true
     }
   }
 
@@ -221,11 +230,12 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, bnbPriceInUsd
                 CLAIM IN&nbsp;
                 <CurrencyLogoWrapper
                   onClick={(e) => {
-                    if (isLoading || !hasReferralEnough || !isTokenPriceValid || claimed || hasClaimedAll) return
+                    if (isLoading || !hasReferralEnough || claimed || hasClaimedAll) return
 
                     setModalOpen(true)
                     e.stopPropagation()
                   }}
+                  disabled={isLoading || !hasReferralEnough || claimed || hasClaimedAll}
                 >
                   <CurrencyLogo currency={claimToken} size="24px" />
                   &nbsp;{claimToken?.symbol}
