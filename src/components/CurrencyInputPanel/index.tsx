@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import { Text, Flex, Button } from '@koda-finance/summitswap-uikit'
 import { Currency, Pair, Token  } from '@koda-finance/summitswap-sdk'
-import { MetamaskIcon } from 'components/Svg'
+import { MetamaskIcon } from 'img/Svg'
 import styled from 'styled-components'
 import { darken } from 'polished'
 import expandMore from 'img/expandMore.svg'
