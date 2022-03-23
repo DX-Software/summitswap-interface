@@ -376,7 +376,7 @@ export default function CrossChainSwap() {
           {selectedToken && account ? (
             <>
               <Input
-                disabled={!isTokensInReferral || isLoading}
+                disabled={!isTokensInReferral || isLoading || !isLiquidityLocked}
                 type="number"
                 placeholder="Referrer %"
                 onChange={(o) => setReferrerPercentage(o.target.value)}
@@ -395,7 +395,7 @@ export default function CrossChainSwap() {
           {selectedToken && account ? (
             <>
               <Input
-                disabled={!isTokensInReferral || isLoading}
+                disabled={!isTokensInReferral || isLoading || !isLiquidityLocked}
                 type="number"
                 placeholder="First buy referree %"
                 onChange={(o) => setFirstBuyPercentage(o.target.value)}
