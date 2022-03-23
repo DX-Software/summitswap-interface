@@ -46,6 +46,8 @@ export default function CrossChainSwap() {
   const [isTokensInReferral, setIsTokensInReferral] = useState(false)
   const [isReferralContractRemovedFromFees, setIsReferralContractRemovedFromFees] = useState(false)
 
+  const [lpBalance, setLpBalance] = useState<BigNumber>()
+
   const [selectedUnlockDate, setSelectedUnlockDate] = useState<Date | null>(addYears(Date.now(), 1))
   const [referralRewardAmount, setReferralRewardAmount] = useState<string>()
   const [referrerPercentage, setReferrerPercentage] = useState<string>()
@@ -73,6 +75,20 @@ export default function CrossChainSwap() {
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
 
   const [displaySucessModal] = useModal(<SuccessModal title="Success" />)
+
+  useEffect(() => {
+    async function fetchLpBalance() {
+      if (!account || !lpContract) {
+        setLpBalance(undefined)
+        return
+      }
+
+      const fetchedLpBalance = (await lpContract.balanceOf(account)) as BigNumber
+      setLpBalance(fetchedLpBalance)
+    }
+
+    fetchLpBalance()
+  }, [account, lpContract])
 
   useEffect(() => {
     async function fetchIfReferralHasSomeBalance() {
@@ -177,8 +193,6 @@ export default function CrossChainSwap() {
         return
       }
 
-      const lpBalance = (await lpContract.balanceOf(account).then((o) => o.toString())) as string
-
       const receipt = await lockerContract.lockTokens(
         lpContract.address,
         lpBalance,
@@ -195,7 +209,7 @@ export default function CrossChainSwap() {
     }
 
     lock()
-  }, [lpContract, account, lockerContract, library, selectedUnlockDate])
+  }, [lpContract, account, lockerContract, library, selectedUnlockDate, lpBalance])
 
   const approveLiquidity = useCallback(() => {
     async function approve() {
@@ -325,11 +339,18 @@ export default function CrossChainSwap() {
             </>
           )}
           <Button
-            disabled={!isEnoughBnbInPool || !isLiquidityApproved || !isSelectedDateGood || isLoading}
+            disabled={
+              !isEnoughBnbInPool ||
+              !isLiquidityApproved ||
+              !isSelectedDateGood ||
+              isLoading ||
+              (lpBalance?.isZero() ?? true)
+            }
             onClick={lockLiquidity}
           >
             Lock Liquidity
           </Button>
+          {(lpBalance?.isZero() ?? true) && <Text color="red">❌ You don&apos;t have enough liquidity tokens</Text>}
           {!isSelectedDateGood && <Text color="red">❌ Please select unlock date minimum 1 year from now</Text>}
           {isLiquidityLocked && <Text color="primary">✅ Liquidity is locked already</Text>}
         </>
