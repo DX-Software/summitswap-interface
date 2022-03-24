@@ -1,12 +1,20 @@
-import styled from 'styled-components';
+import React from 'react'
+import styled from 'styled-components'
 import KapexSmallBanner from '../../img/kapex_small.gif'
 import KapexMediumBanner from '../../img/kapex_medium.gif'
 import KapexLargeBanner from '../../img/kapex_large.gif'
 
-const Banner = styled.img`
+const Link = styled.a`
+  padding: 0;
+  margin: 0;
+  border: none;
+  cursor: pointer;
+  margin-top: 20px;
+`
+
+const ImgBanner = styled.img`
   content:url(${KapexLargeBanner});
   border-radius: 10px;
-  margin-top: 20px;
   width: 100%;
   max-width: 970px;
 
@@ -24,4 +32,10 @@ const Banner = styled.img`
   }
 `
 
-export default Banner;
+export default function Banner() {
+  return (
+    <Link href="https://kapex.me/" rel="noopener noreferrer" target="_blank">
+      <ImgBanner />
+    </Link>
+  )
+}
