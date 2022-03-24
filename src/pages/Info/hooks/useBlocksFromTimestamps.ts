@@ -1,7 +1,7 @@
 import { gql } from 'graphql-request'
 import { useState, useEffect } from 'react'
 import { Block } from 'state/info/types'
-import { BLOCKS_CLIENT } from 'constants/endpoints'
+import { BLOCKS_CLIENT } from 'constants/graphs'
 import { multiQuery } from '../utils/infoQueryHelpers'
 
 const getBlockSubqueries = (timestamps: number[]) =>

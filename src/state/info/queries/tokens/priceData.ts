@@ -3,7 +3,7 @@ import { gql } from 'graphql-request'
 import { getBlocksFromTimestamps } from 'pages/Info/hooks/useBlocksFromTimestamps'
 import { multiQuery } from 'pages/Info/utils/infoQueryHelpers'
 import { PriceChartEntry } from 'state/info/types'
-import { INFO_CLIENT } from 'constants/endpoints'
+import { INFO_CLIENT } from 'constants/graphs'
 import { FormattedHistory } from '../types'
 
 const getPriceSubqueries = (tokenAddress: string, blocks: any) =>
