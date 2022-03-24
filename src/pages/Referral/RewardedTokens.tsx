@@ -7,7 +7,9 @@ import { useReferralContract } from 'hooks/useContract'
 import { useWeb3React } from '@web3-react/core'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import CurrencyLogo from 'components/CurrencyLogo'
-import useTokenPrice from 'hooks/useTokenPrice'
+import { useTokenPrices, useTokenPrice } from 'hooks/useTokenPrice'
+import { ethers, BigNumber } from 'ethers'
+import convertOutputToReward from 'utils/convertOutputToReward'
 import TokenCard from './TokenCard'
 import { BUSDs, CHAIN_ID, KAPEXs, WBNB } from '../../constants'
 import { useClaimingFeeModal } from './useClaimingFeeModal'
@@ -29,17 +31,18 @@ const ClaimButtonsWrapper = styled.div`
   gap: 10px;
 `
 
-const CurrencyLogoWrapper = styled(Box)`
+const CurrencyLogoWrapper = styled(Box)<{ disabled: boolean }>`
   color: ${({ theme }) => theme.colors.invertedContrast};
   border-radius: 5px;
   padding: 3px;
   display: inline-flex;
   align-items: center;
   background: ${({ theme }) => `${theme.colors.sidebarBackground}99`};
+  cursor: ${({ disabled }) => disabled ? "not-allowed" : "pointer"};
 `
 
 const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
-  const { account } = useWeb3React()
+  const { account, library } = useWeb3React()
   const bnbPriceInUsd = useTokenPrice(WBNB)
   const [hasClaimedAll, setHasClaimedAll] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -48,7 +51,10 @@ const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
   const [claimToken, setClaimToken] = useState<Token>(KAPEXs[CHAIN_ID])
   const [claimableTokens, setClaimableTokens] = useState<Token[]>([])
   const [modalOpen, setModalOpen] = useState(false)
+  const [isClaimInSpecificTokenValid, setIsClaimInSpecificTokenValid] = useState<boolean>(false)
+  const [isClaimInRewardedTokenValid, setIsClaimInRewardedTokenValid] = useState<boolean>(false)
 
+  const tokenPrices = useTokenPrices(tokens ?? [])
   const refContract = useReferralContract(true)
 
   useEffect(() => {
@@ -80,6 +86,103 @@ const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
     setClaimableTokens(uniqueTokenList)
   }, [])
 
+  useEffect(() => {
+    const handleClaimInSpecificTokenValid = async () => {
+      const _isClaimInSpecificTokenValid = await getIsClaimInSpecificTokenValid()
+      setIsClaimInSpecificTokenValid(_isClaimInSpecificTokenValid)
+    }
+    handleClaimInSpecificTokenValid()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refContract, claimToken, tokens, tokenPrices, rewardTokens])
+
+  useEffect(() => {
+    const handleIsClaimInRewardedTokenValid = async () => {
+      const _isClaimInRewardedTokenValid = await getIsClaimInRewardedTokenValid()
+      setIsClaimInRewardedTokenValid(_isClaimInRewardedTokenValid)
+    }
+    handleIsClaimInRewardedTokenValid()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refContract, tokens, tokenPrices, rewardTokens])
+
+  async function getIsClaimInSpecificTokenValid(): Promise<boolean> {
+    if (!tokens || tokens.length === 0) return false
+    if (!tokenPrices) return false
+    if (!refContract || !claimToken) return false
+    if (rewardTokens.length === 0) return false
+
+    try {
+      const claimTokenAddress = claimToken.address ?? WETH[CHAIN_ID].address
+
+      const estimatedGasInBNB = await refContract.estimateGas.claimAllRewardsIn(claimTokenAddress)
+      const estimatedGasFormatted = ethers.utils.formatUnits(estimatedGasInBNB.mul(2), 8)
+      const estimatedGasInUsd = Number(estimatedGasFormatted) * bnbPriceInUsd
+  
+      let tokenPriceInUsd = 0
+  
+      for (let i = 0; i < rewardTokens.length; i++) {
+        const rewardToken = rewardTokens[i];
+        const outputToken = tokens.find((o) => o.address === rewardToken)
+        if (outputToken) {
+          const outputTokenAmount = (await refContract.balances(rewardToken, account)) as BigNumber
+          const tokenRewardAmount = await convertOutputToReward(
+            library,
+            refContract,
+            outputToken,
+            outputTokenAmount,
+            claimToken
+          )
+          const tokenPrice = tokenPrices[claimToken.coingeckoId ?? WBNB.coingeckoId!].usd ?? 0
+          const totalTokenPriceInUsd = tokenRewardAmount * tokenPrice
+          tokenPriceInUsd += totalTokenPriceInUsd 
+        }
+      }
+  
+      return tokenPriceInUsd >= estimatedGasInUsd
+    } catch (err) {
+      console.log("Error: ", err)
+      return true
+    }
+  }
+
+  async function getIsClaimInRewardedTokenValid(): Promise<boolean> {
+    if (!tokens || tokens.length === 0) return false
+    if (!tokenPrices || !refContract) return false
+    if (rewardTokens.length === 0) return false
+
+    try {
+      const estimatedGasInBNB = await refContract.estimateGas.claimAllRewardsInOutput()
+      const estimatedGasFormatted = ethers.utils.formatUnits(estimatedGasInBNB.mul(2), 8)
+      const estimatedGasInUsd = Number(estimatedGasFormatted) * bnbPriceInUsd
+  
+      let tokenPriceInUsd = 0
+  
+      for (let i = 0; i < rewardTokens.length; i++) {
+        const rewardToken = rewardTokens[i];
+        const outputToken = tokens.find((o) => o.address === rewardToken)
+        if (outputToken) {
+          const outputTokenAmount = (await refContract.balances(rewardToken, account)) as BigNumber
+          const tokenRewardAmount = await convertOutputToReward(
+            library,
+            refContract,
+            outputToken,
+            outputTokenAmount,
+            outputToken
+          )
+  
+          const tokenPrice = tokenPrices[outputToken.coingeckoId ?? WBNB.coingeckoId!]?.usd ?? 0
+          const totalTokenPriceInUsd = tokenRewardAmount * tokenPrice
+    
+          tokenPriceInUsd += totalTokenPriceInUsd
+        }
+      }
+  
+      return tokenPriceInUsd * 5 >= estimatedGasInUsd
+    } catch (err) {
+      console.log("Error: ", err)
+      return true
+    }
+  }
+
   const [openClaimingFeeModal, closeClaimingFeeModal] = useClaimingFeeModal({
     symbol: claimToken?.symbol as string,
     onConfirm: claimAllInClaimToken,
@@ -90,6 +193,11 @@ const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
     if (!claimToken) return
 
     closeClaimingFeeModal()
+    if (!(await getIsClaimInSpecificTokenValid())) {
+      setIsClaimInSpecificTokenValid(false);
+      return;
+    }
+
     setIsLoading(true)
 
     try {
@@ -105,6 +213,11 @@ const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
 
   async function handleClaimAllInRewarded() {
     if (!refContract) return
+
+    if (!(await getIsClaimInRewardedTokenValid())) {
+      setIsClaimInRewardedTokenValid(false);
+      return;
+    }
 
     setIsLoading(true)
 
@@ -167,7 +280,7 @@ const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
           {rewardTokens.length > 1 && (
             <ClaimButtonsWrapper>
               {!hasClaimedAll && (
-                <Button mt={3} onClick={handleClaimAllInClaimToken} disabled={isLoading || !canClaimAll}>
+                <Button mt={3} onClick={handleClaimAllInClaimToken} disabled={isLoading || !canClaimAll || !isClaimInSpecificTokenValid}>
                   CLAIM ALL IN&nbsp;
                   <CurrencyLogoWrapper
                     onClick={(e) => {
@@ -176,13 +289,14 @@ const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
                       setModalOpen(true)
                       e.stopPropagation()
                     }}
+                    disabled={isLoading || !canClaimAll}
                   >
                     <CurrencyLogo currency={claimToken} size="24px" />
                     &nbsp;{claimToken?.symbol}
                   </CurrencyLogoWrapper>
                 </Button>
               )}
-              {!hasClaimedAll && (
+              {(!hasClaimedAll && isClaimInRewardedTokenValid) && (
                 <Button mt={3} onClick={handleClaimAllInRewarded} disabled={hasClaimedAll || isLoading || !canClaimAll}>
                   CLAIM ALL IN REWARDED
                 </Button>

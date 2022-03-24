@@ -8,7 +8,7 @@ import CurrencyLogo from 'components/CurrencyLogo'
 import { Token, WETH } from '@koda-finance/summitswap-sdk'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { useToken } from 'hooks/Tokens'
-import useTokenPrice from 'hooks/useTokenPrice'
+import { useTokenPrice } from 'hooks/useTokenPrice'
 import convertOutputToReward from 'utils/convertOutputToReward'
 import { REFERRAL_ADDRESS, BUSDs, CHAIN_ID, KAPEXs, NULL_ADDRESS } from '../../constants'
 import { useClaimingFeeModal } from './useClaimingFeeModal'
@@ -128,14 +128,14 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, bnbPriceInUsd
 
   useEffect(() => {
     const handleSetIsTokenPriceValid = async () => {
-      setIsTokenPriceValid(await isClaimTokenPriceHigherThanGasFee())
+      setIsTokenPriceValid(await getIsTokenPriceValid())
     }
 
     handleSetIsTokenPriceValid()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, refContract, claimToken, balance, selectedToken, tokenPriceInUsd])
 
-  async function isClaimTokenPriceHigherThanGasFee(): Promise<boolean> {
+  async function getIsTokenPriceValid(): Promise<boolean> {
     if (!account) return false
     if (!refContract) return false
     if (!balance) return false
@@ -174,7 +174,7 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, bnbPriceInUsd
     closeClaimingFeeModal();
     setIsLoading(true)
 
-    if (!(await isClaimTokenPriceHigherThanGasFee())) {
+    if (!(await getIsTokenPriceValid())) {
       setIsTokenPriceValid(false);
       return;
     }
