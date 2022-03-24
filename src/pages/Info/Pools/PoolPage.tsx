@@ -238,10 +238,11 @@ export default function PoolPage({
                         ${showWeeklyData ? formatAmount(poolData.lpFees7d) : formatAmount(poolData.lpFees24h)}
                       </Text>
                       <Text color="textSubtle" fontSize="12px">
-                        {t('out of $%totalFees% total fees', {
+                        {/* eslint-disable-next-line */}
+                        {t('out of ${{ totalFees }} total fees', {
                           totalFees: showWeeklyData
-                            ? formatAmount(poolData.totalFees7d)
-                            : formatAmount(poolData.totalFees24h),
+                          ? formatAmount(poolData.totalFees7d)
+                          : formatAmount(poolData.totalFees24h),
                         })}
                       </Text>
                     </Flex>
