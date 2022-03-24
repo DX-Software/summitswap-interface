@@ -1,0 +1,23 @@
+.dateInput::before{
+    color: gray;
+    content: attr(placeholder) "";
+}
+.dateInput:focus::before {
+        content: "" !important;
+}
+.dateInput::-webkit-datetime-edit-text {
+        -webkit-appearance: none;
+        display: none;
+}
+.dateInput::-webkit-datetime-edit-month-field{
+        -webkit-appearance: none;
+        display: none;
+}
+.dateInput::-webkit-datetime-edit-day-field {
+        -webkit-appearance: none;
+        display: none;
+}
+.dateInput::-webkit-datetime-edit-year-field {
+        -webkit-appearance: none;
+        display: none;
+}	

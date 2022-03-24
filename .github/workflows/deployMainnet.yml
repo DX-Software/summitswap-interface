@@ -7,6 +7,11 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      REACT_APP_TELEGRAM_API_ID: ${{ secrets.REACT_APP_TELEGRAM_API_ID }}
+      REACT_APP_TELEGRAM_API_HASH: ${{ secrets.REACT_APP_TELEGRAM_API_HASH }}
+      REACT_APP_TELEGRAM_STRING_SESSION: ${{ secrets.REACT_APP_TELEGRAM_STRING_SESSION }}
+      REACT_APP_TELEGRAM_SUPPORT_MEMBER: ${{ secrets.REACT_APP_TELEGRAM_SUPPORT_MEMBER }}
     steps:
       - name: clone repo
         uses: actions/checkout@v2
