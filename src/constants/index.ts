@@ -22,14 +22,17 @@ export const ONBOARDING_API = `${process.env.REACT_APP_ONBOARDING_API}`
 
 export const DEFAULT_SLIPPAGE_TOLERANCE = 0.8
 
-export const MINIMUM_BNB_FOR_ONBOARDING = 0.0001
+export const MINIMUM_KODA_FOR_ONBOARDING = 0.01 // 45000000
 
 // a list of tokens by chain
 type ChainTokenList = {
   readonly [chainId in ChainId]: Token[]
 }
 
-export const KODA = new Token(ChainId.MAINNET, '0x8094e772fA4A60bdEb1DfEC56AB040e17DD608D5', 9, 'KODA', 'KODA Token', 100, true, 11.25, 11.23)
+export const KODA = {
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0x8094e772fA4A60bdEb1DfEC56AB040e17DD608D5', 9, 'KODA', 'KODA Token', 100, true, 11.25, 11.23),
+  [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0x063646d9C4eCB1c341bECdEE162958f072C43561', 9, 'KODA', 'KODA Token', 100, true, 11.25, 11.23)
+}[CHAIN_ID] as Token
 export const DAI = new Token(ChainId.MAINNET, '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3', 18, 'DAI', 'Dai Stablecoin')
 export const BUSD = new Token(ChainId.MAINNET, '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56', 18, 'BUSD', 'Binance USD')
 export const USDT = new Token(ChainId.MAINNET, '0x55d398326f99059fF775485246999027B3197955', 18, 'USDT', 'Tether USD')
