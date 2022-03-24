@@ -1,8 +1,8 @@
 import { Heading } from '@koda-finance/summitswap-uikit'
 import { useTranslation } from 'react-i18next'
 import React, { useMemo } from 'react'
-import TokenTable from 'pages/Info/components/InfoTables/TokensTable'
-import TopTokenMovers from 'pages/Info/components/TopTokenMovers'
+import TokenTable from 'components/InfoTables/TokensTable'
+import TopTokenMovers from 'components/TopTokenMovers'
 import { useAllTokenData } from 'state/info/hooks'
 import InfoPageLayout from '../index'
 

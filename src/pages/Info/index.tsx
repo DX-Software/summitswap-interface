@@ -1,6 +1,6 @@
 import React from 'react'
 import { PoolUpdater, ProtocolUpdater, TokenUpdater } from 'state/info/updaters'
-import InfoNav from './components/InfoNav'
+import InfoNav from 'components/InfoNav'
 
 const InfoPageLayout: React.FC = ({ children }) => {
   return (

@@ -3,11 +3,11 @@ import styled from 'styled-components'
 import { Flex, Box, Text, Heading, Card, Skeleton } from '@koda-finance/summitswap-uikit'
 import { fromUnixTime } from 'date-fns'
 import { useTranslation } from 'react-i18next'
-import LineChart from 'pages/Info/components/InfoCharts/LineChart'
-import TokenTable from 'pages/Info/components/InfoTables/TokensTable'
-import PoolTable from 'pages/Info/components/InfoTables/PoolsTable'
-import { formatAmount } from 'pages/Info/utils/formatInfoNumbers'
-import BarChart from 'pages/Info/components/InfoCharts/BarChart'
+import LineChart from 'components/InfoCharts/LineChart'
+import TokenTable from 'components/InfoTables/TokensTable'
+import PoolTable from 'components/InfoTables/PoolsTable'
+import { formatAmount } from 'utils/formatInfoNumbers'
+import BarChart from 'components/InfoCharts/BarChart'
 import {
   useAllPoolData,
   useAllTokenData,
@@ -15,7 +15,7 @@ import {
   useProtocolData,
   useProtocolTransactions,
 } from 'state/info/hooks'
-import TransactionTable from 'pages/Info/components/InfoTables/TransactionsTable'
+import TransactionTable from 'components/InfoTables/TransactionsTable'
 import getLocale from 'utils/getLocale'
 import InfoPageLayout from '../index'
 

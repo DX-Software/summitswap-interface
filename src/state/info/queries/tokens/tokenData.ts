@@ -3,10 +3,10 @@ import { gql } from 'graphql-request'
 import { useEffect, useState } from 'react'
 import { TokenData } from 'state/info/types'
 import { infoClient } from 'utils/graphql'
-import { useBlocksFromTimestamps } from 'pages/Info/hooks/useBlocksFromTimestamps'
-import { useBnbPrices } from 'pages/Info/hooks/useBnbPrices'
-import { getAmountChange, getChangeForPeriod, getPercentChange } from 'pages/Info/utils/infoDataHelpers'
-import { getDeltaTimestamps } from 'pages/Info/utils/infoQueryHelpers'
+import { useBlocksFromTimestamps } from 'hooks/useBlocksFromTimestamps'
+import { useBnbPrices } from 'hooks/useBnbPrices'
+import { getAmountChange, getChangeForPeriod, getPercentChange } from 'utils/infoDataHelpers'
+import { getDeltaTimestamps } from 'utils/infoQueryHelpers'
 
 interface TokenFields {
   id: string

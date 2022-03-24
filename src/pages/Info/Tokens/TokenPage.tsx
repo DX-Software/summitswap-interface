@@ -19,10 +19,10 @@ import {
 } from '@koda-finance/summitswap-uikit'
 import { getBscScanLink } from 'utils'
 import truncateHash from 'utils/truncateHash'
-import useCMCLink from 'pages/Info/hooks/useCMCLink'
-import { CurrencyLogo } from 'pages/Info/components/CurrencyLogo'
-import { formatAmount } from 'pages/Info/utils/formatInfoNumbers'
-import Percent from 'pages/Info/components/Percent'
+import useCMCLink from 'hooks/useCMCLink'
+import { CurrencyLogo } from 'components/CurrencyLogoByAddress'
+import { formatAmount } from 'utils/formatInfoNumbers'
+import Percent from 'components/Percent'
 import {
   usePoolDatas,
   useTokenData,
@@ -31,11 +31,11 @@ import {
   useTokenPriceData,
   useTokenTransactions,
 } from 'state/info/hooks'
-import PoolTable from 'pages/Info/components/InfoTables/PoolsTable'
-import TransactionTable from 'pages/Info/components/InfoTables/TransactionsTable'
+import PoolTable from 'components/InfoTables/PoolsTable'
+import TransactionTable from 'components/InfoTables/TransactionsTable'
 import { ONE_HOUR_SECONDS } from 'constants/info'
 import { useTranslation } from 'react-i18next'
-import ChartCard from 'pages/Info/components/InfoCharts/ChartCard'
+import ChartCard from 'components/InfoCharts/ChartCard'
 import { useActiveWeb3React } from 'hooks'
 import InfoPageLayout from '../index'
 

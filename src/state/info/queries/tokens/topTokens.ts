@@ -2,7 +2,7 @@ import { TOKEN_BLACKLIST } from 'constants/info'
 import { gql } from 'graphql-request'
 import { useEffect, useState } from 'react'
 import { infoClient } from 'utils/graphql'
-import { getDeltaTimestamps } from 'pages/Info/utils/infoQueryHelpers'
+import { getDeltaTimestamps } from 'utils/infoQueryHelpers'
 
 interface TopTokensResponse {
   tokenDayDatas: {

@@ -3,9 +3,9 @@ import styled from 'styled-components'
 import { Text, Flex, Box, Skeleton, useMatchBreakpoints, ArrowBackIcon, ArrowForwardIcon } from "@koda-finance/summitswap-uikit"
 import { TokenData } from 'state/info/types'
 import { Link } from 'react-router-dom'
-import { CurrencyLogo } from 'pages/Info/components/CurrencyLogo'
-import { formatAmount } from 'pages/Info/utils/formatInfoNumbers'
-import Percent from 'pages/Info/components/Percent'
+import { CurrencyLogo } from 'components/CurrencyLogoByAddress'
+import { formatAmount } from 'utils/formatInfoNumbers'
+import Percent from 'components/Percent'
 import { useTranslation } from 'react-i18next'
 import { ClickableColumnHeader, TableWrapper, PageButtons, Arrow, Break } from './shared'
 

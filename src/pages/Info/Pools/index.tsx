@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import { Heading } from "@koda-finance/summitswap-uikit"
 import { useTranslation } from 'react-i18next'
-import PoolTable from 'pages/Info/components/InfoTables/PoolsTable'
+import PoolTable from 'components/InfoTables/PoolsTable'
 import { useAllPoolData } from 'state/info/hooks'
 import InfoPageLayout from '../index'
 
