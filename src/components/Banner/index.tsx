@@ -6,10 +6,13 @@ import KapexLargeBanner from '../../img/kapex_large.gif'
 
 const Link = styled.a`
   padding: 0;
-  margin: 0;
+  margin: auto;
   border: none;
   cursor: pointer;
   margin-top: 20px;
+  @media (max-width: 1230px) {
+    width: 94%;
+  }
 `
 
 const ImgBanner = styled.img`
@@ -19,7 +22,6 @@ const ImgBanner = styled.img`
   max-width: 970px;
 
   @media (max-width: 1230px) {
-    width: 94%;
     content:url(${KapexMediumBanner});
   }
 
