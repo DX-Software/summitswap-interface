@@ -311,7 +311,7 @@ export default function CrossChainSwap() {
           <p className="paragraph">
             {!lpContract && <Text color="red">❌ Pair not found, please add liquidity first</Text>}
             {!isEnoughBnbInPool && lpContract && <Text color="red">❌ Not enough liquidity, please add more</Text>}
-            {isEnoughBnbInPool && <Text color="primary">✅ There are enough liquidity</Text>}
+            {isEnoughBnbInPool && <Text color="primary">✅ Liquidity already added</Text>}
           </p>
         </>
       ) : (
