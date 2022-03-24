@@ -1,64 +1,31 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Token } from '@koda-finance/summitswap-sdk'
-import { Text, Box, Button, useWalletModal, Flex } from '@koda-finance/summitswap-uikit'
-import styled from 'styled-components'
+import { Box, Button, useWalletModal, Flex } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
+import { TransactionResponse } from '@ethersproject/providers'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { TranslateString } from 'utils/translateTextHelpers'
 import { useAllTokens } from 'hooks/Tokens'
-import CurrencyLogo from 'components/CurrencyLogo'
-import qrCode from 'img/qrCode.svg'
-import useReferralLinkQrModal from './useReferralLinkQrModal'
+import { useReferralContract } from 'hooks/useContract'
+import TransactionConfirmationModal, { TransactionErrorContent } from 'components/TransactionConfirmationModal';
+import { useTransactionAdder } from 'state/transactions/hooks'
 import ReferalLinkImage from '../../img/referral-link.png'
 import InviteImage from '../../img/invite.png'
 import CoinStackImage from '../../img/coinstack.png'
-import expandMore from '../../img/expandMore.svg'
-import RewardedTokens from './RewardedTokens'
 import copyText from '../../utils/copyText'
 import login from '../../utils/login'
 
-import './style.css'
+import ReferralNavCard from '../../components/ReferralNavCard'
+import ReferralSegmentInitial from '../../constants/ReferralSegmentInitial'
+import ReferralSegment from './Segments/ReferralSegment'
+import CoinManagerSegment from './Segments/CoinManagerSegment'
+import SubInfluencer from './Segments/SubInfluencer'
+import LeadInfluencer from './Segments/LeadInfluencer'
+import { InfInfo } from './types'
+import CurrencySelector from './CurrencySelector'
 import SwapList from './SwapList'
-
-const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
-  display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'block' : 'none')};
-  position: absolute;
-  bottom: 36px;
-  right: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-  background-color: ${({ theme }) => theme.colors.sidebarBackground} !important;
-  color: ${({ theme }) => theme.colors.invertedContrast};
-  border-radius: 16px;
-  opacity: 0.7;
-  width: fit-content;
-  padding: 10px;
-`
-const LinkBox = styled(Box)`
-  color: ${({ theme }) => theme.colors.invertedContrast};
-  padding: 16px;
-  border-radius: 16px;
-  background: ${({ theme }) => theme.colors.sidebarBackground};
-  display: flex;
-  align-items: center;
-  > div:first-of-type {
-    flex: 1;
-    overflow: hidden;
-    > div {
-      overflow: hidden;
-      max-width: calc(100% - 20px);
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      word-break: break-all;
-    }
-  }
-  > div:not(:first-of-type) {
-    cursor: pointer;
-    position: relative;
-  }
-`
+import Instructions from './Instructions'
 
 interface IProps {
   isLanding?: boolean
@@ -66,6 +33,7 @@ interface IProps {
 }
 
 const Referral: React.FC<IProps> = () => {
+  const addTransaction = useTransactionAdder()
   const { account, deactivate, activate } = useWeb3React()
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedOutputCoin, setSelectedOutputCoin] = useState<Token | undefined>()
@@ -74,13 +42,103 @@ const Referral: React.FC<IProps> = () => {
   const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
   const allTokensTemp = useAllTokens()
   const location = useLocation()
+  const refContract = useReferralContract(true)
+  const [segmentControllerIndex, setSegmentControllerIndex] = useState(0)
+  const [enabledSegments, setEnabledSegments] = useState(ReferralSegmentInitial)
+  const [myLeadInfluencerAddress, setMyLeadInfluencerAddress] = useState<string | undefined>()
+  const [isSegmentDisabled, setIsSegmentDisabled] = useState({
+    checkManager: false,
+    checkLeadOrSub: false,
+  })
 
-  const [openReferralLinkQrModal] = useReferralLinkQrModal(referralURL)
+  const [isOpen, setIsOpen] = useState(false)
+  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
+  const [hash, setHash] = useState<string | undefined>()
+  const [pendingText, setPendingText] = useState<string>('')
+  const [errorMessage, setErrorMessage] = useState<string | undefined>()
+
+  const onDismiss = () => {
+    setHash(undefined)
+    setPendingText('')
+    setErrorMessage('')
+    setAttemptingTxn(false)
+    setIsOpen(false)
+  }
+
+  const openModel = useCallback((pendingMess: string) => {
+    setIsOpen(true)
+    setPendingText(pendingMess)
+    setAttemptingTxn(true)
+  }, [])
+
+  const transactionSubmitted = useCallback((response: TransactionResponse, summary: string) => {
+    setIsOpen(true)
+    setAttemptingTxn(false)
+    setHash(response.hash)
+    addTransaction(response, {
+      summary
+    })
+  }, [addTransaction])
+
+  const transactionFailed = useCallback((messFromError: string) => {
+    setIsOpen(true)
+    setAttemptingTxn(false)
+    setHash(undefined)
+    setErrorMessage(messFromError)
+  }, [])
+
+  const modelFunctions = {
+    openModel,
+    transactionSubmitted,
+    transactionFailed,
+    onDismiss
+  }
 
   useEffect(() => {
     const tokens = Object.values(allTokensTemp)
     setAllTokens(tokens.filter((token) => token.referralEnabled))
   }, [allTokensTemp])
+
+  useEffect(() => {
+    setSegmentControllerIndex(0)
+    setIsSegmentDisabled({
+      checkLeadOrSub: false, 
+      checkManager: false 
+    })
+  }, [enabledSegments])
+
+  useEffect(() => {
+    setEnabledSegments((prevState) => {
+      const nextValue = { ...prevState }
+      nextValue.leadInfluencer.isActive = false
+      nextValue.subInfluencer.isActive = false
+      return nextValue
+    })
+    setIsSegmentDisabled((prevState) => {
+      const nextValue = {...prevState}
+      nextValue.checkLeadOrSub = false
+      return nextValue
+    })
+    const getIfLead = async () => {
+      if (!account || !refContract || !selectedOutputCoin) return
+      const influencerInfo = (await refContract.influencers(selectedOutputCoin.address, account)) as InfInfo
+      setIsSegmentDisabled((prevState) => {
+        const nextValue = {...prevState}
+        nextValue.checkLeadOrSub = true
+        return nextValue
+      })
+      setEnabledSegments((prevState) => {
+        const nextValue = { ...prevState }
+        nextValue.leadInfluencer.isActive = influencerInfo.isLead
+        nextValue.subInfluencer.isActive = !influencerInfo.isLead
+        if (!influencerInfo.isLead && influencerInfo.lead) {
+          setMyLeadInfluencerAddress(influencerInfo.lead)
+        }
+        return nextValue
+      })
+    }
+    getIfLead()
+  }, [selectedOutputCoin, account, refContract])
 
   useEffect(() => {
     if (!selectedOutputCoin) {
@@ -91,6 +149,36 @@ const Referral: React.FC<IProps> = () => {
   const handleLogin = (connectorId: string) => {
     login(connectorId, activate)
   }
+
+  useEffect(() => {
+    setEnabledSegments((prevState) => {
+      const segmentOptions = { ...prevState }
+      segmentOptions.coinManager.isActive = false
+      return segmentOptions
+    })
+    setIsSegmentDisabled((prevState) => {
+      const nextValue = {...prevState}
+      nextValue.checkManager = false
+      return nextValue
+    })
+    async function checkIfManager() {
+      if (!account || !refContract || !selectedOutputCoin) return
+      const isManager = await refContract.isManager(selectedOutputCoin.address, account)
+      if (isManager) {
+        setEnabledSegments((prevState) => {
+          const segmentOptions = { ...prevState }
+          segmentOptions.coinManager.isActive = true
+          return segmentOptions
+        })
+        setIsSegmentDisabled((prevState) => {
+          const nextValue = {...prevState}
+          nextValue.checkManager = true
+          return nextValue
+        })
+      }
+    }
+    checkIfManager()
+  }, [account, selectedOutputCoin, refContract])
 
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
 
@@ -127,8 +215,51 @@ const Referral: React.FC<IProps> = () => {
     }
     return false
   }, [])
+
+  const getViewForSegment = () => {
+    const segmentKey = Object.keys(enabledSegments).filter((key) => {
+      return enabledSegments[key].isActive
+    })[segmentControllerIndex]
+
+    // TODO: add caching for segments
+    switch (segmentKey) {
+      case 'userDashboard':
+        return (
+          <ReferralSegment
+            copyReferralLink={copyReferralLink}
+            isCopySupported={isCopySupported}
+            isTooltipDisplayed={isTooltipDisplayed}
+            referralURL={referralURL}
+          />
+        )
+      case 'coinManager':
+        return <CoinManagerSegment outputToken={selectedOutputCoin} {...modelFunctions}/>
+      case 'leadInfluencer':
+        return <LeadInfluencer outputToken={selectedOutputCoin} {...modelFunctions} />
+      case 'subInfluencer':
+        return <SubInfluencer myLeadInfluencerAddress={myLeadInfluencerAddress} outputToken={selectedOutputCoin} {...modelFunctions} />
+      case 'history':
+        return <SwapList tokens={allTokens} />
+      default:
+        return <p>Segment Index out of range</p>
+    }
+  }
+
   return (
     <div className="main-content">
+      {account && (
+        <>
+          <CurrencySelector setModalOpen={setModalOpen} selectedOutputCoin={selectedOutputCoin} />
+          <ReferralNavCard
+            selectedController={segmentControllerIndex}
+            segments={enabledSegments}
+            isEnabled={isSegmentDisabled.checkLeadOrSub && isSegmentDisabled.checkManager}
+            setSegmentControllerIndex={(value: number) => {
+              setSegmentControllerIndex(value)
+            }}
+          />
+        </>
+      )}
       <Box>
         {!account && (
           <Flex mb={3} justifyContent="center">
@@ -137,147 +268,11 @@ const Referral: React.FC<IProps> = () => {
             </Button>
           </Flex>
         )}
-        {account && (
-          <>
-            <Text mb="8px" bold>
-              Output Coin
-            </Text>
-            <LinkBox mb={4} onClick={() => setModalOpen(true)} style={{ cursor: 'pointer' }}>
-              <CurrencyLogo currency={selectedOutputCoin} size="24px" style={{ marginRight: '8px' }} />
-              <Box>
-                <Text>{`${selectedOutputCoin?.symbol} - ${selectedOutputCoin?.address}`}</Text>
-              </Box>
-              <img src={expandMore} alt="" width={24} height={24} style={{ marginLeft: '10px' }} />
-            </LinkBox>
-            <Text mb="8px" bold>
-              My Referral link
-            </Text>
-            <LinkBox mb={3}>
-              <Box>
-                <Text style={{ whiteSpace: isCopySupported ? 'nowrap' : 'normal' }}>{referralURL}</Text>
-              </Box>
-              <Box onClick={openReferralLinkQrModal} mr="10px">
-                <img src={qrCode} alt="" width={22} height={22} />
-              </Box>
-              <Box style={{ display: isCopySupported ? 'block' : 'none' }} onClick={copyReferralLink}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="19" height="22" viewBox="0 0 19 22" fill="none">
-                  <path
-                    d="M13 0L2 0C0.9 0 0 0.9 0 2L0 15C0 15.55 0.45 16 1 16C1.55 16 2 15.55 2 15L2 3C2 2.45 2.45 2 3 2L13 2C13.55 2 14 1.55 14 1C14 0.45 13.55 0 13 0ZM17 4L6 4C4.9 4 4 4.9 4 6L4 20C4 21.1 4.9 22 6 22H17C18.1 22 19 21.1 19 20V6C19 4.9 18.1 4 17 4ZM16 20H7C6.45 20 6 19.55 6 19L6 7C6 6.45 6.45 6 7 6L16 6C16.55 6 17 6.45 17 7V19C17 19.55 16.55 20 16 20Z"
-                    fill="white"
-                  />
-                </svg>
-                <Tooltip isTooltipDisplayed={isTooltipDisplayed}>Copied</Tooltip>
-              </Box>
-            </LinkBox>
-            {/* TODO: Display swaplist using lambda x blockchain events */}
-            <SwapList />
-            <RewardedTokens tokens={allTokens} />
-          </>
-        )}
+        {account && getViewForSegment()}
       </Box>
 
-      <div className="invite-friends-area">
-        <h2 className="float-title">How to invite friends</h2>
+      { segmentControllerIndex === 0 && <Instructions referalLinkImage={ReferalLinkImage} inviteImage={InviteImage} coinStackImage={CoinStackImage} /> }
 
-        <div className="clear" />
-
-        <div className="friends-box">
-          <span className="number-circle">1</span>
-
-          <div className="align-center">
-            <img src={ReferalLinkImage} alt="Referral Link" />
-          </div>
-
-          <h3>Get Referral Link</h3>
-
-          <p className="max-width-90">Connect your wallet to generate your referral link above</p>
-        </div>
-
-        <div className="friends-box">
-          <span className="number-circle">2</span>
-
-          <div className="align-center">
-            <img src={InviteImage} alt="Invite" />
-          </div>
-
-          <h3>Invite</h3>
-
-          <p>Share referral link of your favourite projects to your community, friends and family.</p>
-        </div>
-
-        <div className="friends-box no-margin-right">
-          <span className="number-circle">3</span>
-
-          <div className="align-center">
-            <img src={CoinStackImage} alt="Earn Crypto" />
-          </div>
-
-          <h3>Earn Crypto</h3>
-
-          <p>Earn Tokens Get rewards for every one of your friends buys forever.*</p>
-        </div>
-
-        <div className="clear" />
-      </div>
-
-      <div className="reward-section font-15">
-        <p>Reward options - Receive your rewards in:</p>
-        <p>
-          <br />
-          A) The projects tokens <br />
-          B) Convert it to KAPEX without fee <br />
-          C) Convert it to BNB or BUSD (10% - 15% fees respectively)
-        </p>
-      </div>
-
-      <p className="paragraph">
-        Known as the trusted swap site, SummitSwap offers its user base many advantages over alternatives. One of these
-        features is a unique referral system that allows tokens to reward their communities whilst growing their
-        projects.
-      </p>
-
-      <p className="paragraph">
-        <u>How does it work from a user perspective?</u>
-      </p>
-
-      <p className="paragraph">All you need to do is send the referral link above to a future user.</p>
-
-      <p className="paragraph">
-        *Our referrals are FOREVER referrals, this means that if you have already been referred to us by someone, they
-        will earn commissions forever, providing the project pairing continues to support it.
-      </p>
-
-      <p className="paragraph">Please note: The referral fees are only applicable to projects that have this set up.</p>
-
-      <p className="paragraph">
-        <u>How does it work from a Team/Project/Token Perspective?</u>
-      </p>
-
-      <p className="paragraph">
-        Step 1: A project must be whitelisted with SummitSwap. This means they submit their token details for a manual
-        check, to prove they are trustworthy and allow SummitSwap to show this information as part of our SummitCheck
-        whitelisting system.
-      </p>
-
-      <p className="paragraph">The token will then have the logo shown and you can search for it by name.</p>
-
-      <p className="paragraph">
-        Step 2: Project decides that they will run a referral promotion. The project can reward their users any
-        percentage on just buys of their token when they purchase through SummitSwap on specific pairings. For example,
-        TOKEN-EG / BNB pairing. They then set the percentage, for example 1%.
-      </p>
-
-      <p className="paragraph">
-        The project can either fund the rewards with KAPEX our native utility token, or they can feed their own token to
-        the reward pool. This means the referrer can earn either KAPEX or TOKEN-EG.
-      </p>
-
-      <p className="paragraph">
-        The project may choose to remove fees from the reward pool contract so that rewards are paid in full to thier
-        loyal community. Although our native investment token KODA and our utility token KAPEX does this, please note
-        that every project will have their own set up and may choose to keep the transactions with fees included. You can
-        find out this information on their whitelisting project profile through SummitCheck.
-      </p>
       <CurrencySearchModal
         isOpen={modalOpen}
         onDismiss={handleDismissSearch}
@@ -288,6 +283,14 @@ const Referral: React.FC<IProps> = () => {
         showUnknownTokens={false}
         tokens={allTokens}
       />
+
+      <TransactionConfirmationModal
+        isOpen={isOpen}
+        onDismiss={onDismiss}
+        attemptingTxn={attemptingTxn}
+        hash={hash}
+        pendingText={pendingText}
+        content={() => (errorMessage ? <TransactionErrorContent onDismiss={onDismiss} message={errorMessage || ''} /> : null) } />
     </div>
   )
 }

@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { useWalletModal } from '@koda-finance/summitswap-uikit'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import login from 'utils/login'
+import Banner from 'components/Banner'
 import Popups from '../components/Popups'
 import Web3ReactManager from '../components/Web3ReactManager'
 import { RedirectDuplicateTokenIds, RedirectOldAddLiquidityPathStructure } from './AddLiquidity/redirects'
@@ -144,6 +145,7 @@ export default function App() {
                 <Menu>
                   <BodyWrapper>
                     <AppHeader />
+                    <Banner />
                     <Route exact path="/swap" component={Swap} />
                     <Route exact path="/cross-chain-swap" component={CrossChainSwap} />
                     <Route exact path="/swap?ref=:ref" component={Referral} />
