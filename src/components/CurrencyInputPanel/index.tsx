@@ -132,15 +132,9 @@ export default function CurrencyInputPanel({
  
   const token = pair ? pair.liquidityToken : currency instanceof Token ? currency: null
 
-  const tokenAddress = token ? isAddress(token.address) : null
-  const tokenSymbol= token ? currency?.symbol :null 
-
-
-
   const handleDismissSearch = useCallback(() => {
     setModalOpen(false)
   }, [setModalOpen])
-
 
   return (
     <InputPanel id={id}>
@@ -225,7 +219,7 @@ export default function CurrencyInputPanel({
               )}
             </Aligner>
           </CurrencySelect>
-          {token && tokenAddress && tokenSymbol ? (
+          {token && token.symbol && isAddress(token.address) ? (
             <Flex style={{ gap: '4px' }} alignItems="center">
               <CopyButton
                 width="16px"
