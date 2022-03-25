@@ -53,7 +53,7 @@ export default function SendReferralRewards({
   return (
     <article>
       <p>
-        3. Send some of <b>{token?.symbol ?? 'YOUR TOKEN'}</b> to the referral contract for referral rewards
+        Send some of <b>{token?.symbol ?? 'YOUR TOKEN'}</b> to the referral contract for referral rewards
         <br />
       </p>
       {token && account && (
