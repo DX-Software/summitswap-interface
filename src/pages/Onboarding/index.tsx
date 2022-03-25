@@ -36,8 +36,6 @@ interface LpLock {
   lockId: number
 }
 
-// TODO check if enough liquidity is locked
-// TODO check shared tokendropdown
 export default function CrossChainSwap() {
   const { account, activate, deactivate, library } = useWeb3React()
   const [selectedToken, setSelectedToken] = useState<Token>()
@@ -135,22 +133,17 @@ export default function CrossChainSwap() {
     fetchLiquidity()
   }, [pairAddress, tokenContract, kodaConctract])
 
-  // useEffect(() => {
-  //   async function fetchIfReferralHasSomeBalance() {
-  //     if (!tokenContract) return
+  useEffect(() => {
+    async function fetchIfReferralHasSomeBalance() {
+      if (!tokenContract) return
 
-  //     const referralBalance = (await tokenContract.balanceOf(REFERRAL_ADDRESS)) as BigNumber
+      const referralBalance = (await tokenContract.balanceOf(REFERRAL_ADDRESS)) as BigNumber
 
-  //     setIsTokensInReferral(!referralBalance.isZero())
-  //   }
+      setIsTokensSentToReferral(!referralBalance.isZero())
+    }
 
-  //   fetchIfReferralHasSomeBalance()
-  // }, [tokenContract])
-
-  // useEffect(() => {
-  //   fetchUserLocked()
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [tokenContract, lockerContract, account, pairAddress, isLiquidityLocked])
+    fetchIfReferralHasSomeBalance()
+  }, [tokenContract])
 
   const fetchUserLocked = useCallback(async () => {
     if (!tokenContract || !lockerContract || !account || !pairAddress) {
@@ -178,6 +171,11 @@ export default function CrossChainSwap() {
 
     return { fetchedLpLocks, totalAmountOfLpLocked }
   }, [tokenContract, lockerContract, account, pairAddress])
+
+  useEffect(() => {
+    fetchUserLocked()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tokenContract, lockerContract, account, pairAddress, isLiquidityLocked])
 
   return (
     <div className="main-content onboarding-page">

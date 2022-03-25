@@ -41,7 +41,7 @@ export default function SetFeeInfo({
               style={{ marginTop: '10px', marginBottom: '10px' }}
             />
             <p>
-              {!(parseInt(referrerPercentage ?? '') > 0) && isTokensSentToReferral && (
+              {!(parseInt(referrerPercentage ?? '') > 0) && isTokensSentToReferral && isLiquidityLocked && (
                 <Text color="red">Please enter positive number</Text>
               )}
             </p>
@@ -60,7 +60,7 @@ export default function SetFeeInfo({
               style={{ marginTop: '10px', marginBottom: '10px' }}
             />
             <p>
-              {!(+(firstBuyPercentage ?? '') > 0) && isTokensSentToReferral && (
+              {!(+(firstBuyPercentage ?? '') > 0) && isTokensSentToReferral && isLiquidityLocked && (
                 <Text color="red">Please enter positive number</Text>
               )}
             </p>
