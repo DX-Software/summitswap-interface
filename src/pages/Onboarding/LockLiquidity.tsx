@@ -90,7 +90,7 @@ export default function LockLiquidity({
   return (
     <article>
       <p>Lock your liquidity for minimum 1 year</p>
-      {token && account ? (
+      {token && account && (
         <>
           <DatePicker
             label="Unlock date"
@@ -125,8 +125,6 @@ export default function LockLiquidity({
           {(lpBalance?.isZero() ?? true) && <Text color="red">You don&apos;t have enough liquidity tokens</Text>}
           {!isSelectedDateGood && <Text color="red">Please select unlock date minimum 1 year from now</Text>}
         </>
-      ) : (
-        <></>
       )}
     </article>
   )
