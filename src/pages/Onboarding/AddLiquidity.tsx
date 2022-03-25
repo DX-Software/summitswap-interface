@@ -21,15 +21,13 @@ export default function AddLiquidity({ token, isLoading, isEnoughLiquidity }: Pr
         Add liquidity on <b>KODA/{token?.symbol ?? 'YOUR COIN'}</b>. Minimum{' '}
         <b>{abbreviateNumber(MINIMUM_KODA_FOR_ONBOARDING)} KODA</b>
       </p>
-      {token && account ? (
+      {token && account && (
         <>
           <Button as={Link} to={`/add/${KODA}/${token?.address}`} disabled={isLoading}>
             Add Liquidity
           </Button>
           <p>{!isEnoughLiquidity && <Text color="red">Not enough liquidity, please add more</Text>}</p>
         </>
-      ) : (
-        <></>
       )}
     </article>
   )
