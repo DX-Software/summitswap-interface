@@ -2,7 +2,7 @@ import { Token } from '@koda-finance/summitswap-sdk'
 import { Button, useModal } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
 import axios from 'axios'
-import React, { useCallback } from 'react'
+import React, { Dispatch, SetStateAction, useCallback } from 'react'
 import { ONBOARDING_API } from '../../constants'
 import SuccessModal from './SuccessModal'
 
@@ -15,6 +15,7 @@ interface Props {
   isLoading: boolean
   pairAddress: string | undefined
   fetchUserLocked: any
+  setIsLoading: Dispatch<SetStateAction<boolean>>
 }
 
 export default function Submit({
@@ -26,6 +27,7 @@ export default function Submit({
   isLoading,
   pairAddress,
   fetchUserLocked,
+  setIsLoading,
 }: Props) {
   const { account } = useWeb3React()
 
@@ -37,6 +39,7 @@ export default function Submit({
         return
       }
 
+      setIsLoading(true)
       const { fetchedLpLocks, totalAmountOfLpLocked } = await fetchUserLocked()
 
       await axios.post(ONBOARDING_API, {
@@ -49,12 +52,22 @@ export default function Submit({
           %0AReferrer Fee: ${referrerPercentage}
           %0AFirst Buy Fee: ${firstBuyPercentage}`,
       })
+      setIsLoading(false)
 
       displaySucessModal()
     }
 
     submitToken()
-  }, [firstBuyPercentage, referrerPercentage, token, pairAddress, account, fetchUserLocked, displaySucessModal])
+  }, [
+    firstBuyPercentage,
+    referrerPercentage,
+    token,
+    pairAddress,
+    account,
+    setIsLoading,
+    fetchUserLocked,
+    displaySucessModal,
+  ])
 
   return (
     <>

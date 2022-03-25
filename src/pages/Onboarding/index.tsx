@@ -107,10 +107,7 @@ export default function CrossChainSwap() {
         return
       }
 
-      const fetchedPairAddress = (await factoryContract.getPair(
-        KODA.address,
-        selectedToken.address
-      )) as string
+      const fetchedPairAddress = (await factoryContract.getPair(KODA.address, selectedToken.address)) as string
 
       if (fetchedPairAddress === NULL_ADDRESS) {
         setPairAddress(undefined)
@@ -137,10 +134,6 @@ export default function CrossChainSwap() {
 
     fetchLiquidity()
   }, [pairAddress, tokenContract, kodaConctract])
-
-  //
-  //
-
 
   // useEffect(() => {
   //   async function fetchIfReferralHasSomeBalance() {
@@ -268,6 +261,7 @@ export default function CrossChainSwap() {
         isLoading={isLoading}
         pairAddress={pairAddress}
         fetchUserLocked={fetchUserLocked}
+        setIsLoading={setIsLoading}
       />
     </div>
   )
