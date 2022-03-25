@@ -152,20 +152,6 @@ export default function CrossChainSwap() {
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, [tokenContract, lockerContract, account, pairAddress, isLiquidityLocked])
 
-  // useEffect(() => {
-  //   async function fetchUserApproved() {
-  //     if (!lpContract || !account) return
-
-  //     const userBalance = (await lpContract.balanceOf(account)) as BigNumber
-
-  //     const userApprovedAlready = (await lpContract.allowance(account, LOCKER_ADDRESS)) as BigNumber
-
-  //     setIsLiquidityApproved(userApprovedAlready.gte(userBalance))
-  //   }
-
-  //   fetchUserApproved()
-  // }, [account, lpContract])
-
   const fetchUserLocked = useCallback(async () => {
     if (!tokenContract || !lockerContract || !account || !pairAddress) {
       setIsLiquidityLocked(false)

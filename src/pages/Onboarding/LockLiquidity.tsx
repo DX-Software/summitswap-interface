@@ -7,7 +7,7 @@ import { TextField } from '@mui/material'
 import { Button, Text } from '@koda-finance/summitswap-uikit'
 import { useLockerContract, useTokenContract } from 'hooks/useContract'
 import { BigNumber } from 'ethers'
-import { MAX_UINT256 } from '../../constants'
+import { LOCKER_ADDRESS, MAX_UINT256 } from '../../constants'
 
 interface Props {
   token: Token | undefined
@@ -99,6 +99,20 @@ export default function LockLiquidity({
     }
 
     fetchLpBalance()
+  }, [account, lpContract])
+
+  useEffect(() => {
+    async function fetchUserApproved() {
+      if (!lpContract || !account) return
+
+      const userBalance = (await lpContract.balanceOf(account)) as BigNumber
+
+      const userApprovedAlready = (await lpContract.allowance(account, LOCKER_ADDRESS)) as BigNumber
+
+      setIsLiquidityApproved(userApprovedAlready.gte(userBalance))
+    }
+
+    fetchUserApproved()
   }, [account, lpContract])
 
   return (

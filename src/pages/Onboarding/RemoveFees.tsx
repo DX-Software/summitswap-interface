@@ -31,7 +31,7 @@ export default function RemoveFees({
         Referral contract - <b>{REFERRAL_ADDRESS}</b>
       </p>
       <p>
-        Pair contract - <b>{pairAddress ?? '???'}</b>
+        Pair contract - <b>{pairAddress && account ? pairAddress : '???'}</b>
       </p>
       {token && account && (
         <p className="paragraph">
