@@ -16,9 +16,9 @@ export default function AddLiquidity({ token, isLoading, isEnoughLiquidity }: Pr
   const { account } = useWeb3React()
 
   return (
-    <>
-      <p className="paragraph">
-        1. Add liquidity on <b>KODA/{token?.symbol ?? 'YOUR COIN'}</b>. Minimum{' '}
+    <article>
+      <p>
+        Add liquidity on <b>KODA/{token?.symbol ?? 'YOUR COIN'}</b>. Minimum{' '}
         <b>{abbreviateNumber(MINIMUM_KODA_FOR_ONBOARDING)} KODA</b>
       </p>
       {token && account ? (
@@ -26,13 +26,11 @@ export default function AddLiquidity({ token, isLoading, isEnoughLiquidity }: Pr
           <Button as={Link} to={`/add/${KODA}/${token?.address}`} disabled={isLoading}>
             Add Liquidity
           </Button>
-          <p className="paragraph">
-            {!isEnoughLiquidity && <Text color="red">Not enough liquidity, please add more</Text>}
-          </p>
+          <p>{!isEnoughLiquidity && <Text color="red">Not enough liquidity, please add more</Text>}</p>
         </>
       ) : (
         <></>
       )}
-    </>
+    </article>
   )
 }
