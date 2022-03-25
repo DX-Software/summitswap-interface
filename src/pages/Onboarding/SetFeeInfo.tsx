@@ -42,7 +42,7 @@ export default function SetFeeInfo({
             />
             <p>
               {!(parseInt(referrerPercentage ?? '') > 0) && isTokensSentToReferral && (
-                <Text color="red">❌ Please enter positive number</Text>
+                <Text color="red">Please enter positive number</Text>
               )}
             </p>
           </>
@@ -61,7 +61,7 @@ export default function SetFeeInfo({
             />
             <p>
               {!(+(firstBuyPercentage ?? '') > 0) && isTokensSentToReferral && (
-                <Text color="red">❌ Please enter positive number</Text>
+                <Text color="red">Please enter positive number</Text>
               )}
             </p>
           </>

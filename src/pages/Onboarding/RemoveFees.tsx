@@ -26,15 +26,13 @@ export default function RemoveFees({
   const { account } = useWeb3React()
   return (
     <article>
-      <p>If your token has fees remove referral contract from them</p>
+      <p>If your token has fees remove these contracts from them</p>
       <p>
         Referral contract - <b>{REFERRAL_ADDRESS}</b>
       </p>
-      {pairAddress && (
-        <p>
-          Pair contract - <b>{pairAddress}</b>
-        </p>
-      )}
+      <p>
+        Pair contract - <b>{pairAddress ?? '???'}</b>
+      </p>
       {token && account && (
         <p className="paragraph">
           <Checkbox
@@ -43,7 +41,7 @@ export default function RemoveFees({
             disabled={!isTokensSentToReferral || !firstBuyPercentage || !referrerPercentage || isLoading}
             onChange={(o) => setIsReferralContractRemovedFromFees(o.target.checked)}
           />
-          &nbsp; If token transfer fees exist, I confirm that referral contract is excluded
+          &nbsp; If token transfer fees exist, I confirm that these contracts are excluded
         </p>
       )}
     </article>

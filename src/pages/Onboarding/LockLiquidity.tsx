@@ -2,7 +2,7 @@ import { Token } from '@koda-finance/summitswap-sdk'
 import { DatePicker } from '@mui/lab'
 import { useWeb3React } from '@web3-react/core'
 import { addYears, subDays } from 'date-fns'
-import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
+import React, { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { TextField } from '@mui/material'
 import { Button, Text } from '@koda-finance/summitswap-uikit'
 import { useLockerContract, useTokenContract } from 'hooks/useContract'
@@ -87,9 +87,23 @@ export default function LockLiquidity({
     lock()
   }, [lpContract, account, lockerContract, library, selectedUnlockDate, lpBalance, setIsLoading, setIsLiquidityLocked])
 
+  useEffect(() => {
+    async function fetchLpBalance() {
+      if (!account || !lpContract) {
+        setLpBalance(undefined)
+        return
+      }
+
+      const fetchedLpBalance = (await lpContract.balanceOf(account)) as BigNumber
+      setLpBalance(fetchedLpBalance)
+    }
+
+    fetchLpBalance()
+  }, [account, lpContract])
+
   return (
     <article>
-      <p>Lock your liquidity for minimum 1 year</p>
+      <p>Lock liquidity for minimum 1 year</p>
       {token && account && (
         <>
           <DatePicker

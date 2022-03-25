@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import TokenDropdown from 'components/TokenDropdown'
 import { Token, WETH } from '@koda-finance/summitswap-sdk'
-import { Link } from 'react-router-dom'
+import { Link, useHistory, useLocation } from 'react-router-dom'
 import { Button, Checkbox, Flex, Input, Text, useModal, useWalletModal } from '@koda-finance/summitswap-uikit'
 import { useFactoryContract, useLockerContract, useTokenContract } from 'hooks/useContract'
 import { useWeb3React } from '@web3-react/core'
@@ -10,29 +10,34 @@ import axios from 'axios'
 import { TranslateString } from 'utils/translateTextHelpers'
 import login from 'utils/login'
 import DatePicker from '@mui/lab/DatePicker'
-import { TextField } from '@mui/material'
 import { addYears, subDays } from 'date-fns/esm'
+import { useToken } from 'hooks/Tokens'
 import {
   CHAIN_ID,
+  KODA,
   LOCKER_ADDRESS,
   MAX_UINT256,
-  MINIMUM_BNB_FOR_ONBOARDING,
   NULL_ADDRESS,
   ONBOARDING_API,
   REFERRAL_ADDRESS,
 } from '../../constants'
 import SuccessModal from './SuccessModal'
 import './styles.css'
+import AddLiquidity from './AddLiquidity'
+import SwapToKoda from './SwapToKoda'
+import LockLiquidity from './LockLiquidity'
+import SendReferralRewards from './SendReferralRewards'
+import SetFeeInfo from './SetFeeInfo'
+import RemoveFees from './RemoveFees'
+import Submit from './Submit'
 
-const minimumUnlockDate = subDays(addYears(Date.now(), 1), 1)
-
-interface ILpLock {
+interface LpLock {
   lock: any
   lockId: number
 }
 
-// TODO add token as a path parameter
 // TODO check if enough liquidity is locked
+// TODO check shared tokendropdown
 export default function CrossChainSwap() {
   const { account, activate, deactivate, library } = useWeb3React()
   const [selectedToken, setSelectedToken] = useState<Token>()
@@ -40,30 +45,22 @@ export default function CrossChainSwap() {
 
   const [isLoading, setIsLoading] = useState(false)
 
-  const [isEnoughBnbInPool, setIsEnoughBnbInPool] = useState(false)
-  const [isLiquidityApproved, setIsLiquidityApproved] = useState(false)
+  const [isEnoughLiquidity, setIsEnoughLiquidity] = useState(false)
   const [isLiquidityLocked, setIsLiquidityLocked] = useState(false)
-  const [isTokensInReferral, setIsTokensInReferral] = useState(false)
+  const [isTokensSentToReferral, setIsTokensSentToReferral] = useState(false)
   const [isReferralContractRemovedFromFees, setIsReferralContractRemovedFromFees] = useState(false)
 
-  const [lpBalance, setLpBalance] = useState<BigNumber>()
-
-  const [selectedUnlockDate, setSelectedUnlockDate] = useState<Date | null>(addYears(Date.now(), 1))
-  const [referralRewardAmount, setReferralRewardAmount] = useState<string>()
   const [referrerPercentage, setReferrerPercentage] = useState<string>()
   const [firstBuyPercentage, setFirstBuyPercentage] = useState<string>()
 
   const factoryContract = useFactoryContract()
-  const lockerContract = useLockerContract(true)
-  const lpContract = useTokenContract(pairAddress)
   const tokenContract = useTokenContract(selectedToken?.address, true)
-  const wbnbContract = useTokenContract(WETH[CHAIN_ID].address)
+  const kodaConctract = useTokenContract(KODA.address, true)
+  const lockerContract = useLockerContract(true)
 
-  const isSelectedDateGood = useMemo(() => {
-    if (!selectedUnlockDate) return false
-
-    return selectedUnlockDate > minimumUnlockDate
-  }, [selectedUnlockDate])
+  const location = useLocation()
+  const history = useHistory()
+  const tokenFromUrl = useToken(new URLSearchParams(location.search).get('token') || '')
 
   const handleLogin = useCallback(
     (connectorId: string) => {
@@ -72,35 +69,109 @@ export default function CrossChainSwap() {
     [activate]
   )
 
+  const handleTokenSelect = useCallback((inputCurrency) => {
+    setSelectedToken(inputCurrency)
+  }, [])
+
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
 
-  const [displaySucessModal] = useModal(<SuccessModal title="Success" />)
+  useEffect(() => {
+    const onboardingTokenAddress = new URLSearchParams(location.search).get('token')
+
+    if (onboardingTokenAddress && !account) {
+      onPresentConnectModal()
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account, location])
 
   useEffect(() => {
-    async function fetchLpBalance() {
-      if (!account || !lpContract) {
-        setLpBalance(undefined)
+    if (selectedToken) {
+      history.push({ search: `?token=${selectedToken.address}` })
+    } else {
+      history.push({ search: `` })
+    }
+  }, [history, selectedToken])
+
+  useEffect(() => {
+    if (tokenFromUrl) {
+      setSelectedToken(tokenFromUrl)
+    }
+  }, [tokenFromUrl])
+
+  useEffect(() => {
+    async function fetchPair() {
+      if (!selectedToken || !factoryContract) {
+        await Promise.resolve()
+        setPairAddress(undefined)
         return
       }
 
-      const fetchedLpBalance = (await lpContract.balanceOf(account)) as BigNumber
-      setLpBalance(fetchedLpBalance)
+      const fetchedPairAddress = (await factoryContract.getPair(
+        KODA.address,
+        selectedToken.address
+      )) as string
+
+      if (fetchedPairAddress === NULL_ADDRESS) {
+        setPairAddress(undefined)
+      } else {
+        setPairAddress(fetchedPairAddress)
+      }
     }
 
-    fetchLpBalance()
-  }, [account, lpContract])
+    fetchPair()
+  }, [selectedToken, factoryContract])
 
   useEffect(() => {
-    async function fetchIfReferralHasSomeBalance() {
-      if (!tokenContract) return
+    async function fetchLiquidity() {
+      if (!tokenContract || !kodaConctract || !pairAddress) {
+        await Promise.resolve()
+        setIsEnoughLiquidity(false)
+        return
+      }
 
-      const referralBalance = (await tokenContract.balanceOf(REFERRAL_ADDRESS)) as BigNumber
+      const kodaBalanceOfPair = (await kodaConctract.balanceOf(pairAddress)) as BigNumber
 
-      setIsTokensInReferral(!referralBalance.isZero())
+      setIsEnoughLiquidity(!kodaBalanceOfPair.isZero())
     }
 
-    fetchIfReferralHasSomeBalance()
-  }, [tokenContract])
+    fetchLiquidity()
+  }, [pairAddress, tokenContract, kodaConctract])
+
+  //
+  //
+
+
+  // useEffect(() => {
+  //   async function fetchIfReferralHasSomeBalance() {
+  //     if (!tokenContract) return
+
+  //     const referralBalance = (await tokenContract.balanceOf(REFERRAL_ADDRESS)) as BigNumber
+
+  //     setIsTokensInReferral(!referralBalance.isZero())
+  //   }
+
+  //   fetchIfReferralHasSomeBalance()
+  // }, [tokenContract])
+
+  // useEffect(() => {
+  //   fetchUserLocked()
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [tokenContract, lockerContract, account, pairAddress, isLiquidityLocked])
+
+  // useEffect(() => {
+  //   async function fetchUserApproved() {
+  //     if (!lpContract || !account) return
+
+  //     const userBalance = (await lpContract.balanceOf(account)) as BigNumber
+
+  //     const userApprovedAlready = (await lpContract.allowance(account, LOCKER_ADDRESS)) as BigNumber
+
+  //     setIsLiquidityApproved(userApprovedAlready.gte(userBalance))
+  //   }
+
+  //   fetchUserApproved()
+  // }, [account, lpContract])
 
   const fetchUserLocked = useCallback(async () => {
     if (!tokenContract || !lockerContract || !account || !pairAddress) {
@@ -117,7 +188,7 @@ export default function CrossChainSwap() {
 
         return lock.lpToken === pairAddress ? { lock, lockId } : undefined
       })
-    ).then((locks) => locks.filter(Boolean))) as ILpLock[]
+    ).then((locks) => locks.filter(Boolean))) as LpLock[]
 
     const totalAmountOfLpLocked = fetchedLpLocks.reduce(
       (acc, cur) => acc.add(cur.lock.tokenAmount),
@@ -129,155 +200,6 @@ export default function CrossChainSwap() {
     return { fetchedLpLocks, totalAmountOfLpLocked }
   }, [tokenContract, lockerContract, account, pairAddress])
 
-  useEffect(() => {
-    fetchUserLocked()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tokenContract, lockerContract, account, pairAddress, isLiquidityLocked])
-
-  useEffect(() => {
-    async function fetchUserApproved() {
-      if (!lpContract || !account) return
-
-      const userBalance = (await lpContract.balanceOf(account)) as BigNumber
-
-      const userApprovedAlready = (await lpContract.allowance(account, LOCKER_ADDRESS)) as BigNumber
-
-      setIsLiquidityApproved(userApprovedAlready.gte(userBalance))
-    }
-
-    fetchUserApproved()
-  }, [account, lpContract])
-
-  useEffect(() => {
-    async function fetchBnbBalance() {
-      if (!tokenContract || !wbnbContract || !pairAddress) {
-        setIsEnoughBnbInPool(false)
-        return
-      }
-
-      const wbnbBalance = (await wbnbContract.balanceOf(pairAddress)) as BigNumber
-
-      setIsEnoughBnbInPool(wbnbBalance.gte(ethers.utils.parseUnits(`${MINIMUM_BNB_FOR_ONBOARDING}`)))
-    }
-
-    fetchBnbBalance()
-  }, [pairAddress, tokenContract, wbnbContract])
-
-  useEffect(() => {
-    async function fetchPair() {
-      if (!selectedToken || !factoryContract) {
-        setPairAddress(undefined)
-        return
-      }
-
-      const fetchedPair = (await factoryContract.getPair(WETH[CHAIN_ID].address, selectedToken.address)) as string
-
-      if (fetchedPair === NULL_ADDRESS) {
-        setPairAddress(undefined)
-      } else {
-        setPairAddress(fetchedPair)
-      }
-    }
-
-    fetchPair()
-  }, [selectedToken, factoryContract])
-
-  const handleTokenSelect = useCallback((inputCurrency) => {
-    setSelectedToken(inputCurrency)
-  }, [])
-
-  const lockLiquidity = useCallback(() => {
-    async function lock() {
-      if (!lpContract || !account || !lockerContract || !library || !selectedUnlockDate) {
-        setIsLiquidityLocked(false)
-        return
-      }
-
-      const receipt = await lockerContract.lockTokens(
-        lpContract.address,
-        lpBalance,
-        Math.floor(selectedUnlockDate.valueOf() / 1000),
-        account,
-        '2' // Fee type
-      )
-
-      setIsLoading(true)
-      await library.waitForTransaction(receipt.hash)
-      setIsLoading(false)
-
-      setIsLiquidityLocked(true)
-    }
-
-    lock()
-  }, [lpContract, account, lockerContract, library, selectedUnlockDate, lpBalance])
-
-  const approveLiquidity = useCallback(() => {
-    async function approve() {
-      if (!lpContract || !account || !lockerContract || !library) {
-        setIsLiquidityApproved(false)
-        return
-      }
-
-      const receipt = await lpContract.approve(lockerContract.address, MAX_UINT256)
-
-      setIsLoading(true)
-      await library.waitForTransaction(receipt.hash)
-      setIsLoading(false)
-
-      setIsLiquidityApproved(true)
-    }
-
-    approve()
-  }, [lpContract, account, lockerContract, library])
-
-  const sendTokensToReferralContract = useCallback(() => {
-    async function send() {
-      if (!tokenContract || !referralRewardAmount || !library) {
-        setIsTokensInReferral(false)
-        return
-      }
-
-      if (parseInt(referralRewardAmount) <= 0) {
-        return
-      }
-
-      const receipt = await tokenContract.transfer(REFERRAL_ADDRESS, ethers.utils.parseEther(referralRewardAmount))
-
-      setIsLoading(true)
-      await library.waitForTransaction(receipt.hash)
-      setIsLoading(false)
-
-      setIsTokensInReferral(true)
-    }
-
-    send()
-  }, [tokenContract, referralRewardAmount, library])
-
-  const submit = useCallback(() => {
-    async function submitToken() {
-      if (!firstBuyPercentage || !referrerPercentage || !selectedToken || !pairAddress || !account) {
-        return
-      }
-
-      const { fetchedLpLocks, totalAmountOfLpLocked } = await fetchUserLocked()
-
-      await axios.post(ONBOARDING_API, {
-        message: `
-          Token: ${selectedToken.address}
-          %0AUser: ${account}
-          %0APair: ${pairAddress}
-          %0ALockIds: ${fetchedLpLocks?.map((o) => o.lockId)}
-          %0ATotalLocked: ${totalAmountOfLpLocked}
-          %0AReferrer Fee: ${referrerPercentage}
-          %0AFirst Buy Fee: ${firstBuyPercentage}`,
-      })
-
-      displaySucessModal()
-    }
-
-    submitToken()
-  }, [firstBuyPercentage, referrerPercentage, selectedToken, pairAddress, fetchUserLocked, account, displaySucessModal])
-
   return (
     <div className="main-content onboarding-page">
       {!account && (
@@ -287,9 +209,10 @@ export default function CrossChainSwap() {
           </Button>
         </Flex>
       )}
+
       {account && (
         <>
-          <p className="paragraph">Select your token</p>
+          <p className="paragraph">Select onboarding token</p>
           <TokenDropdown
             onCurrencySelect={handleTokenSelect}
             selectedCurrency={selectedToken}
@@ -298,186 +221,54 @@ export default function CrossChainSwap() {
           />
         </>
       )}
-      <h3>Requirements:</h3>
-      <p className="paragraph">
-        1. Add liquidity on <b>BNB/{selectedToken?.symbol ?? 'YOUR COIN'}</b>. Suggest minimum{' '}
-        <b>{MINIMUM_BNB_FOR_ONBOARDING} BNB</b>. This will be used to pair with the native token
-      </p>
-      {selectedToken && account ? (
-        <>
-          <Button as={Link} to={`/add/ETH/${selectedToken?.address}`} disabled={isLoading}>
-            Add Liquidity
-          </Button>
-          <p className="paragraph">
-            {!lpContract && <Text color="red">❌ Pair not found, please add liquidity first</Text>}
-            {!isEnoughBnbInPool && lpContract && <Text color="red">❌ Not enough liquidity, please add more</Text>}
-            {isEnoughBnbInPool && <Text color="primary">✅ Liquidity already added</Text>}
-          </p>
-        </>
-      ) : (
-        <></>
-      )}
-      <p className="paragraph">2. Lock your liquidity for 1 year</p>
-      {selectedToken && account ? (
-        <>
-          <DatePicker
-            label="Unlock date"
-            disabled={!isEnoughBnbInPool || isLoading}
-            value={selectedUnlockDate}
-            onChange={(newValue: Date | null) => {
-              setSelectedUnlockDate(newValue)
-            }}
-            renderInput={(params) => <TextField {...params} />}
-          />
-          &nbsp;
-          {!isLiquidityApproved && (
-            <>
-              <Button disabled={!isEnoughBnbInPool || isLoading} onClick={approveLiquidity}>
-                Approve Liquidity
-              </Button>
-              &nbsp;
-            </>
-          )}
-          <Button
-            disabled={
-              !isEnoughBnbInPool ||
-              !isLiquidityApproved ||
-              !isSelectedDateGood ||
-              isLoading ||
-              (lpBalance?.isZero() ?? true)
-            }
-            onClick={lockLiquidity}
-          >
-            Lock Liquidity
-          </Button>
-          {(lpBalance?.isZero() ?? true) && <Text color="red">❌ You don&apos;t have enough liquidity tokens</Text>}
-          {!isSelectedDateGood && <Text color="red">❌ Please select unlock date minimum 1 year from now</Text>}
-          {isLiquidityLocked && <Text color="primary">✅ Liquidity is locked already</Text>}
-        </>
-      ) : (
-        <></>
-      )}
-      <p className="paragraph">
-        3. Send some of <b>{selectedToken?.symbol ?? 'YOUR TOKEN'}</b> to the referral contract for referral rewards
-        <br />
-        (Up to you how much but each time you load it you can use as a bit of a PR stunt to the community - Note: these
-        tokens are unrecoverable other than through referral scheme)
-        {selectedToken && account ? (
-          <>
-            <Input
-              disabled={!isLiquidityLocked || isLoading}
-              type="number"
-              placeholder="Enter token amount"
-              onChange={(o) => setReferralRewardAmount(o.target.value)}
-              style={{ marginTop: '10px', marginBottom: '10px' }}
-            />
-            <Button
-              disabled={!isLiquidityLocked || isLoading || (parseInt(referralRewardAmount ?? '') || 0) <= 0}
-              onClick={sendTokensToReferralContract}
-            >
-              Transfer
-            </Button>
-            <p className="paragraph">
-              {!(parseInt(referralRewardAmount ?? '') > 0) && isLiquidityLocked && (
-                <Text color="red">❌ Please enter positive number</Text>
-              )}
-              {isLiquidityLocked && isTokensInReferral && (
-                <Text color="primary">✅ Reward tokens are in referral contract</Text>
-              )}
-            </p>
-          </>
-        ) : (
-          <></>
-        )}
-      </p>
-      <p className="paragraph">
-        4. Specify details
-        <p className="paragraph">
-          How much % do you want the referrers to earn?
-          {selectedToken && account ? (
-            <>
-              <Input
-                disabled={!isTokensInReferral || isLoading || !isLiquidityLocked}
-                type="number"
-                placeholder="Referrer %"
-                onChange={(o) => setReferrerPercentage(o.target.value)}
-                style={{ marginTop: '10px', marginBottom: '10px' }}
-              />
-              {!(parseInt(referrerPercentage ?? '') > 0) && isTokensInReferral && (
-                <Text color="red">❌ Please enter positive number</Text>
-              )}
-            </>
-          ) : (
-            <></>
-          )}
-        </p>
-        <p className="paragraph">
-          How much % do you want the referees to earn on their first buy?
-          {selectedToken && account ? (
-            <>
-              <Input
-                disabled={!isTokensInReferral || isLoading || !isLiquidityLocked}
-                type="number"
-                placeholder="First buy referree %"
-                onChange={(o) => setFirstBuyPercentage(o.target.value)}
-                style={{ marginTop: '10px', marginBottom: '10px' }}
-              />
-              {!(+(firstBuyPercentage ?? '') > 0) && isTokensInReferral && (
-                <Text color="red">❌ Please enter positive number</Text>
-              )}
-            </>
-          ) : (
-            <></>
-          )}
-        </p>
-      </p>
-      <p className="paragraph">
-        5. If your token has fees remove referral contract from them
-        <br />
-        <b>Referral contract - {REFERRAL_ADDRESS}</b>
-        {selectedToken && account && (
-          <p className="paragraph">
-            <Checkbox
-              id="agree"
-              scale="sm"
-              disabled={!isTokensInReferral || !firstBuyPercentage || !referrerPercentage || isLoading}
-              defaultChecked={isReferralContractRemovedFromFees}
-              onChange={(o) => setIsReferralContractRemovedFromFees(o.target.checked)}
-            />
-            &nbsp; If token transfer fees exist, I confirm that referral contract is excluded
-          </p>
-        )}
-      </p>
-      {selectedToken && account ? (
-        <Button
-          disabled={
-            !isTokensInReferral ||
-            !firstBuyPercentage ||
-            !referrerPercentage ||
-            !isReferralContractRemovedFromFees ||
-            isLoading ||
-            +(firstBuyPercentage ?? '') <= 0 ||
-            +(referrerPercentage ?? '') <= 0
-          }
-          onClick={submit}
-        >
-          Submit
-        </Button>
-      ) : (
-        <></>
-      )}
-
-      <p className="paragraph">
-        Once set up we will announce to our community that you are listed and that you are offering X referral scheme
-        through our own referral link.
-      </p>
-      <p className="paragraph">
-        <b>Future actions:</b>
-        <p className="paragraph">
-          ⦁ Set up influencers as required. (Further explanation will be required after you have successfully launched
-          on SummitSwap).
-        </p>
-      </p>
+      <h3>Steps:</h3>
+      <SwapToKoda token={selectedToken} isLoading={isLoading} />
+      <AddLiquidity token={selectedToken} isLoading={isLoading} isEnoughLiquidity={isEnoughLiquidity} />
+      <LockLiquidity
+        token={selectedToken}
+        isLoading={isLoading}
+        setIsLoading={setIsLoading}
+        isEnoughLiquidity={isEnoughLiquidity}
+        pairAddress={pairAddress}
+        setIsLiquidityLocked={setIsLiquidityLocked}
+      />
+      <SendReferralRewards
+        token={selectedToken}
+        tokenContract={tokenContract}
+        isLoading={isLoading}
+        setIsLoading={setIsLoading}
+        setIsTokensSentToReferral={setIsTokensSentToReferral}
+        isLiquidityLocked={isLiquidityLocked}
+      />
+      <SetFeeInfo
+        token={selectedToken}
+        isLoading={isLoading}
+        isLiquidityLocked={isLiquidityLocked}
+        isTokensSentToReferral={isTokensSentToReferral}
+        referrerPercentage={referrerPercentage}
+        setReferrerPercentage={setReferrerPercentage}
+        firstBuyPercentage={firstBuyPercentage}
+        setFirstBuyPercentage={setFirstBuyPercentage}
+      />
+      <RemoveFees
+        token={selectedToken}
+        isTokensSentToReferral={isTokensSentToReferral}
+        firstBuyPercentage={firstBuyPercentage}
+        referrerPercentage={referrerPercentage}
+        isLoading={isLoading}
+        setIsReferralContractRemovedFromFees={setIsReferralContractRemovedFromFees}
+        pairAddress={pairAddress}
+      />
+      <Submit
+        token={selectedToken}
+        isTokensSentToReferral={isTokensSentToReferral}
+        firstBuyPercentage={firstBuyPercentage}
+        referrerPercentage={referrerPercentage}
+        isReferralContractRemovedFromFees={isReferralContractRemovedFromFees}
+        isLoading={isLoading}
+        pairAddress={pairAddress}
+        fetchUserLocked={fetchUserLocked}
+      />
     </div>
   )
 }

@@ -66,14 +66,14 @@ export default function SendReferralRewards({
             style={{ marginTop: '10px', marginBottom: '10px' }}
           />
           <Button
-            disabled={!isLiquidityLocked || isLoading || (parseInt(referralRewardAmount ?? '') || 0) <= 0}
+            disabled={!isLiquidityLocked || isLoading || (+(referralRewardAmount ?? '') || 0) <= 0}
             onClick={sendTokensToReferralContract}
           >
             Transfer
           </Button>
           <p>
-            {!(parseInt(referralRewardAmount || '') > 0) && isLiquidityLocked && (
-              <Text color="red">❌ Please enter positive number</Text>
+            {!(+(referralRewardAmount || '') > 0) && isLiquidityLocked && (
+              <Text color="red">Please enter positive number</Text>
             )}
           </p>
         </>
