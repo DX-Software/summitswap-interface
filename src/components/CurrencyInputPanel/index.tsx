@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react'
-import { Text, Flex, Button } from '@koda-finance/summitswap-uikit'
+import { Text, Flex,Button , MetamaskIcon} from '@koda-finance/summitswap-uikit'
 import { Currency, Pair, Token  } from '@koda-finance/summitswap-sdk'
-import { MetamaskIcon } from 'img/Svg'
+
 import styled from 'styled-components'
 import { darken } from 'polished'
 import expandMore from 'img/expandMore.svg'
@@ -225,6 +225,7 @@ export default function CurrencyInputPanel({
               )}
             </Aligner>
           </CurrencySelect>
+  
           {token && tokenAddress && tokenSymbol ? (
             <Flex style={{ gap: '4px' }} alignItems="center">
               <CopyButton
@@ -248,7 +249,9 @@ export default function CurrencyInputPanel({
             
              
             </Flex>
-          ) : null}
+            
+          ) : null} 
+   
         </InputRow>
       </Container>
       {!disableCurrencySelect && onCurrencySelect && (

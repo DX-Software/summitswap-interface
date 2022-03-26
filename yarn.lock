@@ -1215,10 +1215,17 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.5.5", "@babel/runtime@^7.8.7":
+"@babel/runtime@^7.5.5":
   version "7.16.7"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.16.7.tgz#03ff99f64106588c9c403c6ecb8c3bafbbdff1fa"
   integrity sha512-9E9FJowqAsytyOY6LG+1KuueckRL+aQW+mKvXRXnuFGyRAyepJPmEo9vgMfXUA6O9u3IeEdv9MAkppFcaQwogQ==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
+"@babel/runtime@^7.8.7":
+  version "7.17.8"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.17.8.tgz#3e56e4aff81befa55ac3ac6a0967349fd1c5bca2"
+  integrity sha512-dQpEpK0O9o6lj6oPu0gRDbbnk+4LeHlNcBpspf6Olzt3GIX4P1lWF1gS+pHLDFlaJvbR6q7jCfQ08zA4QJBnmA==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -2537,10 +2544,9 @@
     tiny-warning "^1.0.3"
     toformat "^2.0.0"
 
-"@koda-finance/summitswap-uikit@^1.0.0":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@koda-finance/summitswap-uikit/-/summitswap-uikit-1.0.1.tgz#7760e51c997692b32411afe2c498f66863fb902e"
-  integrity sha512-7/cU7NDIOKxKJBVrlLiRrLK8CHvtFfSRfFmTifaJUJ/4tbSvzDfVOX2tOEcy8hBT9oVplrElP6VfgZjbSAO36A==
+"@koda-finance/summitswap-uikit@https://github.com/Koda-Finance/summitswap-uikit.git#MetamaskIcon":
+  version "1.1.0"
+  resolved "https://github.com/Koda-Finance/summitswap-uikit.git#f4f5b2267a4cb3704c2f35d14c54fbbcc2f8c4f0"
   dependencies:
     "@types/lodash" "^4.14.162"
     "@types/styled-system" "^5.1.10"
@@ -3519,9 +3525,9 @@
   integrity sha512-oVfRvqHV/V6D1yifJbVRU3TMp8OT6o6BG+U9MkwuJ3U8/CsDHvalRpsxBqivn71ztOFZBTfJMvETbqHiaNSj7Q==
 
 "@types/lodash@^4.14.162":
-  version "4.14.178"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.178.tgz#341f6d2247db528d4a13ddbb374bcdc80406f4f8"
-  integrity sha512-0d5Wd09ItQWH1qFbEyQ7oTQ3GZrMfth5JkbN3EvTKLXcHLRDSXeLnlvlOn0wvxVIwK5o2M8JzP/OWz7T3NRsbw==
+  version "4.14.180"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.180.tgz#4ab7c9ddfc92ec4a887886483bc14c79fb380670"
+  integrity sha512-XOKXa1KIxtNXgASAnwj7cnttJxS4fksBRywK/9LzRV5YxrF80BXZIGeQSuoESQ/VkUj30Ae0+YcuHc15wJCB2g==
 
 "@types/long@^4.0.0":
   version "4.0.1"
@@ -3761,9 +3767,9 @@
     csstype "^3.0.2"
 
 "@types/styled-system@^5.1.10":
-  version "5.1.14"
-  resolved "https://registry.yarnpkg.com/@types/styled-system/-/styled-system-5.1.14.tgz#5ab9f7ce4ae8ee9c4d20219988a09ad9ee381b22"
-  integrity sha512-yJL0KWju8VNhKIwELAe6oLsvy03Y1ZBwfhncH7HRdj7YVR09l3wOBBpyBKh8QkFAfLQLXGQBSbfhtVgd7y9BKg==
+  version "5.1.15"
+  resolved "https://registry.yarnpkg.com/@types/styled-system/-/styled-system-5.1.15.tgz#075f969cc028a895dba916c07708e2fe828d7077"
+  integrity sha512-1uls4wipZn8FtYFZ7upRVFDoEeOXTQTs2zuyOZPn02T6rjIxtvj2P2lG5qsxXHhKuKsu3thveCZrtaeLE/ibLg==
   dependencies:
     csstype "^3.0.2"
 

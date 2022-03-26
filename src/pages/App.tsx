@@ -25,6 +25,7 @@ import AppHeader from './AppHeader'
 import Menu from '../components/Menu'
 import SupportChatWidget from '../components/SupportChatWidget'
 
+
 const AppWrapper = styled.div`
   display: flex;
   flex-flow: column;
@@ -154,6 +155,7 @@ export default function App() {
                     <Route exact strict path="/pool" component={Pool} />
                     <Route exact path="/add" component={AddLiquidity} />
                     <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
+                
 
                     {/* Redirection: These old routes are still used in the code base */}
                     <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
