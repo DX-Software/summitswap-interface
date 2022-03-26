@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { CopyIcon, SvgProps } from '@koda-finance/summitswap-uikit'
-import  copyText  from 'utils/copyText'
+import copyText from 'utils/copyText'
 import styled from 'styled-components'
 
 const Tooltip = styled.div<{
@@ -24,7 +24,7 @@ const Tooltip = styled.div<{
 `
 
 interface CopyButtonProps extends SvgProps {
-  text: string 
+  text: string
   tooltipMessage: string
   tooltipTop: number
   tooltipRight?: number
@@ -32,7 +32,7 @@ interface CopyButtonProps extends SvgProps {
   buttonColor?: string
 }
 
-export  default function CopyButton ({
+export default function CopyButton({
   text,
   tooltipMessage,
   width,
@@ -41,7 +41,7 @@ export  default function CopyButton ({
   tooltipFontSize,
   // buttonColor = 'primary',
   ...props
-} :CopyButtonProps){
+}: CopyButtonProps) {
   const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
 
   const displayTooltip = () => {
@@ -54,7 +54,7 @@ export  default function CopyButton ({
     <>
       <CopyIcon
         style={{ cursor: 'pointer' }}
-        color='primary'
+        color="primary"
         width={width}
         onClick={() => copyText(text, displayTooltip)}
         {...props}

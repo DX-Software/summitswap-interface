@@ -2,7 +2,7 @@ import { Currency, CurrencyAmount, currencyEquals, ETHER, Token } from '@koda-fi
 import React, { CSSProperties, MutableRefObject, useCallback, useEffect, useMemo, useRef } from 'react'
 import { VariableSizeList } from 'react-window'
 import styled from 'styled-components'
-import { Flex, Text  } from '@koda-finance/summitswap-uikit'
+import { Flex, Text } from '@koda-finance/summitswap-uikit'
 import { useActiveWeb3React } from '../../hooks'
 import { useSelectedTokenList, WrappedTokenInfo } from '../../state/lists/hooks'
 import { useAddUserToken, useRemoveUserAddedToken } from '../../state/user/hooks'
@@ -123,9 +123,6 @@ function CurrencyRow({
   const removeToken = useRemoveUserAddedToken()
   const addToken = useAddUserToken()
 
-
-
-
   // only show add or remove buttons if not on selected list
   return (
     <MenuItem
@@ -134,12 +131,10 @@ function CurrencyRow({
       onClick={() => (isSelected ? null : onSelect())}
       disabled={isSelected}
       selected={otherSelected}
-      // onClick={isSelected ? coinToken : null }
     >
-      <Flex justifyContent="space-between" width="100%" ref={currencyRef}  >
+      <Flex justifyContent="space-between" width="100%" ref={currencyRef}>
         <LogoContainer>
           <CurrencyLogo currency={currency} size="24px" />
-          
         </LogoContainer>
         <Flex justifyContent="space-between" alignItems="center" width="100%">
           <Column style={{ marginLeft: 16 }}>
@@ -182,11 +177,9 @@ function CurrencyRow({
             {balance ? <Balance balance={balance} /> : account ? <Loader /> : null}
           </RowFixed>
         </Flex>
-      
       </Flex>
     </MenuItem>
   )
-
 }
 
 export default function CurrencyList({
@@ -222,7 +215,6 @@ export default function CurrencyList({
     const otherSelected = Boolean(otherCurrency && currencyEquals(otherCurrency, currency))
     const handleSelect = () => onCurrencySelect(currency)
 
-
     useEffect(() => {
       if (rowRef.current) {
         setRowHeight(index, rowRef?.current?.clientHeight)
@@ -242,8 +234,6 @@ export default function CurrencyList({
       />
     )
   }
-
- 
 
   const getRowHeight = (index: number): number => {
     return rowHeights.current[index] + 16 || 56

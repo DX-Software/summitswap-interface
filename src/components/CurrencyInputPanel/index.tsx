@@ -16,7 +16,7 @@ import { Input } from '../NumericalInput'
 import { useActiveWeb3React } from '../../hooks'
 import TranslatedText from '../TranslatedText'
 import { TranslateString } from '../../utils/translateTextHelpers'
-import CopyButton  from '../CopyButton'
+import CopyButton from '../CopyButton'
 import { registerToken } from '../../connectors/index'
 
 const NumericalInput = styled(Input)`
@@ -84,9 +84,9 @@ const Container = styled.div<{ hideInput: boolean }>`
 
 const CurrencyText = styled(Text)`
   align-self: center;
-  @media (max-width:480px) {
+  @media (max-width: 480px) {
     font-size: 12px !important;
-  } 
+  }
 `
 
 interface CurrencyInputPanelProps {
@@ -127,20 +127,14 @@ export default function CurrencyInputPanel({
   price,
 }: CurrencyInputPanelProps) {
   const [modalOpen, setModalOpen] = useState(false)
-  const { account,library } = useActiveWeb3React()
+  const { account, library } = useActiveWeb3React()
   const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
- 
-  const token = pair ? pair.liquidityToken : currency instanceof Token ? currency: null
 
-  const tokenAddress = token ? isAddress(token.address) : null
-  const tokenSymbol= token ? currency?.symbol :null 
-
-
+  const token = pair ? pair.liquidityToken : currency instanceof Token ? currency : null
 
   const handleDismissSearch = useCallback(() => {
     setModalOpen(false)
   }, [setModalOpen])
-
 
   return (
     <InputPanel id={id}>
@@ -152,9 +146,14 @@ export default function CurrencyInputPanel({
                 {label}
               </Text>
               {account && isSwap && (
-                <Text color='sidebarColor' onClick={onMax} fontSize="14px" style={{ display: 'inline', cursor: 'pointer' }}>
+                <Text
+                  color="sidebarColor"
+                  onClick={onMax}
+                  fontSize="14px"
+                  style={{ display: 'inline', cursor: 'pointer' }}
+                >
                   {!hideBalance && !!currency
-                    ? `Balance: ${selectedCurrencyBalance?.toSignificant(6) ?? "Loading..."}`
+                    ? `Balance: ${selectedCurrencyBalance?.toSignificant(6) ?? 'Loading...'}`
                     : ' -'}
                 </Text>
               )}
@@ -166,12 +165,7 @@ export default function CurrencyInputPanel({
             </RowBetween>
           </LabelRow>
         )}
-        <InputRow
-          style={
-            hideInput ? { padding: '0', borderRadius: '8px' } : {}
-          }
-          selected={disableCurrencySelect}
-        >
+        <InputRow style={hideInput ? { padding: '0', borderRadius: '8px' } : {}} selected={disableCurrencySelect}>
           {!hideInput && (
             <div style={{ flex: 1 }}>
               <NumericalInput
@@ -197,25 +191,24 @@ export default function CurrencyInputPanel({
               }
             }}
           >
-            
             <Aligner>
-              <Flex minWidth='75px'>
+              <Flex minWidth="75px">
                 {pair ? (
                   <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={16} margin />
                 ) : currency ? (
                   <CurrencyLogo currency={currency} size="24px" style={{ marginRight: '8px' }} />
                 ) : null}
                 {pair ? (
-                  <CurrencyText id="pair" color='sidebarColor' style={{ fontSize: '16px', fontWeight: 600 }}>
+                  <CurrencyText id="pair" color="sidebarColor" style={{ fontSize: '16px', fontWeight: 600 }}>
                     {pair?.token0.symbol}:{pair?.token1.symbol}
                   </CurrencyText>
                 ) : (
-                  <CurrencyText id="pair" color='sidebarColor' style={{ fontSize: '16px', fontWeight: 600 }}>
+                  <CurrencyText id="pair" color="sidebarColor" style={{ fontSize: '16px', fontWeight: 600 }}>
                     {(currency && currency.symbol && currency.symbol.length > 20
                       ? `${currency.symbol.slice(0, 4)}...${currency.symbol.slice(
-                        currency.symbol.length - 5,
-                        currency.symbol.length
-                      )}`
+                          currency.symbol.length - 5,
+                          currency.symbol.length
+                        )}`
                       : currency?.symbol) || <TranslatedText translationId={82}>Select a currency</TranslatedText>}
                   </CurrencyText>
                 )}
@@ -225,8 +218,7 @@ export default function CurrencyInputPanel({
               )}
             </Aligner>
           </CurrencySelect>
-  
-          {token && tokenAddress && tokenSymbol ? (
+          {token && token.symbol && isAddress(token.address) ? (
             <Flex style={{ gap: '4px' }} alignItems="center">
               <CopyButton
                 width="16px"
@@ -236,18 +228,10 @@ export default function CurrencyInputPanel({
                 tooltipTop={-20}
                 tooltipRight={40}
                 tooltipFontSize={12}
-                
-              /> 
-                {library?.provider?.isMetaMask && (
-
-              <MetamaskIcon
-                  style={{ cursor: 'pointer' }}
-                  width="16px"
-                  onClick={() => registerToken(token)}
-            /> 
-                 )}
-            
-             
+              />
+              {library?.provider?.isMetaMask && (
+                <MetamaskIcon style={{ cursor: 'pointer' }} width="16px" onClick={() => registerToken(token)} />
+              )}
             </Flex>
             
           ) : null} 
