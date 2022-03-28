@@ -1,0 +1,45 @@
+.Dropdown-control {
+    background-color: #000f18 !important;
+    border-radius: 12px !important;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border: 1px solid #000f18 !important;
+}
+
+.is-selected {
+    color: rgb(255, 255, 255) !important;
+}
+
+.Dropdown-menu {
+    background-color: #000f18 !important;
+    border-radius: 12px !important;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border: 1px solid #000f18 !important;
+    margin-top: 3px !important;
+}
+
+.Dropdown-option:hover {
+    background-color: #000f1844;
+    color: #333;
+}
+
+.Dropdown-option.is-selected {
+    background-color: #000f1844;
+    color: #555 !important;
+}
+
+.Dropdown-option {
+    color: rgb(255, 255, 255) !important;
+}
+
+.Dropdown-arrow {
+    border-color: rgb(255, 255, 255) transparent transparent;
+    margin-top: 0 !important;
+    right: 13px !important;
+    top: 18px !important;
+}

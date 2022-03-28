@@ -12,3 +12,28 @@ export interface ReferralReward extends Result {
   lead: string
   leadReward: BigNumber
 }
+
+export interface Influencer {
+  outputToken: string;
+  referee: string;
+  referrer: string;
+}
+
+export interface InfInfo {
+  lead: string;
+  leadFee: BigNumber;
+  refFee: BigNumber;
+  isActive: boolean;
+  isLead: boolean;
+}
+
+export interface FeeInfo {
+  tokenR: string;
+  refFee: BigNumber;
+  devFee: BigNumber;
+  promRefFee?: BigNumber;
+  promStart?: string;
+  promEnd?: string;
+}
+
+export type PaginatedRewards = { [key: string]: ReferralReward[] }

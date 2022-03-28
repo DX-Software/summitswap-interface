@@ -5,6 +5,7 @@ import AppBody from '../AppBody'
 
 const RubicWrapper = styled.div`
   overflow: hidden;
+  margin-top: 20px;
 
   iframe {
     height: 825px;
