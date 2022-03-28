@@ -37,7 +37,7 @@ export default function Submit({
 
   const submit = useCallback(() => {
     async function submitToken() {
-      if (!firstBuyPercentage || !referrerPercentage || !token || !pairAddress || !account) {
+      if (!firstBuyPercentage || !referrerPercentage || !token || !pairAddress || !account || !devPercentage) {
         return
       }
 
@@ -51,9 +51,10 @@ export default function Submit({
           %0APair: ${pairAddress}
           %0ALockIds: ${fetchedLpLocks?.map((o) => o.lockId)}
           %0ATotalLocked: ${totalAmountOfLpLocked}
-          %0AReferrer Fee: ${referrerPercentage}
-          %0AFirst Buy Fee: ${firstBuyPercentage}
-          %0ADev Fee: ${devPercentage}`,
+          %0AReferrer Fee: ${+referrerPercentage * 10 ** 9}
+          %0AFirst Buy Fee: ${+firstBuyPercentage * 10 ** 9}
+          %0ADev Fee: ${+devPercentage * 10 ** 9}
+          %0A(This fees can be directly fed into contract)`,
       })
       setIsLoading(false)
 
