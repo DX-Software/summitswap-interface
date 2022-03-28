@@ -176,12 +176,15 @@ export default function CurrencyInputPanel({
                 }}
               />
               {account && currency && showMaxButton && label !== 'To' && (
-                <Button onClick={onMax} scale="xxs" variant="tertiary">
+                <Button
+                style={{marginTop:'10px'}}
+                onClick={onMax} scale="xxs" variant="tertiary">
                   MAX
                 </Button>
               )}
             </div>
           )}
+       
           <CurrencySelect
             selected={!!currency}
             className="open-currency-select-button"
@@ -216,11 +219,15 @@ export default function CurrencyInputPanel({
               {!disableCurrencySelect && (
                 <img src={expandMore} alt="" width={24} height={24} style={{ marginLeft: '10px' }} />
               )}
+
+      
             </Aligner>
           </CurrencySelect>
+     
           {token && token.symbol && isAddress(token.address) ? (
-            <Flex style={{ gap: '4px' }} alignItems="center">
+            <Flex alignItems="center">
               <CopyButton
+              style={  showMaxButton ? {marginTop:'-30px'} : {marginTop:'10'}}
                 width="16px"
                 buttonColor="textSubtle"
                 text={token.address}
@@ -230,12 +237,14 @@ export default function CurrencyInputPanel({
                 tooltipFontSize={12}
               />
               {library?.provider?.isMetaMask && (
-                <MetamaskIcon style={{ cursor: 'pointer' }} width="16px" onClick={() => registerToken(token)} />
+                <MetamaskIcon 
+                style={  showMaxButton ? {marginTop:'-30px',cursor: 'pointer'} : {marginTop:'10',cursor: 'pointer'}}
+                  width="16px" onClick={() => registerToken(token)} />
               )}
             </Flex>
             
           ) : null} 
-   
+     
         </InputRow>
       </Container>
       {!disableCurrencySelect && onCurrencySelect && (
