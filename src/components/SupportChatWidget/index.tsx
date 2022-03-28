@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import {
   TELEGRAM_API_HASH,
@@ -274,7 +274,6 @@ const SupportChatWidget = () => {
     }
   }
 
-  const [isTgClicked, setIsTgClicked] = useState(false)
   const [showLoader, setShowLoader] = useState(false)
 
   const { TelegramClient, Api } = window.telegram
@@ -284,18 +283,8 @@ const SupportChatWidget = () => {
   const apiHash = TELEGRAM_API_HASH
   const stringSession = new StringSession(TELEGRAM_STRING_SESSION)
 
-  const [directionLink, setDirectionLink] = useState('')
-
-  useEffect(() => {
-    if (directionLink) {
-      window.open(directionLink, '_blank')
-    }
-  }, [directionLink])
-
   const init = async () => {
-    setIsTgClicked(true)
-
-    if (!isTgClicked) {
+    if (!localStorage.getItem('loggedIn')) {
       setShowLoader(true)
 
       try {
@@ -321,16 +310,27 @@ const SupportChatWidget = () => {
           })
         )
 
-        setDirectionLink(result2.link)
+        client.addEventHandler(async (update: typeof Api.TypeUpdate) => {
+          if (update.className === 'UpdateChatParticipants') {
+            await client.invoke(
+              new Api.messages.SendMessage({
+                  peer: result.chats[0],
+                  message: "Hello 👋🏻 We appreciate you dropping us a message, one of our support team will be with you shortly... ⌛️",
+              })
+            )
+          }
+        })
+
+        localStorage.setItem('loggedIn', result2.link)
         setShowLoader(false)
 
         } catch(err) {
           // eslint-disable-next-line no-console
           console.log(err)
         }
-      } else if (directionLink) {
-          window.open(directionLink, '_blank')
-      }
+      } 
+
+      window.open(localStorage.getItem('loggedIn')?.toString(), '_blank')
     }
 
     return (
