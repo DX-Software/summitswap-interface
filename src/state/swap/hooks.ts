@@ -16,7 +16,7 @@ import { SwapState } from './reducer'
 
 import { useUserSlippageTolerance } from '../user/hooks'
 import { computeSlippageAdjustedAmounts } from '../../utils/prices'
-import { ADDITIONAL_FACTORY_ADDRESSES, ADDITIONAL_INIT_CODE_HASHES, ADDITIONAL_ROUTER_ADDRESSES, FACTORY_ADDRESS, INIT_CODE_HASH, ROUTER_ADDRESS } from '../../constants'
+import { ADDITIONAL_FACTORY_ADDRESSES, ADDITIONAL_INIT_CODE_HASHES, ADDITIONAL_ROUTER_ADDRESSES, FACTORY_ADDRESS, INIT_CODE_HASH, KODA, ROUTER_ADDRESS } from '../../constants'
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>((state) => state.swap)
@@ -301,18 +301,19 @@ export function useDefaultsFromURLSearch():
   useEffect(() => {
     if (!chainId) return
     const parsed = queryParametersToSwapState(parsedQs)
+    const outputCurrencyId = parsed[Field.OUTPUT].currencyId ? parsed[Field.OUTPUT].currencyId : KODA.address
 
     dispatch(
       replaceSwapState({
         typedValue: parsed.typedValue,
         field: parsed.independentField,
         inputCurrencyId: parsed[Field.INPUT].currencyId,
-        outputCurrencyId: parsed[Field.OUTPUT].currencyId,
+        outputCurrencyId,
         recipient: parsed.recipient,
       })
     )
 
-    setResult({ inputCurrencyId: parsed[Field.INPUT].currencyId, outputCurrencyId: parsed[Field.OUTPUT].currencyId })
+    setResult({ inputCurrencyId: parsed[Field.INPUT].currencyId, outputCurrencyId })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, chainId])
 
