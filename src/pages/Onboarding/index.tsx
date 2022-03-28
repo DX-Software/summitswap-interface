@@ -50,6 +50,7 @@ export default function CrossChainSwap() {
 
   const [referrerPercentage, setReferrerPercentage] = useState<string>()
   const [firstBuyPercentage, setFirstBuyPercentage] = useState<string>()
+  const [devPercentage, setDevPercentage] = useState<string>()
 
   const factoryContract = useFactoryContract()
   const tokenContract = useTokenContract(selectedToken?.address, true)
@@ -226,6 +227,8 @@ export default function CrossChainSwap() {
         setReferrerPercentage={setReferrerPercentage}
         firstBuyPercentage={firstBuyPercentage}
         setFirstBuyPercentage={setFirstBuyPercentage}
+        devPercentage={devPercentage}
+        setDevPercentage={setDevPercentage}
       />
       <RemoveFees
         token={selectedToken}
@@ -241,6 +244,7 @@ export default function CrossChainSwap() {
         isTokensSentToReferral={isTokensSentToReferral}
         firstBuyPercentage={firstBuyPercentage}
         referrerPercentage={referrerPercentage}
+        devPercentage={devPercentage}
         isReferralContractRemovedFromFees={isReferralContractRemovedFromFees}
         isLoading={isLoading}
         pairAddress={pairAddress}

@@ -12,6 +12,8 @@ interface Props {
   setReferrerPercentage: Dispatch<SetStateAction<string | undefined>>
   firstBuyPercentage: string | undefined
   setFirstBuyPercentage: Dispatch<SetStateAction<string | undefined>>
+  devPercentage: string | undefined
+  setDevPercentage: Dispatch<SetStateAction<string | undefined>>
 }
 
 export default function SetFeeInfo({
@@ -23,6 +25,8 @@ export default function SetFeeInfo({
   setReferrerPercentage,
   firstBuyPercentage,
   setFirstBuyPercentage,
+  devPercentage,
+  setDevPercentage
 }: Props) {
   const { account } = useWeb3React()
 
@@ -61,6 +65,25 @@ export default function SetFeeInfo({
             />
             <p>
               {!(+(firstBuyPercentage ?? '') > 0) && isTokensSentToReferral && isLiquidityLocked && (
+                <Text color="red">Please enter positive number</Text>
+              )}
+            </p>
+          </>
+        )}
+      </p>
+      <p>
+        How much % do you want the dev to earn?
+        {token && account && (
+          <>
+            <Input
+              disabled={!isTokensSentToReferral || isLoading || !isLiquidityLocked}
+              type="number"
+              placeholder="Dev %"
+              onChange={(o) => setDevPercentage(o.target.value)}
+              style={{ marginTop: '10px', marginBottom: '10px' }}
+            />
+            <p>
+              {!(+(devPercentage ?? '') > 0) && isTokensSentToReferral && isLiquidityLocked && (
                 <Text color="red">Please enter positive number</Text>
               )}
             </p>

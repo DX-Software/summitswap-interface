@@ -11,6 +11,7 @@ interface Props {
   isTokensSentToReferral: boolean
   firstBuyPercentage: string | undefined
   referrerPercentage: string | undefined
+  devPercentage: string | undefined
   isReferralContractRemovedFromFees: boolean
   isLoading: boolean
   pairAddress: string | undefined
@@ -23,6 +24,7 @@ export default function Submit({
   isTokensSentToReferral,
   firstBuyPercentage,
   referrerPercentage,
+  devPercentage,
   isReferralContractRemovedFromFees,
   isLoading,
   pairAddress,
@@ -50,7 +52,8 @@ export default function Submit({
           %0ALockIds: ${fetchedLpLocks?.map((o) => o.lockId)}
           %0ATotalLocked: ${totalAmountOfLpLocked}
           %0AReferrer Fee: ${referrerPercentage}
-          %0AFirst Buy Fee: ${firstBuyPercentage}`,
+          %0AFirst Buy Fee: ${firstBuyPercentage}
+          %0ADev Fee: ${devPercentage}`,
       })
       setIsLoading(false)
 
@@ -66,6 +69,7 @@ export default function Submit({
     account,
     setIsLoading,
     fetchUserLocked,
+    devPercentage,
     displaySucessModal,
   ])
 
@@ -80,7 +84,8 @@ export default function Submit({
             !isReferralContractRemovedFromFees ||
             isLoading ||
             +(firstBuyPercentage ?? '') <= 0 ||
-            +(referrerPercentage ?? '') <= 0
+            +(referrerPercentage ?? '') <= 0 ||
+            +(devPercentage ?? '') <= 0
           }
           onClick={submit}
         >
