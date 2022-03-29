@@ -2537,10 +2537,9 @@
     tiny-warning "^1.0.3"
     toformat "^2.0.0"
 
-"@koda-finance/summitswap-uikit@^1.2.0":
+"@koda-finance/summitswap-uikit@git+https://github.com/Koda-Finance/summitswap-uikit.git#fix/trust-wallet-deep-link":
   version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@koda-finance/summitswap-uikit/-/summitswap-uikit-1.2.0.tgz#e3c233c8d0d2c82ae68af1e4d6fbac509b161793"
-  integrity sha512-tWsi6VloYW611N6BN9No/+HUN04Jfl6c2NHj1kCeQkTD1T787cedDayKp6H8vfzY6RQel10M4KtyYAKelsdFUw==
+  resolved "git+https://github.com/Koda-Finance/summitswap-uikit.git#1b51a500ed8a22349eb4495ab3220797521302bc"
   dependencies:
     "@types/lodash" "^4.14.162"
     "@types/styled-system" "^5.1.10"
