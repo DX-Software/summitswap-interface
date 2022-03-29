@@ -342,7 +342,7 @@ const SupportChatWidget = () => {
             <ProfilePhoto/>
             <Description>
               <h4>SummitSwap Support</h4>
-              <p>7/24 help</p>
+              <p>24/7 help</p>
             </Description>
           </Info>
           <MessageContainer>

@@ -2,21 +2,33 @@ import React, { useEffect, useState } from 'react'
 import { Text, Box, Button, Flex } from '@koda-finance/summitswap-uikit'
 import { Token } from '@koda-finance/summitswap-sdk'
 import { TransactionResponse } from '@ethersproject/providers'
-import { useFormik } from 'formik';
+import styled from 'styled-components'
+import { useFormik } from 'formik'
 import { BigNumber, Contract, ethers } from 'ethers'
 import { AddressZero } from '@ethersproject/constants'
 import web3 from 'web3'
 
 import { useReferralContract } from 'hooks/useContract'
-import checkIfUint256 from 'utils/checkUint256'
+import { useToken } from 'hooks/Tokens'
 import DateInput from '../DateInput'
-import { isAddress } from '../../../utils'
-import { StyledBr, StyledWhiteBr } from '../StyledBr';
+import { getBscScanLink, isAddress } from '../../../utils'
+import { StyledBr, StyledWhiteBr } from '../StyledBr'
 import StyledInput from '../StyledInput'
-import { SegmentsProps } from './SegmentsProps';
-import { FeeInfo, InfInfo } from '../types';
-import { CenterSign } from '../CenterDiv';
-import { isdecimals, isPercentage } from '../utility';
+import { SegmentsProps } from './SegmentsProps'
+import { FeeInfo, InfInfo } from '../types'
+import { CenterSign } from '../CenterDiv'
+import { isdecimals, isPercentage } from '../utility'
+import { CHAIN_ID } from '../../../constants'
+
+
+const Link = styled.a`
+  padding: 0;
+  margin: 0;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  text-decoration: underline;
+`
 
 enum Role {
   LEAD_INFLUENCER,
@@ -44,7 +56,7 @@ const SetFirstBuyFee: React.FC<SectionProps> = ({
     fee?: number;
   }
 
-  const [feePlaceholder, setFeePlaceholder] = useState<string | undefined>()
+  const [currentFee, setCurrentFee] = useState<string | undefined>()
 
   const formik = useFormik<FormInputs>({
     initialValues: {
@@ -68,7 +80,7 @@ const SetFirstBuyFee: React.FC<SectionProps> = ({
 
       try {
         const transaction = await contract.setFirstBuyFee(selectedCoin.address, _fee)
-        setFeePlaceholder(ethers.utils.formatUnits(_fee, 7))
+        setCurrentFee(ethers.utils.formatUnits(_fee, 7))
         transactionSubmitted(transaction, 'Set first buy fee succeeded')
       } catch (err) {
         const callError = err as any
@@ -87,7 +99,7 @@ const SetFirstBuyFee: React.FC<SectionProps> = ({
 
       const holder = ethers.utils.formatUnits(transaction, 7)
       
-      setFeePlaceholder(holder)
+      setCurrentFee(holder)
     }
     fetchFirstBuyRefereeFee()
   }, [selectedCoin, contract])
@@ -99,11 +111,11 @@ const SetFirstBuyFee: React.FC<SectionProps> = ({
     <StyledWhiteBr />
     <Box>
       <Text mb="4px" small>
-        Fee value
+        Fee value (Current: {currentFee && currentFee !== "" ? `${currentFee}%` : "-"})
       </Text>
       <form onSubmit={formik.handleSubmit}>
         <Flex>          
-          <StyledInput value={formik.values.fee} onChange={formik.handleChange} name="fee" min="0" max="100" step={0.01} type="number" placeholder={feePlaceholder} autoComplete="off" />
+          <StyledInput value={formik.values.fee} onChange={formik.handleChange} name="fee" min="0" max="100" step={0.01} type="number" placeholder="0" autoComplete="off" />
           <CenterSign>
             <Text bold>%</Text>
           </CenterSign>
@@ -125,12 +137,14 @@ const SetFeeInfo: React.FC<SectionProps> = ({
   transactionFailed
 }) => {
   const [formHolder, setFormHolder] = useState<FeeInfo | undefined>()
-
+  const rewardToken = useToken(formHolder?.tokenR ?? "")
   interface FormInputs {
     rewardToken: string;
     refFee?: number;
     devFee?: number;
     promRefFee?: number;
+    promStartTimestamp?: number;
+    promEndTimestamp?: number;
     promStart?: string;
     promEnd?: string;
   }
@@ -195,6 +209,8 @@ const SetFeeInfo: React.FC<SectionProps> = ({
           refFee: BigNumber.from(0),
           devFee: BigNumber.from(0),
           promRefFee: undefined,
+          promStartTimestamp: undefined,
+          promEndTimestamp: undefined,
           promStart: undefined,
           promEnd: undefined
         })
@@ -204,6 +220,8 @@ const SetFeeInfo: React.FC<SectionProps> = ({
           refFee: transaction.refFee as BigNumber,
           devFee: transaction.devFee as BigNumber,
           promRefFee: transaction.promRefFee as BigNumber,
+          promStartTimestamp: Number(transaction.promStart),
+          promEndTimestamp: Number(transaction.promEnd),
           promStart: formatDateFromNumber((transaction.promStart as BigNumber).mul(1000)),
           promEnd: formatDateFromNumber((transaction.promEnd as BigNumber).mul(1000)),
         })
@@ -218,6 +236,8 @@ const SetFeeInfo: React.FC<SectionProps> = ({
       refFee: undefined,
       devFee: undefined,
       promRefFee: undefined,
+      promStartTimestamp: undefined,
+      promEndTimestamp: undefined,
       promStart: undefined,
       promEnd: undefined,
     },
@@ -259,8 +279,10 @@ const SetFeeInfo: React.FC<SectionProps> = ({
           refFee: _refFee,
           devFee: _devFee,
           promRefFee: _promRefFee,
-          promStart: formatDate(_promStart),
-          promEnd: formatDate(_promEnd),
+          promStartTimestamp: Number(promStart),
+          promEndTimestamp: Number(promEnd),
+          promStart: formatDate((Number(_promStart) * 1000).toString()),
+          promEnd: formatDate((Number(_promEnd) * 1000).toString()),
         })
 
         transactionSubmitted(transaction, 'Set fee information succeeded')
@@ -285,44 +307,52 @@ const SetFeeInfo: React.FC<SectionProps> = ({
     <StyledWhiteBr />
     <form onSubmit={formik.handleSubmit}>
       <Text mb="4px" small>
-        Reward token
+        Reward token (Current: {
+        rewardToken?.name ? (
+          <Link href={getBscScanLink(CHAIN_ID, rewardToken.address, 'token')} rel="noopener noreferrer" target="_blank">{rewardToken?.name}</Link>
+        ) : formHolder?.tokenR ? (
+          <Link href={getBscScanLink(CHAIN_ID, formHolder?.tokenR, 'token')} rel="noopener noreferrer" target="_blank">{formHolder?.tokenR}</Link>
+        ) : (
+          "-"
+        )
+      })
       </Text>
-      <StyledInput name="rewardToken" type="text" onChange={formik.handleChange} value={formik.values.rewardToken} placeholder={formHolder?.tokenR} autoComplete="off" />
+      <StyledInput name="rewardToken" type="text" onChange={formik.handleChange} value={formik.values.rewardToken} placeholder={AddressZero} autoComplete="off" />
       <Text mb="4px" small>
-        Referral reward percentage
+        Referral reward percentage (Current: {formHolder?.refFee ? `${formatAmount(formHolder.refFee)}%` : "-"})
       </Text>
       <Flex>
-        <StyledInput name="refFee" type="number" step={0.01} onChange={formik.handleChange} value={formik.values.refFee} placeholder={formatAmount(formHolder?.refFee)} />
+        <StyledInput name="refFee" type="number" step={0.01} onChange={formik.handleChange} value={formik.values.refFee} placeholder="0" />
         <CenterSign>
           <Text bold>%</Text>
         </CenterSign>
       </Flex>
       <Text mb="4px" small>
-        Developer reward percentage
+        Developer reward percentage (Current: {formHolder?.devFee ? `${formatAmount(formHolder.devFee)}%` : "-"})
       </Text>
       <Flex>
-        <StyledInput name="devFee" type="number" step={0.01} onChange={formik.handleChange} value={formik.values.devFee} placeholder={formatAmount(formHolder?.devFee)} />
+        <StyledInput name="devFee" type="number" step={0.01} onChange={formik.handleChange} value={formik.values.devFee} placeholder="0" />
         <CenterSign>
           <Text bold>%</Text>
         </CenterSign>
       </Flex>
       <Text mb="4px" small>
-        Promotion referral reward percentage (optional)
+        Promotion referral reward percentage (Current: {formHolder?.promRefFee ? `${formatAmount(formHolder.promRefFee)}%` : "-"}) (optional)
       </Text>
       <Flex>
-        <StyledInput name="promRefFee" type="number" step={0.01} onChange={formik.handleChange} value={formik.values.promRefFee} placeholder={formatAmount(formHolder?.promRefFee)} />
+        <StyledInput name="promRefFee" type="number" step={0.01} onChange={formik.handleChange} value={formik.values.promRefFee} placeholder="0" />
         <CenterSign>
           <Text bold>%</Text>
         </CenterSign>
       </Flex>
       <Text mb="4px" small>
-        Promotion start timestamp (optional)
+        Promotion start timestamp (Current: {formHolder?.promStartTimestamp ? formHolder?.promStart : "-"}) (optional)
       </Text>
-      <DateInput name="promStart" type="date" onChange={formik.handleChange} value={formik.values.promStart || ''} placeholder={formHolder?.promStart} />
+      <DateInput name="promStart" type="date" onChange={formik.handleChange} value={formik.values.promStart || ''} placeholder={formatDate(Date.now().toString())} />
       <Text mb="4px" small>
-        Promotion end timestamp (optional)
+        Promotion end timestamp (Current: {formHolder?.promEndTimestamp ? formHolder?.promEnd : "-"}) (optional)
       </Text>
-      <DateInput name="promEnd" type="date" onChange={formik.handleChange} value={formik.values.promEnd || ''} placeholder={formHolder?.promEnd} />
+      <DateInput name="promEnd" type="date" onChange={formik.handleChange} value={formik.values.promEnd || ''} placeholder={formatDate(Date.now().toString())} />
       <Box style={{ marginTop: '12px' }}>
         <Button type="submit" disabled={selectedCoin?.symbol === 'WBNB'}>Submit</Button>
       </Box>
@@ -528,7 +558,7 @@ const CheckRole: React.FC<SectionProps> = ({
   )
   return <>
     <Text bold>
-      Check role for address
+      Check address for role
     </Text>
     <StyledWhiteBr />
     <Box>
