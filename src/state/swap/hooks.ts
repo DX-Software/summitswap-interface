@@ -301,7 +301,7 @@ export function useDefaultsFromURLSearch():
   useEffect(() => {
     if (!chainId) return
     const parsed = queryParametersToSwapState(parsedQs)
-    const outputCurrencyId = parsed[Field.OUTPUT].currencyId ? parsed[Field.OUTPUT].currencyId : KODA.address
+    const outputCurrencyId = parsed[Field.OUTPUT].currencyId || KODA.address
 
     dispatch(
       replaceSwapState({
