@@ -211,7 +211,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
     const buySlippageTolerance = (currencies[Field.OUTPUT] as Token).buySlippageTolerance || DEFAULT_SLIPPAGE_TOLERANCE
     const _allowedSlippage = sellSlippageTolerance > buySlippageTolerance ? sellSlippageTolerance : buySlippageTolerance
     if (_allowedSlippage > 0) {
-      setAllowedSlippage(_allowedSlippage)
+      setAllowedSlippage(_allowedSlippage * 100)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currencies[Field.INPUT], currencies[Field.OUTPUT]])
