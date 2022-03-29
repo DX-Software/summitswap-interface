@@ -32,6 +32,8 @@ export interface FeeInfo {
   refFee: BigNumber;
   devFee: BigNumber;
   promRefFee?: BigNumber;
+  promStartTimestamp?: Number;
+  promEndTimestamp?: Number;
   promStart?: string;
   promEnd?: string;
 }
