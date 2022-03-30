@@ -17,7 +17,7 @@ export default function SwapList() {
   const referralContract = useReferralContract(true)
 
   const [swapList, setSwapList] = useState<ReferralReward[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     setSwapList([])
@@ -45,47 +45,45 @@ export default function SwapList() {
         queries.push([blockNumber, Math.min(latestBlocknumber, blockNumber + MAX_QUERYING_BLOCK_AMOUNT - 1)])
       }
 
-      await Promise.all(
-        queries.map(async (o) => {
-          const referrerLogsOnInterval = await referralContract.queryFilter(referrerFilter, o[0], o[1])
-          const leadLogsOnInterval = await referralContract.queryFilter(leadFilter, o[0], o[1])
-
+      for (let i = 0; i < queries.length; i++) {
+        try {
+          const referrerLogsOnInterval = await referralContract.queryFilter(referrerFilter, queries[i][0], queries[i][1])
+          const leadLogsOnInterval = await referralContract.queryFilter(leadFilter, queries[i][0], queries[i][1])
+  
           referrerLogs = [...referrerLogs, ...referrerLogsOnInterval]
           leadLogs = [...leadLogs, ...leadLogsOnInterval]
-
+  
           let eventLogs = [...referrerLogs, ...leadLogs].map((oo) => oo.args) as ReferralReward[]
           eventLogs = _.orderBy(eventLogs, (eventLog) => eventLog.timestamp.toNumber(), 'desc')
-
+  
           setSwapList(eventLogs)
-          setIsLoading(false)
-        })
-      )
+        } catch (err) {
+          console.log("Error: ", err)
+        }
+      }
+      setIsLoading(false)
     }
 
-    fetchSwapList()
+    // fetchSwapList()
   }, [account, library, referralContract])
 
-  return isLoading ? (
-    <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="90px" />
-  ) : (
+  return (
     <>
-      {swapList.length ? (
-        <>
-          <Text bold mb={2}>
-            Referred swaps
-          </Text>
-          <Box mb={2}>
-            {_.map(swapList, (swap: any) => (
-              <ReferralTransactionRow account={account} {...swap} />
-            ))}
-          </Box>
-          <RewardedTokens />
-        </>
-      ) : (
-        <>
-          <Text bold> No history to be displayed! </Text>
-        </>
+      {/* <Text bold mb={2}>
+        Referred swap histories
+      </Text>
+      <Box mb={2}>
+        {_.map(swapList, (swap: ReferralReward) => (
+          <ReferralTransactionRow key={`${swap.timestamp}`} account={account} {...swap} />
+        ))}
+      </Box>
+      {isLoading && (
+        <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="45px" />
       )}
+      {(swapList.length === 0 && !isLoading) && (
+        <Text bold> No history to be displayed! </Text>
+      )} */}
+      <RewardedTokens />
     </>
   )
 }
