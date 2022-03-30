@@ -51,9 +51,9 @@ export default function Submit({
           %0APair: ${pairAddress}
           %0ALockIds: ${fetchedLpLocks?.map((o) => o.lockId)}
           %0ATotalLocked: ${totalAmountOfLpLocked}
-          %0AReferrer Fee: ${+referrerPercentage * 10 ** 9}
-          %0AFirst Buy Fee: ${+firstBuyPercentage * 10 ** 9}
-          %0ADev Fee: ${+devPercentage * 10 ** 9}
+          %0AReferrer Fee: ${+referrerPercentage * 10 ** 7}
+          %0AFirst Buy Fee: ${+firstBuyPercentage * 10 ** 7}
+          %0ADev Fee: ${+devPercentage * 10 ** 7}
           %0A(This fees can be directly fed into contract)`,
       })
       setIsLoading(false)
