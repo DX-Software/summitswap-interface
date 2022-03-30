@@ -32,7 +32,6 @@ const InputRow = styled.div<{ selected: boolean }>`
 `
 
 const CurrencySelect = styled.button<{ selected: boolean }>`
-  margin-top: 20px;
   align-items: center;
   height: 38px;
   font-size: 16px;
@@ -176,74 +175,67 @@ export default function CurrencyInputPanel({
                 }}
               />
               {account && currency && showMaxButton && label !== 'To' && (
-                <Button
-                style={{marginTop:'10px'}}
-                onClick={onMax} scale="xxs" variant="tertiary">
+                <Button onClick={onMax} scale="xxs" variant="tertiary">
                   MAX
                 </Button>
               )}
             </div>
           )}
-       
-          <CurrencySelect
-            selected={!!currency}
-            className="open-currency-select-button"
-            onClick={() => {
-              if (!disableCurrencySelect) {
-                setModalOpen(true)
-              }
-            }}
-          >
-            <Aligner>
-              <Flex minWidth="75px">
-                {pair ? (
-                  <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={16} margin />
-                ) : currency ? (
-                  <CurrencyLogo currency={currency} size="24px" style={{ marginRight: '8px' }} />
-                ) : null}
-                {pair ? (
-                  <CurrencyText id="pair" color="sidebarColor" style={{ fontSize: '16px', fontWeight: 600 }}>
-                    {pair?.token0.symbol}:{pair?.token1.symbol}
-                  </CurrencyText>
-                ) : (
-                  <CurrencyText id="pair" color="sidebarColor" style={{ fontSize: '16px', fontWeight: 600 }}>
-                    {(currency && currency.symbol && currency.symbol.length > 20
-                      ? `${currency.symbol.slice(0, 4)}...${currency.symbol.slice(
-                          currency.symbol.length - 5,
-                          currency.symbol.length
-                        )}`
-                      : currency?.symbol) || <TranslatedText translationId={82}>Select a currency</TranslatedText>}
-                  </CurrencyText>
+
+          <Flex marginTop="12px" height="fit-content">
+            <CurrencySelect
+              selected={!!currency}
+              className="open-currency-select-button"
+              onClick={() => {
+                if (!disableCurrencySelect) {
+                  setModalOpen(true)
+                }
+              }}
+            >
+              <Aligner>
+                <Flex minWidth="75px">
+                  {pair ? (
+                    <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={16} margin />
+                  ) : currency ? (
+                    <CurrencyLogo currency={currency} size="24px" style={{ marginRight: '8px' }} />
+                  ) : null}
+                  {pair ? (
+                    <CurrencyText id="pair" color="sidebarColor" style={{ fontSize: '16px', fontWeight: 600 }}>
+                      {pair?.token0.symbol}:{pair?.token1.symbol}
+                    </CurrencyText>
+                  ) : (
+                    <CurrencyText id="pair" color="sidebarColor" style={{ fontSize: '16px', fontWeight: 600 }}>
+                      {(currency && currency.symbol && currency.symbol.length > 20
+                        ? `${currency.symbol.slice(0, 4)}...${currency.symbol.slice(
+                            currency.symbol.length - 5,
+                            currency.symbol.length
+                          )}`
+                        : currency?.symbol) || <TranslatedText translationId={82}>Select a currency</TranslatedText>}
+                    </CurrencyText>
+                  )}
+                </Flex>
+                {!disableCurrencySelect && (
+                  <img src={expandMore} alt="" width={24} height={24} style={{ marginLeft: '10px' }} />
+                )}
+              </Aligner>
+            </CurrencySelect>
+            {token && token.symbol && isAddress(token.address) && (
+              <Flex alignItems="center" style={{ columnGap: "4px" }} marginLeft="8px">
+                <CopyButton
+                  width="16px"
+                  buttonColor="textSubtle"
+                  text={token.address}
+                  tooltipMessage="Token address copied"
+                  tooltipTop={-20}
+                  tooltipRight={40}
+                  tooltipFontSize={12}
+                />
+                {library?.provider?.isMetaMask && (
+                  <MetamaskIcon cursor="pointer" width="16px" onClick={() => registerToken(token)} />
                 )}
               </Flex>
-              {!disableCurrencySelect && (
-                <img src={expandMore} alt="" width={24} height={24} style={{ marginLeft: '10px' }} />
-              )}
-
-      
-            </Aligner>
-          </CurrencySelect>
-     
-          {token && token.symbol && isAddress(token.address) ? (
-            <Flex alignItems="center">
-              <CopyButton
-              style={  showMaxButton ? {marginTop:'-30px'} : {marginTop:'10'}}
-                width="16px"
-                buttonColor="textSubtle"
-                text={token.address}
-                tooltipMessage="Token address copied"
-                tooltipTop={-20}
-                tooltipRight={40}
-                tooltipFontSize={12}
-              />
-              {library?.provider?.isMetaMask && (
-                <MetamaskIcon 
-                style={  showMaxButton ? {marginTop:'-30px',cursor: 'pointer'} : {marginTop:'10',cursor: 'pointer'}}
-                  width="16px" onClick={() => registerToken(token)} />
-              )}
-            </Flex>
-            
-          ) : null} 
+            )}
+          </Flex>
      
         </InputRow>
       </Container>
