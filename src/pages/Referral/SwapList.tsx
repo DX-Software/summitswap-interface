@@ -17,7 +17,7 @@ export default function SwapList() {
   const referralContract = useReferralContract(true)
 
   const [swapList, setSwapList] = useState<ReferralReward[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     setSwapList([])
@@ -64,12 +64,12 @@ export default function SwapList() {
       setIsLoading(false)
     }
 
-    fetchSwapList()
+    // fetchSwapList()
   }, [account, library, referralContract])
 
   return (
     <>
-      <Text bold mb={2}>
+      {/* <Text bold mb={2}>
         Referred swap histories
       </Text>
       <Box mb={2}>
@@ -82,7 +82,7 @@ export default function SwapList() {
       )}
       {(swapList.length === 0 && !isLoading) && (
         <Text bold> No history to be displayed! </Text>
-      )}
+      )} */}
       <RewardedTokens />
     </>
   )
