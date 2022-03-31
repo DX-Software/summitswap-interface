@@ -8,7 +8,7 @@ import CurrencyLogo from 'components/CurrencyLogo'
 import { Token, WETH } from '@koda-finance/summitswap-sdk'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { useToken } from 'hooks/Tokens'
-import { REFERRAL_ADDRESS, BUSDs, CHAIN_ID, KAPEXs, NULL_ADDRESS } from '../../constants'
+import { REFERRAL_ADDRESS, BUSDs, CHAIN_ID, KAPEX, NULL_ADDRESS } from '../../constants'
 import { useClaimingFeeModal } from './useClaimingFeeModal'
 
 interface Props {

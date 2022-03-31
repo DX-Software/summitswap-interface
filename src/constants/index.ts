@@ -23,7 +23,6 @@ type ChainTokenList = {
   readonly [chainId in ChainId]: Token[]
 }
 
-export const KAPEX = new Token(ChainId.MAINNET, '0x11441afb1d10e3ce4e39666fc4f4a2a5d6d8c0da', 9, 'KAPEX', 'KAPEX')
 export const KODA = new Token(ChainId.MAINNET, '0x8094e772fA4A60bdEb1DfEC56AB040e17DD608D5', 9, 'KODA', 'KODA Token', 100, true, 11.25, 11.23)
 export const DAI = new Token(ChainId.MAINNET, '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3', 18, 'DAI', 'Dai Stablecoin')
 export const BUSD = new Token(ChainId.MAINNET, '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56', 18, 'BUSD', 'Binance USD')
@@ -42,11 +41,10 @@ export const BUSDs = {
   [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7', 18, 'BUSD', 'Binance USD'),
 }
 
-// TODO: Use real kapex addresses
-export const KAPEXs = {
-  [ChainId.MAINNET]: KAPEX,
+export const KAPEX = {
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0x11441AFb1D10E3Ce4E39666FC4F4A2A5d6d8C0Da', 9, 'KAPEX', 'KAPEX'),
   [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0x4e35b5D0Fc6A410e7Dd09C02673b5110c1B1D5a5', 9, 'KAPEX', 'KAPEX'),
-}
+}[CHAIN_ID] as Token;
 
 const WETH_ONLY: ChainTokenList = {
   [ChainId.MAINNET]: [WETH[ChainId.MAINNET]],
