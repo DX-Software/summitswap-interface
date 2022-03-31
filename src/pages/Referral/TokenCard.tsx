@@ -70,7 +70,7 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
     if (!outputToken) return
     if (!rewardToken) return
 
-    const tokenList: Token[] = [BUSDs[CHAIN_ID], KAPEXs[CHAIN_ID], outputToken, rewardToken].filter(o => !!o && o !== NULL_ADDRESS);
+    const tokenList: Token[] = [BUSDs[CHAIN_ID], KAPEX, outputToken, rewardToken].filter(o => !!o && o !== NULL_ADDRESS);
     const uniqueTokenAddresses = [...new Set(tokenList.map((o) => o.address))]
     const uniqueTokenList = uniqueTokenAddresses.map((o) => tokenList.find((oo) => oo.address === o)) as Token[]
 
