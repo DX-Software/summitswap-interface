@@ -9,11 +9,15 @@ declare module 'fortmatic'
 interface Window {
   ethereum?: {
     isMetaMask?: true
+    providers?: any[]
     on?: (...args: any[]) => void
     removeListener?: (...args: any[]) => void
+    request?: (...args: any[]) => Promise<void>
+
   }
   web3?: any
   BinanceChain?: BinanceChain
+  telegram?: any
 }
 
 declare const rubicWidget: any; 
@@ -34,3 +38,7 @@ interface BinanceChain {
   on?: (method: string, listener: (...args: any[]) => void) => void
   removeListener?: (method: string, listener: (...args: any[]) => void) => void
 }
+
+
+
+type SerializedBigNumber = string

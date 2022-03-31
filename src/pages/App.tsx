@@ -1,9 +1,10 @@
 import React, { Suspense, useEffect, useState } from 'react'
 import { Route, Switch, Redirect, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
-import { useWalletModal } from '@summitswap-uikit'
+import { useWalletModal } from '@koda-finance/summitswap-uikit'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import login from 'utils/login'
+import Banner from 'components/Banner'
 import Popups from '../components/Popups'
 import Web3ReactManager from '../components/Web3ReactManager'
 import { RedirectDuplicateTokenIds, RedirectOldAddLiquidityPathStructure } from './AddLiquidity/redirects'
@@ -22,6 +23,8 @@ import { TranslationsContext } from '../hooks/TranslationsContext'
 import langSrc from '../constants/localisation/translate/index'
 import AppHeader from './AppHeader'
 import Menu from '../components/Menu'
+import SupportChatWidget from '../components/SupportChatWidget'
+
 
 const AppWrapper = styled.div`
   display: flex;
@@ -63,10 +66,10 @@ export default function App() {
   const { account, deactivate, activate, error } = useWeb3React()
 
   useEffect(() => {
-    if (error instanceof UnsupportedChainIdError) {
+    if (error instanceof UnsupportedChainIdError || !account) {
       localStorage.removeItem('walletconnect')
     }
-  }, [error])
+  }, [error, account])
 
   const [selectedLanguage, setSelectedLanguage] = useState<any>(undefined)
   const [translatedLanguage, setTranslatedLanguage] = useState<any>(undefined)
@@ -133,15 +136,17 @@ export default function App() {
           value={{ selectedLanguage, setSelectedLanguage, translatedLanguage, setTranslatedLanguage }}
         >
           <TranslationsContext.Provider value={{ translations, setTranslations }}>
+            <SupportChatWidget/>
             <Popups />
             <Web3ReactManager>
               <Switch>
-                <Route exact strict path="/">
-                  <Redirect to="/swap" />
+                <Route exact strict path={["/", "/send"]}>
+                  <Redirect to={`/swap${location.search}`} />
                 </Route>
                 <Menu>
                   <BodyWrapper>
                     <AppHeader />
+                    <Banner />
                     <Route exact path="/swap" component={Swap} />
                     <Route exact path="/cross-chain-swap" component={CrossChainSwap} />
                     <Route exact path="/swap?ref=:ref" component={Referral} />
@@ -150,6 +155,7 @@ export default function App() {
                     <Route exact strict path="/pool" component={Pool} />
                     <Route exact path="/add" component={AddLiquidity} />
                     <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
+                
 
                     {/* Redirection: These old routes are still used in the code base */}
                     <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />

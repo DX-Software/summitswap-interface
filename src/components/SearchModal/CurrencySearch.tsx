@@ -1,16 +1,17 @@
-import { Currency, ETHER, Token } from '@summitswap-libs'
+import { Currency, ETHER, Token } from '@koda-finance/summitswap-sdk'
 import React, { KeyboardEvent, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { Text, CloseIcon } from '@summitswap-uikit'
+import { Text, CloseIcon } from '@koda-finance/summitswap-uikit'
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { VariableSizeList } from 'react-window'
 import styled, { ThemeContext } from 'styled-components'
 import AutoSizer from 'react-virtualized-auto-sizer'
+import CustomLightSpinner from 'components/CustomLightSpinner'
 import { useActiveWeb3React } from '../../hooks'
 import { AppState } from '../../state'
 import { useAllTokens, useToken } from '../../hooks/Tokens'
 import { useSelectedListInfo } from '../../state/lists/hooks'
-import { LinkStyledButton, Spinner } from '../Shared'
+import { LinkStyledButton } from '../Shared'
 import { isAddress } from '../../utils'
 import Card from '../Card'
 import Column from '../Column'
@@ -24,6 +25,7 @@ import { useTokenComparator } from './sorting'
 import { PaddedColumn, SearchInput, Separator } from './styleds'
 import TranslatedText from '../TranslatedText'
 import { TranslateString } from '../../utils/translateTextHelpers'
+
 
 interface CurrencySearchProps {
   isOpen: boolean
@@ -53,13 +55,6 @@ const TokenAutoSizer = styled(AutoSizer)`
       border-radius: 10px;
     }
   }
-`
-
-const CustomLightSpinner = styled(Spinner) <{ size: string }>`
-  height: ${({ size }) => size};
-  width: ${({ size }) => size};
-  display: flex;
-  margin: auto;
 `
 
 export function CurrencySearch({

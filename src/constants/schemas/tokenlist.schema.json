@@ -205,6 +205,39 @@
               true
             ]
           },
+          "buySlippageTolerance": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 49,
+            "description": "The maximum amount of slippage that can be tolerated for the token",
+            "examples": [
+              20.12
+            ]
+          },
+          "sellSlippageTolerance": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 49,
+            "description": "The maximum amount of slippage that can be tolerated for the token",
+            "examples": [
+              20.12
+            ]
+          },
+          "coingeckoId": {
+            "type": "string",
+            "description": "The unique identifier of the token on Coingecko",
+            "examples": [
+              "koda-finance",
+              "binancecoin"
+            ]
+          },
+          "allowSellMax": {
+            "type": "boolean",
+            "description": "A flag indicating whether the token can be sold for the maximum amount of the token",
+            "examples": [
+              true
+            ]
+          },
           "tags": {
             "type": "array",
             "description": "An array of tag identifiers associated with the token; tags are defined at the list level",

@@ -3,7 +3,7 @@ import { getAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
-import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER } from '@summitswap-libs'
+import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER } from '@koda-finance/summitswap-sdk'
 import SummitswapRouterAbi  from '../constants/abis/summitswap-router.json'
 import { ROUTER_ADDRESS } from '../constants'
 import { TokenAddressMap } from '../state/lists/hooks'
@@ -88,8 +88,8 @@ export function getContract(address: string, ABI: any, library: Web3Provider, ac
 }
 
 // account is optional
-export function getRouterContract(_: number, library: Web3Provider, account?: string): Contract {
-  return getContract(ROUTER_ADDRESS, SummitswapRouterAbi, library, account)
+export function getRouterContract(_: number, library: Web3Provider, account?: string, routerAddress: string = ROUTER_ADDRESS): Contract {
+  return getContract(routerAddress, SummitswapRouterAbi, library, account)
 }
 
 export function escapeRegExp(string: string): string {

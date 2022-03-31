@@ -1,6 +1,6 @@
 import { UnsupportedChainIdError } from '@web3-react/core'
 import { NoEthereumProviderError } from '@web3-react/injected-connector'
-import { connectorLocalStorageKey } from '@summitswap-uikit'
+import { connectorLocalStorageKey } from '@koda-finance/summitswap-uikit'
 import { injected, bsc, walletconnect, setupNetwork } from 'connectors'
 import { NoBscProviderError } from 'connectors/bsc/bscConnector'
 import { AbstractConnector } from '@web3-react/abstract-connector'

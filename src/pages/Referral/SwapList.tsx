@@ -1,18 +1,23 @@
-import { useActiveWeb3React } from 'hooks'
-import { useReferralContract } from 'hooks/useContract'
-import _ from 'lodash'
 import React, { useState, useEffect } from 'react'
-import { Box, Text } from '@summitswap-uikit'
+import { Box, Text } from '@koda-finance/summitswap-uikit'
+import _ from 'lodash'
 import { Event } from 'ethers'
+import CustomLightSpinner from '../../components/CustomLightSpinner'
+import { useReferralContract } from '../../hooks/useContract'
+import { useActiveWeb3React } from '../../hooks'
 import { MAX_QUERYING_BLOCK_AMOUNT, REFERRAL_DEPLOYMENT_BLOCKNUMBER } from '../../constants'
 import ReferralTransactionRow from './ReferralTransactionRow'
 import { ReferralReward } from './types'
+import RewardedTokens from './RewardedTokens'
+
+
 
 export default function SwapList() {
   const { account, library } = useActiveWeb3React()
   const referralContract = useReferralContract(true)
 
   const [swapList, setSwapList] = useState<ReferralReward[]>([])
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     setSwapList([])
@@ -40,39 +45,46 @@ export default function SwapList() {
         queries.push([blockNumber, Math.min(latestBlocknumber, blockNumber + MAX_QUERYING_BLOCK_AMOUNT - 1)])
       }
 
-      await Promise.all(
-        queries.map(async (o) => {
-          const referrerLogsOnInterval = await referralContract.queryFilter(referrerFilter, o[0], o[1])
-          const leadLogsOnInterval = await referralContract.queryFilter(leadFilter, o[0], o[1])
-
+      for (let i = 0; i < queries.length; i++) {
+        try {
+          const referrerLogsOnInterval = await referralContract.queryFilter(referrerFilter, queries[i][0], queries[i][1])
+          const leadLogsOnInterval = await referralContract.queryFilter(leadFilter, queries[i][0], queries[i][1])
+  
           referrerLogs = [...referrerLogs, ...referrerLogsOnInterval]
           leadLogs = [...leadLogs, ...leadLogsOnInterval]
-
+  
           let eventLogs = [...referrerLogs, ...leadLogs].map((oo) => oo.args) as ReferralReward[]
           eventLogs = _.orderBy(eventLogs, (eventLog) => eventLog.timestamp.toNumber(), 'desc')
-
+  
           setSwapList(eventLogs)
-        })
-      )
+        } catch (err) {
+          console.log("Error: ", err)
+        }
+      }
+      setIsLoading(false)
     }
 
-    fetchSwapList()
+    // fetchSwapList()
   }, [account, library, referralContract])
 
   return (
     <>
-      {!!swapList.length && (
-        <>
-          <Text bold mb={2}>
-            Referred swaps
-          </Text>
-          <Box mb={2}>
-            {_.map(swapList, (swap: any) => (
-              <ReferralTransactionRow account={account} {...swap} />
-            ))}
-          </Box>
-        </>
+      <Text bold mb={2}>
+        Referred swap histories
+      </Text>
+      <Text> Section under maintenance, please try again later </Text>
+      {/* <Box mb={2}>
+        {_.map(swapList, (swap: ReferralReward) => (
+          <ReferralTransactionRow key={`${swap.timestamp}`} account={account} {...swap} />
+        ))}
+      </Box>
+      {isLoading && (
+        <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="45px" />
       )}
+      {(swapList.length === 0 && !isLoading) && (
+        <Text bold> No history to be displayed! </Text>
+      )} */}
+      <RewardedTokens />
     </>
   )
 }

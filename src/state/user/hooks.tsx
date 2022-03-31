@@ -1,4 +1,4 @@
-import { ChainId, Pair, Token } from '@summitswap-libs'
+import { ChainId, Pair, Token } from '@koda-finance/summitswap-sdk'
 import flatMap from 'lodash.flatmap'
 import { useCallback, useMemo } from 'react'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
@@ -23,7 +23,7 @@ import {
 } from './actions'
 import { setThemeCache } from '../../utils/theme'
 
-function serializeToken(token: Token): SerializedToken {
+ function serializeToken(token: Token): SerializedToken {
   return {
     chainId: token.chainId,
     address: token.address,
@@ -32,6 +32,7 @@ function serializeToken(token: Token): SerializedToken {
     name: token.name,
   }
 }
+
 
 function deserializeToken(serializedToken: SerializedToken): Token {
   return new Token(

@@ -1,4 +1,4 @@
-import { CurrencyAmount, ETHER, JSBI } from '@summitswap-libs'
+import { CurrencyAmount, ETHER, JSBI } from '@koda-finance/summitswap-sdk'
 import { MIN_ETH } from '../constants'
 
 /**
