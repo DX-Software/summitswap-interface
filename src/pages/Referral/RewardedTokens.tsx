@@ -8,7 +8,7 @@ import { useWeb3React } from '@web3-react/core'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import CurrencyLogo from 'components/CurrencyLogo'
 import TokenCard from './TokenCard'
-import { BUSDs, CHAIN_ID, KAPEXs } from '../../constants'
+import { BUSDs, CHAIN_ID, KAPEX } from '../../constants'
 import { useClaimingFeeModal } from './useClaimingFeeModal'
 
 const StyledContainer = styled(Box)`
@@ -40,7 +40,7 @@ const RewardedTokens: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [rewardTokens, setRewardTokens] = useState<string[]>([])
   const [canClaimAll, setCanClaimAll] = useState(true)
-  const [claimToken, setClaimToken] = useState<Token>(KAPEXs[CHAIN_ID])
+  const [claimToken, setClaimToken] = useState<Token>(KAPEX)
   const [claimableTokens, setClaimableTokens] = useState<Token[]>([])
   const [modalOpen, setModalOpen] = useState(false)
 
@@ -68,7 +68,7 @@ const RewardedTokens: React.FC = () => {
   }, [account, refContract])
 
   useEffect(() => {
-    const tokenList: Token[] = [BUSDs[CHAIN_ID], KAPEXs[CHAIN_ID]].filter((o) => !!o)
+    const tokenList: Token[] = [BUSDs[CHAIN_ID], KAPEX].filter((o) => !!o)
     const uniqueTokenAddresses = [...new Set(tokenList.map((o) => o.address))]
     const uniqueTokenList = uniqueTokenAddresses.map((o) => tokenList.find((oo) => oo.address === o)) as Token[]
 
