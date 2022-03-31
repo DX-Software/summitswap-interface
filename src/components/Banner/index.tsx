@@ -1,8 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
-import KapexSmallBanner from '../../img/kapex_small.gif'
-import KapexMediumBanner from '../../img/kapex_medium.gif'
-import KapexLargeBanner from '../../img/kapex_large.gif'
+import KapexSmallBanner from '../../img/kapex_small_v2.gif'
+import KapexMediumBanner from '../../img/kapex_medium_v2.gif'
+import KapexLargeBanner from '../../img/kapex_large_v2.gif'
 
 const Link = styled.a`
   padding: 0;
