@@ -42,8 +42,8 @@ export const BUSDs = {
 }
 
 export const KAPEX = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0x11441AFb1D10E3Ce4E39666FC4F4A2A5d6d8C0Da', 9, 'KAPEX', 'KAPEX Token'),
-  [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0x4e35b5D0Fc6A410e7Dd09C02673b5110c1B1D5a5', 9, 'KAPEX', 'KAPEX Token'),
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0x11441AFb1D10E3Ce4E39666FC4F4A2A5d6d8C0Da', 18, 'KAPEX', 'KAPEX Token'),
+  [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0x4e35b5D0Fc6A410e7Dd09C02673b5110c1B1D5a5', 18, 'KAPEX', 'KAPEX Token'),
 }[CHAIN_ID] as Token;
 
 const WETH_ONLY: ChainTokenList = {
