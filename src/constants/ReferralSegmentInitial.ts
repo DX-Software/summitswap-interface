@@ -17,7 +17,7 @@ const ReferralSegmentInitial = {
     },
     history: {
         isActive: true,
-        title: "Rewards"
+        title: "Transaction History"
     },
 }
 

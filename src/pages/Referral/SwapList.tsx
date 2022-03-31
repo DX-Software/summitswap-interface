@@ -69,10 +69,11 @@ export default function SwapList() {
 
   return (
     <>
-      {/* <Text bold mb={2}>
+      <Text bold mb={2}>
         Referred swap histories
       </Text>
-      <Box mb={2}>
+      <Text> Section under maintenance, please try again later </Text>
+      {/* <Box mb={2}>
         {_.map(swapList, (swap: ReferralReward) => (
           <ReferralTransactionRow key={`${swap.timestamp}`} account={account} {...swap} />
         ))}
