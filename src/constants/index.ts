@@ -45,7 +45,7 @@ export const BUSDs = {
 // TODO: Use real kapex addresses
 export const KAPEXs = {
   [ChainId.MAINNET]: KAPEX,
-  [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0xCD59230E93E5Eb671D06F2D0d920C7ff52BB2D18', 9, 'KAPEX', 'KAPEX'),
+  [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0x4e35b5D0Fc6A410e7Dd09C02673b5110c1B1D5a5', 9, 'KAPEX', 'KAPEX'),
 }
 
 const WETH_ONLY: ChainTokenList = {
