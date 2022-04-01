@@ -13,7 +13,7 @@ import ERC20_ABI from '../constants/abis/erc20.json'
 import WETH_ABI from '../constants/abis/weth.json'
 import REFERRAL_ABI from '../constants/abis/summitReferral.json'
 import FACTORY_ABI from '../constants/abis/summitswapFactory.json'
-import LOCKER_ABI from '../constants/abis/cryptExLpTokenLocker.json'
+import LOCKER_ABI from '../constants/abis/summitswaLocker.json'
 
 // returns null on errors
 function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {
