@@ -101,12 +101,13 @@ export default function CrossChainSwap() {
   useEffect(() => {
     async function fetchPair() {
       if (!selectedToken || !factoryContract) {
-        await Promise.resolve()
         setPairAddress(undefined)
         return
       }
 
+      setIsLoading(true);
       const fetchedPairAddress = (await factoryContract.getPair(KODA.address, selectedToken.address)) as string
+      setIsLoading(true)
 
       if (fetchedPairAddress === NULL_ADDRESS) {
         setPairAddress(undefined)
@@ -121,12 +122,13 @@ export default function CrossChainSwap() {
   useEffect(() => {
     async function fetchLiquidity() {
       if (!tokenContract || !kodaConctract || !pairAddress) {
-        await Promise.resolve()
         setIsEnoughLiquidity(false)
         return
       }
 
+      setIsLoading(true)
       const kodaBalanceOfPair = (await kodaConctract.balanceOf(pairAddress)) as BigNumber
+      setIsLoading(false)
 
       setIsEnoughLiquidity(!kodaBalanceOfPair.isZero())
     }
@@ -138,7 +140,9 @@ export default function CrossChainSwap() {
     async function fetchIfReferralHasSomeBalance() {
       if (!tokenContract) return
 
+      setIsLoading(true)
       const referralBalance = (await tokenContract.balanceOf(REFERRAL_ADDRESS)) as BigNumber
+      setIsLoading(false)
 
       setIsTokensSentToReferral(!referralBalance.isZero())
     }
@@ -151,6 +155,8 @@ export default function CrossChainSwap() {
       setIsLiquidityLocked(false)
       return { lpLockfetchedLpLockss: undefined, totalAmountOfLpLocked: undefined }
     }
+    
+    setIsLoading(true);
 
     const userLocksLength = (await lockerContract.userLocksLength(account).then((o) => o.toNumber())) as number
 
@@ -168,6 +174,7 @@ export default function CrossChainSwap() {
       BigNumber.from(0)
     ) as BigNumber
 
+    setIsLoading(false);
     setIsLiquidityLocked(!totalAmountOfLpLocked.isZero())
 
     return { fetchedLpLocks, totalAmountOfLpLocked }
@@ -196,6 +203,7 @@ export default function CrossChainSwap() {
             selectedCurrency={selectedToken}
             showETH={false}
             showOnlyUnknownTokens
+            disabled={isLoading}
           />
         </>
       )}

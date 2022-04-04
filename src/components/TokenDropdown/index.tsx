@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import { Token, Currency } from '@koda-finance/summitswap-sdk'
 import { Text, Box } from '@koda-finance/summitswap-uikit'
-import styled from 'styled-components'
+import styled, { StyledFunction } from 'styled-components'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import CurrencyLogo from 'components/CurrencyLogo'
 import expandMore from '../../img/expandMore.svg'
@@ -25,10 +25,12 @@ const LinkBox = styled(Box)`
     }
   }
   > div:last-of-type {
-    cursor: pointer;
     position: relative;
   }
 `
+interface YourProps {
+  isDisabled: boolean
+}
 
 interface CurrencySearchModalProps {
   selectedCurrency?: Token | null
@@ -40,6 +42,7 @@ interface CurrencySearchModalProps {
   isAddedByUserOn?: boolean
   showUnknownTokens?: boolean
   showOnlyUnknownTokens?: boolean
+  disabled?: boolean
 }
 
 export default function TokenDropdown({
@@ -51,6 +54,7 @@ export default function TokenDropdown({
   isAddedByUserOn,
   showUnknownTokens,
   showOnlyUnknownTokens,
+  disabled,
 }: CurrencySearchModalProps) {
   const [modalOpen, setModalOpen] = useState(false)
 
@@ -60,19 +64,22 @@ export default function TokenDropdown({
 
   return (
     <>
-      <LinkBox mb={4} onClick={() => setModalOpen(true)} style={{ cursor: 'pointer' }}>
-        {selectedCurrency ? (
-          <>
-            <CurrencyLogo currency={selectedCurrency} size="24px" style={{ marginRight: '8px' }} />
-            <Box>
-              <Text>{`${selectedCurrency.symbol} - ${selectedCurrency.address}`}</Text>
-            </Box>
-          </>
-        ) : (
-          <Text>Select token</Text>
-        )}
-        <img src={expandMore} alt="" width={24} height={24} style={{ marginLeft: '10px' }} />
-      </LinkBox>
+      <div style={{ cursor: disabled ? 'not-allowed' : 'pointer'}}>
+        <LinkBox mb={4} onClick={() => !disabled && setModalOpen(true)}>
+          {selectedCurrency ? (
+            <>
+              <CurrencyLogo currency={selectedCurrency} size="24px" style={{ marginRight: '8px' }} />
+              <Box>
+                <Text>{`${selectedCurrency.symbol} - ${selectedCurrency.address}`}</Text>
+              </Box>
+            </>
+          ) : (
+            <Text>Select token</Text>
+          )}
+          <img src={expandMore} alt="" width={24} height={24} style={{ marginLeft: '10px' }} />
+        </LinkBox>
+      </div>
+
       <CurrencySearchModal
         isOpen={modalOpen}
         onDismiss={handleDismissSearch}
