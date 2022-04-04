@@ -4,9 +4,9 @@ import { useWeb3React } from '@web3-react/core'
 import { addYears, subDays } from 'date-fns'
 import React, { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { TextField } from '@mui/material'
-import { Button, Text } from '@koda-finance/summitswap-uikit'
+import { Button, Text, Input } from '@koda-finance/summitswap-uikit'
 import { useLockerContract, useTokenContract } from 'hooks/useContract'
-import { BigNumber } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import { LOCKER_ADDRESS, MAX_UINT256 } from '../../constants'
 
 interface Props {
@@ -29,6 +29,8 @@ export default function LockLiquidity({
   pairAddress,
 }: Props) {
   const { account, library } = useWeb3React()
+
+  const [recipient, setRecipient] = useState('')
 
   const [isLiquidityApproved, setIsLiquidityApproved] = useState(false)
   const [selectedUnlockDate, setSelectedUnlockDate] = useState<Date | null>(addYears(Date.now(), 1))
@@ -64,7 +66,7 @@ export default function LockLiquidity({
 
   const lockLiquidity = useCallback(() => {
     async function lock() {
-      if (!lpContract || !account || !lockerContract || !library || !selectedUnlockDate) {
+      if (!lpContract || !recipient || !lockerContract || !library || !selectedUnlockDate) {
         setIsLiquidityLocked(false)
         return
       }
@@ -73,7 +75,7 @@ export default function LockLiquidity({
         lpContract.address,
         lpBalance,
         Math.floor(selectedUnlockDate.valueOf() / 1000),
-        account,
+        recipient,
         '2' // Fee type
       )
 
@@ -85,7 +87,16 @@ export default function LockLiquidity({
     }
 
     lock()
-  }, [lpContract, account, lockerContract, library, selectedUnlockDate, lpBalance, setIsLoading, setIsLiquidityLocked])
+  }, [
+    lpContract,
+    lockerContract,
+    library,
+    selectedUnlockDate,
+    lpBalance,
+    recipient,
+    setIsLoading,
+    setIsLiquidityLocked,
+  ])
 
   useEffect(() => {
     async function fetchLpBalance() {
@@ -118,11 +129,25 @@ export default function LockLiquidity({
   return (
     <article>
       <p>Lock liquidity for minimum 1 year</p>
+
       {token && account && (
-        <>
+        <p>
+          <Input
+            disabled={!isEnoughLiquidity || !isLiquidityApproved || isLoading || (lpBalance?.isZero() ?? true)}
+            type="text"
+            placeholder="Recipient"
+            onChange={(o) => setRecipient(o.target.value)}
+            style={{ marginBottom: '20px' }}
+          />
           <DatePicker
             label="Unlock date"
-            disabled={!isEnoughLiquidity || isLoading}
+            disabled={
+              !isEnoughLiquidity ||
+              !isLiquidityApproved ||
+              isLoading ||
+              (lpBalance?.isZero() ?? true) ||
+              !ethers.utils.isAddress(recipient)
+            }
             value={selectedUnlockDate}
             onChange={(newValue: Date | null) => {
               setSelectedUnlockDate(newValue)
@@ -144,17 +169,21 @@ export default function LockLiquidity({
               !isLiquidityApproved ||
               !isSelectedDateGood ||
               isLoading ||
-              (lpBalance?.isZero() ?? true)
+              (lpBalance?.isZero() ?? true) ||
+              !ethers.utils.isAddress(recipient)
             }
             onClick={lockLiquidity}
           >
             Lock Liquidity
           </Button>
           <p>
-            {(lpBalance?.isZero() ?? true) && isEnoughLiquidity && <Text color="red">You don&apos;t have enough liquidity tokens</Text>}
+            {(lpBalance?.isZero() ?? true) && isEnoughLiquidity && (
+              <Text color="red">You don&apos;t have enough liquidity tokens</Text>
+            )}
             {!isSelectedDateGood && <Text color="red">Please select unlock date minimum 1 year from now</Text>}
+            {!ethers.utils.isAddress(recipient) && <Text color="red">Please use valid recipient</Text>}
           </p>
-        </>
+        </p>
       )}
     </article>
   )
