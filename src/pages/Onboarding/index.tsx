@@ -54,7 +54,7 @@ export default function CrossChainSwap() {
 
   const factoryContract = useFactoryContract()
   const tokenContract = useTokenContract(selectedToken?.address, true)
-  const kodaConctract = useTokenContract(KODA.address, true)
+  const kodaContract = useTokenContract(KODA.address, true)
   const lockerContract = useLockerContract(true)
 
   const location = useLocation()
@@ -121,20 +121,20 @@ export default function CrossChainSwap() {
 
   useEffect(() => {
     async function fetchLiquidity() {
-      if (!tokenContract || !kodaConctract || !pairAddress) {
+      if (!tokenContract || !kodaContract || !pairAddress) {
         setIsEnoughLiquidity(false)
         return
       }
 
       setIsLoading(true)
-      const kodaBalanceOfPair = (await kodaConctract.balanceOf(pairAddress)) as BigNumber
+      const kodaBalanceOfPair = (await kodaContract.balanceOf(pairAddress)) as BigNumber
       setIsLoading(false)
 
       setIsEnoughLiquidity(!kodaBalanceOfPair.isZero())
     }
 
     fetchLiquidity()
-  }, [pairAddress, tokenContract, kodaConctract])
+  }, [pairAddress, tokenContract, kodaContract])
 
   useEffect(() => {
     async function fetchIfReferralHasSomeBalance() {

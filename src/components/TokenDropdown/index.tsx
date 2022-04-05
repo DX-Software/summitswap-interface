@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import { Token, Currency } from '@koda-finance/summitswap-sdk'
 import { Text, Box } from '@koda-finance/summitswap-uikit'
-import styled, { StyledFunction } from 'styled-components'
+import styled from 'styled-components'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import CurrencyLogo from 'components/CurrencyLogo'
 import expandMore from '../../img/expandMore.svg'
