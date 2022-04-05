@@ -20,7 +20,6 @@ import { isTokenOnList } from '../../utils'
 function currencyKey(currency: Currency): string {
   return currency instanceof Token ? currency.address : currency === ETHER ? 'ETHER' : ''
 }
-
 const StyledBalanceText = styled(Text)`
   white-space: nowrap;
   overflow: hidden;
@@ -204,7 +203,10 @@ export default function CurrencyList({
 }) {
   const rowHeights = useRef({})
   const itemData = useMemo(() => (showETH ? [Currency.ETHER, ...currencies] : [...currencies]), [currencies, showETH])
-
+  const setRowHeight = (index, size: any) => {
+    variableListRef?.current?.resetAfterIndex(0)
+    rowHeights.current = { ...rowHeights.current, [index]: size }
+  }
   function Row({ data, index, style }) {
     const rowRef = useRef({}) as any
 
@@ -231,11 +233,6 @@ export default function CurrencyList({
         currencyRef={rowRef as any}
       />
     )
-  }
-
-  const setRowHeight = (index, size: any) => {
-    variableListRef?.current?.resetAfterIndex(0)
-    rowHeights.current = { ...rowHeights.current, [index]: size }
   }
 
   const getRowHeight = (index: number): number => {
