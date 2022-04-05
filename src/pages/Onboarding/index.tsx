@@ -107,7 +107,7 @@ export default function CrossChainSwap() {
 
       setIsLoading(true);
       const fetchedPairAddress = (await factoryContract.getPair(KODA.address, selectedToken.address)) as string
-      setIsLoading(true)
+      setIsLoading(false)
 
       if (fetchedPairAddress === NULL_ADDRESS) {
         setPairAddress(undefined)
