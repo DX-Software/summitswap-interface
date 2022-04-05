@@ -29,7 +29,6 @@ export default function SendReferralRewards({
   const sendTokensToReferralContract = useCallback(() => {
     async function send() {
       if (!tokenContract || !referralRewardAmount || !library) {
-        await Promise.resolve()
         setIsTokensSentToReferral(false)
         return
       }
