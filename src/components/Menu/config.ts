@@ -24,9 +24,9 @@ const config: MenuEntry[] = [
   },
   
   // {
-  //   label: "Farms",
-  //   icon: "FarmIcon",
-  //   href: "/farms",
+  //   label: "Onboarding",
+  //   icon: "OnboardingIcon",
+  //   href: "/onboarding",
   // },
   // {
   //   label: "Pools",

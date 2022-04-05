@@ -50,7 +50,7 @@ export default function AppHeader() {
         {location.pathname === '/summitcheck' && 'Summit Check'}
         {location.pathname === '/referral' && 'Summit Referral'}
         {location.pathname === '/cross-chain-swap' && 'Cross-Chain Swap'}
-      
+        {location.pathname === '/onboarding' && 'Onboarding'}
       </Box>
       <TopLogo src={TopLogoIcon} alt='' />
     </StyledContainer>

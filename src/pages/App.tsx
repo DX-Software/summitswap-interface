@@ -16,6 +16,7 @@ import RemoveLiquidity from './RemoveLiquidity'
 import Swap from './Swap'
 import CrossChainSwap from './CrossChainSwap'
 import Referral from './Referral'
+import Onboarding from './Onboarding'
 import SummitCheck from './SummitCheck'
 import { EN, allLanguages } from '../constants/localisation/languageCodes'
 import { LanguageContext } from '../hooks/LanguageContext'
@@ -151,6 +152,7 @@ export default function App() {
                     <Route exact path="/cross-chain-swap" component={CrossChainSwap} />
                     <Route exact path="/swap?ref=:ref" component={Referral} />
                     <Route exact path="/referral" component={Referral} />
+                    <Route exact path="/onboarding" component={Onboarding} />
                     <Route exact strict path="/find" component={PoolFinder} />
                     <Route exact strict path="/pool" component={Pool} />
                     <Route exact path="/add" component={AddLiquidity} />

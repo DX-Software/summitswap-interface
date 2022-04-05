@@ -4,7 +4,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
 import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER } from '@koda-finance/summitswap-sdk'
-import SummitswapRouterAbi  from '../constants/abis/summitswap-router.json'
+import SummitswapRouterAbi from '../constants/abis/summitswap-router.json'
 import { ROUTER_ADDRESS } from '../constants'
 import { TokenAddressMap } from '../state/lists/hooks'
 
@@ -19,7 +19,7 @@ export function isAddress(value: any): string | false {
 
 const BSCSCAN_PREFIXES: { [chainId in ChainId]: string } = {
   56: '',
-  97: 'testnet.'
+  97: 'testnet.',
 }
 
 export function getBscScanLink(chainId: ChainId, data: string, type: 'transaction' | 'token' | 'address'): string {
@@ -64,7 +64,7 @@ export function calculateSlippageAmount(value: CurrencyAmount, slippage: number)
   }
   return [
     JSBI.divide(JSBI.multiply(value.raw, JSBI.BigInt(10000 - slippage)), JSBI.BigInt(10000)),
-    JSBI.divide(JSBI.multiply(value.raw, JSBI.BigInt(10000 + slippage)), JSBI.BigInt(10000))
+    JSBI.divide(JSBI.multiply(value.raw, JSBI.BigInt(10000 + slippage)), JSBI.BigInt(10000)),
   ]
 }
 
@@ -88,7 +88,12 @@ export function getContract(address: string, ABI: any, library: Web3Provider, ac
 }
 
 // account is optional
-export function getRouterContract(_: number, library: Web3Provider, account?: string, routerAddress: string = ROUTER_ADDRESS): Contract {
+export function getRouterContract(
+  _: number,
+  library: Web3Provider,
+  account?: string,
+  routerAddress: string = ROUTER_ADDRESS
+): Contract {
   return getContract(routerAddress, SummitswapRouterAbi, library, account)
 }
 
@@ -99,4 +104,25 @@ export function escapeRegExp(string: string): string {
 export function isTokenOnList(defaultTokens: TokenAddressMap, currency?: Currency): boolean {
   if (currency === ETHER) return true
   return Boolean(currency instanceof Token && defaultTokens[currency.chainId]?.[currency.address])
+}
+
+const SI_SYMBOL = ['', 'k', 'M', 'G', 'T', 'P', 'E']
+
+export function abbreviateNumber(number) {
+  // what tier? (determines SI symbol)
+  // eslint-disable-next-line no-bitwise
+  const tier = (Math.log10(Math.abs(number)) / 3) | 0
+
+  // if zero, we don't need a suffix
+  if (tier === 0) return number
+
+  // get suffix and determine scale
+  const suffix = SI_SYMBOL[tier]
+  const scale = 10 ** (tier * 3)
+
+  // scale the number
+  const scaled = number / scale
+
+  // format number and add suffix
+  return scaled.toFixed(1) + suffix
 }
