@@ -1,5 +1,6 @@
 import { Currency, CurrencyAmount, JSBI, Token, Trade } from '@koda-finance/summitswap-sdk'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+
 import { ArrowDown } from 'react-feather'
 import { CardBody, Button, IconButton, Text } from '@koda-finance/summitswap-uikit'
 import { ThemeContext } from 'styled-components'
@@ -15,8 +16,10 @@ import confirmPriceImpactWithoutFee from 'components/swap/confirmPriceImpactWith
 import { ArrowWrapper, BottomGrouping, SwapCallbackError, Wrapper, Dots } from 'components/swap/styleds'
 import TokenWarningModal from 'components/TokenWarningModal'
 import SyrupWarningModal from 'components/SyrupWarningModal'
+import ReferralAddressCheckModal from 'components/ReferralAddressCheckModal'
 import ProgressSteps from 'components/ProgressSteps'
 import { useWeb3React } from '@web3-react/core'
+import { isAddress } from 'utils'
 import { useAllTokens, useCurrency } from 'hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from 'hooks/useApproveCallback'
 import { useSwapCallback } from 'hooks/useSwapCallback'
@@ -34,6 +37,8 @@ import useGetTokenData from 'hooks/useGetTokenData'
 import useGetEthPrice from 'hooks/useGetEthPrice'
 import AppBody from '../AppBody'
 import { DEFAULT_SLIPPAGE_TOLERANCE, KODA } from '../../constants'
+
+
 
 interface IProps {
   isLanding?: boolean
@@ -334,9 +339,27 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
 
     return urlLoadedTokens.every((o) => !!allTokens[o.address])
   }, [urlLoadedTokens, allTokens])
+ 
 
+const theUrl=window.location.href.split("?");
+const refValidation=()=>{
+  if(theUrl.length>1){
+    const queries=theUrl[1].split("&");
+    const queryRef=queries[1].split("=");
+    if(!isAddress(queryRef[1])){
+      return false
+    }
+  }
+  return true
+}
+const [refValidModal,setRefValidModal]=useState(refValidation);
+const openRefModal=()=>{
+  setRefValidModal(prev => !prev)
+  
+}
   return (
     <>
+
       <TokenWarningModal
         isOpen={urlLoadedTokens.length > 0 && !dismissTokenWarning && !areKnownTokens}
         tokens={urlLoadedTokens}
@@ -347,6 +370,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
         transactionType={syrupTransactionType}
         onConfirm={handleConfirmSyrupWarning}
       />
+      <ReferralAddressCheckModal isOpen={!refValidModal} onConfirm={openRefModal}/>
       <AppBody>
         <PageHeader />
         {isLanding ? '' : <CardNav />}
@@ -433,7 +457,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
                 {!account ? (
                   /* <ConnectWalletButton /> */
                   <ConnectWalletButtonSwap />
-                ) : showWrap ? (
+                ): showWrap ? (
                   <Button disabled={Boolean(wrapInputError)} onClick={onWrap} style={{ width: '100%' }}>
                     {wrapInputError ??
                       (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
@@ -464,6 +488,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
                     </Button>
                     <Button
                       onClick={() => {
+                    
                         if (isExpertMode) {
                           handleSwap()
                         } else {
@@ -490,7 +515,9 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
                   </RowBetween>
                 ) : (
                   <Button
-                    onClick={() => {
+                  
+                    onClick={ refValidation()? () => {
+                    
                       if (isExpertMode) {
                         handleSwap()
                       } else {
@@ -502,7 +529,10 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
                           txHash: undefined,
                         })
                       }
-                    }}
+                    } : ()=>{
+                        setRefValidModal(prev => !prev)
+                    }
+                  }
                     id="swap-button"
                     disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}
                     variant={isValid && priceImpactSeverity > 2 && !swapCallbackError ? 'danger' : 'primary'}
@@ -511,10 +541,12 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
                       (priceImpactSeverity > 3 && !isExpertMode
                         ? `Price Impact Too High`
                         : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`)}
+                        
                   </Button>
                 )}
                 {showApproveFlow && <ProgressSteps steps={[approval === ApprovalState.APPROVED]} />}
                 {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
+                {swapErrorMessage? <SwapCallbackError error={swapErrorMessage} /> : null}
               </BottomGrouping>
             </div>
           </CardBody>

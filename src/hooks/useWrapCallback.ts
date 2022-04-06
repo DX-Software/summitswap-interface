@@ -1,7 +1,6 @@
 
-import React,{ useMemo } from 'react'
+import { useMemo } from 'react'
 import { Currency, currencyEquals, ETHER, WETH } from '@koda-finance/summitswap-sdk'
-import { BrowserRouter as Router, Link, useLocation} from "react-router-dom";
 import { tryParseAmount } from '../state/swap/hooks'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { useCurrencyBalance } from '../state/wallet/hooks'
@@ -32,11 +31,7 @@ export default function useWrapCallback(
   // we can always parse the amount typed as the input currency, since wrapping is 1:1
   const inputAmount = useMemo(() => tryParseAmount(typedValue, inputCurrency), [inputCurrency, typedValue])
   const addTransaction = useTransactionAdder()
-  const useQuery=()=> {
-    const { search } = useLocation();
-  
-    return React.useMemo(() => new URLSearchParams(search), [search]);
-  }
+
   return useMemo(() => {
     if (!wethContract || !chainId || !inputCurrency || !outputCurrency) return NOT_APPLICABLE
 
@@ -75,6 +70,7 @@ export default function useWrapCallback(
         inputError: sufficientBalance ? undefined : 'Insufficient WBNB balance'
       }
     }
+    
 
      
       return NOT_APPLICABLE
