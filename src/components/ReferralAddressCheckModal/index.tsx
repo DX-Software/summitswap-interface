@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import styled from 'styled-components'
-import { Button, Text } from '@koda-finance/summitswap-uikit'
+import { Button, Flex, Text } from '@koda-finance/summitswap-uikit'
 import { AlertTriangle } from 'react-feather'
 import Modal from '../Modal'
 import { AutoRow} from '../Row'
@@ -30,8 +30,9 @@ export default function ReferralAddressCheckModal({
     const handleDismiss = useCallback(() => null, [])
     return (
       <Modal isOpen={isOpen} onDismiss={handleDismiss} maxHeight={90}>
-        <WarningContainer className="token-warning-container">
+        <WarningContainer className="warning-container">
           <AutoColumn gap="lg">
+            <Flex justifyContent="center">
             <AutoRow gap="6px">
               <StyledWarningIcon />
               <Text color="failure">Wrong Referral Link </Text>
@@ -47,6 +48,8 @@ export default function ReferralAddressCheckModal({
               >
                 OK
               </Button>
+            </Flex>
+        
         
           </AutoColumn>
         </WarningContainer>
