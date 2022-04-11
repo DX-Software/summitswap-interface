@@ -6,30 +6,41 @@ import { infoClient } from 'utils/graphql'
 import { useBlocksFromTimestamps } from 'hooks/useBlocksFromTimestamps'
 import { getChangeForPeriod, getLpFeesAndApr, getPercentChange } from 'utils/infoDataHelpers'
 import { getDeltaTimestamps } from 'utils/infoQueryHelpers'
+import { useBnbPrices } from 'hooks/useBnbPrices'
 
 interface PoolFields {
   id: string
   reserve0: string
   reserve1: string
+  reserveBNB: string
   reserveUSD: string
   volumeUSD: string
+  volumeToken0: string
+  volumeToken1: string
   token0Price: string
   token1Price: string
   token0: {
     id: string
     symbol: string
     name: string
+    derivedBNB: string
   }
   token1: {
     id: string
     symbol: string
     name: string
+    derivedBNB: string
   }
 }
 
 interface FormattedPoolFields
-  extends Omit<PoolFields, 'volumeUSD' | 'reserveUSD' | 'reserve0' | 'reserve1' | 'token0Price' | 'token1Price'> {
+  extends Omit<PoolFields, 'token0DerivedBNB' | 'token1DerivedBNB' | 'volumeToken0' | 'volumeToken1' | 'volumeUSD' | 'reserveBNB' | 'reserveUSD' | 'reserve0' | 'reserve1' | 'token0Price' | 'token1Price'> {
+  token0DerivedBNB: number
+  token1DerivedBNB: number
+  volumeToken0: number
+  volumeToken1: number
   volumeUSD: number
+  reserveBNB: number
   reserveUSD: number
   reserve0: number
   reserve1: number
@@ -62,7 +73,10 @@ const POOL_AT_BLOCK = (block: number | null, pools: string[]) => {
     id
     reserve0
     reserve1
+    reserveBNB
     reserveUSD
+    volumeToken0
+    volumeToken1
     volumeUSD
     token0Price
     token1Price
@@ -70,11 +84,13 @@ const POOL_AT_BLOCK = (block: number | null, pools: string[]) => {
       id
       symbol
       name
+      derivedBNB
     }
     token1 {
       id
       symbol
       name
+      derivedBNB
     }
   }`
 }
@@ -110,10 +126,15 @@ const parsePoolData = (pairs?: PoolFields[]) => {
     return {}
   }
   return pairs.reduce((accum: { [address: string]: FormattedPoolFields }, poolData) => {
-    const { volumeUSD, reserveUSD, reserve0, reserve1, token0Price, token1Price } = poolData
+    const { token0, token1, volumeToken0, volumeToken1, volumeUSD, reserveBNB, reserveUSD, reserve0, reserve1, token0Price, token1Price } = poolData
     accum[poolData.id] = {
       ...poolData,
+      token0DerivedBNB: parseFloat(token0.derivedBNB),
+      token1DerivedBNB: parseFloat(token1.derivedBNB),
+      volumeToken0: parseFloat(volumeToken0),
+      volumeToken1: parseFloat(volumeToken1),
       volumeUSD: parseFloat(volumeUSD),
+      reserveBNB: parseFloat(reserveBNB),
       reserveUSD: parseFloat(reserveUSD),
       reserve0: parseFloat(reserve0),
       reserve1: parseFloat(reserve1),
@@ -136,6 +157,7 @@ interface PoolDatas {
  */
 const usePoolDatas = (poolAddresses: string[]): PoolDatas => {
   const [fetchState, setFetchState] = useState<PoolDatas>({ error: false })
+  const bnbPrices = useBnbPrices()
   const [t24h, t48h, t7d, t14d] = getDeltaTimestamps()
   const { blocks, error: blockError } = useBlocksFromTimestamps([t24h, t48h, t7d, t14d])
   const [block24h, block48h, block7d, block14d] = blocks ?? []
@@ -167,20 +189,24 @@ const usePoolDatas = (poolAddresses: string[]): PoolDatas => {
           const week: FormattedPoolFields | undefined = formattedPoolData7d[address]
           const twoWeeks: FormattedPoolFields | undefined = formattedPoolData14d[address]
 
+          const currentBnbPrice: number = bnbPrices?.current ?? 0
+          const currentToken0Price = (current?.token0DerivedBNB * currentBnbPrice)
+          const currentToken1Price = (current?.token1DerivedBNB * currentBnbPrice)
+
           const [volumeUSD, volumeUSDChange] = getChangeForPeriod(
-            current?.volumeUSD,
-            oneDay?.volumeUSD,
-            twoDays?.volumeUSD
+            (current?.volumeToken0 * currentToken0Price + current?.volumeToken1 * currentToken1Price) / 2,
+            (oneDay?.volumeToken0 * currentToken0Price + oneDay?.volumeToken1 * currentToken1Price) / 2,
+            (twoDays?.volumeToken0 * currentToken0Price + twoDays?.volumeToken1 * currentToken1Price) / 2,
           )
           const [volumeUSDWeek, volumeUSDChangeWeek] = getChangeForPeriod(
-            current?.volumeUSD,
-            week?.volumeUSD,
-            twoWeeks?.volumeUSD
+            (current?.volumeToken0 * currentToken0Price + current?.volumeToken1 * currentToken1Price) / 2,
+            (week?.volumeToken0 * currentToken0Price + week?.volumeToken1 * currentToken1Price) / 2,
+            (twoWeeks?.volumeToken0 * currentToken0Price + twoWeeks?.volumeToken1 * currentToken1Price) / 2,
           )
 
-          const liquidityUSD = current ? current.reserveUSD : 0
+          const liquidityUSD = current ? current.reserveBNB * currentBnbPrice : 0
 
-          const liquidityUSDChange = getPercentChange(current?.reserveUSD, oneDay?.reserveUSD)
+          const liquidityUSDChange = getPercentChange(current?.reserveBNB * currentBnbPrice, oneDay?.reserveBNB * currentBnbPrice)
 
           const liquidityToken0 = current ? current.reserve0 : 0
           const liquidityToken1 = current ? current.reserve1 : 0
@@ -232,7 +258,7 @@ const usePoolDatas = (poolAddresses: string[]): PoolDatas => {
     if (poolAddresses.length > 0 && allBlocksAvailable && !blockError) {
       fetch()
     }
-  }, [poolAddresses, block24h, block48h, block7d, block14d, blockError])
+  }, [poolAddresses, block24h, block48h, block7d, block14d, blockError, bnbPrices])
 
   return fetchState
 }

@@ -15,10 +15,12 @@ const POOL_TRANSACTIONS = gql`
         token0 {
           id
           symbol
+          derivedBNB
         }
         token1 {
           id
           symbol
+          derivedBNB
         }
       }
       to
@@ -33,10 +35,12 @@ const POOL_TRANSACTIONS = gql`
         token0 {
           id
           symbol
+          derivedBNB
         }
         token1 {
           id
           symbol
+          derivedBNB
         }
       }
       from
@@ -53,10 +57,12 @@ const POOL_TRANSACTIONS = gql`
         token0 {
           id
           symbol
+          derivedBNB
         }
         token1 {
           id
           symbol
+          derivedBNB
         }
       }
       sender
