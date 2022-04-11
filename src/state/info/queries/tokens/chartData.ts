@@ -1,7 +1,7 @@
 import { PCS_V2_START } from 'constants/info'
 import { gql } from 'graphql-request'
 import { ChartEntry } from 'state/info/types'
-import { infoClient } from 'utils/graphql'
+import { pancakeInfoClient } from 'utils/graphql'
 import { fetchChartData, mapDayData } from '../helpers'
 import { TokenDayDatasResponse } from '../types'
 
@@ -22,7 +22,7 @@ const getTokenChartData = async (skip: number, address: string): Promise<{ data?
         }
       }
     `
-    const { tokenDayDatas } = await infoClient.request<TokenDayDatasResponse>(query, {
+    const { tokenDayDatas } = await pancakeInfoClient.request<TokenDayDatasResponse>(query, {
       startTime: PCS_V2_START,
       skip,
       address,

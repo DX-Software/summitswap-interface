@@ -2,10 +2,12 @@ interface PairResponse {
   token0: {
     id: string
     symbol: string
+    derivedBNB: number
   }
   token1: {
     id: string
     symbol: string
+    derivedBNB: number
   }
 }
 
@@ -52,9 +54,14 @@ export interface TokenDayDatasResponse {
 
 // Footprint is the same, declared just for better readability
 export type SummitDayData = TokenDayData
+export type PancakeDayData = TokenDayData
 
 export interface SummitDayDatasResponse {
   summitDayDatas: SummitDayData[]
+}
+
+export interface PancakeDayDatasResponse {
+  pancakeDayDatas: PancakeDayData[]
 }
 
 export interface PairDayData {
