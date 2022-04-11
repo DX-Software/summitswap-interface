@@ -130,7 +130,7 @@ const TokenTable: React.FC<{
   tokenDatas: (TokenData | undefined)[] | undefined
   maxItems?: number
 }> = ({ tokenDatas, maxItems = MAX_ITEMS }) => {
-  const [sortField, setSortField] = useState(SORT_FIELD.volumeUSD)
+  const [sortField, setSortField] = useState(SORT_FIELD.priceUSD)
   const [sortDirection, setSortDirection] = useState<boolean>(true)
 
   const { t } = useTranslation()
