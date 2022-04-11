@@ -16,10 +16,12 @@ const GLOBAL_TRANSACTIONS = gql`
         token0 {
           id
           symbol
+          derivedBNB
         }
         token1 {
           id
           symbol
+          derivedBNB
         }
       }
       to
@@ -34,10 +36,12 @@ const GLOBAL_TRANSACTIONS = gql`
         token0 {
           id
           symbol
+          derivedBNB
         }
         token1 {
           id
           symbol
+          derivedBNB
         }
       }
       from
@@ -54,10 +58,12 @@ const GLOBAL_TRANSACTIONS = gql`
         token0 {
           id
           symbol
+          derivedBNB
         }
         token1 {
           id
           symbol
+          derivedBNB
         }
       }
       sender

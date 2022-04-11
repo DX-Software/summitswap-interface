@@ -14,9 +14,15 @@ export const mapMints = (mint: MintResponse) => {
     token1Symbol: mint.pair.token1.symbol,
     token0Address: mint.pair.token0.id,
     token1Address: mint.pair.token1.id,
+    token0DerivedBNB: mint.pair.token0.derivedBNB,
+    token1DerivedBNB: mint.pair.token1.derivedBNB,
     amountUSD: parseFloat(mint.amountUSD),
     amountToken0: parseFloat(mint.amount0),
     amountToken1: parseFloat(mint.amount1),
+    amountBNB: (
+      (parseFloat(mint.amount0) * mint.pair.token0.derivedBNB) +
+      (parseFloat(mint.amount1) * mint.pair.token1.derivedBNB)
+    ),
   }
 }
 
@@ -30,9 +36,15 @@ export const mapBurns = (burn: BurnResponse) => {
     token1Symbol: burn.pair.token1.symbol,
     token0Address: burn.pair.token0.id,
     token1Address: burn.pair.token1.id,
+    token0DerivedBNB: burn.pair.token0.derivedBNB,
+    token1DerivedBNB: burn.pair.token1.derivedBNB,
     amountUSD: parseFloat(burn.amountUSD),
     amountToken0: parseFloat(burn.amount0),
     amountToken1: parseFloat(burn.amount1),
+    amountBNB: (
+      (parseFloat(burn.amount0) * burn.pair.token0.derivedBNB) +
+      (parseFloat(burn.amount1) * burn.pair.token1.derivedBNB)
+    ),
   }
 }
 
@@ -46,9 +58,19 @@ export const mapSwaps = (swap: SwapResponse) => {
     token1Symbol: swap.pair.token1.symbol,
     token0Address: swap.pair.token0.id,
     token1Address: swap.pair.token1.id,
+    token0DerivedBNB: swap.pair.token0.derivedBNB,
+    token1DerivedBNB: swap.pair.token1.derivedBNB,
     amountUSD: parseFloat(swap.amountUSD),
     amountToken0: parseFloat(swap.amount0In) - parseFloat(swap.amount0Out),
     amountToken1: parseFloat(swap.amount1In) - parseFloat(swap.amount1Out),
+    amountBNB: (
+      (
+        (parseFloat(swap.amount0In) + parseFloat(swap.amount0Out)) * swap.pair.token0.derivedBNB
+      ) +
+      (
+        (parseFloat(swap.amount1In) + parseFloat(swap.amount1Out)) * swap.pair.token1.derivedBNB
+      )
+    ) / 2,
   }
 }
 

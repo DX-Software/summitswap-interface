@@ -11,6 +11,7 @@ import { Transaction, TransactionType } from 'state/info/types'
 import { ITEMS_PER_INFO_TABLE_PAGE } from 'constants/info'
 import { useTranslation } from 'react-i18next'
 import { useActiveWeb3React } from 'hooks'
+import { useBnbPrices } from 'hooks/useBnbPrices'
 import { ClickableColumnHeader, TableWrapper, PageButtons, Arrow, Break } from './shared'
 
 const Wrapper = styled.div`
@@ -136,6 +137,7 @@ const TransactionTable: React.FC<{
 }> = ({ transactions }) => {
   const [sortField, setSortField] = useState(SORT_FIELD.timestamp)
   const [sortDirection, setSortDirection] = useState<boolean>(true)
+  const bnbPrices = useBnbPrices()
 
   const { t } = useTranslation()
 
@@ -156,16 +158,24 @@ const TransactionTable: React.FC<{
               const [first, second] = toBeAbsList.includes(sortField)
                 ? [Math.abs(firstField as number), Math.abs(secondField as number)]
                 : [firstField, secondField]
-              return first > second ? (sortDirection ? -1 : 1) * 1 : (sortDirection ? -1 : 1) * -1
+              return (first ?? 0) > (second ?? 0) ? (sortDirection ? -1 : 1) * 1 : (sortDirection ? -1 : 1) * -1
             }
             return -1
           })
           .filter((x) => {
             return txFilter === undefined || x.type === txFilter
           })
+          .map((transaction) => {
+            if (bnbPrices) {
+              const newTransaction = { ...transaction }
+              newTransaction.amountUSD = transaction.amountBNB * bnbPrices.current / 2
+              return newTransaction
+            }
+            return transaction
+          })
           .slice(ITEMS_PER_INFO_TABLE_PAGE * (page - 1), page * ITEMS_PER_INFO_TABLE_PAGE)
       : []
-  }, [transactions, page, sortField, sortDirection, txFilter])
+  }, [transactions, page, sortField, sortDirection, txFilter, bnbPrices])
 
   // Update maxPage based on amount of items & applied filtering
   useEffect(() => {
