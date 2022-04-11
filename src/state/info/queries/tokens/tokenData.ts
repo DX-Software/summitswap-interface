@@ -14,6 +14,7 @@ interface TokenFields {
   name: string
   derivedBNB: string // Price in BNB per token
   derivedUSD: string // Price in USD per token
+  tradeVolume: number
   tradeVolumeUSD: string
   totalTransactions: string
   totalLiquidity: string
@@ -53,6 +54,7 @@ const TOKEN_AT_BLOCK = (block: number | null | undefined, tokens: string[]) => {
       name
       derivedBNB
       derivedUSD
+      tradeVolume
       tradeVolumeUSD
       totalTransactions
       totalLiquidity
@@ -147,24 +149,26 @@ const useFetchedTokenDatas = (tokenAddresses: string[]): TokenDatas => {
           const week: FormattedTokenFields | undefined = parsed7d[address]
           const twoWeeks: FormattedTokenFields | undefined = parsed14d[address]
 
-          const [volumeUSD, volumeUSDChange] = getChangeForPeriod(
-            current?.tradeVolumeUSD,
-            oneDay?.tradeVolumeUSD,
-            twoDays?.tradeVolumeUSD,
-          )
-          const [volumeUSDWeek] = getChangeForPeriod(
-            current?.tradeVolumeUSD,
-            week?.tradeVolumeUSD,
-            twoWeeks?.tradeVolumeUSD,
-          )
-          const liquidityUSD = current ? current.totalLiquidity * current.derivedUSD : 0
-          const liquidityUSDOneDayAgo = oneDay ? oneDay.totalLiquidity * oneDay.derivedUSD : 0
-          const liquidityUSDChange = getPercentChange(liquidityUSD, liquidityUSDOneDayAgo)
-          const liquidityToken = current ? current.totalLiquidity : 0
           // Prices of tokens for now, 24h ago and 7d ago
           const currentBnbPrice = bnbPrices?.current ?? 0
           const oneDayBnbPrices = bnbPrices?.oneDay ?? 0
           const weekBnbPrice = bnbPrices?.week ?? 0
+
+          const [volumeUSD, volumeUSDChange] = getChangeForPeriod(
+            current?.tradeVolume * currentBnbPrice,
+            oneDay?.tradeVolume * currentBnbPrice,
+            twoDays?.tradeVolume * currentBnbPrice,
+          )
+          const [volumeUSDWeek] = getChangeForPeriod(
+            current?.tradeVolume * currentBnbPrice,
+            week?.tradeVolume * currentBnbPrice,
+            twoWeeks?.tradeVolume * currentBnbPrice,
+          )
+
+          const liquidityUSD = current ? current.totalLiquidity * current.derivedBNB * currentBnbPrice : 0
+          const liquidityUSDOneDayAgo = oneDay ? oneDay.totalLiquidity * oneDay.derivedBNB * oneDayBnbPrices : 0
+          const liquidityUSDChange = getPercentChange(liquidityUSD, liquidityUSDOneDayAgo)
+          const liquidityToken = current ? current.totalLiquidity : 0
           
           const priceUSD = current ? current.derivedBNB * currentBnbPrice : 0
           const priceUSDOneDay = oneDay ? oneDay.derivedBNB * oneDayBnbPrices : 0

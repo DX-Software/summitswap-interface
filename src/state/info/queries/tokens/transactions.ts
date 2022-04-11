@@ -16,10 +16,12 @@ const TOKEN_TRANSACTIONS = gql`
         token0 {
           id
           symbol
+          derivedBNB
         }
         token1 {
           id
           symbol
+          derivedBNB
         }
       }
       to
@@ -34,10 +36,12 @@ const TOKEN_TRANSACTIONS = gql`
         token0 {
           id
           symbol
+          derivedBNB
         }
         token1 {
           id
           symbol
+          derivedBNB
         }
       }
       to
@@ -52,10 +56,12 @@ const TOKEN_TRANSACTIONS = gql`
         token0 {
           id
           symbol
+          derivedBNB
         }
         token1 {
           id
           symbol
+          derivedBNB
         }
       }
       from
@@ -72,10 +78,12 @@ const TOKEN_TRANSACTIONS = gql`
         token0 {
           id
           symbol
+          derivedBNB
         }
         token1 {
           id
           symbol
+          derivedBNB
         }
       }
       from
@@ -92,10 +100,12 @@ const TOKEN_TRANSACTIONS = gql`
         token0 {
           id
           symbol
+          derivedBNB
         }
         token1 {
           id
           symbol
+          derivedBNB
         }
       }
       sender
@@ -110,10 +120,12 @@ const TOKEN_TRANSACTIONS = gql`
         token0 {
           id
           symbol
+          derivedBNB
         }
         token1 {
           id
           symbol
+          derivedBNB
         }
       }
       sender
