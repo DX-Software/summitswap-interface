@@ -117,7 +117,8 @@ export default function CrossChainSwap() {
     }
 
     fetchPair()
-  }, [selectedToken, factoryContract])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedToken?.address, factoryContract])
 
   useEffect(() => {
     async function fetchLiquidity() {
