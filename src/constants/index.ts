@@ -20,6 +20,8 @@ export const CHAIN_ID = parseInt(process.env.REACT_APP_CHAIN_ID ?? '56')
 
 export const ONBOARDING_API = `${process.env.REACT_APP_ONBOARDING_API}`
 
+export const pancakeswapRouterV2Address = "0x10ED43C718714eb63d5aA57B78B54704E256024E"
+
 export const DEFAULT_SLIPPAGE_TOLERANCE = 0.8
 
 // a list of tokens by chain
@@ -41,7 +43,7 @@ export const UST = new Token(
   18,
   'UST',
   'Wrapped UST Token'
-  )
+  ) 
 
 export const BUSDs = {
   [ChainId.MAINNET]: BUSD,

@@ -4,6 +4,7 @@ import { useWeb3React } from '@web3-react/core'
 import useTheme from 'hooks/useTheme'
 import useGetPriceData from 'hooks/useGetPriceData'
 import useGetKodaPriceData from 'hooks/useGetKodaPriceData'
+import useGetKapexPrice from 'hooks/useGetKapexPrice'
 import { useLocation } from 'react-router-dom'
 import config from './config'
 import login from '../../utils/login'
@@ -17,6 +18,7 @@ const Menu: React.FC = (props) => {
   const cakePriceUsd = priceData ? Number(priceData.prices.Cake) : undefined
   const kodaPriceData = useGetKodaPriceData()
   const kodaPriceUsd = kodaPriceData ? Number(kodaPriceData['koda-finance'].usd) : undefined
+  const kapexPriceUsd = useGetKapexPrice()
   // const { selectedLanguage, setSelectedLanguage } = useContext(LanguageContext)
 
   const [showConnectButton, setShowConnectButton] = useState(true)
@@ -44,6 +46,7 @@ const Menu: React.FC = (props) => {
       toggleTheme={toggleTheme}
       cakePriceUsd={cakePriceUsd}
       kodaPriceUsd={kodaPriceUsd}
+      kapexPriceUsd={kapexPriceUsd}
       {...props}
     />
   )
