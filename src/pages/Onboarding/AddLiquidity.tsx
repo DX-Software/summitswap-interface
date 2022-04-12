@@ -21,7 +21,7 @@ export default function AddLiquidity({ token, isLoading, isEnoughLiquidity }: Pr
       </p>
       {token && account && (
         <>
-          <Button as={Link} to={`/add/${KODA.address}/${token?.address}`} disabled={isLoading}>
+          <Button as={Link} to={`/add/${KODA.address}/${token?.address}`} disabled={isLoading} target="_blank" rel="noreferrer">
             Add Liquidity
           </Button>
           <p>{!isEnoughLiquidity && <Text color="red">Not enough liquidity, please add more</Text>}</p>
