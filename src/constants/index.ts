@@ -20,7 +20,8 @@ export const CHAIN_ID = parseInt(process.env.REACT_APP_CHAIN_ID ?? '56')
 
 export const ONBOARDING_API = `${process.env.REACT_APP_ONBOARDING_API}`
 
-export const pancakeswapRouterV2Address = "0x10ED43C718714eb63d5aA57B78B54704E256024E"
+export const PANCAKESWAP_ROUTER_V2_ADDRESS = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
+export const WBNB_MAINNET_ADDRESS = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
 
 export const DEFAULT_SLIPPAGE_TOLERANCE = 0.8
 
@@ -96,6 +97,8 @@ export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } 
     [DAI, USDT],
   ],
 }
+
+export const BSC_RPC_URL = 'https://bsc-dataseed1.binance.org:443'
 
 export const NetworkContextName = 'NETWORK'
 

@@ -2,29 +2,23 @@ import { useState, useEffect } from 'react'
 import Web3 from 'web3';
 import { AbiItem } from "web3-utils";
 import { Contract } from "web3-eth-contract"
-import routerAbi from '../constants/abis/routerAbi.json'
-import {pancakeswapRouterV2Address} from '../constants'
-import { mainnetTokens } from '../constants/tokens-pancake'
-
+import { BSC_RPC_URL, BUSD,
+         PANCAKESWAP_ROUTER_V2_ADDRESS,
+        WBNB_MAINNET_ADDRESS, KAPEX } from '../constants'
+import summitswapRouterAbi from '../constants/abis/summitswap-router.json'
 
 const kapexToBusdRoute = [
-    mainnetTokens.kapex.address, 
-    mainnetTokens.wbnb.address,
-    mainnetTokens.busd.address
+    KAPEX.address, 
+    WBNB_MAINNET_ADDRESS,
+    BUSD.address
   ];
 
-
 const useGetKapexPrice = () => {
-
+    
     const [price, setPrice] = useState<string>()
 
-    const web3 = new Web3('https://bsc-dataseed1.binance.org:443')
-
-    const routerContract2 = new web3.eth.Contract(
-        routerAbi as AbiItem[],
-        pancakeswapRouterV2Address,
-      );
-
+    const web3 = new Web3(BSC_RPC_URL)
+  
     useEffect(() => {
         const init = async() =>  {
           const kapexPrice = await getAmountsOut(routerContract2, kapexToBusdRoute, 1);
@@ -33,7 +27,12 @@ const useGetKapexPrice = () => {
         init();
       // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [])
-
+      
+      const routerContract2 = new web3.eth.Contract(
+        summitswapRouterAbi as AbiItem[],
+        PANCAKESWAP_ROUTER_V2_ADDRESS,
+      );
+      
       const getAmountsOut = async (router: Contract, route: string[], amount: number) => {
         try {
           const amountsInWei = web3.utils.toWei(amount.toString(), 'ether');
