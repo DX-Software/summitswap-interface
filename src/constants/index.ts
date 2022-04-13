@@ -20,8 +20,7 @@ export const CHAIN_ID = parseInt(process.env.REACT_APP_CHAIN_ID ?? '56')
 
 export const ONBOARDING_API = `${process.env.REACT_APP_ONBOARDING_API}`
 
-export const PANCAKESWAP_ROUTER_V2_ADDRESS = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
-export const WBNB_MAINNET_ADDRESS = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
+export const PANCAKESWAP_ROUTER_V2_ADDRESS = ADDITIONAL_ROUTER_ADDRESSES[0]
 
 export const DEFAULT_SLIPPAGE_TOLERANCE = 0.8
 
@@ -38,13 +37,21 @@ export const DAI = new Token(ChainId.MAINNET, '0x1AF3F329e8BE154074D8769D1FFa4eE
 export const BUSD = new Token(ChainId.MAINNET, '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56', 18, 'BUSD', 'Binance USD')
 export const USDT = new Token(ChainId.MAINNET, '0x55d398326f99059fF775485246999027B3197955', 18, 'USDT', 'Tether USD')
 
+export const WBNB = new Token(
+  ChainId.MAINNET, 
+  '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', 
+  18, 
+  'WBNB', 
+  'Wrapped BNB'
+)
+
 export const UST = new Token(
   ChainId.MAINNET,
   '0x23396cF899Ca06c4472205fC903bDB4de249D6fC',
   18,
   'UST',
   'Wrapped UST Token'
-  ) 
+) 
 
 export const BUSDs = {
   [ChainId.MAINNET]: BUSD,
@@ -98,7 +105,9 @@ export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } 
   ],
 }
 
-export const BSC_RPC_URL = 'https://bsc-dataseed1.binance.org:443'
+export const BSC_RPC_URL = `${process.env.REACT_APP_BSC_URL}`
+
+export const KAPEX_TO_BUSD_ROUTE = [KAPEX.address, WBNB.address, BUSD.address] 
 
 export const NetworkContextName = 'NETWORK'
 
