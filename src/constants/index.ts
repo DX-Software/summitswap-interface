@@ -105,8 +105,6 @@ export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } 
   ],
 }
 
-export const BSC_RPC_URL = `${process.env.REACT_APP_BSC_URL}`
-
 export const KAPEX_TO_BUSD_ROUTE = [KAPEX.address, WBNB.address, BUSD.address] 
 
 export const NetworkContextName = 'NETWORK'
