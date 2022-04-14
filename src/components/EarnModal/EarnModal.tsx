@@ -87,7 +87,7 @@ const EarnModal = ({ onDismiss = defaultOnDismiss }: EarnModalModalProps) => {
               </Option>
             </Flex>
             <Flex alignItems='center' mt={3}>
-              <Text>SummitSwap fee</Text>
+              <Text>Dev fee</Text>
               <InputOption>
                 <Input
                   type="number"

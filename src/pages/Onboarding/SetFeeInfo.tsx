@@ -72,13 +72,13 @@ export default function SetFeeInfo({
         )}
       </p>
       <p>
-        How much % do you want the dev to earn?
+        How much % do you want the SummitSwap to earn?
         {token && account && (
           <>
             <Input
               disabled={!isTokensSentToReferral || isLoading || !isLiquidityLocked}
               type="number"
-              placeholder="Dev %"
+              placeholder="SummitSwap %"
               onChange={(o) => setDevPercentage(o.target.value)}
               style={{ marginTop: '10px', marginBottom: '10px' }}
             />
