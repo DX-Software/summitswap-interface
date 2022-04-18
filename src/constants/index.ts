@@ -37,14 +37,6 @@ export const DAI = new Token(ChainId.MAINNET, '0x1AF3F329e8BE154074D8769D1FFa4eE
 export const BUSD = new Token(ChainId.MAINNET, '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56', 18, 'BUSD', 'Binance USD')
 export const USDT = new Token(ChainId.MAINNET, '0x55d398326f99059fF775485246999027B3197955', 18, 'USDT', 'Tether USD')
 
-export const WBNB = new Token(
-  ChainId.MAINNET, 
-  '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', 
-  18, 
-  'WBNB', 
-  'Wrapped BNB'
-)
-
 export const UST = new Token(
   ChainId.MAINNET,
   '0x23396cF899Ca06c4472205fC903bDB4de249D6fC',
@@ -105,7 +97,7 @@ export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } 
   ],
 }
 
-export const KAPEX_TO_BUSD_ROUTE = [KAPEX.address, WBNB.address, BUSD.address] 
+export const KAPEX_TO_BUSD_ROUTE = [KAPEX.address, WETH[56].address, BUSD.address] 
 
 export const NetworkContextName = 'NETWORK'
 
