@@ -8,7 +8,7 @@ import { useWeb3React } from '@web3-react/core'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import CurrencyLogo from 'components/CurrencyLogo'
 import TokenCard from './TokenCard'
-import { BUSDs, CHAIN_ID, KAPEX } from '../../constants'
+import { BUSD, CHAIN_ID, KAPEX } from '../../constants'
 import { useClaimingFeeModal } from './useClaimingFeeModal'
 
 const StyledContainer = styled(Box)`
@@ -68,7 +68,7 @@ const RewardedTokens: React.FC = () => {
   }, [account, refContract])
 
   useEffect(() => {
-    const tokenList: Token[] = [BUSDs[CHAIN_ID], KAPEX].filter((o) => !!o)
+    const tokenList: Token[] = [BUSD, KAPEX].filter((o) => !!o)
     const uniqueTokenAddresses = [...new Set(tokenList.map((o) => o.address))]
     const uniqueTokenList = uniqueTokenAddresses.map((o) => tokenList.find((oo) => oo.address === o)) as Token[]
 
@@ -117,7 +117,7 @@ const RewardedTokens: React.FC = () => {
   async function handleClaimAllInClaimToken() {
     if (!claimToken) return
 
-    if (claimToken.address === BUSDs[CHAIN_ID].address || claimToken.address === undefined) {
+    if (claimToken.address === BUSD.address || claimToken.address === undefined) {
       openClaimingFeeModal()
     } else {
       await claimAllInClaimToken()
