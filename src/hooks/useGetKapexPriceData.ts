@@ -16,7 +16,7 @@ const useGetKapexPriceData = () => {
         const amountsOutInEther = utils.formatEther(amountsOutInWei)
         setPrice(Number(amountsOutInEther).toFixed(8))
       } catch (err) {
-        setPrice("0.001") // Means it's on Testnet
+        console.log(err) // Means it's on Testnet
       }
     }
     getPrice() 
