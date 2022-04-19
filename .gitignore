@@ -28,8 +28,6 @@ yarn-error.log*
 notes.txt
 .idea/
 
-.vscode/
-
 package-lock.json
 
 cypress/videos
