@@ -25,6 +25,7 @@ import langSrc from '../constants/localisation/translate/index'
 import AppHeader from './AppHeader'
 import Menu from '../components/Menu'
 import SupportChatWidget from '../components/SupportChatWidget'
+import CreateToken from './CreateToken';
 
 
 const AppWrapper = styled.div`
@@ -149,6 +150,7 @@ export default function App() {
                     <AppHeader />
                     <Banner />
                     <Route exact path="/swap" component={Swap} />
+                    <Route exact path="/createToken" component={CreateToken} />
                     <Route exact path="/cross-chain-swap" component={CrossChainSwap} />
                     <Route exact path="/swap?ref=:ref" component={Referral} />
                     <Route exact path="/referral" component={Referral} />
