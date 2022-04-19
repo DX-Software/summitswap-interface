@@ -1,0 +1,14 @@
+{
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[solidity]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "solidity.defaultCompiler": "remote",
+  "solidity.linter": "solhint",
+  "solidity.formatter": "prettier",
+  "editor.tabSize": 2,
+  "prettier.tabWidth": 2,
+  "editor.detectIndentation": false
+}
