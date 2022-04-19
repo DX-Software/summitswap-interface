@@ -81,10 +81,10 @@ export function useTokenBalancesWithLoadingIndicator(
   ]
 }
 
-export async function useTokenBalanceBigNumber(
-  account?: string,
-  tokenContract?: Contract
-): Promise<BigNumber | undefined> {
+export function useTokenBalanceBigNumber(
+  account?: string | null,
+  tokenContract?: Contract | null
+): BigNumber | undefined {
   const [balance, setBalance] = useState<BigNumber>()
 
   useEffect(() => {
