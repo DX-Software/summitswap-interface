@@ -25,6 +25,9 @@ import langSrc from '../constants/localisation/translate/index'
 import AppHeader from './AppHeader'
 import Menu from '../components/Menu'
 import SupportChatWidget from '../components/SupportChatWidget'
+import Deposit from './Staking/Deposit'
+import Withdraw from './Staking/Withdraw'
+import Claim from './Staking/Claim'
 
 
 const AppWrapper = styled.div`
@@ -156,6 +159,9 @@ export default function App() {
                     <Route exact strict path="/find" component={PoolFinder} />
                     <Route exact strict path="/pool" component={Pool} />
                     <Route exact path="/add" component={AddLiquidity} />
+                    <Route exact path="/staking/deposit" component={Deposit} />
+                    <Route exact path="/staking/claim" component={Claim} />
+                    <Route exact path="/staking/withdraw" component={Withdraw} />
                     <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
                 
 
