@@ -157,7 +157,7 @@ const RewardedTokens: React.FC = () => {
               />
             ))}
           </StyledContainer>
-          {rewardTokens.length >= 1 && (
+          {rewardTokens.length > 1 && (
             <ClaimButtonsWrapper>
               {!hasClaimedAll && (
                 <Button mt={3} onClick={handleClaimAllInClaimToken} disabled={isLoading || !canClaimAll}>
