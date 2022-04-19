@@ -5,6 +5,7 @@ export const STAKING_ADDRESS = `${process.env.REACT_APP_STAKING_ADDRESS}`
 export const MAX_QUERYING_BLOCK_AMOUNT = 5000;
 export const NETWORK_URL = `${process.env.REACT_APP_NETWORK_URL}`
 export const ROUTER_ADDRESS = `${process.env.REACT_APP_ROUTER_ADDRESS}`
+export const PANCAKESWAP_ROUTER_V2_ADDRESS = `${process.env.REACT_APP_PANCAKESWAP_ROUTER_V2_ADDRESS}`
 export const LOCKER_ADDRESS = `${process.env.REACT_APP_LOCKER_ADDRESS}`
 export const FACTORY_ADDRESS = `${process.env.REACT_APP_FACTORY_ADDRESS}`
 export const INIT_CODE_HASH = `${process.env.REACT_APP_INIT_CODE_HASH}`
@@ -34,7 +35,6 @@ export const KODA = {
   [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0x063646d9C4eCB1c341bECdEE162958f072C43561', 9, 'KODA', 'KODA Token', 100, true, 11.25, 11.23)
 }[CHAIN_ID] as Token
 export const DAI = new Token(ChainId.MAINNET, '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3', 18, 'DAI', 'Dai Stablecoin')
-export const BUSD = new Token(ChainId.MAINNET, '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56', 18, 'BUSD', 'Binance USD')
 export const USDT = new Token(ChainId.MAINNET, '0x55d398326f99059fF775485246999027B3197955', 18, 'USDT', 'Tether USD')
 
 export const UST = new Token(
@@ -43,12 +43,12 @@ export const UST = new Token(
   18,
   'UST',
   'Wrapped UST Token'
-  )
+) 
 
-export const BUSDs = {
-  [ChainId.MAINNET]: BUSD,
+export const BUSD = {
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56', 18, 'BUSD', 'Binance USD'),
   [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7', 18, 'BUSD', 'Binance USD'),
-}
+}[CHAIN_ID] as Token;
 
 export const KAPEX = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0x11441AFb1D10E3Ce4E39666FC4F4A2A5d6d8C0Da', 18, 'KAPEX', 'KAPEX Token'),
@@ -96,6 +96,8 @@ export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } 
     [DAI, USDT],
   ],
 }
+
+export const KAPEX_TO_BUSD_ROUTE = [KAPEX.address, WETH[CHAIN_ID].address, BUSD.address] 
 
 export const NetworkContextName = 'NETWORK'
 

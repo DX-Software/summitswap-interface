@@ -15,6 +15,7 @@ import REFERRAL_ABI from '../constants/abis/summitReferral.json'
 import FACTORY_ABI from '../constants/abis/summitswapFactory.json'
 import LOCKER_ABI from '../constants/abis/summitswaLocker.json'
 import STAKING_ABI from '../constants/abis/kodaStaking.json'
+import ROUTER_ABI from '../constants/abis/summitswap-router.json'
 
 // returns null on errors
 function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {
@@ -83,4 +84,8 @@ export function usePairContract(pairAddress?: string, withSignerIfPossible?: boo
 export function useMulticallContract(): Contract | null {
   const { chainId } = useActiveWeb3React()
   return useContract(chainId && MULTICALL_NETWORKS[chainId], MULTICALL_ABI, false)
+}
+
+export function useRouterContract(routerAddress: string): Contract | null {
+  return useContract(routerAddress, ROUTER_ABI)
 }
