@@ -36,7 +36,7 @@ interface LpLock {
   lockId: number
 }
 
-export default function CrossChainSwap() {
+export default function Onboarding() {
   const { account, activate, deactivate, library } = useWeb3React()
   const [selectedToken, setSelectedToken] = useState<Token>()
   const [pairAddress, setPairAddress] = useState<string>()
@@ -87,16 +87,14 @@ export default function CrossChainSwap() {
   useEffect(() => {
     if (selectedToken) {
       history.push({ search: `?token=${selectedToken.address}` })
-    } else {
-      history.push({ search: `` })
     }
   }, [history, selectedToken])
 
   useEffect(() => {
-    if (tokenFromUrl) {
+    if (tokenFromUrl && selectedToken?.address !== tokenFromUrl.address) {
       setSelectedToken(tokenFromUrl)
     }
-  }, [tokenFromUrl])
+  }, [selectedToken, tokenFromUrl])
 
   useEffect(() => {
     async function fetchPair() {
@@ -105,7 +103,7 @@ export default function CrossChainSwap() {
         return
       }
 
-      setIsLoading(true);
+      setIsLoading(true)
       const fetchedPairAddress = (await factoryContract.getPair(KODA.address, selectedToken.address)) as string
       setIsLoading(false)
 
@@ -155,8 +153,8 @@ export default function CrossChainSwap() {
       setIsLiquidityLocked(false)
       return { lpLockfetchedLpLockss: undefined, totalAmountOfLpLocked: undefined }
     }
-    
-    setIsLoading(true);
+
+    setIsLoading(true)
 
     const userLocksLength = (await lockerContract.userLocksLength(account).then((o) => o.toNumber())) as number
 
@@ -174,7 +172,7 @@ export default function CrossChainSwap() {
       BigNumber.from(0)
     ) as BigNumber
 
-    setIsLoading(false);
+    setIsLoading(false)
     setIsLiquidityLocked(!totalAmountOfLpLocked.isZero())
 
     return { fetchedLpLocks, totalAmountOfLpLocked }

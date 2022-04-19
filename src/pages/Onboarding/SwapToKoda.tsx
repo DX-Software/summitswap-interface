@@ -20,7 +20,7 @@ export default function SwapToKoda({ isLoading, token }: Props) {
       </p>
       {account && token && (
         <>
-          <Button as={Link} to="/swap" disabled={isLoading}>
+          <Button as={Link} to="/swap" disabled={isLoading} target="_blank" rel="noreferrer">
             Swap on SummitSwap
           </Button>
           &nbsp;

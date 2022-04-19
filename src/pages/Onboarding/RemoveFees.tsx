@@ -26,10 +26,11 @@ export default function RemoveFees({
   const { account } = useWeb3React()
   return (
     <article>
-      <p>If your token has fees remove these contracts from them</p>
+      <p>If token has fees remove referral contract from them</p>
       <p>
         Referral contract - <b>{REFERRAL_ADDRESS}</b>
       </p>
+      <p>Remove pair from KODA fees</p>
       <p>
         Pair contract - <b>{pairAddress && account ? pairAddress : '???'}</b>
       </p>
@@ -41,7 +42,7 @@ export default function RemoveFees({
             disabled={!isTokensSentToReferral || !firstBuyPercentage || !referrerPercentage || isLoading}
             onChange={(o) => setIsReferralContractRemovedFromFees(o.target.checked)}
           />
-          &nbsp; If token transfer fees exist, I confirm that these contracts are excluded
+          &nbsp; I confirm that these requirements are satisfied
         </p>
       )}
     </article>
