@@ -8,12 +8,16 @@ const useGetKapexPriceData = () => {
   const pancakeRouterContract = useRouterContract(PANCAKESWAP_ROUTER_V2_ADDRESS)
 
   useEffect(() => {
-    const getPrice = async() =>  {
-      const amountsInWei = utils.parseUnits("1", "ether")
-      const amountsOutInWei = await pancakeRouterContract?.getAmountsOut(amountsInWei, KAPEX_TO_BUSD_ROUTE)
-        .then((o) => o[o.length - 1]) 
-      const amountsOutInEther = utils.formatEther(amountsOutInWei)
-      setPrice(Number(amountsOutInEther).toFixed(8))
+    const getPrice = async() => {
+      try {
+        const amountsInWei = utils.parseUnits("1", "ether")
+        const amountsOutInWei = await pancakeRouterContract?.getAmountsOut(amountsInWei, KAPEX_TO_BUSD_ROUTE)
+          .then((o) => o[o.length - 1]) 
+        const amountsOutInEther = utils.formatEther(amountsOutInWei)
+        setPrice(Number(amountsOutInEther).toFixed(8))
+      } catch (err) {
+        console.log(err) // Means it's on Testnet
+      }
     }
     getPrice() 
   // eslint-disable-next-line react-hooks/exhaustive-deps
