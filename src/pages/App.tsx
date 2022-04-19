@@ -3,8 +3,8 @@ import { Route, Switch, Redirect, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { useWalletModal } from '@koda-finance/summitswap-uikit'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
-import login from 'utils/login'
-import Banner from 'components/Banner'
+import login from '../utils/login'
+import Banner from '../components/Banner'
 import Popups from '../components/Popups'
 import Web3ReactManager from '../components/Web3ReactManager'
 import { RedirectDuplicateTokenIds, RedirectOldAddLiquidityPathStructure } from './AddLiquidity/redirects'
@@ -25,6 +25,7 @@ import langSrc from '../constants/localisation/translate/index'
 import AppHeader from './AppHeader'
 import Menu from '../components/Menu'
 import SupportChatWidget from '../components/SupportChatWidget'
+import CreateToken from './CreateToken'
 
 
 const AppWrapper = styled.div`
@@ -149,6 +150,7 @@ export default function App() {
                     <AppHeader />
                     <Banner />
                     <Route exact path="/swap" component={Swap} />
+                    <Route exact path="/createToken" component={CreateToken} />
                     <Route exact path="/cross-chain-swap" component={CrossChainSwap} />
                     <Route exact path="/swap?ref=:ref" component={Referral} />
                     <Route exact path="/referral" component={Referral} />
