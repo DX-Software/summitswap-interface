@@ -10,6 +10,7 @@ import './styles.css'
 import { useTokenBalance, useTokenBalanceBigNumber } from 'state/wallet/hooks'
 import { useToken } from 'hooks/Tokens'
 import NavBar from './Navbar'
+import { MAX_UINT256 } from '../../constants'
 
 const RadioContainer = styled.div`
   display: flex;
@@ -33,19 +34,42 @@ const BalanceContainer = styled.div`
   justify-content: space-between;
 `
 
+const ButtonsContainer = styled.div`
+  display: flex;
+  gap: 10px;
+`
+
+// TODO fix KODA decimal 9
 export default function Deposit() {
-  const { account } = useWeb3React()
+  const { account, library } = useWeb3React()
 
   const stakingContract = useStakingContract(true)
 
-  const [amount, setAmount] = useState<string>('')
-  const [lockDuration, setLockDuration] = useState<string>('31556916')
-  const [currentRatingScore, setCurrentRatingScore] = useState<BigNumber>(BigNumber.from(0))
-  const [ratingScoreGained, setRatingScoreGained] = useState<BigNumber>(BigNumber.from(0))
+  const [amount, setAmount] = useState('')
+  const [lockDuration, setLockDuration] = useState('31556916')
+  const [currentRatingScore, setCurrentRatingScore] = useState(BigNumber.from(0))
+  const [ratingScoreGained, setRatingScoreGained] = useState(BigNumber.from(0))
   const [stakingTokenAddress, setStakingTokenAddress] = useState<string>()
+  const [needsToApprove, setNeedsToApprove] = useState(true)
+
+  const [isLoading, setIsLoading] = useState(false)
 
   const stakingToken = useTokenContract(stakingTokenAddress)
   const stakingTokenBalance = useTokenBalanceBigNumber(account, stakingToken)
+
+  useEffect(() => {
+    async function fetchAllowance() {
+      if (!account || !amount || !stakingToken || !stakingTokenAddress) {
+        return
+      }
+
+      const allowance = (await stakingToken.allowance(account, stakingTokenAddress)) as BigNumber
+
+      setNeedsToApprove(allowance.lt(utils.parseEther(amount)))
+    }
+
+    fetchAllowance()
+  }, [account, amount, stakingToken, stakingTokenAddress])
 
   useEffect(() => {
     async function fetchStakingTokenAddress() {
@@ -69,7 +93,9 @@ export default function Deposit() {
         return
       }
 
+      setIsLoading(true)
       const fetchedRatingScore = (await stakingContract.accounts(account).then((o) => o.rating)) as BigNumber
+      setIsLoading(false)
 
       setCurrentRatingScore(fetchedRatingScore)
     }
@@ -84,8 +110,10 @@ export default function Deposit() {
         return
       }
 
+      setIsLoading(true)
       const K = (await stakingContract.calculateK(+lockDuration)) as BigNumber
       const K_BASE = (await stakingContract.K_BASE()) as BigNumber
+      setIsLoading(false)
 
       setRatingScoreGained(utils.parseEther(amount).mul(K).div(K_BASE))
     }
@@ -94,12 +122,28 @@ export default function Deposit() {
   }, [amount, lockDuration, stakingContract])
 
   const deposit = useCallback(async () => {
-    if (!account || !lockDuration || !amount) {
+    if (!account || !lockDuration || !amount || !stakingContract) {
       return
     }
 
-    console.log('a')
-  }, [account, amount, lockDuration])
+    setIsLoading(true)
+    const receipt = await stakingContract.putDeposit(utils.parseEther(amount), lockDuration)
+    await library.waitForTransaction(receipt.hash)
+    setIsLoading(false)
+  }, [account, amount, library, lockDuration, stakingContract])
+
+  const approve = useCallback(async () => {
+    if (!account || !stakingToken) {
+      return
+    }
+
+    setIsLoading(true)
+    const receipt = await stakingToken.approve(stakingTokenAddress, MAX_UINT256)
+    await library.waitForTransaction(receipt.hash)
+    setIsLoading(false)
+
+    setNeedsToApprove(false)
+  }, [account, library, stakingToken, stakingTokenAddress])
 
   const onMax = useCallback(() => {
     if (!stakingTokenBalance) {
@@ -150,9 +194,14 @@ export default function Deposit() {
 
         <p>APY: 0-100%</p>
 
-        <Button disabled={!amount || !lockDuration} onClick={deposit}>
-          DEPOSIT
-        </Button>
+        <ButtonsContainer>
+          <Button disabled={!amount || isLoading || !needsToApprove} onClick={approve}>
+            APPROVE
+          </Button>
+          <Button disabled={!amount || !lockDuration || isLoading || needsToApprove} onClick={deposit}>
+            DEPOSIT
+          </Button>
+        </ButtonsContainer>
         {!amount && <Text color="red">Please enter positive amount</Text>}
         {!lockDuration && <Text color="red">Please select locking period</Text>}
       </InfoContainer>
