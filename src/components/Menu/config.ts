@@ -18,7 +18,7 @@ const config: MenuEntry[] = [
   },
   {
     label: 'Staking',
-    icon: 'FarmIcon',
+    icon: 'StakingIcon',
     href: '/staking/deposit',
   },
   {
