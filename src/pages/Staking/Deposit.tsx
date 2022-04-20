@@ -39,7 +39,7 @@ const ButtonsContainer = styled.div`
   gap: 10px;
 `
 
-// TODO fix KODA decimal 9
+// TODO hide some stuff if not connected
 export default function Deposit() {
   const { account, library } = useWeb3React()
 
@@ -51,25 +51,44 @@ export default function Deposit() {
   const [ratingScoreGained, setRatingScoreGained] = useState(BigNumber.from(0))
   const [stakingTokenAddress, setStakingTokenAddress] = useState<string>()
   const [needsToApprove, setNeedsToApprove] = useState(true)
+  const [isAmountValid, setIsAmountValid] = useState(false)
+  const [amountError, setAmountError] = useState('')
 
   const [isLoading, setIsLoading] = useState(false)
 
-  const stakingToken = useTokenContract(stakingTokenAddress)
-  const stakingTokenBalance = useTokenBalanceBigNumber(account, stakingToken)
+  const stakingTokenContract = useTokenContract(stakingTokenAddress)
+  const stakingToken = useToken(stakingTokenAddress)
+  const stakingTokenBalance = useTokenBalanceBigNumber(account, stakingTokenContract)
+
+  useEffect(() => {
+    if (!amount || !stakingToken || !stakingTokenBalance) {
+      return
+    }
+
+    if (utils.parseUnits(amount, stakingToken.decimals).isNegative()) {
+      setIsAmountValid(false)
+      setAmountError('Please input a positive amount')
+    } else if (utils.parseUnits(amount, stakingToken.decimals).gt(stakingTokenBalance)) {
+      setIsAmountValid(false)
+      setAmountError("You don't have enough tokens")
+    } else {
+      setIsAmountValid(true)
+    }
+  }, [amount, stakingToken, stakingTokenBalance])
 
   useEffect(() => {
     async function fetchAllowance() {
-      if (!account || !amount || !stakingToken || !stakingTokenAddress) {
+      if (!account || !amount || !stakingTokenContract || !stakingTokenAddress) {
         return
       }
 
-      const allowance = (await stakingToken.allowance(account, stakingTokenAddress)) as BigNumber
+      const allowance = (await stakingTokenContract.allowance(account, stakingTokenAddress)) as BigNumber
 
       setNeedsToApprove(allowance.lt(utils.parseEther(amount)))
     }
 
     fetchAllowance()
-  }, [account, amount, stakingToken, stakingTokenAddress])
+  }, [account, amount, stakingTokenContract, stakingTokenAddress])
 
   useEffect(() => {
     async function fetchStakingTokenAddress() {
@@ -133,25 +152,25 @@ export default function Deposit() {
   }, [account, amount, library, lockDuration, stakingContract])
 
   const approve = useCallback(async () => {
-    if (!account || !stakingToken) {
+    if (!account || !stakingTokenContract) {
       return
     }
 
     setIsLoading(true)
-    const receipt = await stakingToken.approve(stakingTokenAddress, MAX_UINT256)
+    const receipt = await stakingTokenContract.approve(stakingTokenAddress, MAX_UINT256)
     await library.waitForTransaction(receipt.hash)
     setIsLoading(false)
 
     setNeedsToApprove(false)
-  }, [account, library, stakingToken, stakingTokenAddress])
+  }, [account, library, stakingTokenContract, stakingTokenAddress])
 
   const onMax = useCallback(() => {
-    if (!stakingTokenBalance) {
+    if (!stakingTokenBalance || !stakingToken) {
       return
     }
 
-    setAmount(utils.formatEther(stakingTokenBalance ?? BigNumber.from(0)))
-  }, [stakingTokenBalance])
+    setAmount(utils.formatUnits(stakingTokenBalance ?? BigNumber.from(0), stakingToken.decimals))
+  }, [stakingTokenBalance, stakingToken])
 
   return (
     <div className="main-content">
@@ -166,11 +185,15 @@ export default function Deposit() {
         style={{ margin: '10px 0' }}
       />
       <BalanceContainer>
-        <Balance>Balance: {utils.formatEther(stakingTokenBalance ?? BigNumber.from(0))}</Balance>
+        <Balance>
+          Balance: {utils.formatUnits(stakingTokenBalance ?? BigNumber.from(0), stakingToken?.decimals)}
+        </Balance>
         <Button onClick={onMax} scale="xxs" variant="tertiary">
           MAX
         </Button>
       </BalanceContainer>
+
+      {!isAmountValid && <Text color="red">{amountError}</Text>}
 
       <RadioContainer onChange={(o: React.ChangeEvent<HTMLInputElement>) => setLockDuration(o.target.value)}>
         <label>
@@ -195,10 +218,13 @@ export default function Deposit() {
         <p>APY: 0-100%</p>
 
         <ButtonsContainer>
-          <Button disabled={!amount || isLoading || !needsToApprove} onClick={approve}>
+          <Button disabled={!amount || isLoading || !needsToApprove || !isAmountValid} onClick={approve}>
             APPROVE
           </Button>
-          <Button disabled={!amount || !lockDuration || isLoading || needsToApprove} onClick={deposit}>
+          <Button
+            disabled={!amount || isLoading || needsToApprove || !isAmountValid}
+            onClick={deposit}
+          >
             DEPOSIT
           </Button>
         </ButtonsContainer>
