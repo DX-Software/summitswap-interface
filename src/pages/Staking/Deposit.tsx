@@ -4,10 +4,10 @@ import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { Radio, Input, Progress, Button, Text } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
-import { useStakingContract } from 'hooks/useContract'
+import { useStakingContract, useTokenContract } from 'hooks/useContract'
 import { BigNumber, utils } from 'ethers'
 import './styles.css'
-import { useTokenBalance } from 'state/wallet/hooks'
+import { useTokenBalance, useTokenBalanceBigNumber } from 'state/wallet/hooks'
 import { useToken } from 'hooks/Tokens'
 import NavBar from './Navbar'
 
@@ -24,20 +24,28 @@ const InfoContainer = styled.div`
   gap: 10px;
 `
 
+const Balance = styled.p`
+  color: gray;
+`
+
+const BalanceContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
+
 export default function Deposit() {
   const { account } = useWeb3React()
 
   const stakingContract = useStakingContract(true)
 
-  const [amount, setAmount] = useState<number>()
+  const [amount, setAmount] = useState<string>('')
   const [lockDuration, setLockDuration] = useState<string>('31556916')
-  const [currentRatingScore, setCurrentRatingScore] = useState<string>('0')
-  const [ratingScoreGained, setRatingScoreGained] = useState<number>(0)
+  const [currentRatingScore, setCurrentRatingScore] = useState<BigNumber>(BigNumber.from(0))
+  const [ratingScoreGained, setRatingScoreGained] = useState<BigNumber>(BigNumber.from(0))
   const [stakingTokenAddress, setStakingTokenAddress] = useState<string>()
-  // const tokenAmount = useTokenBalance(account ?? undefined, stakingToken ?? undefined)
-  
-  const stakingToken = useToken(stakingTokenAddress)
-  const [stakingTokenBalance, setStakingTokenBalance] = useState<BigNumber>(BigNumber.from(0))
+
+  const stakingToken = useTokenContract(stakingTokenAddress)
+  const stakingTokenBalance = useTokenBalanceBigNumber(account, stakingToken)
 
   useEffect(() => {
     async function fetchStakingTokenAddress() {
@@ -46,7 +54,7 @@ export default function Deposit() {
         return
       }
 
-      const fetchedStakingTokenAddress = await stakingContract.stakingToken() as string
+      const fetchedStakingTokenAddress = (await stakingContract.stakingToken()) as string
 
       setStakingTokenAddress(fetchedStakingTokenAddress)
     }
@@ -57,14 +65,11 @@ export default function Deposit() {
   useEffect(() => {
     async function fetchCurrentRatingScore() {
       if (!stakingContract || !account) {
-        setCurrentRatingScore('0')
+        setCurrentRatingScore(BigNumber.from(0))
         return
       }
 
-      const fetchedRatingScore = (await stakingContract
-        .accounts(account)
-        .then((o) => o.rating)
-        .then((o) => o.toString())) as string
+      const fetchedRatingScore = (await stakingContract.accounts(account).then((o) => o.rating)) as BigNumber
 
       setCurrentRatingScore(fetchedRatingScore)
     }
@@ -75,13 +80,14 @@ export default function Deposit() {
   useEffect(() => {
     async function fetchRatingScoreGained() {
       if (!amount || !stakingContract) {
-        setRatingScoreGained(0)
+        setRatingScoreGained(BigNumber.from(0))
         return
       }
 
-      const K = +utils.formatEther(await stakingContract.calculateK(+lockDuration))
+      const K = (await stakingContract.calculateK(+lockDuration)) as BigNumber
+      const K_BASE = (await stakingContract.K_BASE()) as BigNumber
 
-      setRatingScoreGained((amount ?? 0) * K)
+      setRatingScoreGained(utils.parseEther(amount).mul(K).div(K_BASE))
     }
 
     fetchRatingScoreGained()
@@ -95,12 +101,32 @@ export default function Deposit() {
     console.log('a')
   }, [account, amount, lockDuration])
 
+  const onMax = useCallback(() => {
+    if (!stakingTokenBalance) {
+      return
+    }
+
+    setAmount(utils.formatEther(stakingTokenBalance ?? BigNumber.from(0)))
+  }, [stakingTokenBalance])
+
   return (
     <div className="main-content">
       <NavBar activeIndex={0} />
 
       <p>Amount</p>
-      <Input placeholder="0.00" onChange={(o) => setAmount(+o.target.value)} />
+      <Input
+        placeholder="0.00"
+        type="number"
+        value={amount}
+        onChange={(o) => setAmount(o.target.value)}
+        style={{ margin: '10px 0' }}
+      />
+      <BalanceContainer>
+        <Balance>Balance: {utils.formatEther(stakingTokenBalance ?? BigNumber.from(0))}</Balance>
+        <Button onClick={onMax} scale="xxs" variant="tertiary">
+          MAX
+        </Button>
+      </BalanceContainer>
 
       <RadioContainer onChange={(o: React.ChangeEvent<HTMLInputElement>) => setLockDuration(o.target.value)}>
         <label>
@@ -118,9 +144,9 @@ export default function Deposit() {
       </RadioContainer>
 
       <InfoContainer>
-        <p>Your current rating score: {currentRatingScore}</p>
-        <p>Gained rating score: {ratingScoreGained}</p>
-        <p>New rating score after deposit: {+currentRatingScore + ratingScoreGained}</p>
+        <p>Your current rating score: {utils.formatEther(currentRatingScore)}</p>
+        <p>Gained rating score: {utils.formatEther(ratingScoreGained)}</p>
+        <p>New rating score after deposit: {utils.formatEther(currentRatingScore.add(ratingScoreGained))}</p>
 
         <p>APY: 0-100%</p>
 
