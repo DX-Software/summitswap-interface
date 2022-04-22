@@ -11,14 +11,13 @@ import RewardedTokens from './RewardedTokens'
 
 export default function SwapList() {
   const { account } = useActiveWeb3React()
-  const referralHistories = useReferralHistories(account ?? "")
+  const referralHistories = useReferralHistories(account)
 
   return (
     <>
       <Text bold mb={2}>
-        Referred swap histories
+        Referred swap history
       </Text>
-      <Text> Section under maintenance, please try again later </Text>
       <Box mb={2}>
         {_.map(referralHistories, (referralHistory: ReferralReward) => (
           <ReferralTransactionRow key={`${referralHistory.timestamp}`} account={account} {...referralHistory} />
