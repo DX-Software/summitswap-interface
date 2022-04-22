@@ -51,7 +51,7 @@ type ReferralReward = {
   leadReward: string
 }
 
-const useReferralHistories = (walletAddress: string, outputTokenAddress = ""): ReferralReward[] => {
+const useReferralHistories = (walletAddress?: string | null, outputTokenAddress?: string | null): ReferralReward[] => {
   const [data, setData] = useState<ReferralReward[]>([])
 
   useEffect(() => {
@@ -88,11 +88,15 @@ const useReferralHistories = (walletAddress: string, outputTokenAddress = ""): R
     `
     const fetchData = async () => {
       try {
+        const _walletAddress = walletAddress ?? ""
         const referralHistories = await referralClient.request<ReferralHistoriesResponse>(query, {
-          id: walletAddress.toLowerCase(),
-          outputToken: outputTokenAddress
+          id: _walletAddress.toLowerCase(),
+          outputToken: outputTokenAddress ?? ""
         })
-        if (referralHistories.account === null) return;
+        if (referralHistories.account === null) {
+          setData([])
+          return
+        }
         const dataTemp: ReferralReward[] = []
         referralHistories.account.referralRewards.forEach((referralReward: ReferralRewardResponse) => {
           dataTemp.push({
