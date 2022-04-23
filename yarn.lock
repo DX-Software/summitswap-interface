@@ -2654,10 +2654,10 @@
     tiny-warning "^1.0.3"
     toformat "^2.0.0"
 
-"@koda-finance/summitswap-uikit@^1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@koda-finance/summitswap-uikit/-/summitswap-uikit-1.5.0.tgz#f594ff09b164a3f4148f153ce851b013d0dcc9e1"
-  integrity sha512-/VPuh5hzOsxORfnRnm82qIheQPT2qzRJzWBhTeOZ1P5SxO3Y03EteHnQ2XAq7SaZ5Vd7nvNdtBr5s6NkED7xoQ==
+"@koda-finance/summitswap-uikit@^1.5.1":
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/@koda-finance/summitswap-uikit/-/summitswap-uikit-1.5.1.tgz#ee70fca017357bbc30aa1b6d09c020ff7ca010a3"
+  integrity sha512-MhL87rVPQJNVuq2hWH4bvZPEQPxO3zOa8lakT5JzQ5VQ7CNpHec9+HZURGZw1X5eb28h/IzmR36Xe82mzYNEDA==
   dependencies:
     "@types/lodash" "^4.14.162"
     "@types/styled-system" "^5.1.10"
