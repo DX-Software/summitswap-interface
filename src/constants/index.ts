@@ -43,7 +43,7 @@ export const UST = new Token(
   18,
   'UST',
   'Wrapped UST Token'
-) 
+)
 
 export const BUSD = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56', 18, 'BUSD', 'Binance USD'),
@@ -52,7 +52,7 @@ export const BUSD = {
 
 export const KAPEX = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0x11441AFb1D10E3Ce4E39666FC4F4A2A5d6d8C0Da', 18, 'KAPEX', 'KAPEX Token'),
-  [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0x4e35b5D0Fc6A410e7Dd09C02673b5110c1B1D5a5', 18, 'KAPEX', 'KAPEX Token'),
+  [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0x8df2813ED24d1c27a9299226c812CfD7217eb99b', 18, 'KAPEX', 'KAPEX Token'),
 }[CHAIN_ID] as Token;
 
 const WETH_ONLY: ChainTokenList = {
@@ -97,7 +97,7 @@ export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } 
   ],
 }
 
-export const KAPEX_TO_BUSD_ROUTE = [KAPEX.address, WETH[CHAIN_ID].address, BUSD.address] 
+export const KAPEX_TO_BUSD_ROUTE = [KAPEX.address, WETH[CHAIN_ID].address, BUSD.address]
 
 export const NetworkContextName = 'NETWORK'
 
