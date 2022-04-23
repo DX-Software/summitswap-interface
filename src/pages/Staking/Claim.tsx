@@ -97,7 +97,9 @@ export default function Claim() {
             </TokenInfo>
           </b>
         </p>
-        <Button onClick={claim}>CLAIM</Button>
+        <Button disabled={isLoading || pendingReward.lte(BigNumber.from(0))} onClick={claim}>
+          CLAIM
+        </Button>
       </ClaimContainer>
     </AppBody>
   )
