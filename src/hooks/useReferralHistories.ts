@@ -1,6 +1,6 @@
+import { referralClient } from 'apollo/client'
+import { REFERRAL_HISTORIES } from 'apollo/queries'
 import { useEffect, useState } from 'react'
-import { gql } from 'graphql-request'
-import { referralClient } from 'utils/graphql'
 
 type ReferralHistoriesResponse = {
   account: Account | null
@@ -55,50 +55,21 @@ const useReferralHistories = (walletAddress?: string | null, outputTokenAddress?
   const [data, setData] = useState<ReferralReward[]>([])
 
   useEffect(() => {
-    const query = gql`
-      query referralHistories($id: String!, $outputToken: String!) {
-        account(id: $id, orderBy: timestamp, orderDirection: desc) {
-          id
-          referralRewards {
-            id
-            referrer {
-              id
-            }
-            leadInf {
-              id
-            }
-            timestamp
-            inputToken {
-              id
-              name
-              symbol
-            }
-            outputToken(where: {outputToken_contains: $outputToken}) {
-              id
-              name
-              symbol
-            }
-            inputTokenAmount
-            outputTokenAmount
-            referrerReward
-            leadReward
-          }
-        }
-      }
-    `
     const fetchData = async () => {
       try {
-        const _walletAddress = walletAddress ?? ""
-        const referralHistories = await referralClient.request<ReferralHistoriesResponse>(query, {
-          id: _walletAddress.toLowerCase(),
-          outputToken: outputTokenAddress ?? ""
-        })
-        if (referralHistories.account === null) {
+        const _walletAddress = walletAddress?.toLowerCase() || ""
+        const _outputTokenAddress = outputTokenAddress?.toLowerCase() || ""
+        console.log("fetching referral histories")
+        const referralHistories = await referralClient.query({
+          query: REFERRAL_HISTORIES(_walletAddress, _outputTokenAddress),
+          fetchPolicy: 'cache-first',
+        });
+        if (referralHistories.data.account === null) {
           setData([])
           return
         }
         const dataTemp: ReferralReward[] = []
-        referralHistories.account.referralRewards.forEach((referralReward: ReferralRewardResponse) => {
+        referralHistories.data.account.referralRewards.forEach((referralReward: ReferralRewardResponse) => {
           dataTemp.push({
             id: referralReward.id,
             timestamp: referralReward.timestamp,
