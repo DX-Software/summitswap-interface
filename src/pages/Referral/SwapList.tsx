@@ -20,7 +20,7 @@ export default function SwapList() {
       </Text>
       <Box mb={2}>
         {_.map(referralHistories, (referralHistory: ReferralReward) => (
-          <ReferralTransactionRow key={`${referralHistory.timestamp}`} account={account} {...referralHistory} />
+          <ReferralTransactionRow key={`${referralHistory.id}-${referralHistory.timestamp}`} account={account} {...referralHistory} />
         ))}
       </Box>
       {referralHistories.length}

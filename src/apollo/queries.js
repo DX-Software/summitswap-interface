@@ -877,12 +877,14 @@ export const FILTERED_TRANSACTIONS = gql`
   }
 `
 
-export const REFERRAL_HISTORIES = (walletAddress, outputTokenAddress) => {
+export const REFERRAL_HISTORIES = (walletAddress, outputTokenAddress, page=1, perPage=1000) => {
+  const skip = (page - 1) * perPage
+
   const queryString = `
     query referralHistories {
-      account(id: "${walletAddress}", orderBy: timestamp, orderDirection: desc) {
+      account(id: "${walletAddress}") {
         id
-        referralRewards {
+        referralRewards(first: ${perPage}, skip: ${skip}, orderBy: timestamp, orderDirection: desc) {
           id
           referrer {
             id

@@ -24,7 +24,7 @@ const HistoryList: React.FC<HistoryListProps> = ({ history }) => {
     <>
       {history.map((record) => {
         return (
-          <Box key={record.timestamp}>
+          <Box key={`${record.id}-${record.timestamp}`}>
             <ReferralTransactionRow {...record} />
           </Box>
         )

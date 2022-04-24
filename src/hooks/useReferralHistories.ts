@@ -3,7 +3,9 @@ import { REFERRAL_HISTORIES } from 'apollo/queries'
 import { useEffect, useState } from 'react'
 
 type ReferralHistoriesResponse = {
-  account: Account | null
+  data: {
+    account: Account | null
+  }
 }
 
 type Account = {
@@ -59,37 +61,40 @@ const useReferralHistories = (walletAddress?: string | null, outputTokenAddress?
       try {
         const _walletAddress = walletAddress?.toLowerCase() || ""
         const _outputTokenAddress = outputTokenAddress?.toLowerCase() || ""
-        console.log("fetching referral histories")
-        const referralHistories = await referralClient.query({
-          query: REFERRAL_HISTORIES(_walletAddress, _outputTokenAddress),
-          fetchPolicy: 'cache-first',
-        });
-        if (referralHistories.data.account === null) {
-          setData([])
-          return
-        }
-        const dataTemp: ReferralReward[] = []
-        referralHistories.data.account.referralRewards.forEach((referralReward: ReferralRewardResponse) => {
-          dataTemp.push({
-            id: referralReward.id,
-            timestamp: referralReward.timestamp,
-            inputToken: referralReward.inputToken.id,
-            inputTokenName: referralReward.inputToken.name,
-            inputTokenSymbol: referralReward.inputToken.symbol,
-            inputTokenAmount: referralReward.inputTokenAmount,
-            outputToken: referralReward.outputToken.id,
-            outputTokenName: referralReward.outputToken.name,
-            outputTokenSymbol: referralReward.outputToken.symbol,
-            outputTokenAmount: referralReward.outputTokenAmount,
-            referrer: referralReward.referrer.id,
-            referrerReward: referralReward.referrerReward,
-            lead: referralReward.leadInf.id,
-            leadReward: referralReward.leadReward,
+
+        let page = 1
+        const perPage = 20
+        while (true) {
+          const dataTemp: ReferralReward[] = []
+          const referralHistoriesResponse: ReferralHistoriesResponse = await referralClient.query({
+            query: REFERRAL_HISTORIES(_walletAddress, _outputTokenAddress, page, perPage),
+            fetchPolicy: 'cache-first',
+          });
+          if (!referralHistoriesResponse.data.account || referralHistoriesResponse.data.account.referralRewards.length === 0) break
+          referralHistoriesResponse.data.account.referralRewards.forEach((referralReward: ReferralRewardResponse) => {
+            dataTemp.push({
+              id: referralReward.id,
+              timestamp: referralReward.timestamp,
+              inputToken: referralReward.inputToken.id,
+              inputTokenName: referralReward.inputToken.name,
+              inputTokenSymbol: referralReward.inputToken.symbol,
+              inputTokenAmount: referralReward.inputTokenAmount,
+              outputToken: referralReward.outputToken.id,
+              outputTokenName: referralReward.outputToken.name,
+              outputTokenSymbol: referralReward.outputToken.symbol,
+              outputTokenAmount: referralReward.outputTokenAmount,
+              referrer: referralReward.referrer.id,
+              referrerReward: referralReward.referrerReward,
+              lead: referralReward.leadInf.id,
+              leadReward: referralReward.leadReward,
+            })
           })
-        })
-        setData(dataTemp)
+          setData((prevValue) => [...prevValue, ...dataTemp])
+          page++;
+        }
       } catch (error) {
         console.error("Failed to fetch referral histories", error)
+        setData([])
       }
     }
 
