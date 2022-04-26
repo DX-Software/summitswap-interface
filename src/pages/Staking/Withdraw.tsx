@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
-import { Radio, Input, Progress, Button } from '@koda-finance/summitswap-uikit'
+import { Radio, Input, Progress, Button, Spinner } from '@koda-finance/summitswap-uikit'
 import AppBody from 'pages/AppBody'
 import { useWeb3React } from '@web3-react/core'
 import { useStakingContract } from 'hooks/useContract'
@@ -10,13 +10,14 @@ import { BigNumber } from 'ethers'
 import { format } from 'date-fns'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { useToken } from 'hooks/Tokens'
+import CustomLightSpinner from 'components/CustomLightSpinner'
 import NavBar from './Navbar'
 
 interface Deposit {
   id: number
   user: string
-  depositAt: BigNumber
-  lockFor: BigNumber
+  depositAt: number
+  lockFor: number
   amount: BigNumber
 }
 
@@ -48,7 +49,7 @@ export default function Withdraw() {
 
   const [stakingTokenAddress, setStakingTokenAddress] = useState<string>()
   const [isLoading, setIsLoading] = useState(false)
-  const [userDeposits, setUserDeposits] = useState<Deposit[]>([])
+  const [userDeposits, setUserDeposits] = useState<Deposit[]>()
 
   const premiumToken = useToken(stakingTokenAddress)
 
@@ -107,36 +108,41 @@ export default function Withdraw() {
     <AppBody>
       <br />
       <NavBar activeIndex={2} />
-      <p>Your deposits:</p>
-      <DepositsContainer>
-        {userDeposits.map((deposit) => (
-          <Deposit key={deposit.id}>
-            <p>
-              Amount:&nbsp;
-              <b>
-                {deposit.amount.toString()}&nbsp;
-                <TokenInfo>
-                  KODA&nbsp;
-                  <CurrencyLogo currency={premiumToken ?? undefined} size="24px" />
-                </TokenInfo>
-              </b>
-            </p>
-            {!!Number(deposit.lockFor) && (
-              <p>
-                Unlocks at:&nbsp;
-                <b>{format(new Date(+deposit.lockFor * 1000), 'dd/MM/yyyy HH:mm')}</b>
-              </p>
-            )}
-            <p>
-              Deposited at:&nbsp;
-              <b>{format(new Date(+deposit.depositAt * 1000), 'dd/MM/yyyy HH:mm')}</b>
-            </p>
-            <Button disabled={isLoading || +deposit.lockFor / 1000 > Date.now()} onClick={() => withdraw(deposit)}>
-              WITHDRAW
-            </Button>
-          </Deposit>
-        ))}
-      </DepositsContainer>
+      {!userDeposits && <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="45px" />}
+      {userDeposits && (
+        <>
+          <p>Your deposits:</p>
+          <DepositsContainer>
+            {userDeposits?.map((deposit) => (
+              <Deposit key={deposit.id}>
+                <p>
+                  Amount:&nbsp;
+                  <b>
+                    {deposit.amount.toString()}&nbsp;
+                    <TokenInfo>
+                      KODA&nbsp;
+                      <CurrencyLogo currency={premiumToken ?? undefined} size="24px" />
+                    </TokenInfo>
+                  </b>
+                </p>
+                {!!Number(deposit.lockFor) && (
+                  <p>
+                    Unlocks at:&nbsp;
+                    <b>{format(new Date((deposit.depositAt + deposit.lockFor) * 1000), 'dd/MM/yyyy')}</b>
+                  </p>
+                )}
+                <p>
+                  Deposited at:&nbsp;
+                  <b>{format(new Date(deposit.depositAt * 1000), 'dd/MM/yyyy HH:mm')}</b>
+                </p>
+                <Button disabled={isLoading || +deposit.lockFor / 1000 > Date.now()} onClick={() => withdraw(deposit)}>
+                  WITHDRAW
+                </Button>
+              </Deposit>
+            ))}
+          </DepositsContainer>
+        </>
+      )}
     </AppBody>
   )
 }
