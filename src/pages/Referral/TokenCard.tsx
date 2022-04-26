@@ -8,7 +8,7 @@ import CurrencyLogo from 'components/CurrencyLogo'
 import { Token, WETH } from '@koda-finance/summitswap-sdk'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { useToken } from 'hooks/Tokens'
-import { REFERRAL_ADDRESS, BUSDs, CHAIN_ID, KAPEX, NULL_ADDRESS } from '../../constants'
+import { REFERRAL_ADDRESS, BUSD, CHAIN_ID, KAPEX, NULL_ADDRESS } from '../../constants'
 import { useClaimingFeeModal } from './useClaimingFeeModal'
 
 interface Props {
@@ -70,7 +70,7 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
     if (!outputToken) return
     if (!rewardToken) return
 
-    const tokenList: Token[] = [BUSDs[CHAIN_ID], KAPEX, outputToken, rewardToken].filter(o => !!o && o !== NULL_ADDRESS);
+    const tokenList: Token[] = [BUSD, KAPEX, outputToken, rewardToken].filter(o => !!o);
     const uniqueTokenAddresses = [...new Set(tokenList.map((o) => o.address))]
     const uniqueTokenList = uniqueTokenAddresses.map((o) => tokenList.find((oo) => oo.address === o)) as Token[]
 
@@ -149,7 +149,7 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
   const handleClaim = async () => {
     if (!claimToken) return
 
-    if (claimToken.address === BUSDs[CHAIN_ID].address || claimToken.address === undefined) {
+    if (claimToken.address === BUSD.address || claimToken.address === undefined) {
       openClaimingFeeModal()
     } else {
       await claim()

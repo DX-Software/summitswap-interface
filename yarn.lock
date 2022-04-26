@@ -1222,7 +1222,7 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.5.5", "@babel/runtime@^7.8.7":
+"@babel/runtime@^7.5.5":
   version "7.16.7"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.16.7.tgz#03ff99f64106588c9c403c6ecb8c3bafbbdff1fa"
   integrity sha512-9E9FJowqAsytyOY6LG+1KuueckRL+aQW+mKvXRXnuFGyRAyepJPmEo9vgMfXUA6O9u3IeEdv9MAkppFcaQwogQ==
@@ -2654,10 +2654,10 @@
     tiny-warning "^1.0.3"
     toformat "^2.0.0"
 
-"@koda-finance/summitswap-uikit@^1.3.1":
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/@koda-finance/summitswap-uikit/-/summitswap-uikit-1.3.1.tgz#3cdb1d237bfb5efccc540f9e3eb33105e7f5d87c"
-  integrity sha512-guPBRlw9iYEqYQQEwwabwpBK3YVOzPvZL9ychQ+C1E1QDVNeusFqpnUgR0AsQDDUFaEM4zTZmK+/eg9zX52k/g==
+"@koda-finance/summitswap-uikit@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@koda-finance/summitswap-uikit/-/summitswap-uikit-1.4.0.tgz#eb74a220fd788c37bb9dda4486aa0fa8be067f03"
+  integrity sha512-coPQykFbe62qr9GKy2XfXQ2I8BI6tAEZs6rNac8sufv0o87a4cTTEzNVkhGC/LLRZLvIkIYvx31uEKhLQXMFkg==
   dependencies:
     "@types/lodash" "^4.14.162"
     "@types/styled-system" "^5.1.10"
