@@ -157,7 +157,7 @@ export default function Deposit() {
       }
 
       setIsLoading(true)
-      const K = (await stakingContract.calculateK(+lockDuration)) as BigNumber
+      const K = (await stakingContract.k(+lockDuration)) as BigNumber
       const K_BASE = (await stakingContract.K_BASE()) as BigNumber
       setIsLoading(false)
 
