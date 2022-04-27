@@ -1,19 +1,16 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
-import { Radio, Input, Progress, Button, Text } from '@koda-finance/summitswap-uikit'
+import { Radio, Input, Button, Text } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
 import { useStakingContract, useTokenContract } from 'hooks/useContract'
 import { BigNumber, utils } from 'ethers'
-import './styles.css'
-import { useTokenBalance, useTokenBalanceBigNumber } from 'state/wallet/hooks'
 import { useToken } from 'hooks/Tokens'
 import AppBody from 'pages/AppBody'
-import PageHeader from 'components/PageHeader'
 import CurrencyLogo from 'components/CurrencyLogo'
 import NavBar from './Navbar'
 import { MAX_UINT256 } from '../../constants'
+import './styles.css'
 
 const RadioContainer = styled.div`
   display: flex;
@@ -26,14 +23,6 @@ const RadioContainer = styled.div`
 const LockingPeriod = styled.div`
   margin: 20px 0;
 `
-
-// const InfoContainer = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   gap: 10px;
-//   margin: 20px 0;
-// `
 
 const Balance = styled.p`
   color: gray;
@@ -86,10 +75,12 @@ export default function Deposit() {
   const [stakingTokenBalance, setStakingTokenBalance] = useState(BigNumber.from(0))
   // const stakingTokenBalance = useTokenBalanceBigNumber(account, stakingTokenContract)
 
-  const [noLockingStakedAmount, setNoLockingStakedAmount] = useState('')
-  const [threeMonthsStakedAmount, setThreeMonthsStakedAmount] = useState('')
-  const [sixMonthsStakedAmount, setSixMonthsStakedAmount] = useState('')
-  const [yearStakedAmount, setYearStakedAmount] = useState('')
+  const [noLockingStakedAmount, setNoLockingStakedAmount] = useState('...')
+  const [threeMonthsStakedAmount, setThreeMonthsStakedAmount] = useState('...')
+  const [sixMonthsStakedAmount, setSixMonthsStakedAmount] = useState('...')
+  const [yearStakedAmount, setYearStakedAmount] = useState('...')
+
+  const [apy, setApy] = useState('...')
 
   const fetchStakingTokenBalance = useCallback(async () => {
     if (!account) return
@@ -105,23 +96,48 @@ export default function Deposit() {
   }, [fetchStakingTokenBalance])
 
   useEffect(() => {
+    async function calculateApy() {
+      if (!stakingContract || !account) {
+        setApy('...')
+        return
+      }
+
+      try {
+        const yearlyReward = utils.parseUnits(String(9 * 10 ** 9), 'gwei')
+        const totalRating = await stakingContract.totalRating()
+        const myRating = (await stakingContract.accounts(account).then((o) => o.rating)) as BigNumber
+        const myYearlyReward = BigNumber.from(yearlyReward).mul(myRating).div(totalRating)
+        const myStakedAmount = (await stakingContract.accounts(account).then((o) => o.totalDepositAmount)) as BigNumber
+
+        setApy(myYearlyReward.mul(100).div(myStakedAmount).toString())
+      } catch (err) {
+        setApy('0')
+      }
+    }
+
+    calculateApy()
+  }, [account, stakingContract])
+
+  useEffect(() => {
     async function fetchStakedAmounts() {
       if (!stakingContract || !stakingToken) {
-        setNoLockingStakedAmount('')
-        setThreeMonthsStakedAmount('')
-        setSixMonthsStakedAmount('')
-        setYearStakedAmount('')
+        setNoLockingStakedAmount('...')
+        setThreeMonthsStakedAmount('...')
+        setSixMonthsStakedAmount('...')
+        setYearStakedAmount('...')
         return
       }
 
       const fetchedNoLockingStakedAmount = (await stakingContract.kCounter(0)) as BigNumber
-      const fetchedThreeMonthsStakedAmount = (await stakingContract.kCounter(7889229)) as BigNumber
-      const fetchedSixMonthsStakedAmount = (await stakingContract.kCounter(15778458)) as BigNumber
-      const fetchedYearStakedAmount = (await stakingContract.kCounter(31556916)) as BigNumber
-
       setNoLockingStakedAmount(utils.formatUnits(fetchedNoLockingStakedAmount, stakingToken.decimals))
+
+      const fetchedThreeMonthsStakedAmount = (await stakingContract.kCounter(7889229)) as BigNumber
       setThreeMonthsStakedAmount(utils.formatUnits(fetchedThreeMonthsStakedAmount, stakingToken.decimals))
+
+      const fetchedSixMonthsStakedAmount = (await stakingContract.kCounter(15778458)) as BigNumber
       setSixMonthsStakedAmount(utils.formatUnits(fetchedSixMonthsStakedAmount, stakingToken.decimals))
+
+      const fetchedYearStakedAmount = (await stakingContract.kCounter(31556916)) as BigNumber
       setYearStakedAmount(utils.formatUnits(fetchedYearStakedAmount, stakingToken.decimals))
     }
 
@@ -306,7 +322,7 @@ export default function Deposit() {
         </p>
 
         <p>
-          APY: <b>0-150%</b>
+          APY: <b>{apy}% + KAPEX BONUSES</b>
         </p>
       </InfoContainer>
       <ButtonsContainer>
