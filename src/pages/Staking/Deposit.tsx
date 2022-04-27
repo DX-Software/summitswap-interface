@@ -117,23 +117,25 @@ export default function Deposit() {
   }, [fetchStakingTokenBalance])
 
   const fetchApy = useCallback(async () => {
-    if (!stakingContract || !account) {
+    if (!stakingContract || !stakingToken) {
       setApy('...')
       return
     }
 
-    try {
-      const yearlyReward = utils.parseUnits(String(9 * 10 ** 9), 'gwei')
-      const totalRating = await stakingContract.totalRating()
-      const myRating = (await stakingContract.accounts(account).then((o) => o.rating)) as BigNumber
-      const myYearlyReward = BigNumber.from(yearlyReward).mul(myRating).div(totalRating)
-      const myStakedAmount = (await stakingContract.accounts(account).then((o) => o.totalDepositAmount)) as BigNumber
+    const yearlyReward = utils.parseUnits(String(9 * 10 ** 9), 'gwei')
+    const totalRating = (await stakingContract.totalRating()) as BigNumber
+    const myRating = currentRatingScore.add(ratingScoreGained)
+    const myYearlyReward = BigNumber.from(yearlyReward).mul(myRating).div(totalRating.add(myRating))
+    let myStakedAmount = utils
+      .parseUnits(amount || '0', stakingToken.decimals)
+      .add(await stakingContract.accounts(account ?? DEAD_ADDRESS).then((o) => o.totalDepositAmount)) as BigNumber
 
-      setApy(myYearlyReward.mul(100).div(myStakedAmount).toString())
-    } catch (err) {
-      setApy('0')
+    if (myStakedAmount.eq(BigNumber.from(0))) {
+      myStakedAmount = utils.parseUnits('1', stakingToken.decimals)
     }
-  }, [account, stakingContract])
+
+    setApy(myYearlyReward.mul(100).div(myStakedAmount).toString())
+  }, [account, amount, currentRatingScore, ratingScoreGained, stakingContract, stakingToken])
 
   useEffect(() => {
     fetchApy()
