@@ -10,12 +10,16 @@ import { useStakingContract, useTokenContract } from 'hooks/useContract'
 import { BigNumber, utils } from 'ethers'
 import CurrencyLogo from 'components/CurrencyLogo'
 import NavBar from './Navbar'
+import { KAPEX, KODA } from '../../constants'
 
 const ClaimContainer = styled.div`
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
+  margin: 10px;
+  background-color: ${(props) => props.theme.colors.card};
+  border-radius: 10px;
+  padding: 10px;
 `
 
 const TokenInfo = styled.div`
@@ -28,43 +32,36 @@ export default function Claim() {
 
   const stakingContract = useStakingContract(true)
 
-  const [premiumTokenAddress, setPremiumTokenAddress] = useState<string>()
   const [isLoading, setIsLoading] = useState(false)
-  const [pendingReward, setPendingReward] = useState(BigNumber.from(0))
+  const [pendingKoda, setPendingKoda] = useState(BigNumber.from(0))
+  const [pendingKapex, setPendingKapex] = useState(BigNumber.from(0))
 
-  const premiumTokenContract = useTokenContract(premiumTokenAddress)
-  const premiumToken = useToken(premiumTokenAddress)
-
-  useEffect(() => {
-    async function fetchStakingTokenAddress() {
-      if (!stakingContract) {
-        setPremiumTokenAddress(undefined)
-        return
-      }
-
-      const fetchedStakingTokenAddress = (await stakingContract.premiumToken()) as string
-
-      setPremiumTokenAddress(fetchedStakingTokenAddress)
-    }
-
-    fetchStakingTokenAddress()
-  }, [stakingContract])
+  const kodaToken = useToken(KODA.address)
+  const kapexToken = useToken(KAPEX.address)
 
   useEffect(() => {
-    async function fetchPendingReward() {
+    async function fetchPendingRewards() {
       if (!stakingContract || !account) {
-        setPendingReward(BigNumber.from(0))
+        setPendingKoda(BigNumber.from(0))
+        setPendingKapex(BigNumber.from(0))
         return
       }
 
       setIsLoading(true)
-      const fetchedPendingReward = (await stakingContract.premiumOf(account)) as BigNumber
+      const fetchedPendingKoda = (await stakingContract.premiumOf(KODA.address, account)) as BigNumber
       setIsLoading(false)
 
-      setPendingReward(fetchedPendingReward)
+      setPendingKoda(fetchedPendingKoda)
+
+
+      setIsLoading(true)
+      const fetchedPendingKapex = (await stakingContract.premiumOf(KAPEX.address, account)) as BigNumber
+      setIsLoading(false)
+
+      setPendingKapex(fetchedPendingKapex)
     }
 
-    fetchPendingReward()
+    fetchPendingRewards()
   }, [account, stakingContract])
 
   const claim = useCallback(() => {
@@ -85,19 +82,30 @@ export default function Claim() {
     <AppBody>
       <br />
       <NavBar activeIndex={1} />
+      <p>Pending rewards</p>
       <ClaimContainer>
-        <p>
-          Pending rewards:{' '}
-          <b>
-            <TokenInfo>
-              {utils.formatUnits(pendingReward, premiumToken?.decimals)}
-              &nbsp;
-              <CurrencyLogo currency={premiumToken ?? undefined} size="24px" />
-              &nbsp; KAPEX
-            </TokenInfo>
-          </b>
-        </p>
-        <Button disabled={isLoading || pendingReward.lte(BigNumber.from(0))} onClick={claim}>
+        <b>
+          <TokenInfo>
+            <CurrencyLogo currency={kodaToken ?? undefined} size="24px" />
+            &nbsp;
+            {utils.formatUnits(pendingKoda, KODA.decimals)}
+            &nbsp; KODA
+          </TokenInfo>
+        </b>
+        <Button disabled={isLoading || pendingKoda.lte(BigNumber.from(0))} onClick={claim}>
+          CLAIM
+        </Button>
+      </ClaimContainer>
+      <ClaimContainer>
+        <b>
+          <TokenInfo>
+            <CurrencyLogo currency={kapexToken ?? undefined} size="24px" />
+            &nbsp;
+            {utils.formatUnits(pendingKoda, KAPEX.decimals)}
+            &nbsp; KAPEX
+          </TokenInfo>
+        </b>
+        <Button style={{justifySelf: 'right'}} disabled={isLoading || pendingKoda.lte(BigNumber.from(0))} onClick={claim}>
           CLAIM
         </Button>
       </ClaimContainer>
