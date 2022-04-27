@@ -122,19 +122,24 @@ export default function Deposit() {
       return
     }
 
-    const yearlyReward = utils.parseUnits(String(9 * 10 ** 9), 'gwei')
-    const totalRating = (await stakingContract.totalRating()) as BigNumber
-    const myRating = currentRatingScore.add(ratingScoreGained)
-    const myYearlyReward = BigNumber.from(yearlyReward).mul(myRating).div(totalRating.add(myRating))
-    let myStakedAmount = utils
-      .parseUnits(amount || '0', stakingToken.decimals)
-      .add(await stakingContract.accounts(account ?? DEAD_ADDRESS).then((o) => o.totalDepositAmount)) as BigNumber
+    try {
+      const yearlyReward = utils.parseUnits(String(9 * 10 ** 9), 'gwei')
+      const totalRating = (await stakingContract.totalRating()) as BigNumber
+      const myRating = currentRatingScore.add(ratingScoreGained)
+      const myYearlyReward = BigNumber.from(yearlyReward).mul(myRating).div(totalRating.add(myRating))
+      const myStakedAmount = utils
+        .parseUnits(amount || '0', stakingToken.decimals)
+        .add(await stakingContract.accounts(account ?? DEAD_ADDRESS).then((o) => o.totalDepositAmount)) as BigNumber
 
-    if (myStakedAmount.eq(BigNumber.from(0))) {
-      myStakedAmount = utils.parseUnits('1', stakingToken.decimals)
+      // if (myStakedAmount.eq(BigNumber.from(0))) {
+      //   myStakedAmount = utils.parseUnits('1', stakingToken.decimals)
+      // }
+
+      setApy(myYearlyReward.mul(100).div(myStakedAmount).toString())
+    } catch (err) {
+      console.warn(err)
+      setApy('...')
     }
-
-    setApy(myYearlyReward.mul(100).div(myStakedAmount).toString())
   }, [account, amount, currentRatingScore, ratingScoreGained, stakingContract, stakingToken])
 
   useEffect(() => {
@@ -237,10 +242,9 @@ export default function Deposit() {
 
       setIsLoading(true)
       const K = (await stakingContract.k(+lockDuration)) as BigNumber
-      const K_BASE = (await stakingContract.K_BASE()) as BigNumber
       setIsLoading(false)
 
-      setRatingScoreGained(utils.parseUnits(amount, stakingToken.decimals).mul(K).div(K_BASE))
+      setRatingScoreGained(BigNumber.from(amount).mul(K))
     }
 
     fetchRatingScoreGained()
@@ -337,19 +341,19 @@ export default function Deposit() {
       <InfoContainer>
         <p>
           Current rating score:&nbsp;
-          <b>{utils.formatUnits(currentRatingScore, stakingToken?.decimals)}</b>
+          <b>{currentRatingScore.toString()}</b>
         </p>
         <p>
           Gained rating score:&nbsp;
-          <b>{utils.formatUnits(ratingScoreGained, stakingToken?.decimals)}</b>
+          <b>{ratingScoreGained.toString()}</b>
         </p>
         <p>
           New rating score:&nbsp;
-          <b>{utils.formatUnits(currentRatingScore.add(ratingScoreGained), stakingToken?.decimals)}</b>
+          <b>{currentRatingScore.add(ratingScoreGained).toString()}</b>
         </p>
 
         <p>
-          APY: <b>{apy}% + KAPEX BONUSES</b>
+          APY: <b>{apy} % + KAPEX BONUSES</b>
         </p>
       </InfoContainer>
       <ButtonsContainer>
