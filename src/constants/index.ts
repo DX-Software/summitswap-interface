@@ -97,6 +97,8 @@ export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } 
 
 export const NetworkContextName = 'NETWORK'
 
+export const BANNER_LINKS = ["https://kapex.me/","https://koda.finance/"]
+
 // default allowed slippage, in bips
 export const INITIAL_ALLOWED_SLIPPAGE = 80
 // 20 minutes, denominated in seconds
