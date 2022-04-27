@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import BANNERS from './banners'
-import { BANNER_LINKS } from '../../constants'
+import BANNERS,{ BANNER_LINKS } from './banners'
 
 const Link = styled.a`
   padding: 0;
