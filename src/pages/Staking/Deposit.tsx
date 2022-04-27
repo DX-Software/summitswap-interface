@@ -95,54 +95,54 @@ export default function Deposit() {
     fetchStakingTokenBalance()
   }, [fetchStakingTokenBalance])
 
-  useEffect(() => {
-    async function calculateApy() {
-      if (!stakingContract || !account) {
-        setApy('...')
-        return
-      }
-
-      try {
-        const yearlyReward = utils.parseUnits(String(9 * 10 ** 9), 'gwei')
-        const totalRating = await stakingContract.totalRating()
-        const myRating = (await stakingContract.accounts(account).then((o) => o.rating)) as BigNumber
-        const myYearlyReward = BigNumber.from(yearlyReward).mul(myRating).div(totalRating)
-        const myStakedAmount = (await stakingContract.accounts(account).then((o) => o.totalDepositAmount)) as BigNumber
-
-        setApy(myYearlyReward.mul(100).div(myStakedAmount).toString())
-      } catch (err) {
-        setApy('0')
-      }
+  const fetchApy = useCallback(async () => {
+    if (!stakingContract || !account) {
+      setApy('...')
+      return
     }
 
-    calculateApy()
+    try {
+      const yearlyReward = utils.parseUnits(String(9 * 10 ** 9), 'gwei')
+      const totalRating = await stakingContract.totalRating()
+      const myRating = (await stakingContract.accounts(account).then((o) => o.rating)) as BigNumber
+      const myYearlyReward = BigNumber.from(yearlyReward).mul(myRating).div(totalRating)
+      const myStakedAmount = (await stakingContract.accounts(account).then((o) => o.totalDepositAmount)) as BigNumber
+
+      setApy(myYearlyReward.mul(100).div(myStakedAmount).toString())
+    } catch (err) {
+      setApy('0')
+    }
   }, [account, stakingContract])
 
   useEffect(() => {
-    async function fetchStakedAmounts() {
-      if (!stakingContract || !stakingToken) {
-        setNoLockingStakedAmount('...')
-        setThreeMonthsStakedAmount('...')
-        setSixMonthsStakedAmount('...')
-        setYearStakedAmount('...')
-        return
-      }
+    fetchApy()
+  }, [fetchApy])
 
-      const fetchedNoLockingStakedAmount = (await stakingContract.kCounter(0)) as BigNumber
-      setNoLockingStakedAmount(utils.formatUnits(fetchedNoLockingStakedAmount, stakingToken.decimals))
-
-      const fetchedThreeMonthsStakedAmount = (await stakingContract.kCounter(7889229)) as BigNumber
-      setThreeMonthsStakedAmount(utils.formatUnits(fetchedThreeMonthsStakedAmount, stakingToken.decimals))
-
-      const fetchedSixMonthsStakedAmount = (await stakingContract.kCounter(15778458)) as BigNumber
-      setSixMonthsStakedAmount(utils.formatUnits(fetchedSixMonthsStakedAmount, stakingToken.decimals))
-
-      const fetchedYearStakedAmount = (await stakingContract.kCounter(31556916)) as BigNumber
-      setYearStakedAmount(utils.formatUnits(fetchedYearStakedAmount, stakingToken.decimals))
+  const fetchStakedAmounts = useCallback(async () => {
+    if (!stakingContract || !stakingToken) {
+      setNoLockingStakedAmount('...')
+      setThreeMonthsStakedAmount('...')
+      setSixMonthsStakedAmount('...')
+      setYearStakedAmount('...')
+      return
     }
 
-    fetchStakedAmounts()
+    const fetchedNoLockingStakedAmount = (await stakingContract.kCounter(0)) as BigNumber
+    setNoLockingStakedAmount(utils.formatUnits(fetchedNoLockingStakedAmount, stakingToken.decimals))
+
+    const fetchedThreeMonthsStakedAmount = (await stakingContract.kCounter(7889229)) as BigNumber
+    setThreeMonthsStakedAmount(utils.formatUnits(fetchedThreeMonthsStakedAmount, stakingToken.decimals))
+
+    const fetchedSixMonthsStakedAmount = (await stakingContract.kCounter(15778458)) as BigNumber
+    setSixMonthsStakedAmount(utils.formatUnits(fetchedSixMonthsStakedAmount, stakingToken.decimals))
+
+    const fetchedYearStakedAmount = (await stakingContract.kCounter(31556916)) as BigNumber
+    setYearStakedAmount(utils.formatUnits(fetchedYearStakedAmount, stakingToken.decimals))
   }, [stakingContract, stakingToken])
+
+  useEffect(() => {
+    fetchStakedAmounts()
+  }, [fetchStakedAmounts])
 
   useEffect(() => {
     if (!amount || !stakingToken || !stakingTokenBalance) {
@@ -235,10 +235,14 @@ export default function Deposit() {
     setIsLoading(false)
 
     setCurrentRatingScore(currentRatingScore.add(ratingScoreGained))
+    fetchStakedAmounts()
+    fetchApy()
   }, [
     account,
     amount,
     currentRatingScore,
+    fetchApy,
+    fetchStakedAmounts,
     fetchStakingTokenBalance,
     library,
     lockDuration,
