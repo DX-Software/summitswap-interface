@@ -107,7 +107,8 @@ export default function Withdraw() {
       <br />
       <NavBar activeIndex={2} />
       {!userDeposits && <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="45px" />}
-      {userDeposits && (
+      {userDeposits?.length === 0 && <p>You dont have any deposits</p>}
+      {userDeposits && userDeposits.length > 0 && (
         <>
           <p>Deposits</p>
           <div>
