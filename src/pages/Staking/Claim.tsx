@@ -1,12 +1,11 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
-import { Radio, Input, Progress, Button } from '@koda-finance/summitswap-uikit'
+import { Button } from '@koda-finance/summitswap-uikit'
 import AppBody from 'pages/AppBody'
 import { useWeb3React } from '@web3-react/core'
 import { useToken } from 'hooks/Tokens'
-import { useStakingContract, useTokenContract } from 'hooks/useContract'
+import { useStakingContract } from 'hooks/useContract'
 import { BigNumber, utils } from 'ethers'
 import CurrencyLogo from 'components/CurrencyLogo'
 import NavBar from './Navbar'
@@ -39,44 +38,45 @@ export default function Claim() {
   const kodaToken = useToken(KODA.address)
   const kapexToken = useToken(KAPEX.address)
 
-  useEffect(() => {
-    async function fetchPendingRewards() {
-      if (!stakingContract || !account) {
-        setPendingKoda(BigNumber.from(0))
-        setPendingKapex(BigNumber.from(0))
-        return
-      }
-
-      setIsLoading(true)
-      const fetchedPendingKoda = (await stakingContract.premiumOf(KODA.address, account)) as BigNumber
-      setIsLoading(false)
-
-      setPendingKoda(fetchedPendingKoda)
-
-
-      setIsLoading(true)
-      const fetchedPendingKapex = (await stakingContract.premiumOf(KAPEX.address, account)) as BigNumber
-      setIsLoading(false)
-
-      setPendingKapex(fetchedPendingKapex)
+  const fetchPendingRewards = useCallback(async () => {
+    if (!stakingContract || !account) {
+      setPendingKoda(BigNumber.from(0))
+      setPendingKapex(BigNumber.from(0))
+      return
     }
 
-    fetchPendingRewards()
+    setIsLoading(true)
+    const fetchedPendingKoda = (await stakingContract.premiumOf(KODA.address, account)) as BigNumber
+    setIsLoading(false)
+
+    setPendingKoda(fetchedPendingKoda)
+
+    setIsLoading(true)
+    const fetchedPendingKapex = (await stakingContract.premiumOf(KAPEX.address, account)) as BigNumber
+    setIsLoading(false)
+
+    setPendingKapex(fetchedPendingKapex)
   }, [account, stakingContract])
 
-  const claim = useCallback(() => {
-    async function claimRewards() {
+  useEffect(() => {
+    fetchPendingRewards()
+  }, [fetchPendingRewards])
+
+  const claim = useCallback(
+    async (premiumTokenAddress: string) => {
       if (!stakingContract) {
         return
       }
 
       setIsLoading(true)
-      await stakingContract.claimPremium()
+      const receipt = await stakingContract.claimPremium(premiumTokenAddress)
+      await library.waitForTransaction(receipt.hash)
       setIsLoading(false)
-    }
 
-    claimRewards()
-  }, [stakingContract])
+      fetchPendingRewards()
+    },
+    [fetchPendingRewards, library, stakingContract]
+  )
 
   return (
     <AppBody>
@@ -92,7 +92,7 @@ export default function Claim() {
             &nbsp; KODA
           </TokenInfo>
         </b>
-        <Button disabled={isLoading || pendingKoda.lte(BigNumber.from(0))} onClick={claim}>
+        <Button disabled={isLoading || pendingKoda.lte(BigNumber.from(0))} onClick={() => claim(KODA.address)}>
           CLAIM
         </Button>
       </ClaimContainer>
@@ -101,11 +101,15 @@ export default function Claim() {
           <TokenInfo>
             <CurrencyLogo currency={kapexToken ?? undefined} size="24px" />
             &nbsp;
-            {utils.formatUnits(pendingKoda, KAPEX.decimals)}
+            {utils.formatUnits(pendingKapex, KAPEX.decimals)}
             &nbsp; KAPEX
           </TokenInfo>
         </b>
-        <Button style={{justifySelf: 'right'}} disabled={isLoading || pendingKoda.lte(BigNumber.from(0))} onClick={claim}>
+        <Button
+          style={{ justifySelf: 'right' }}
+          disabled={isLoading || pendingKoda.lte(BigNumber.from(0))}
+          onClick={() => claim(KAPEX.address)}
+        >
           CLAIM
         </Button>
       </ClaimContainer>
