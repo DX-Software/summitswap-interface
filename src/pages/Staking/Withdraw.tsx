@@ -28,6 +28,7 @@ const Deposit = styled.div`
   background-color: ${(props) => props.theme.colors.card};
   border-radius: 10px;
   padding: 10px;
+  margin: 10px;
 `
 
 const TokenInfo = styled.div`
@@ -135,7 +136,10 @@ export default function Withdraw() {
                   Deposited at:&nbsp;
                   <b>{format(new Date(deposit.depositAt * 1000), 'dd/MM/yyyy HH:mm')}</b>
                 </p>
-                <Button disabled={isLoading || +deposit.lockFor / 1000 > Date.now()} onClick={() => withdraw(deposit)}>
+                <Button
+                  disabled={isLoading || (deposit.depositAt + deposit.lockFor) * 1000 > Date.now()}
+                  onClick={() => withdraw(deposit)}
+                >
                   WITHDRAW
                 </Button>
               </Deposit>
