@@ -1,6 +1,7 @@
 import { ChainId, JSBI, Percent, Token, WETH } from '@koda-finance/summitswap-sdk'
 
 export const STAKING_ADDRESS = `${process.env.REACT_APP_STAKING_ADDRESS}`
+export const STAKING_POOL_ADDRESS = `${process.env.REACT_APP_STAKING_POOL_ADDRESS}`
 
 export const MAX_QUERYING_BLOCK_AMOUNT = 5000;
 export const NETWORK_URL = `${process.env.REACT_APP_NETWORK_URL}`
@@ -17,6 +18,7 @@ export const ADDITIONAL_FACTORY_ADDRESSES: string[] = process.env.REACT_APP_ADDI
 export const ADDITIONAL_INIT_CODE_HASHES: string[] = process.env.REACT_APP_ADDITIONAL_INIT_CODE_HASH?.split(",") ?? []
 
 export const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
+export const DEAD_ADDRESS = '0x000000000000000000000000000000000000dEaD'
 export const MAX_UINT256 = '115792089237316195423570985008687907853269984665640564039457584007913129639935'
 export const SUMMITCHECK_API = `${process.env.REACT_APP_SUMMITCHECK_API}`
 export const CHAIN_ID = parseInt(process.env.REACT_APP_CHAIN_ID ?? '56')

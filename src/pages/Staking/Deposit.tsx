@@ -9,7 +9,7 @@ import { useToken } from 'hooks/Tokens'
 import AppBody from 'pages/AppBody'
 import CurrencyLogo from 'components/CurrencyLogo'
 import NavBar from './Navbar'
-import { MAX_UINT256 } from '../../constants'
+import { DEAD_ADDRESS, MAX_UINT256, STAKING_ADDRESS, STAKING_POOL_ADDRESS } from '../../constants'
 import './styles.css'
 
 const RadioContainer = styled.div`
@@ -81,6 +81,27 @@ export default function Deposit() {
   const [yearStakedAmount, setYearStakedAmount] = useState('...')
 
   const [apy, setApy] = useState('...')
+  const [circulatingAmount, setCirculatingAmount] = useState('...')
+
+  const fetchCirculatingSupply = useCallback(async () => {
+    if (!stakingTokenContract || !stakingToken) {
+      setCirculatingAmount('...')
+      return
+    }
+
+    const totalSupply = (await stakingTokenContract.totalSupply()) as BigNumber
+    const burnedAmount = (await stakingTokenContract.balanceOf(DEAD_ADDRESS)) as BigNumber
+    const stakedAmount = (await stakingTokenContract.balanceOf(STAKING_ADDRESS)) as BigNumber
+    const stakingPoolAmount = (await stakingTokenContract.balanceOf(STAKING_POOL_ADDRESS)) as BigNumber
+
+    const circulatingSupply = totalSupply.sub(burnedAmount).sub(stakedAmount).sub(stakingPoolAmount)
+
+    setCirculatingAmount(utils.formatUnits(circulatingSupply, stakingToken.decimals))
+  }, [stakingToken, stakingTokenContract])
+
+  useEffect(() => {
+    fetchCirculatingSupply()
+  }, [fetchCirculatingSupply])
 
   const fetchStakingTokenBalance = useCallback(async () => {
     if (!account) return
@@ -350,6 +371,9 @@ export default function Deposit() {
         </p>
         <p>
           12 Months: <b>{yearStakedAmount} KODA</b>
+        </p>
+        <p>
+          Circulating: <b> {circulatingAmount} KODA</b>
         </p>
       </InfoContainer>
     </AppBody>
