@@ -30,6 +30,7 @@ import SendReferralRewards from './SendReferralRewards'
 import SetFeeInfo from './SetFeeInfo'
 import RemoveFees from './RemoveFees'
 import Submit from './Submit'
+import WithdrawLiquidity from './WithdrawLiquidity'
 
 interface LpLock {
   lock: any
@@ -205,6 +206,13 @@ export default function Onboarding() {
           />
         </>
       )}
+      <WithdrawLiquidity 
+       token={selectedToken}
+       isLoading={isLoading}
+       setIsLoading={setIsLoading}
+       pairAddress={pairAddress}
+       fetchUserLocked={fetchUserLocked}
+       />
       <h3>Steps:</h3>
       <SwapToKoda token={selectedToken} isLoading={isLoading} />
       <AddLiquidity token={selectedToken} isLoading={isLoading} isEnoughLiquidity={isEnoughLiquidity} />
