@@ -235,7 +235,7 @@ export default function Deposit() {
 
   useEffect(() => {
     async function fetchRatingScoreGained() {
-      if (!amount || !stakingContract || !stakingToken) {
+      if (!amount || !stakingContract || !stakingToken || !stakingToken) {
         setRatingScoreGained(BigNumber.from(0))
         return
       }
@@ -244,7 +244,7 @@ export default function Deposit() {
       const K = (await stakingContract.k(+lockDuration)) as BigNumber
       setIsLoading(false)
 
-      setRatingScoreGained(BigNumber.from(amount).mul(K))
+      setRatingScoreGained(utils.parseUnits(amount, stakingToken.decimals).mul(K))
     }
 
     fetchRatingScoreGained()
@@ -341,15 +341,15 @@ export default function Deposit() {
       <InfoContainer>
         <p>
           Current rating score:&nbsp;
-          <b>{currentRatingScore.toString()}</b>
+          <b>{utils.formatUnits(currentRatingScore, stakingToken?.decimals)}</b>
         </p>
         <p>
           Gained rating score:&nbsp;
-          <b>{ratingScoreGained.toString()}</b>
+          <b>{utils.formatUnits(ratingScoreGained, stakingToken?.decimals)}</b>
         </p>
         <p>
           New rating score:&nbsp;
-          <b>{currentRatingScore.add(ratingScoreGained).toString()}</b>
+          <b>{utils.formatUnits(currentRatingScore.add(ratingScoreGained), stakingToken?.decimals)}</b>
         </p>
 
         <p>
