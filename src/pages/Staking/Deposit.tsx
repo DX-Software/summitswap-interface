@@ -27,13 +27,13 @@ const LockingPeriod = styled.div`
   margin: 20px 0;
 `
 
-const InfoContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  margin: 20px 0;
-`
+// const InfoContainer = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   gap: 10px;
+//   margin: 20px 0;
+// `
 
 const Balance = styled.p`
   color: gray;
@@ -51,6 +51,17 @@ const ButtonsContainer = styled.div`
   display: flex;
   gap: 10px;
   justify-content: center;
+  margin: 20px 0;
+`
+
+const InfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: ${(props) => props.theme.colors.card};
+  border-radius: 10px;
+  padding: 10px;
+  margin: 10px 0;
 `
 
 // TODO hide some stuff if not connected
@@ -75,6 +86,11 @@ export default function Deposit() {
   const [stakingTokenBalance, setStakingTokenBalance] = useState(BigNumber.from(0))
   // const stakingTokenBalance = useTokenBalanceBigNumber(account, stakingTokenContract)
 
+  const [noLockingStakedAmount, setNoLockingStakedAmount] = useState('')
+  const [threeMonthsStakedAmount, setThreeMonthsStakedAmount] = useState('')
+  const [sixMonthsStakedAmount, setSixMonthsStakedAmount] = useState('')
+  const [yearStakedAmount, setYearStakedAmount] = useState('')
+
   const fetchStakingTokenBalance = useCallback(async () => {
     if (!account) return
     if (!stakingTokenContract) return
@@ -87,6 +103,30 @@ export default function Deposit() {
   useEffect(() => {
     fetchStakingTokenBalance()
   }, [fetchStakingTokenBalance])
+
+  useEffect(() => {
+    async function fetchStakedAmounts() {
+      if (!stakingContract || !stakingToken) {
+        setNoLockingStakedAmount('')
+        setThreeMonthsStakedAmount('')
+        setSixMonthsStakedAmount('')
+        setYearStakedAmount('')
+        return
+      }
+
+      const fetchedNoLockingStakedAmount = (await stakingContract.kCounter(0)) as BigNumber
+      const fetchedThreeMonthsStakedAmount = (await stakingContract.kCounter(7889229)) as BigNumber
+      const fetchedSixMonthsStakedAmount = (await stakingContract.kCounter(15778458)) as BigNumber
+      const fetchedYearStakedAmount = (await stakingContract.kCounter(31556916)) as BigNumber
+
+      setNoLockingStakedAmount(utils.formatUnits(fetchedNoLockingStakedAmount, stakingToken.decimals))
+      setThreeMonthsStakedAmount(utils.formatUnits(fetchedThreeMonthsStakedAmount, stakingToken.decimals))
+      setSixMonthsStakedAmount(utils.formatUnits(fetchedSixMonthsStakedAmount, stakingToken.decimals))
+      setYearStakedAmount(utils.formatUnits(fetchedYearStakedAmount, stakingToken.decimals))
+    }
+
+    fetchStakedAmounts()
+  }, [stakingContract, stakingToken])
 
   useEffect(() => {
     if (!amount || !stakingToken || !stakingTokenBalance) {
@@ -216,7 +256,6 @@ export default function Deposit() {
     <AppBody>
       <br />
       <NavBar activeIndex={0} />
-
       <p>Amount</p>
       <Input
         placeholder="0.00"
@@ -226,7 +265,6 @@ export default function Deposit() {
         style={{ margin: '10px 0' }}
       />
       {!isAmountValid && <Text color="red">{amountError}</Text>}
-
       <BalanceContainer>
         <Balance>
           <CurrencyLogo currency={stakingToken ?? undefined} size="24px" style={{ marginRight: '8px' }} />
@@ -236,7 +274,6 @@ export default function Deposit() {
           MAX
         </Button>
       </BalanceContainer>
-
       <LockingPeriod>
         <p>Locking period</p>
         <RadioContainer onChange={(o: React.ChangeEvent<HTMLInputElement>) => setLockDuration(o.target.value)}>
@@ -254,7 +291,6 @@ export default function Deposit() {
           </label>
         </RadioContainer>
       </LockingPeriod>
-
       <InfoContainer>
         <p>
           Current rating score:&nbsp;
@@ -270,7 +306,7 @@ export default function Deposit() {
         </p>
 
         <p>
-          APY: <b>0-100%</b>
+          APY: <b>0-150%</b>
         </p>
       </InfoContainer>
       <ButtonsContainer>
@@ -281,6 +317,21 @@ export default function Deposit() {
           DEPOSIT
         </Button>
       </ButtonsContainer>
+      <p>Statistics </p>
+      <InfoContainer>
+        <p>
+          No locking: <b>{noLockingStakedAmount} KODA</b>
+        </p>
+        <p>
+          3 Months: <b>{threeMonthsStakedAmount} KODA</b>
+        </p>
+        <p>
+          6 Months: <b>{sixMonthsStakedAmount} KODA</b>
+        </p>
+        <p>
+          12 Months: <b>{yearStakedAmount} KODA</b>
+        </p>
+      </InfoContainer>
     </AppBody>
   )
 }
