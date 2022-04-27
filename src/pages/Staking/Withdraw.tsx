@@ -1,12 +1,11 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
-import { Radio, Input, Progress, Button, Spinner } from '@koda-finance/summitswap-uikit'
+import { Button } from '@koda-finance/summitswap-uikit'
 import AppBody from 'pages/AppBody'
 import { useWeb3React } from '@web3-react/core'
 import { useStakingContract } from 'hooks/useContract'
-import { BigNumber } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import { format } from 'date-fns'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { useToken } from 'hooks/Tokens'
@@ -36,13 +35,6 @@ const TokenInfo = styled.div`
   align-items: center;
 `
 
-const DepositsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin: 10px 0;
-  gap: 20px;
-`
-
 export default function Withdraw() {
   const { account, library } = useWeb3React()
 
@@ -69,41 +61,46 @@ export default function Withdraw() {
     fetchStakingTokenAddress()
   }, [stakingContract])
 
+  const fetchUserDeposits = useCallback(async () => {
+    if (!stakingContract || !account) {
+      setUserDeposits([])
+      return
+    }
+
+    setIsLoading(true)
+
+    const userDepositIds = (await stakingContract.getUserDepositIds(account)) as BigNumber[]
+    const deposits = (await Promise.all(
+      userDepositIds.map(async (depositId) => ({
+        id: +depositId,
+        ...(await stakingContract.deposits(depositId)),
+      }))
+    )) as Deposit[]
+
+    setIsLoading(false)
+
+    setUserDeposits(deposits)
+  }, [account, stakingContract])
+
   const withdraw = useCallback(
-    (deposit: Deposit) => {
-      if (!stakingContract) {
-        return
-      }
-
-      stakingContract.withdrawDeposit(deposit.id, deposit.amount)
-    },
-    [stakingContract]
-  )
-
-  useEffect(() => {
-    async function fetchUserDeposits() {
-      if (!stakingContract || !account) {
-        setUserDeposits([])
+    async (deposit: Deposit) => {
+      if (!stakingContract || !library) {
         return
       }
 
       setIsLoading(true)
-
-      const userDepositIds = (await stakingContract.getUserDepositIds(account)) as BigNumber[]
-      const deposits = (await Promise.all(
-        userDepositIds.map(async (depositId) => ({
-          id: +depositId,
-          ...(await stakingContract.deposits(depositId)),
-        }))
-      )) as Deposit[]
-
+      const receipt = await stakingContract.withdrawDeposit(deposit.id, deposit.amount)
+      await library.waitForTransaction(receipt.hash)
       setIsLoading(false)
 
-      setUserDeposits(deposits)
-    }
+      fetchUserDeposits()
+    },
+    [fetchUserDeposits, stakingContract, library]
+  )
 
+  useEffect(() => {
     fetchUserDeposits()
-  }, [account, stakingContract])
+  }, [fetchUserDeposits])
 
   return (
     <AppBody>
@@ -112,14 +109,14 @@ export default function Withdraw() {
       {!userDeposits && <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="45px" />}
       {userDeposits && (
         <>
-          <p>Your deposits:</p>
-          <DepositsContainer>
+          <p>Deposits</p>
+          <div>
             {userDeposits?.map((deposit) => (
               <Deposit key={deposit.id}>
                 <p>
                   Amount:&nbsp;
                   <b>
-                    {deposit.amount.toString()}&nbsp;
+                    {utils.formatUnits(deposit.amount, premiumToken?.decimals)}&nbsp;
                     <TokenInfo>
                       KODA&nbsp;
                       <CurrencyLogo currency={premiumToken ?? undefined} size="24px" />
@@ -144,7 +141,7 @@ export default function Withdraw() {
                 </Button>
               </Deposit>
             ))}
-          </DepositsContainer>
+          </div>
         </>
       )}
     </AppBody>
