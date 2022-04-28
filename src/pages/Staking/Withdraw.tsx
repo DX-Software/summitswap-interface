@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Button } from '@koda-finance/summitswap-uikit'
+import { Button, Text, useModal } from '@koda-finance/summitswap-uikit'
 import AppBody from 'pages/AppBody'
 import { useWeb3React } from '@web3-react/core'
 import { useStakingContract } from 'hooks/useContract'
@@ -11,16 +11,9 @@ import CurrencyLogo from 'components/CurrencyLogo'
 import { useToken } from 'hooks/Tokens'
 import CustomLightSpinner from 'components/CustomLightSpinner'
 import NavBar from './Navbar'
+import { Deposit } from './types'
 
-interface Deposit {
-  id: number
-  user: string
-  depositAt: number
-  lockFor: number
-  amount: BigNumber
-}
-
-const Deposit = styled.div`
+const DepositContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -45,6 +38,9 @@ export default function Withdraw() {
   const [userDeposits, setUserDeposits] = useState<Deposit[]>()
 
   const premiumToken = useToken(stakingTokenAddress)
+
+  const [selectedDeposit, setSelectedDeposit] = useState<Deposit>()
+  const [penalty, setPenalty] = useState(0)
 
   useEffect(() => {
     async function fetchStakingTokenAddress() {
@@ -71,10 +67,18 @@ export default function Withdraw() {
 
     const userDepositIds = (await stakingContract.getUserDepositIds(account)) as BigNumber[]
     const deposits = (await Promise.all(
-      userDepositIds.map(async (depositId) => ({
-        id: +depositId,
-        ...(await stakingContract.deposits(depositId)),
-      }))
+      userDepositIds.map(async (depositId) => {
+        const fetchedDeposit = await stakingContract.deposits(depositId)
+
+        return {
+          id: +depositId,
+          penalty:
+            (fetchedDeposit.depositAt + fetchedDeposit.lockFor) * 1000 > Date.now()
+              ? +(await stakingContract.penalties(fetchedDeposit.lockFor))
+              : 0,
+          ...fetchedDeposit,
+        }
+      })
     )) as Deposit[]
 
     setIsLoading(false)
@@ -89,13 +93,17 @@ export default function Withdraw() {
       }
 
       setIsLoading(true)
-      const receipt = await stakingContract.withdrawDeposit(deposit.id, deposit.amount)
-      await library.waitForTransaction(receipt.hash)
+      try {
+        const receipt = await stakingContract.withdrawDeposit(deposit.id, deposit.amount)
+        await library.waitForTransaction(receipt.hash)
+      } catch (err) {
+        console.warn(err)
+      }
       setIsLoading(false)
 
       fetchUserDeposits()
     },
-    [fetchUserDeposits, stakingContract, library]
+    [stakingContract, library, fetchUserDeposits]
   )
 
   useEffect(() => {
@@ -113,7 +121,7 @@ export default function Withdraw() {
           <p>Deposits</p>
           <div>
             {userDeposits?.map((deposit) => (
-              <Deposit key={deposit.id}>
+              <DepositContainer key={deposit.id}>
                 <p>
                   Amount:&nbsp;
                   <b>
@@ -134,13 +142,15 @@ export default function Withdraw() {
                   Deposited at:&nbsp;
                   <b>{format(new Date(deposit.depositAt * 1000), 'dd/MM/yyyy HH:mm')}</b>
                 </p>
-                <Button
-                  disabled={isLoading || (deposit.depositAt + deposit.lockFor) * 1000 > Date.now()}
-                  onClick={() => withdraw(deposit)}
-                >
+                {deposit.penalty !== 0 && (
+                  <Text color="red">
+                    If you claim early, you will lose <b> {deposit.penalty / 100}%</b> of you tokens
+                  </Text>
+                )}
+                <Button disabled={isLoading} onClick={() => withdraw(deposit)}>
                   WITHDRAW
                 </Button>
-              </Deposit>
+              </DepositContainer>
             ))}
           </div>
         </>
