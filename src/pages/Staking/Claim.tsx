@@ -69,8 +69,12 @@ export default function Claim() {
       }
 
       setIsLoading(true)
-      const receipt = await stakingContract.claimPremium(premiumTokenAddress)
-      await library.waitForTransaction(receipt.hash)
+      try {
+        const receipt = await stakingContract.claimPremium(premiumTokenAddress)
+        await library.waitForTransaction(receipt.hash)
+      } catch (err) {
+        console.warn(err)
+      }
       setIsLoading(false)
 
       fetchPendingRewards()
