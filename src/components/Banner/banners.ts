@@ -5,11 +5,13 @@ import KodaSmallBanner from '../../img/banners/koda_small.gif'
 import KodaMediumBanner from '../../img/banners/koda_medium.gif'
 import KodaLargeBanner from '../../img/banners/koda_large.gif'
 
-export const BANNER_LINKS = ["https://kapex.me/","https://koda.finance/"]
+export const BANNER_LINKS = ["https://kapex.me/", "https://koda.finance/"]
+
+export const BANNER_DELAY = 11000
 
 const BANNERS = [
     [KapexLargeBanner, KapexMediumBanner, KapexSmallBanner], 
-    [KodaLargeBanner,KodaMediumBanner, KodaSmallBanner]
+    [KodaLargeBanner, KodaMediumBanner, KodaSmallBanner]
     // [BannerLarge, BannerMedium, BannerSmall], ...
     // Other banners should be added as shown.
 ]

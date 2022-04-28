@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import BANNERS,{ BANNER_LINKS } from './banners'
+import BANNERS, { BANNER_LINKS, BANNER_DELAY } from './banners'
 
 const Link = styled.a`
   padding: 0;
@@ -36,12 +36,24 @@ const ImgBanner = styled.img<ImgBanner>`
 `
 
 export default function Banner() {
-  const chosenBannerIndex = Math.floor(Math.random() * BANNERS.length)
-  const chosenBanner = BANNERS[chosenBannerIndex]
+  const [chosenBannerIndex, setChosenBannerIndex] = useState(Math.floor(Math.random() * BANNERS.length))
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setChosenBannerIndex((index) => {
+        return (index + 1) % BANNERS.length
+      })
+    }, BANNER_DELAY)
+    return () => clearTimeout(timer)
+  }, [chosenBannerIndex])
 
   return (
     <Link href={BANNER_LINKS[chosenBannerIndex]} rel="noopener noreferrer" target="_blank">
-      <ImgBanner large={chosenBanner[0]} medium={chosenBanner[1]} small={chosenBanner[2]} />
+      <ImgBanner
+        large={BANNERS[chosenBannerIndex][0]}
+        medium={BANNERS[chosenBannerIndex][1]}
+        small={BANNERS[chosenBannerIndex][2]}
+      />
     </Link>
   )
 }
