@@ -256,9 +256,13 @@ export default function Deposit() {
     }
 
     setIsLoading(true)
-    const receipt = await stakingContract.putDeposit(utils.parseUnits(amount, stakingToken.decimals), lockDuration)
-    await library.waitForTransaction(receipt.hash)
-    fetchStakingTokenBalance()
+    try {
+      const receipt = await stakingContract.putDeposit(utils.parseUnits(amount, stakingToken.decimals), lockDuration)
+      await library.waitForTransaction(receipt.hash)
+      fetchStakingTokenBalance()
+    } catch (err) {
+      console.warn(err)
+    }
     setIsLoading(false)
 
     setCurrentRatingScore(currentRatingScore.add(ratingScoreGained))
@@ -284,8 +288,12 @@ export default function Deposit() {
     }
 
     setIsLoading(true)
-    const receipt = await stakingTokenContract.approve(stakingContract.address, MAX_UINT256)
-    await library.waitForTransaction(receipt.hash)
+    try {
+      const receipt = await stakingTokenContract.approve(stakingContract.address, MAX_UINT256)
+      await library.waitForTransaction(receipt.hash)
+    } catch (err) {
+      console.warn(err)
+    }
     setIsLoading(false)
 
     setNeedsToApprove(false)
