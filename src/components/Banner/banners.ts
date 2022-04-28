@@ -16,4 +16,4 @@ const BANNERS = [
     // Other banners should be added as shown.
 ]
 
-export default BANNERS;
+export default BANNERS

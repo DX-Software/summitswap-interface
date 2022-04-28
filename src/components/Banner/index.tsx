@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
+
+
 import BANNERS, { BANNER_LINKS, BANNER_DELAY } from './banners'
 
 const Link = styled.a`
