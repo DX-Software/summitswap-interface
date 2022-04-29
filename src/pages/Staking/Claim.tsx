@@ -14,6 +14,7 @@ import { KAPEX, KODA } from '../../constants'
 const ClaimContainer = styled.div`
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 10px;
   margin: 10px;
   background-color: ${(props) => props.theme.colors.card};
@@ -109,7 +110,6 @@ export default function Claim() {
           </TokenInfo>
         </b>
         <Button
-          style={{ justifySelf: 'right' }}
           disabled={isLoading || pendingKapex.lte(BigNumber.from(0))}
           onClick={() => claim(KAPEX.address)}
         >
