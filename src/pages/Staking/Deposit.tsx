@@ -260,14 +260,13 @@ export default function Deposit() {
       const receipt = await stakingContract.putDeposit(utils.parseUnits(amount, stakingToken.decimals), lockDuration)
       await library.waitForTransaction(receipt.hash)
       fetchStakingTokenBalance()
+      setCurrentRatingScore(currentRatingScore.add(ratingScoreGained))
+      fetchStakedAmounts()
+      fetchApy()
     } catch (err) {
       console.warn(err)
     }
     setIsLoading(false)
-
-    setCurrentRatingScore(currentRatingScore.add(ratingScoreGained))
-    fetchStakedAmounts()
-    fetchApy()
   }, [
     account,
     amount,
