@@ -39,9 +39,6 @@ export default function Withdraw() {
 
   const premiumToken = useToken(stakingTokenAddress)
 
-  const [selectedDeposit, setSelectedDeposit] = useState<Deposit>()
-  const [penalty, setPenalty] = useState(0)
-
   useEffect(() => {
     async function fetchStakingTokenAddress() {
       if (!stakingContract) {
@@ -96,12 +93,11 @@ export default function Withdraw() {
       try {
         const receipt = await stakingContract.withdrawDeposit(deposit.id, deposit.amount)
         await library.waitForTransaction(receipt.hash)
+        fetchUserDeposits()
       } catch (err) {
         console.warn(err)
       }
       setIsLoading(false)
-
-      fetchUserDeposits()
     },
     [stakingContract, library, fetchUserDeposits]
   )
