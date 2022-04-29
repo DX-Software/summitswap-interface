@@ -1,11 +1,10 @@
 import React from 'react'
 import { Pair } from '@koda-finance/summitswap-sdk'
+import { useWeb3React } from '@web3-react/core'
 import { Button, Card as UIKitCard, CardBody, Text } from '@koda-finance/summitswap-uikit'
 import styled from 'styled-components'
 import { BigNumber, utils } from 'ethers'
 import AnimatedBar from './AnimatedBar'
-import { useActiveWeb3React } from '../../hooks'
-
 import { unwrappedToken } from '../../utils/wrappedCurrency'
 import { AutoColumn } from '../Column'
 import CurrencyLogo from '../CurrencyLogo'
@@ -15,44 +14,54 @@ const FixedHeightRow = styled(RowBetween)`
   height: 28px;
 `
 
+const UnlockText = styled(Text)`
+  @media (max-width: 680px) {
+    font-size: 10px;
+  }
+  @media (max-width: 480px) {
+    font-size: 7px;
+  }
+`
+
 interface Props {
   pair: Pair
   lockId: number
+  isLoading: boolean
+  lock: (string | BigNumber)[]
+  withdrawLiquidity: (lockId: any, owner: any) => void
+  timeLeftToUnLock: (
+    date: Date
+  ) => {
+    monthWithYears: number | undefined
+    days: number | undefined
+    hours: number | undefined
+    minutes: number | undefined
+  }
   // eslint-disable-next-line react/no-unused-prop-types
   showUnwrapped?: boolean
-  isLoading: boolean
-  lock: (string|BigNumber)[]
-  widthdarLiquidity: (lockId: any, owner: any) => void
-  timeLeft: (date: Date) => {
-    months: number;
-    days: number;
-    hours: number;
-    mins: number;
-}
 }
 
 export default function LockedPoolCard({
   pair,
-  widthdarLiquidity,
+  lock,
   lockId,
   isLoading,
-  lock,
-  timeLeft,
+  timeLeftToUnLock,
+  withdrawLiquidity,
   showUnwrapped = true,
 }: Props) {
-  const { account } = useActiveWeb3React()
+  const { account } = useWeb3React()
 
   const currency0 = showUnwrapped ? pair.token0 : unwrappedToken(pair.token0)
   const currency1 = showUnwrapped ? pair.token1 : unwrappedToken(pair.token1)
 
-  const [, owner, tokenAmount, unlockDate] = lock;
+  const [, owner, tokenAmount, unlockDate] = lock
 
   const date = new Date(Number(unlockDate) * 1000)
-
-  const { months, days, hours, mins } = timeLeft(date)
+  const { monthWithYears, days, hours, minutes } = timeLeftToUnLock(date)
 
   return owner === account ? (
-    <UIKitCard>
+    <UIKitCard style={{ marginBottom: '10px' }}>
       <CardBody>
         <AutoColumn gap="12px">
           <RowFlatCenter>
@@ -64,26 +73,26 @@ export default function LockedPoolCard({
               <CurrencyLogo size="28px" style={{ marginLeft: '8px' }} currency={currency1} />
             </RowFixed>
           </RowFlatCenter>
-          <AnimatedBar/>
+          <AnimatedBar />
           <FixedHeightRow>
             <RowFixed>
-              <Text fontSize="14px" color="inputColor">
+              <UnlockText fontSize="14px" color="inputColor">
                 {`Unlocks ${date.toLocaleString([], { hour12: true }).toLocaleUpperCase()}`}
-              </Text>
+              </UnlockText>
             </RowFixed>
             <RowFixed>
-              <Text color="inputColor" fontSize="14px">
-                {months ? `${months} Months ` : ''}
-              </Text>
-              <Text color="inputColor" fontSize="14px">
-                {days ? `, ${days} Days `: ''}
-              </Text>
-              <Text color="inputColor" fontSize="14px">
-                {hours ? `, ${hours} hours `: ''}
-              </Text>
-              <Text color="inputColor" fontSize="14px">
-                {mins ? `, ${mins} Minutes ` : ''}
-              </Text>
+              <UnlockText color="inputColor" fontSize="14px">
+                {monthWithYears ? `${monthWithYears} Months ` : ''}
+              </UnlockText>
+              <UnlockText color="inputColor" fontSize="14px">
+                {days ? `, ${days} Days ` : ''}
+              </UnlockText>
+              <UnlockText color="inputColor" fontSize="14px">
+                {hours ? `, ${hours} hours ` : ''}
+              </UnlockText>
+              <UnlockText color="inputColor" fontSize="14px">
+                {minutes ? `, ${minutes} Minutes ` : ''}
+              </UnlockText>
             </RowFixed>
           </FixedHeightRow>
           <AutoColumn gap="4px">
@@ -94,8 +103,8 @@ export default function LockedPoolCard({
               <RowFixed>
                 <Button
                   scale="xxs"
-                  disabled={isLoading || account !== owner || (date>= new Date())}
-                  onClick={() => widthdarLiquidity(lockId, owner)}
+                  disabled={isLoading || account !== owner || date >= new Date()}
+                  onClick={() => withdrawLiquidity(lockId, owner)}
                 >
                   Withdraw
                 </Button>
@@ -109,4 +118,3 @@ export default function LockedPoolCard({
     <></>
   )
 }
-

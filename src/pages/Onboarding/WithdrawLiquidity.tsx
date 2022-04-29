@@ -1,12 +1,14 @@
 import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react'
 import { Token } from '@koda-finance/summitswap-sdk'
-import moment from 'moment'
+import { useModal } from '@koda-finance/summitswap-uikit'
+import intervalToDuration from 'date-fns/intervalToDuration'
 import { useWeb3React } from '@web3-react/core'
 import { useLockerContract, usePairContract } from '../../hooks/useContract'
 import { usePair, PairState } from '../../data/Reserves'
 import { useCurrency } from '../../hooks/Tokens'
 import LockedPoolCard from '../../components/LockedPoolCard'
-import Spinner from '../../components/CustomLightSpinner'
+import CustomLightSpinner from '../../components/CustomLightSpinner'
+import SuccessModal from './SuccessModal'
 
 interface Props {
   token: Token | undefined
@@ -26,6 +28,9 @@ export default function WithdrawLiquidity({ token, isLoading, setIsLoading, pair
   const [locks, setLocks] = useState<any>([])
   const [tokenAddress0, setTokenAddress0] = useState('')
   const [tokenAddress1, setTokenAddress1] = useState('')
+  const [isLockPairsFetched, setIsLockPairsFetched] = useState(false)
+
+  const [displaySucessModal] = useModal(<SuccessModal text="Withdrawal was Successful" title="Success" />)
 
   const pairContract = usePairContract(pairAddress)
   const lockerContract = useLockerContract(true)
@@ -49,52 +54,50 @@ export default function WithdrawLiquidity({ token, isLoading, setIsLoading, pair
     async function fetch() {
       const { fetchedLpLocks } = await fetchUserLocked()
       setLocks(fetchedLpLocks)
+      setIsLockPairsFetched(true)
     }
     if (token && pairAddress) {
       fetch()
     }
   }, [fetchUserLocked, token, pairAddress])
 
-  const widthdarLiquidity = useCallback(
+  const withdrawLiquidity = useCallback(
     (lockId, owner) => {
-      async function widthdraw() {
+      async function withdraw() {
         if (!lockerContract || !pairContract || !library || !(account === owner)) {
           return
         }
         const receipt = await lockerContract.withdraw(lockId)
-
         setIsLoading(true)
         await library.waitForTransaction(receipt.hash)
+
+        const { fetchedLpLocks } = await fetchUserLocked()
+        setLocks(fetchedLpLocks)
         setIsLoading(false)
+        displaySucessModal()
       }
-      widthdraw()
+      withdraw()
     },
-    [lockerContract, pairContract, library, account, setIsLoading]
+    [lockerContract, pairContract, library, account, setIsLoading, fetchUserLocked, displaySucessModal]
   )
 
-  const timeLeft = useCallback((date: Date) => {
-    const unlockMoment = moment(date)
-    const presentMoment = moment()
+  const timeLeftToUnLock = useCallback((date: Date) => {
+    const { years, months, days, hours, minutes } = intervalToDuration({
+      start: new Date(),
+      end: date,
+    })
+    const monthWithYears = years ? (Number(months) + years*12) : months;
+    return {monthWithYears, days, hours, minutes}
+  },[])
 
-    const months = unlockMoment.diff(presentMoment, 'months')
-    presentMoment.add(months, 'months')
-    const days = unlockMoment.diff(presentMoment, 'days')
-    presentMoment.add(days, 'days')
-    const hours = unlockMoment.diff(presentMoment, 'hours')
-    presentMoment.add(hours, 'hours')
-    const mins = unlockMoment.diff(presentMoment, 'minutes')
-
-    return { months, days, hours, mins }
-  }, [])
-
-  return pairState === PairState.LOADING || pairState === PairState.EXISTS ? (
+  return (account && token) ? (
     locks && pair ? (
       locks.map((lk) => {
         const { lock, lockId } = lk
         return (
           <LockedPoolCard
-            timeLeft={timeLeft}
-            widthdarLiquidity={widthdarLiquidity}
+            timeLeftToUnLock={timeLeftToUnLock}
+            withdrawLiquidity={withdrawLiquidity}
             lock={lock}
             isLoading={isLoading}
             lockId={lockId}
@@ -103,9 +106,7 @@ export default function WithdrawLiquidity({ token, isLoading, setIsLoading, pair
         )
       })
     ) : (
-      <Spinner size="50px" />
+      (!isLockPairsFetched || !(pairState === PairState.EXISTS)) && <CustomLightSpinner src="/images/blue-loader.svg" size="50px" />
     )
-  ) : (
-    <></>
-  )
+  ) : <></>
 }
