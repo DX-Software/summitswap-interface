@@ -102,8 +102,10 @@ export default function Deposit() {
   }, [fetchCirculatingSupply])
 
   const fetchStakingTokenBalance = useCallback(async () => {
-    if (!account) return
-    if (!stakingTokenContract) return
+    if (!account || !stakingTokenContract) {
+      setStakingTokenBalance(BigNumber.from(0))
+      return
+    }
 
     const fetchedBalance = (await stakingTokenContract.balanceOf(account)) as BigNumber
 
