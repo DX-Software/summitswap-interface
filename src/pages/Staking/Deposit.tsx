@@ -53,7 +53,6 @@ const InfoContainer = styled.div`
   margin: 10px 0;
 `
 
-// TODO hide some stuff if not connected
 export default function Deposit() {
   const { account, library } = useWeb3React()
 
@@ -73,7 +72,6 @@ export default function Deposit() {
   const stakingTokenContract = useTokenContract(stakingTokenAddress)
   const stakingToken = useToken(stakingTokenAddress)
   const [stakingTokenBalance, setStakingTokenBalance] = useState(BigNumber.from(0))
-  // const stakingTokenBalance = useTokenBalanceBigNumber(account, stakingTokenContract)
 
   const [noLockingStakedAmount, setNoLockingStakedAmount] = useState('...')
   const [threeMonthsStakedAmount, setThreeMonthsStakedAmount] = useState('...')
