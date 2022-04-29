@@ -23,7 +23,6 @@ export default function SwapList() {
           <ReferralTransactionRow key={`${referralHistory.id}-${referralHistory.timestamp}`} account={account} {...referralHistory} />
         ))}
       </Box>
-      {referralHistories.length}
       {(referralHistories.length === 0) && (
         <Text bold> No history to be displayed! </Text>
       )}
