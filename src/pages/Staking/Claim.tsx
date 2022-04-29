@@ -111,7 +111,7 @@ export default function Claim() {
         </b>
         <Button
           style={{ justifySelf: 'right' }}
-          disabled={isLoading || pendingKoda.lte(BigNumber.from(0))}
+          disabled={isLoading || pendingKapex.lte(BigNumber.from(0))}
           onClick={() => claim(KAPEX.address)}
         >
           CLAIM
