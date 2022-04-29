@@ -17,12 +17,16 @@ const config: MenuEntry[] = [
     href: '/referral',
   },
   {
+    label: 'Staking',
+    icon: 'StakingIcon',
+    href: '/staking/deposit',
+  },
+  {
     label: 'Cross-Chain',
     icon: 'RubicIcon',
     href: '/cross-chain-swap',
     showConnectButton: false,
   },
-  
   // {
   //   label: "Onboarding",
   //   icon: "OnboardingIcon",
