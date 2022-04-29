@@ -286,12 +286,11 @@ export default function Deposit() {
     try {
       const receipt = await stakingTokenContract.approve(stakingContract.address, MAX_UINT256)
       await library.waitForTransaction(receipt.hash)
+      setNeedsToApprove(false)
     } catch (err) {
       console.warn(err)
     }
     setIsLoading(false)
-
-    setNeedsToApprove(false)
   }, [account, stakingTokenContract, stakingContract, library])
 
   const onMax = useCallback(() => {
