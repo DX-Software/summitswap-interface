@@ -131,10 +131,6 @@ export default function Deposit() {
         .parseUnits(amount || '0', stakingToken.decimals)
         .add(await stakingContract.accounts(account ?? DEAD_ADDRESS).then((o) => o.totalDepositAmount)) as BigNumber
 
-      // if (myStakedAmount.eq(BigNumber.from(0))) {
-      //   myStakedAmount = utils.parseUnits('1', stakingToken.decimals)
-      // }
-
       setApy(myYearlyReward.mul(100).div(myStakedAmount).toString())
     } catch (err) {
       console.warn(err)
