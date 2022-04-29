@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Box, Text } from '@koda-finance/summitswap-uikit'
 import _ from 'lodash'
 import useReferralHistories from 'hooks/useReferralHistories'
+import { CHAIN_ID } from 'constants/index'
 import { REFERRAL_CLIENT } from 'constants/graphs'
 import { useActiveWeb3React } from '../../hooks'
 import ReferralTransactionRow from './ReferralTransactionRow'
@@ -11,7 +12,7 @@ import RewardedTokens from './RewardedTokens'
 
 
 export default function SwapList() {
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const referralHistories = useReferralHistories(account)
 
   return (
@@ -19,7 +20,7 @@ export default function SwapList() {
       <Text bold mb={2}>
         Referred swap history
       </Text>
-      {REFERRAL_CLIENT === ""
+      {CHAIN_ID !== chainId || REFERRAL_CLIENT === ""
         ? <Text bold>Swap history is not supported on current network!</Text>
         : (referralHistories.length === 0)
         ? <Text bold> No history to be displayed!</Text>

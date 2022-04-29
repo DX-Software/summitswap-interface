@@ -1,6 +1,9 @@
 import { referralClient } from 'apollo/client'
 import { REFERRAL_HISTORIES } from 'apollo/queries'
 import { useEffect, useState } from 'react'
+import { CHAIN_ID } from 'constants/index'
+import { REFERRAL_CLIENT } from 'constants/graphs'
+import { useActiveWeb3React } from 'hooks'
 
 type ReferralHistoriesResponse = {
   data: {
@@ -55,10 +58,13 @@ type ReferralReward = {
 
 const useReferralHistories = (walletAddress?: string | null, outputTokenAddress?: string | null): ReferralReward[] => {
   const [data, setData] = useState<ReferralReward[]>([])
+  const { chainId } = useActiveWeb3React()
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        if (CHAIN_ID !== chainId || REFERRAL_CLIENT === "") throw new Error('Swap history is not supported on current network!')
+
         const _walletAddress = walletAddress?.toLowerCase() || ""
         const _outputTokenAddress = outputTokenAddress?.toLowerCase() || ""
 
@@ -99,7 +105,7 @@ const useReferralHistories = (walletAddress?: string | null, outputTokenAddress?
     }
 
     fetchData()
-  }, [setData, walletAddress, outputTokenAddress])
+  }, [setData, walletAddress, outputTokenAddress, chainId])
 
   return data
 }
