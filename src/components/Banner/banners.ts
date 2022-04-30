@@ -7,7 +7,8 @@ import KodaLargeBanner from '../../img/banners/koda_large.gif'
 
 export const BANNER_LINKS = ["https://kapex.me/", "https://koda.finance/"]
 
-export const BANNER_DELAY = 11000
+export const KAPEX_BANNER_DELAY = 9500
+export const KODA_BANNER_DELAY = 6200
 
 const BANNERS = [
     [KapexLargeBanner, KapexMediumBanner, KapexSmallBanner], 
