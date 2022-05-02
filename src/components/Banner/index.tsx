@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 
-import BANNERS, { BANNER_LINKS, KAPEX_BANNER_DELAY, KODA_BANNER_DELAY } from './banners'
+import BANNERS from './banners'
 
 const Link = styled.a`
   padding: 0;
@@ -40,42 +40,42 @@ const ImgBanner = styled.img<ImgBanner>`
 `
 
 export default function Banner() {
-  const [chosenBannerIndex, setChosenBannerIndex] = useState(Math.floor(Math.random() * BANNERS.length))
-
+  const banners = Object.keys(BANNERS)
   const t = Date.now()
 
+  const [chosenBanner, setChosenBanner] = useState(banners[Math.floor(Math.random() * banners.length)])
   const [banner, setBanner] = useState(
     <ImgBanner
-      large={`${BANNERS[chosenBannerIndex][0]}?${t}`}
-      medium={`${BANNERS[chosenBannerIndex][1]}?${t}`}
-      small={`${BANNERS[chosenBannerIndex][2]}?${t}`}
+      large={`${BANNERS[chosenBanner].gifs[0]}?${t}`}
+      medium={`${BANNERS[chosenBanner].gifs[1]}?${t}`}
+      small={`${BANNERS[chosenBanner].gifs[2]}?${t}`}
     />
   )
 
   useEffect(() => {
     const t2 = Date.now()
-    let updatedIndex
+    let updatedBanner;
     const timer = setTimeout(
       () => {
-        setChosenBannerIndex((index) => {
-          updatedIndex = (index + 1) % BANNERS.length
-          return updatedIndex
+        setChosenBanner((bn) => {
+          updatedBanner = banners[(banners.indexOf(bn) + 1) % banners.length]
+          return updatedBanner
         })
         setBanner(
           <ImgBanner
-            large={`${BANNERS[updatedIndex][0]}?${t2}`}
-            medium={`${BANNERS[updatedIndex][1]}?${t2}`}
-            small={`${BANNERS[updatedIndex][2]}?${t2}`}
+            large={`${BANNERS[updatedBanner].gifs[0]}?${t2}`}
+            medium={`${BANNERS[updatedBanner].gifs[1]}?${t2}`}
+            small={`${BANNERS[updatedBanner].gifs[2]}?${t2}`}
           />
         )
       },
-      chosenBannerIndex ? KODA_BANNER_DELAY : KAPEX_BANNER_DELAY
+      chosenBanner === 'koda' ? BANNERS.koda.delay : BANNERS.kapex.delay
     )
     return () => clearTimeout(timer)
-  }, [chosenBannerIndex])
+  }, [chosenBanner, banners])
 
   return (
-    <Link href={BANNER_LINKS[chosenBannerIndex]} rel="noopener noreferrer" target="_blank">
+    <Link href={BANNERS[chosenBanner].link} rel="noopener noreferrer" target="_blank">
       {banner}
     </Link>
   )
