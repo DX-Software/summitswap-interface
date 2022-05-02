@@ -33,7 +33,7 @@ export default function Submit({
 }: Props) {
   const { account } = useWeb3React()
 
-  const [displaySucessModal] = useModal(<SuccessModal title="Success" />)
+  const [displaySucessModal] = useModal(<SuccessModal text="Successfully submitted application" title="Success" />)
 
   const submit = useCallback(() => {
     async function submitToken() {
