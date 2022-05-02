@@ -8,7 +8,7 @@ import { usePair, PairState } from '../../data/Reserves'
 import { useCurrency } from '../../hooks/Tokens'
 import LockedPoolCard from '../../components/LockedPoolCard'
 import CustomLightSpinner from '../../components/CustomLightSpinner'
-import SuccessModal from './SuccessModal'
+import Modal from './SuccessModal'
 
 interface Props {
   token: Token | undefined
@@ -30,7 +30,8 @@ export default function WithdrawLiquidity({ token, isLoading, setIsLoading, pair
   const [tokenAddress1, setTokenAddress1] = useState('')
   const [isLockPairsFetched, setIsLockPairsFetched] = useState(false)
 
-  const [displaySucessModal] = useModal(<SuccessModal text="Withdrawal was Successful" title="Success" />)
+  const [displaySucessModal] = useModal(<Modal text="Withdrawal was Successful" title="Success" />)
+  const [displayFailureModal] = useModal(<Modal text="Withdrawal was not Successful" title="Failed" />)
 
   const pairContract = usePairContract(pairAddress)
   const lockerContract = useLockerContract(true)
@@ -67,18 +68,32 @@ export default function WithdrawLiquidity({ token, isLoading, setIsLoading, pair
         if (!lockerContract || !pairContract || !library || !(account === owner)) {
           return
         }
-        const receipt = await lockerContract.withdraw(lockId)
-        setIsLoading(true)
-        await library.waitForTransaction(receipt.hash)
+        try {
+          const receipt = await lockerContract.withdraw(lockId)
+          setIsLoading(true)
+          await library.waitForTransaction(receipt.hash)
 
-        const { fetchedLpLocks } = await fetchUserLocked()
-        setLocks(fetchedLpLocks)
-        setIsLoading(false)
-        displaySucessModal()
+          const { fetchedLpLocks } = await fetchUserLocked()
+          setLocks(fetchedLpLocks)
+          setIsLoading(false)
+          displaySucessModal()
+        } catch (err) {
+          setIsLoading(false)
+          displayFailureModal()
+        }
       }
       withdraw()
     },
-    [lockerContract, pairContract, library, account, setIsLoading, fetchUserLocked, displaySucessModal]
+    [
+      lockerContract,
+      pairContract,
+      library,
+      account,
+      setIsLoading,
+      fetchUserLocked,
+      displaySucessModal,
+      displayFailureModal,
+    ]
   )
 
   const timeLeftToUnLock = useCallback((date: Date) => {
@@ -86,11 +101,11 @@ export default function WithdrawLiquidity({ token, isLoading, setIsLoading, pair
       start: new Date(),
       end: date,
     })
-    const monthWithYears = years ? (Number(months) + years*12) : months;
-    return {monthWithYears, days, hours, minutes}
-  },[])
+    const monthWithYears = years ? Number(months) + years * 12 : months
+    return { monthWithYears, days, hours, minutes }
+  }, [])
 
-  return (account && token) ? (
+  return account && token ? (
     locks && pair ? (
       locks.map((lk) => {
         const { lock, lockId } = lk
@@ -106,7 +121,11 @@ export default function WithdrawLiquidity({ token, isLoading, setIsLoading, pair
         )
       })
     ) : (
-      (!isLockPairsFetched || !(pairState === PairState.EXISTS)) && <CustomLightSpinner src="/images/blue-loader.svg" size="50px" />
+      (!isLockPairsFetched || !(pairState === PairState.EXISTS)) && (
+        <CustomLightSpinner src="/images/blue-loader.svg" size="50px" />
+      )
     )
-  ) : <></>
+  ) : (
+    <></>
+  )
 }
