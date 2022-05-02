@@ -21,6 +21,7 @@ interface ImgBanner {
   small?: string
 }
 
+// height of banner is 100vw * the ratio of vw/(w of banner)
 const ImgBanner = styled.img<ImgBanner>`
   content: url(${({ large }) => large});
   border-radius: 10px;
