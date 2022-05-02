@@ -73,9 +73,7 @@ export default function Banner() {
             small={`${BANNERS[updatedBanner].gifs[2]}?${t2}`}
           />
         )
-      },
-      chosenBanner === 'koda' ? BANNERS.koda.delay : BANNERS.kapex.delay
-    )
+      }, BANNERS[chosenBanner].delay)
     return () => clearTimeout(timer)
   }, [chosenBanner, banners])
 
