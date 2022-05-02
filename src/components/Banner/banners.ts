@@ -14,7 +14,7 @@ const BANNERS = {
     koda: {
         gifs: [KodaLargeBanner, KodaMediumBanner, KodaSmallBanner],
         link: "https://koda.finance/",
-        delay: 6200,
+        delay: 6200
     }
 }
 

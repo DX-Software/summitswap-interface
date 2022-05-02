@@ -28,6 +28,10 @@ const ImgBanner = styled.img<ImgBanner>`
   max-width: 970px;
   height: 90px;
 
+  @media (max-width: 1230px) {
+    height: calc(100vw * 0.067829);
+  }
+
   @media (max-width: 967px) {
     content: url(${({ medium, large }) => medium || large});
     height: calc(100vw * 0.11642);
@@ -54,7 +58,7 @@ export default function Banner() {
 
   useEffect(() => {
     const t2 = Date.now()
-    let updatedBanner;
+    let updatedBanner
     const timer = setTimeout(
       () => {
         setChosenBanner((bn) => {
