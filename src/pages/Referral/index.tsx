@@ -8,7 +8,7 @@ import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { TranslateString } from 'utils/translateTextHelpers'
 import { useAllTokens } from 'hooks/Tokens'
 import { useReferralContract } from 'hooks/useContract'
-import TransactionConfirmationModal, { TransactionErrorContent } from 'components/TransactionConfirmationModal';
+import TransactionConfirmationModal, { TransactionErrorContent } from 'components/TransactionConfirmationModal'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import ReferalLinkImage from '../../img/referral-link.png'
 import InviteImage from '../../img/invite.png'
@@ -26,6 +26,7 @@ import { InfInfo } from './types'
 import CurrencySelector from './CurrencySelector'
 import SwapList from './SwapList'
 import Instructions from './Instructions'
+import TokenReferrers from './TokenReferrers'
 
 interface IProps {
   isLanding?: boolean
@@ -71,14 +72,17 @@ const Referral: React.FC<IProps> = () => {
     setAttemptingTxn(true)
   }, [])
 
-  const transactionSubmitted = useCallback((response: TransactionResponse, summary: string) => {
-    setIsOpen(true)
-    setAttemptingTxn(false)
-    setHash(response.hash)
-    addTransaction(response, {
-      summary
-    })
-  }, [addTransaction])
+  const transactionSubmitted = useCallback(
+    (response: TransactionResponse, summary: string) => {
+      setIsOpen(true)
+      setAttemptingTxn(false)
+      setHash(response.hash)
+      addTransaction(response, {
+        summary,
+      })
+    },
+    [addTransaction]
+  )
 
   const transactionFailed = useCallback((messFromError: string) => {
     setIsOpen(true)
@@ -91,7 +95,7 @@ const Referral: React.FC<IProps> = () => {
     openModel,
     transactionSubmitted,
     transactionFailed,
-    onDismiss
+    onDismiss,
   }
 
   useEffect(() => {
@@ -101,8 +105,8 @@ const Referral: React.FC<IProps> = () => {
   useEffect(() => {
     setSegmentControllerIndex(0)
     setIsSegmentDisabled({
-      checkLeadOrSub: false, 
-      checkManager: false 
+      checkLeadOrSub: false,
+      checkManager: false,
     })
   }, [enabledSegments])
 
@@ -114,7 +118,7 @@ const Referral: React.FC<IProps> = () => {
       return nextValue
     })
     setIsSegmentDisabled((prevState) => {
-      const nextValue = {...prevState}
+      const nextValue = { ...prevState }
       nextValue.checkLeadOrSub = false
       return nextValue
     })
@@ -122,7 +126,7 @@ const Referral: React.FC<IProps> = () => {
       if (!account || !refContract || !selectedOutputCoin) return
       const influencerInfo = (await refContract.influencers(selectedOutputCoin.address, account)) as InfInfo
       setIsSegmentDisabled((prevState) => {
-        const nextValue = {...prevState}
+        const nextValue = { ...prevState }
         nextValue.checkLeadOrSub = true
         return nextValue
       })
@@ -156,7 +160,7 @@ const Referral: React.FC<IProps> = () => {
       return segmentOptions
     })
     setIsSegmentDisabled((prevState) => {
-      const nextValue = {...prevState}
+      const nextValue = { ...prevState }
       nextValue.checkManager = false
       return nextValue
     })
@@ -170,7 +174,7 @@ const Referral: React.FC<IProps> = () => {
           return segmentOptions
         })
         setIsSegmentDisabled((prevState) => {
-          const nextValue = {...prevState}
+          const nextValue = { ...prevState }
           nextValue.checkManager = true
           return nextValue
         })
@@ -232,11 +236,17 @@ const Referral: React.FC<IProps> = () => {
           />
         )
       case 'coinManager':
-        return <CoinManagerSegment outputToken={selectedOutputCoin} {...modelFunctions}/>
+        return <CoinManagerSegment outputToken={selectedOutputCoin} {...modelFunctions} />
       case 'leadInfluencer':
         return <LeadInfluencer outputToken={selectedOutputCoin} {...modelFunctions} />
       case 'subInfluencer':
-        return <SubInfluencer myLeadInfluencerAddress={myLeadInfluencerAddress} outputToken={selectedOutputCoin} {...modelFunctions} />
+        return (
+          <SubInfluencer
+            myLeadInfluencerAddress={myLeadInfluencerAddress}
+            outputToken={selectedOutputCoin}
+            {...modelFunctions}
+          />
+        )
       case 'history':
         return <SwapList />
       default:
@@ -270,7 +280,16 @@ const Referral: React.FC<IProps> = () => {
         {account && getViewForSegment()}
       </Box>
 
-      { segmentControllerIndex === 0 && <Instructions referalLinkImage={ReferalLinkImage} inviteImage={InviteImage} coinStackImage={CoinStackImage} /> }
+      {segmentControllerIndex === 0 && (
+        <>
+          <TokenReferrers
+            tokens={allTokens.filter((token) => token.referralEnabled)}
+            account={account}
+            referalContract={refContract}
+          />
+          <Instructions referalLinkImage={ReferalLinkImage} inviteImage={InviteImage} coinStackImage={CoinStackImage} />
+        </>
+      )}
 
       <CurrencySearchModal
         isOpen={modalOpen}
@@ -289,7 +308,10 @@ const Referral: React.FC<IProps> = () => {
         attemptingTxn={attemptingTxn}
         hash={hash}
         pendingText={pendingText}
-        content={() => (errorMessage ? <TransactionErrorContent onDismiss={onDismiss} message={errorMessage || ''} /> : null) } />
+        content={() =>
+          errorMessage ? <TransactionErrorContent onDismiss={onDismiss} message={errorMessage || ''} /> : null
+        }
+      />
     </div>
   )
 }
