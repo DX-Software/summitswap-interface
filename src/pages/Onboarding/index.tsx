@@ -206,13 +206,13 @@ export default function Onboarding() {
           />
         </>
       )}
-      <WithdrawLiquidity 
-       token={selectedToken}
-       isLoading={isLoading}
-       setIsLoading={setIsLoading}
-       pairAddress={pairAddress}
-       fetchUserLocked={fetchUserLocked}
-       />
+      <WithdrawLiquidity
+        token={selectedToken}
+        isLoading={isLoading}
+        setIsLoading={setIsLoading}
+        pairAddress={pairAddress}
+        fetchUserLocked={fetchUserLocked}
+      />
       <h3>Steps:</h3>
       <SwapToKoda token={selectedToken} isLoading={isLoading} />
       <AddLiquidity token={selectedToken} isLoading={isLoading} isEnoughLiquidity={isEnoughLiquidity} />

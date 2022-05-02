@@ -15,6 +15,8 @@ const FixedHeightRow = styled(RowBetween)`
 `
 
 const UnlockText = styled(Text)`
+  color: #30566b;
+  font-size: 14px;
   @media (max-width: 680px) {
     font-size: 10px;
   }
@@ -76,23 +78,15 @@ export default function LockedPoolCard({
           <AnimatedBar />
           <FixedHeightRow>
             <RowFixed>
-              <UnlockText fontSize="14px" color="inputColor">
-                {`Unlocks ${date.toLocaleString([], { hour12: true }).toLocaleUpperCase()}`}
-              </UnlockText>
+              <UnlockText>{`Unlocks ${date.toLocaleString([], { hour12: true }).toLocaleUpperCase()}`}</UnlockText>
             </RowFixed>
             <RowFixed>
-              <UnlockText color="inputColor" fontSize="14px">
-                {monthWithYears ? `${monthWithYears} Months ` : ''}
+              <UnlockText>
+                {monthWithYears ? `${monthWithYears} Months${days || hours || minutes ? ',' : ''}` : ''}
               </UnlockText>
-              <UnlockText color="inputColor" fontSize="14px">
-                {days ? `, ${days} Days ` : ''}
-              </UnlockText>
-              <UnlockText color="inputColor" fontSize="14px">
-                {hours ? `, ${hours} hours ` : ''}
-              </UnlockText>
-              <UnlockText color="inputColor" fontSize="14px">
-                {minutes ? `, ${minutes} Minutes ` : ''}
-              </UnlockText>
+              <UnlockText>&nbsp;{days ? `${days} Days${hours || minutes ? ',' : ''}` : ''}</UnlockText>
+              <UnlockText>&nbsp;{hours ? `${hours} hours${minutes ? ',' : ''}` : ''}</UnlockText>
+              <UnlockText>&nbsp;{minutes ? `${minutes} Minutes ` : ''}</UnlockText>
             </RowFixed>
           </FixedHeightRow>
           <AutoColumn gap="4px">
