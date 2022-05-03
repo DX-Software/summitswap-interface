@@ -5,6 +5,8 @@ import { useWalletModal } from '@koda-finance/summitswap-uikit'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import login from '../utils/login'
 import Banner from '../components/Banner'
+import { utils } from 'ethers'
+import InvalidReferralLinkModal from 'components/InvalidReferralLinkModal'
 import Popups from '../components/Popups'
 import Web3ReactManager from '../components/Web3ReactManager'
 import { RedirectDuplicateTokenIds, RedirectOldAddLiquidityPathStructure } from './AddLiquidity/redirects'
@@ -76,6 +78,7 @@ export default function App() {
   const [selectedLanguage, setSelectedLanguage] = useState<any>(undefined)
   const [translatedLanguage, setTranslatedLanguage] = useState<any>(undefined)
   const [translations, setTranslations] = useState<Array<any>>([])
+  const [isInvalidRefLink, setIsInvalidRefLink] = useState<boolean>(false)
 
   const location = useLocation()
 
@@ -120,7 +123,11 @@ export default function App() {
   useEffect(() => {
     const referrerParam = new URLSearchParams(location.search).get('ref')
     const outputParam = new URLSearchParams(location.search).get('output')
-
+    if (referrerParam && !utils.isAddress(referrerParam)) {
+      setIsInvalidRefLink(true)
+      return
+    }
+    setIsInvalidRefLink(false)
     if (referrerParam && outputParam) {
       const referralCached: Record<string, string> = JSON.parse(localStorage.getItem('referral') ?? '{}')
       referralCached[outputParam] = referrerParam
@@ -130,7 +137,6 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
 
-
   return (
     <Suspense fallback={null}>
       <AppWrapper>
@@ -138,6 +144,7 @@ export default function App() {
           value={{ selectedLanguage, setSelectedLanguage, translatedLanguage, setTranslatedLanguage }}
         >
           <TranslationsContext.Provider value={{ translations, setTranslations }}>
+            <InvalidReferralLinkModal isOpen={isInvalidRefLink} />
             <SupportChatWidget/>
             <Popups />
             <Web3ReactManager>
