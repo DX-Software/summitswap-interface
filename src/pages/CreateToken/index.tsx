@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { ethers } from '@ethersproject/experimental/node_modules/ethers';
 import AppBody from '../AppBody';
