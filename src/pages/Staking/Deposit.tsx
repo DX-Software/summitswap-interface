@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { Radio, Input, Button, Text } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
@@ -62,7 +62,15 @@ export default function Deposit() {
   const [amount, setAmount] = useState('')
   const [lockDuration, setLockDuration] = useState('31556916')
   const [currentKodaRatingScore, setCurrentKodaRatingScore] = useState(BigNumber.from(0))
-  const [kodaRatingScoreGained, setKodaRatingScoreGained] = useState(BigNumber.from(0))
+
+  const kodaRatingScoreGained = useMemo(() => {
+    if (!amount) {
+      return BigNumber.from(0)
+    }
+
+    return utils.parseUnits(amount, KODA.decimals).mul(APYs[KODA.address][lockDuration])
+  }, [amount, lockDuration])
+
   const [needsToApprove, setNeedsToApprove] = useState(true)
   const [isAmountValid, setIsAmountValid] = useState(false)
   const [amountError, setAmountError] = useState('')
@@ -223,19 +231,6 @@ export default function Deposit() {
 
     fetchCurrentRatingScore()
   }, [stakingContract, account])
-
-  useEffect(() => {
-    async function fetchRatingScoreGained() {
-      if (!amount || !stakingContract) {
-        setKodaRatingScoreGained(BigNumber.from(0))
-        return
-      }
-
-      setKodaRatingScoreGained(utils.parseUnits(amount, KODA.decimals).mul(APYs[KODA.address][lockDuration]))
-    }
-
-    fetchRatingScoreGained()
-  }, [amount, lockDuration, stakingContract])
 
   const deposit = useCallback(async () => {
     if (!account || !lockDuration || !amount || !stakingContract) {
