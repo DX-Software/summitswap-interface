@@ -15,7 +15,7 @@ import './styles.css'
 
 const RadioContainer = styled.div`
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   flex-wrap: wrap;
   gap: 10px;
   margin: 10px 0;
@@ -88,6 +88,14 @@ export default function Deposit() {
 
   const [apy, setApy] = useState('...')
   const [circulatingAmount, setCirculatingAmount] = useState('...')
+
+  const [userNoLockingStakedAmount, setUserNoLockingStakedAmount] = useState('...')
+  const [userThreeMonthsStakedAmount, setUserThreeMonthsStakedAmount] = useState('...')
+  const [userSixMonthsStakedAmount, setUserSixMonthsStakedAmount] = useState('...')
+  const [userYearStakedAmount, setUserYearStakedAmount] = useState('...')
+
+  const [totalKodaEarned, setTotalKodaEarned] = useState('...')
+  const [totalKapexEarned, setTotalKapexEarned] = useState('...')
 
   const fetchCirculatingSupply = useCallback(async () => {
     if (!kodaTokenContract) {
@@ -169,16 +177,16 @@ export default function Deposit() {
       return
     }
 
-    const fetchedNoLockingStakedAmount = (await stakingContract.depositedAmounts(0)) as BigNumber
+    const fetchedNoLockingStakedAmount = (await stakingContract.lockAmounts(0)) as BigNumber
     setNoLockingStakedAmount(utils.formatUnits(fetchedNoLockingStakedAmount, KODA.decimals))
 
-    const fetchedThreeMonthsStakedAmount = (await stakingContract.depositedAmounts(7889229)) as BigNumber
+    const fetchedThreeMonthsStakedAmount = (await stakingContract.lockAmounts(7889229)) as BigNumber
     setThreeMonthsStakedAmount(utils.formatUnits(fetchedThreeMonthsStakedAmount, KODA.decimals))
 
-    const fetchedSixMonthsStakedAmount = (await stakingContract.depositedAmounts(15778458)) as BigNumber
+    const fetchedSixMonthsStakedAmount = (await stakingContract.lockAmounts(15778458)) as BigNumber
     setSixMonthsStakedAmount(utils.formatUnits(fetchedSixMonthsStakedAmount, KODA.decimals))
 
-    const fetchedYearStakedAmount = (await stakingContract.depositedAmounts(31556916)) as BigNumber
+    const fetchedYearStakedAmount = (await stakingContract.lockAmounts(31556916)) as BigNumber
     setYearStakedAmount(utils.formatUnits(fetchedYearStakedAmount, KODA.decimals))
   }, [stakingContract])
 
@@ -262,6 +270,50 @@ export default function Deposit() {
     stakingContract,
   ])
 
+  useEffect(() => {
+    async function fetchTotalEarned() {
+      if (!stakingContract || !account) {
+        setTotalKodaEarned('...')
+        setTotalKapexEarned('...')
+        return
+      }
+
+      const fetchedTotalKodaEarned = (await stakingContract.tokensEarned(KODA.address, account)) as BigNumber
+      setTotalKodaEarned(utils.formatUnits(fetchedTotalKodaEarned, KODA.decimals))
+
+      const fetchedTotalKapexEarned = (await stakingContract.tokensEarned(KAPEX.address, account)) as BigNumber
+      setTotalKapexEarned(utils.formatUnits(fetchedTotalKapexEarned, KAPEX.decimals))
+    }
+
+    fetchTotalEarned()
+  }, [stakingContract, account])
+
+  useEffect(() => {
+    async function fetchPersonalStakedAmounts() {
+      if (!stakingContract || !account) {
+        setUserNoLockingStakedAmount('...')
+        setUserThreeMonthsStakedAmount('...')
+        setUserSixMonthsStakedAmount('...')
+        setUserYearStakedAmount('...')
+        return
+      }
+
+      const fetchedNoLockingStakedAmount = (await stakingContract.userDeposits(account, 0)) as BigNumber
+      setUserNoLockingStakedAmount(utils.formatUnits(fetchedNoLockingStakedAmount, KODA.decimals))
+
+      const fetchedThreeMonthsStakedAmount = (await stakingContract.userDeposits(account, 7889229)) as BigNumber
+      setUserThreeMonthsStakedAmount(utils.formatUnits(fetchedThreeMonthsStakedAmount, KODA.decimals))
+
+      const fetchedSixMonthsStakedAmount = (await stakingContract.userDeposits(account, 15778458)) as BigNumber
+      setUserSixMonthsStakedAmount(utils.formatUnits(fetchedSixMonthsStakedAmount, KODA.decimals))
+
+      const fetchedYearStakedAmount = (await stakingContract.userDeposits(account, 31556916)) as BigNumber
+      setUserYearStakedAmount(utils.formatUnits(fetchedYearStakedAmount, KODA.decimals))
+    }
+
+    fetchPersonalStakedAmounts()
+  }, [stakingContract, account])
+
   const approve = useCallback(async () => {
     if (!account || !kodaTokenContract || !stakingContract) {
       return
@@ -312,16 +364,20 @@ export default function Deposit() {
         <p>Locking period</p>
         <RadioContainer onChange={(o: React.ChangeEvent<HTMLInputElement>) => setLockDuration(o.target.value)}>
           <label>
+            <Radio id="name" name="locking-duration" value="0" checked={lockDuration === '0'} /> No locking (APY{' '}
+            {APYs[KODA.address][0].toString()}%)
+          </label>
+          <label>
             <Radio id="name" name="locking-duration" value="7889229" checked={lockDuration === '7889229'} /> 3 Months
+            (APY {APYs[KODA.address][7889229].toString()}%)
           </label>
           <label>
             <Radio id="name" name="locking-duration" value="15778458" checked={lockDuration === '15778458'} /> 6 Months
+            (APY {APYs[KODA.address][15778458].toString()}%)
           </label>
           <label>
             <Radio id="name" name="locking-duration" value="31556916" checked={lockDuration === '31556916'} /> 12 Months
-          </label>
-          <label>
-            <Radio id="name" name="locking-duration" value="0" checked={lockDuration === '0'} /> No locking
+            (APY {APYs[KODA.address][31556916].toString()}%)
           </label>
         </RadioContainer>
       </LockingPeriod>
@@ -351,19 +407,40 @@ export default function Deposit() {
           DEPOSIT
         </Button>
       </ButtonsContainer>
+      <p>My Statistics </p>
+      <InfoContainer>
+        <p>
+          No locking (APY {APYs[KODA.address][0].toString()}%): <b>{userNoLockingStakedAmount} KODA</b>
+        </p>
+        <p>
+          3 Months (APY {APYs[KODA.address][7889229].toString()}%): <b>{userThreeMonthsStakedAmount} KODA</b>
+        </p>
+        <p>
+          6 Months (APY {APYs[KODA.address][15778458].toString()}%): <b>{userSixMonthsStakedAmount} KODA</b>
+        </p>
+        <p>
+          12 Months (APY {APYs[KODA.address][31556916].toString()}%): <b>{userYearStakedAmount} KODA</b>
+        </p>
+        <p>
+          Koda Earned: <b> {totalKodaEarned} KODA</b>
+        </p>
+        <p>
+          Kapex Earned: <b> {totalKapexEarned} KAPEX</b>
+        </p>
+      </InfoContainer>
       <p>Statistics </p>
       <InfoContainer>
         <p>
-          No locking: <b>{noLockingStakedAmount} KODA</b>
+          No locking (APY {APYs[KODA.address][0].toString()}%): <b>{noLockingStakedAmount} KODA</b>
         </p>
         <p>
-          3 Months: <b>{threeMonthsStakedAmount} KODA</b>
+          3 Months (APY {APYs[KODA.address][7889229].toString()}%): <b>{threeMonthsStakedAmount} KODA</b>
         </p>
         <p>
-          6 Months: <b>{sixMonthsStakedAmount} KODA</b>
+          6 Months (APY {APYs[KODA.address][15778458].toString()}%): <b>{sixMonthsStakedAmount} KODA</b>
         </p>
         <p>
-          12 Months: <b>{yearStakedAmount} KODA</b>
+          12 Months (APY {APYs[KODA.address][31556916].toString()}%): <b>{yearStakedAmount} KODA</b>
         </p>
         <p>
           Circulating: <b> {circulatingAmount} KODA</b>
