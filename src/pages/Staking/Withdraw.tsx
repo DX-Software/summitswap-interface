@@ -12,6 +12,7 @@ import { useToken } from 'hooks/Tokens'
 import CustomLightSpinner from 'components/CustomLightSpinner'
 import NavBar from './Navbar'
 import { Deposit } from './types'
+import { KODA } from '../../constants'
 
 const DepositContainer = styled.div`
   display: flex;
@@ -33,26 +34,10 @@ export default function Withdraw() {
 
   const stakingContract = useStakingContract(true)
 
-  const [stakingTokenAddress, setStakingTokenAddress] = useState<string>()
   const [isLoading, setIsLoading] = useState(false)
   const [userDeposits, setUserDeposits] = useState<Deposit[]>()
 
-  const premiumToken = useToken(stakingTokenAddress)
-
-  useEffect(() => {
-    async function fetchStakingTokenAddress() {
-      if (!stakingContract) {
-        setStakingTokenAddress(undefined)
-        return
-      }
-
-      const fetchedStakingTokenAddress = (await stakingContract.stakingToken()) as string
-
-      setStakingTokenAddress(fetchedStakingTokenAddress)
-    }
-
-    fetchStakingTokenAddress()
-  }, [stakingContract])
+  const kodaToken = useToken(KODA.address)
 
   const fetchUserDeposits = useCallback(async () => {
     if (!stakingContract || !account) {
@@ -121,10 +106,10 @@ export default function Withdraw() {
                 <p>
                   Amount:&nbsp;
                   <b>
-                    {utils.formatUnits(deposit.amount, premiumToken?.decimals)}&nbsp;
+                    {utils.formatUnits(deposit.amount, kodaToken?.decimals)}&nbsp;
                     <TokenInfo>
                       KODA&nbsp;
-                      <CurrencyLogo currency={premiumToken ?? undefined} size="24px" />
+                      <CurrencyLogo currency={kodaToken ?? undefined} size="24px" />
                     </TokenInfo>
                   </b>
                 </p>
