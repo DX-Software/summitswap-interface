@@ -8,11 +8,10 @@ import { BigNumber, utils } from 'ethers'
 import { useToken } from 'hooks/Tokens'
 import AppBody from 'pages/AppBody'
 import CurrencyLogo from 'components/CurrencyLogo'
-import { APY, maximumKodaReward } from 'constants/staking'
+import { APYs, maximumKodaReward } from '../../constants/staking'
 import NavBar from './Navbar'
-import { DEAD_ADDRESS, KODA, MAX_UINT256, STAKING_ADDRESS, STAKING_POOL_ADDRESS } from '../../constants'
+import { DEAD_ADDRESS, KAPEX, KODA, MAX_UINT256, STAKING_ADDRESS, STAKING_POOL_ADDRESS } from '../../constants'
 import './styles.css'
-import { Deposit as IDeposit } from './types'
 
 const RadioContainer = styled.div`
   display: flex;
@@ -62,8 +61,8 @@ export default function Deposit() {
 
   const [amount, setAmount] = useState('')
   const [lockDuration, setLockDuration] = useState('31556916')
-  const [currentRatingScore, setCurrentRatingScore] = useState(BigNumber.from(0))
-  const [ratingScoreGained, setRatingScoreGained] = useState(BigNumber.from(0))
+  const [currentKodaRatingScore, setCurrentKodaRatingScore] = useState(BigNumber.from(0))
+  const [kodaRatingScoreGained, setKodaRatingScoreGained] = useState(BigNumber.from(0))
   const [needsToApprove, setNeedsToApprove] = useState(true)
   const [isAmountValid, setIsAmountValid] = useState(false)
   const [amountError, setAmountError] = useState('')
@@ -83,7 +82,7 @@ export default function Deposit() {
   const [circulatingAmount, setCirculatingAmount] = useState('...')
 
   const fetchCirculatingSupply = useCallback(async () => {
-    if (!kodaTokenContract || !kodaToken) {
+    if (!kodaTokenContract) {
       setCirculatingAmount('...')
       return
     }
@@ -95,8 +94,8 @@ export default function Deposit() {
 
     const circulatingSupply = totalSupply.sub(burnedAmount).sub(stakedAmount).sub(stakingPoolAmount)
 
-    setCirculatingAmount(Math.floor(Number(utils.formatUnits(circulatingSupply, kodaToken.decimals))).toString())
-  }, [kodaToken, kodaTokenContract])
+    setCirculatingAmount(Math.floor(Number(utils.formatUnits(circulatingSupply, KODA.decimals))).toString())
+  }, [kodaTokenContract])
 
   useEffect(() => {
     fetchCirculatingSupply()
@@ -118,59 +117,43 @@ export default function Deposit() {
   }, [fetchStakingTokenBalance])
 
   const fetchApy = useCallback(async () => {
-    if (!stakingContract || !kodaToken) {
+    if (!stakingContract) {
       setApy('...')
       return
     }
 
-    async function getReward(lockFor: number) {
-      let stakedAmount = (await stakingContract!.depositedAmounts(lockFor)) as BigNumber
-
-      if (+lockDuration === lockFor) {
-        stakedAmount = stakedAmount.add(utils.parseUnits(amount || '0', kodaToken?.decimals))
-      }
-
-      const reward = stakedAmount.mul(APY[lockFor]).div(100)
-
-      return reward
-    }
-
+    setIsLoading(true)
     try {
-      const _0MonthsRewards = await getReward(0)
-      const _3MonthsRewards = await getReward(7889229)
-      const _6MonthsRewards = await getReward(15778458)
-      const _1YearRewards = await getReward(31556916)
+      const myRating = currentKodaRatingScore.add(kodaRatingScoreGained)
+      const kodaTotalRating = kodaRatingScoreGained.add(await stakingContract.totalRatings(KODA.address))
 
-      let totalRewards = _0MonthsRewards.add(_3MonthsRewards).add(_6MonthsRewards).add(_1YearRewards)
+      let totalRewards = myRating.add(await stakingContract.totalRatings(KODA.address))
 
       totalRewards = totalRewards.gt(maximumKodaReward) ? maximumKodaReward : totalRewards
 
-      const myRating = currentRatingScore.add(ratingScoreGained)
-      const totalRating = ratingScoreGained.add(await stakingContract.totalRating())
-
-      const willEarn = totalRewards.mul(myRating).div(totalRating)
+      const willEarn = totalRewards.mul(myRating).div(kodaTotalRating)
 
       const myStakedAmount = utils
-        .parseUnits(amount || '0', kodaToken.decimals)
-        .add(await stakingContract.accounts(account ?? DEAD_ADDRESS).then((o) => o.totalDepositAmount)) as BigNumber
+        .parseUnits(amount || '0', KODA.decimals)
+        .add(await stakingContract.userTotalDeposits(account ?? DEAD_ADDRESS)) as BigNumber
 
       const calculatedApy =
-        (+utils.formatUnits(willEarn, kodaToken.decimals) / +utils.formatUnits(myStakedAmount, kodaToken.decimals)) *
-        100
+        +utils.formatUnits(willEarn, KODA.decimals) / +utils.formatUnits(myStakedAmount, KODA.decimals)
 
       setApy(calculatedApy.toFixed(2))
     } catch (err) {
       console.warn(err)
       setApy('...')
     }
-  }, [account, amount, currentRatingScore, lockDuration, ratingScoreGained, stakingContract, kodaToken])
+    setIsLoading(false)
+  }, [account, amount, currentKodaRatingScore, kodaRatingScoreGained, stakingContract])
 
   useEffect(() => {
     fetchApy()
   }, [fetchApy])
 
   const fetchStakedAmounts = useCallback(async () => {
-    if (!stakingContract || !kodaToken) {
+    if (!stakingContract) {
       setNoLockingStakedAmount('...')
       setThreeMonthsStakedAmount('...')
       setSixMonthsStakedAmount('...')
@@ -179,36 +162,36 @@ export default function Deposit() {
     }
 
     const fetchedNoLockingStakedAmount = (await stakingContract.depositedAmounts(0)) as BigNumber
-    setNoLockingStakedAmount(utils.formatUnits(fetchedNoLockingStakedAmount, kodaToken.decimals))
+    setNoLockingStakedAmount(utils.formatUnits(fetchedNoLockingStakedAmount, KODA.decimals))
 
     const fetchedThreeMonthsStakedAmount = (await stakingContract.depositedAmounts(7889229)) as BigNumber
-    setThreeMonthsStakedAmount(utils.formatUnits(fetchedThreeMonthsStakedAmount, kodaToken.decimals))
+    setThreeMonthsStakedAmount(utils.formatUnits(fetchedThreeMonthsStakedAmount, KODA.decimals))
 
     const fetchedSixMonthsStakedAmount = (await stakingContract.depositedAmounts(15778458)) as BigNumber
-    setSixMonthsStakedAmount(utils.formatUnits(fetchedSixMonthsStakedAmount, kodaToken.decimals))
+    setSixMonthsStakedAmount(utils.formatUnits(fetchedSixMonthsStakedAmount, KODA.decimals))
 
     const fetchedYearStakedAmount = (await stakingContract.depositedAmounts(31556916)) as BigNumber
-    setYearStakedAmount(utils.formatUnits(fetchedYearStakedAmount, kodaToken.decimals))
-  }, [stakingContract, kodaToken])
+    setYearStakedAmount(utils.formatUnits(fetchedYearStakedAmount, KODA.decimals))
+  }, [stakingContract])
 
   useEffect(() => {
     fetchStakedAmounts()
   }, [fetchStakedAmounts])
 
   useEffect(() => {
-    if (!amount || !kodaToken || !stakingTokenBalance) {
+    if (!amount || !stakingTokenBalance) {
       return
     }
-    if (utils.parseUnits(amount, kodaToken.decimals).lte(BigNumber.from(0))) {
+    if (utils.parseUnits(amount, KODA.decimals).lte(BigNumber.from(0))) {
       setIsAmountValid(false)
       setAmountError('Please input a positive amount')
-    } else if (utils.parseUnits(amount, kodaToken.decimals).gt(stakingTokenBalance)) {
+    } else if (utils.parseUnits(amount, KODA.decimals).gt(stakingTokenBalance)) {
       setIsAmountValid(false)
       setAmountError("You don't have enough tokens")
     } else {
       setIsAmountValid(true)
     }
-  }, [amount, kodaToken, stakingTokenBalance])
+  }, [amount, stakingTokenBalance])
 
   useEffect(() => {
     async function fetchAllowance() {
@@ -227,15 +210,15 @@ export default function Deposit() {
   useEffect(() => {
     async function fetchCurrentRatingScore() {
       if (!stakingContract || !account) {
-        setCurrentRatingScore(BigNumber.from(0))
+        setCurrentKodaRatingScore(BigNumber.from(0))
         return
       }
 
       setIsLoading(true)
-      const fetchedRatingScore = (await stakingContract.accounts(account).then((o) => o.rating)) as BigNumber
+      const fetchedKodaRatingScore = (await stakingContract.ratings(KODA.address, account)) as BigNumber
       setIsLoading(false)
 
-      setCurrentRatingScore(fetchedRatingScore)
+      setCurrentKodaRatingScore(fetchedKodaRatingScore)
     }
 
     fetchCurrentRatingScore()
@@ -243,32 +226,28 @@ export default function Deposit() {
 
   useEffect(() => {
     async function fetchRatingScoreGained() {
-      if (!amount || !stakingContract || !kodaToken || !kodaToken) {
-        setRatingScoreGained(BigNumber.from(0))
+      if (!amount || !stakingContract) {
+        setKodaRatingScoreGained(BigNumber.from(0))
         return
       }
 
-      setIsLoading(true)
-      const K = (await stakingContract.apys(KODA.address, lockDuration)) as BigNumber
-      setIsLoading(false)
-
-      setRatingScoreGained(utils.parseUnits(amount, kodaToken.decimals).mul(K))
+      setKodaRatingScoreGained(utils.parseUnits(amount, KODA.decimals).mul(APYs[KODA.address][lockDuration]))
     }
 
     fetchRatingScoreGained()
-  }, [amount, lockDuration, stakingContract, kodaToken])
+  }, [amount, lockDuration, stakingContract])
 
   const deposit = useCallback(async () => {
-    if (!account || !lockDuration || !amount || !stakingContract || !kodaToken) {
+    if (!account || !lockDuration || !amount || !stakingContract) {
       return
     }
 
     setIsLoading(true)
     try {
-      const receipt = await stakingContract.putDeposit(utils.parseUnits(amount, kodaToken.decimals), lockDuration)
+      const receipt = await stakingContract.putDeposit(utils.parseUnits(amount, KODA.decimals), lockDuration)
       await library.waitForTransaction(receipt.hash)
       fetchStakingTokenBalance()
-      setCurrentRatingScore(currentRatingScore.add(ratingScoreGained))
+      setCurrentKodaRatingScore(currentKodaRatingScore.add(kodaRatingScoreGained))
       fetchStakedAmounts()
       fetchApy()
     } catch (err) {
@@ -278,15 +257,14 @@ export default function Deposit() {
   }, [
     account,
     amount,
-    currentRatingScore,
+    currentKodaRatingScore,
     fetchApy,
     fetchStakedAmounts,
     fetchStakingTokenBalance,
     library,
     lockDuration,
-    ratingScoreGained,
+    kodaRatingScoreGained,
     stakingContract,
-    kodaToken,
   ])
 
   const approve = useCallback(async () => {
@@ -306,12 +284,12 @@ export default function Deposit() {
   }, [account, kodaTokenContract, stakingContract, library])
 
   const onMax = useCallback(() => {
-    if (!stakingTokenBalance || !kodaToken) {
+    if (!stakingTokenBalance) {
       return
     }
 
-    setAmount(utils.formatUnits(stakingTokenBalance ?? BigNumber.from(0), kodaToken.decimals))
-  }, [stakingTokenBalance, kodaToken])
+    setAmount(utils.formatUnits(stakingTokenBalance ?? BigNumber.from(0), KODA.decimals))
+  }, [stakingTokenBalance])
 
   return (
     <AppBody>
@@ -329,7 +307,7 @@ export default function Deposit() {
       <BalanceContainer>
         <Balance>
           <CurrencyLogo currency={kodaToken ?? undefined} size="24px" style={{ marginRight: '8px' }} />
-          Balance: {utils.formatUnits(stakingTokenBalance ?? BigNumber.from(0), kodaToken?.decimals)}
+          Balance: {utils.formatUnits(stakingTokenBalance ?? BigNumber.from(0), KODA.decimals)}
         </Balance>
         <Button onClick={onMax} scale="xxs" variant="tertiary">
           MAX
@@ -355,15 +333,15 @@ export default function Deposit() {
       <InfoContainer>
         <p>
           Current rating score:&nbsp;
-          <b>{utils.formatUnits(currentRatingScore, kodaToken?.decimals)}</b>
+          <b>{utils.formatUnits(currentKodaRatingScore, KODA.decimals)}</b>
         </p>
         <p>
           Gained rating score:&nbsp;
-          <b>{utils.formatUnits(ratingScoreGained, kodaToken?.decimals)}</b>
+          <b>{utils.formatUnits(kodaRatingScoreGained, KODA.decimals)}</b>
         </p>
         <p>
           New rating score:&nbsp;
-          <b>{utils.formatUnits(currentRatingScore.add(ratingScoreGained), kodaToken?.decimals)}</b>
+          <b>{utils.formatUnits(currentKodaRatingScore.add(kodaRatingScoreGained), KODA.decimals)}</b>
         </p>
 
         <p>
