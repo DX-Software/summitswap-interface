@@ -1,32 +1,33 @@
 import React, { useEffect, useState } from 'react'
 import { Token } from '@koda-finance/summitswap-sdk'
-import { Text } from '@koda-finance/summitswap-uikit'
+import { Text, Box } from '@koda-finance/summitswap-uikit'
 import styled from 'styled-components'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { RowBetween, RowFixed, AutoRow } from 'components/Row'
 import { Contract } from 'ethers'
 
-const ReferrerText = styled(Text)`
-  font-size: 14px;
-  @media (max-width: 1230px) {
-    font-size: 10px;
-  }
-  @media (max-width: 730px) {
-    font-size: 8px;
-  }
-  @media (max-width: 560px) {
-    font-size: 6px;
-  }
-  @media (max-width: 440px) {
-    font-size: 7px;
-  }
+const LinkBox = styled(Box)`
+  color: ${({ theme }) => theme.colors.invertedContrast};
+  padding: 16px;
+  border-radius: 16px;
+  background: #011724;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
 `
 
-const Row = styled(AutoRow)`
-  justify-content: space-between;
-  @media (max-width: 440px) {
-    justify-content: center;
-  }
+const ReferrerText = styled(Text)`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 16px;
+`
+const BorderBox = styled(Box)`
+  width: 95%;
+  margin: 10px auto;
+  opacity: 0.1;
+  margin-bottom: 0;
 `
 
 interface Props {
@@ -60,23 +61,27 @@ export default function TokenReferrers({ referalContract, account, tokens }: Pro
 
   return referrers.length ? (
     <>
-      <RowBetween mb="8px">
-        <Text bold>Coins</Text>
-        <Text bold>Referrers</Text>
+      <RowBetween mt="30px" mb="30px">
+        <h2 className="float-title">Who invited me</h2>
       </RowBetween>
-      {referrers.map((ref) => (
-        <>
-          <Row mb="10px">
-            <RowFixed>
-              <CurrencyLogo currency={ref?.token} size="15px" style={{ marginRight: '8px' }} />
-              <ReferrerText>{`${ref?.token?.symbol} - ${ref?.token?.address}`}</ReferrerText>
-            </RowFixed>
-            <RowFixed>
-              <ReferrerText>{ref?.referrer}</ReferrerText>
-            </RowFixed>
-          </Row>
-        </>
-      ))}
+      <LinkBox>
+        {referrers.map((ref, i) => (
+          <>
+            <AutoRow mx="10px" mt="10px">
+              <RowFixed>
+                <CurrencyLogo currency={ref?.token} size="20px" style={{ marginRight: '8px' }} />
+                <ReferrerText>
+                  {ref?.token?.symbol} - {ref?.token?.address}
+                </ReferrerText>
+              </RowFixed>
+              <RowFixed>
+                <ReferrerText>Referrer - {ref?.referrer}</ReferrerText>
+              </RowFixed>
+              <BorderBox borderBottom={referrers.length !== i + 1 ? '1px solid white;' : 'none;'} />
+            </AutoRow>
+          </>
+        ))}
+      </LinkBox>
     </>
   ) : (
     <></>
