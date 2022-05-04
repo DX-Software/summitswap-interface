@@ -7,4 +7,5 @@ export interface Deposit {
   lockFor: number
   amount: BigNumber
   penalty: number
+  apy: BigNumber
 }

@@ -8,9 +8,11 @@ import { BigNumber, utils } from 'ethers'
 import { useToken } from 'hooks/Tokens'
 import AppBody from 'pages/AppBody'
 import CurrencyLogo from 'components/CurrencyLogo'
+import { APY, maximumKodaReward } from 'constants/staking'
 import NavBar from './Navbar'
 import { DEAD_ADDRESS, MAX_UINT256, STAKING_ADDRESS, STAKING_POOL_ADDRESS } from '../../constants'
 import './styles.css'
+import { Deposit as IDeposit } from './types'
 
 const RadioContainer = styled.div`
   display: flex;
@@ -94,7 +96,7 @@ export default function Deposit() {
 
     const circulatingSupply = totalSupply.sub(burnedAmount).sub(stakedAmount).sub(stakingPoolAmount)
 
-    setCirculatingAmount(utils.formatUnits(circulatingSupply, stakingToken.decimals))
+    setCirculatingAmount(Math.floor(Number(utils.formatUnits(circulatingSupply, stakingToken.decimals))).toString())
   }, [stakingToken, stakingTokenContract])
 
   useEffect(() => {
@@ -122,21 +124,48 @@ export default function Deposit() {
       return
     }
 
+    async function getReward(lockFor: number) {
+      let stakedAmount = (await stakingContract!.kCounter(lockFor)) as BigNumber
+
+      if (+lockDuration === lockFor) {
+        stakedAmount = stakedAmount.add(utils.parseUnits(amount || '0', stakingToken?.decimals))
+      }
+
+      const reward = stakedAmount.mul(APY[lockFor]).div(100)
+
+      return reward
+    }
+
     try {
-      const yearlyReward = utils.parseUnits(String(9 * 10 ** 9), 'gwei')
-      const totalRating = (await stakingContract.totalRating()) as BigNumber
+      const _0MonthsRewards = await getReward(0)
+      const _3MonthsRewards = await getReward(7889229)
+      const _6MonthsRewards = await getReward(15778458)
+      const _1YearRewards = await getReward(31556916)
+
+      let totalRewards = _0MonthsRewards.add(_3MonthsRewards).add(_6MonthsRewards).add(_1YearRewards)
+
+      totalRewards = totalRewards.gt(maximumKodaReward) ? maximumKodaReward : totalRewards
+
       const myRating = currentRatingScore.add(ratingScoreGained)
-      const myYearlyReward = BigNumber.from(yearlyReward).mul(myRating).div(totalRating.add(myRating))
+      const totalRating = ratingScoreGained.add(await stakingContract.totalRating())
+
+      const willEarn = totalRewards.mul(myRating).div(totalRating)
+
       const myStakedAmount = utils
         .parseUnits(amount || '0', stakingToken.decimals)
         .add(await stakingContract.accounts(account ?? DEAD_ADDRESS).then((o) => o.totalDepositAmount)) as BigNumber
 
-      setApy(myYearlyReward.mul(100).div(myStakedAmount).toString())
+      const calculatedApy =
+        (+utils.formatUnits(willEarn, stakingToken.decimals) /
+          +utils.formatUnits(myStakedAmount, stakingToken.decimals)) *
+        100
+
+      setApy(calculatedApy.toFixed(2))
     } catch (err) {
       console.warn(err)
       setApy('...')
     }
-  }, [account, amount, currentRatingScore, ratingScoreGained, stakingContract, stakingToken])
+  }, [account, amount, currentRatingScore, lockDuration, ratingScoreGained, stakingContract, stakingToken])
 
   useEffect(() => {
     fetchApy()
