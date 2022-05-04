@@ -10,7 +10,7 @@ import AppBody from 'pages/AppBody'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { APY, maximumKodaReward } from 'constants/staking'
 import NavBar from './Navbar'
-import { DEAD_ADDRESS, MAX_UINT256, STAKING_ADDRESS, STAKING_POOL_ADDRESS } from '../../constants'
+import { DEAD_ADDRESS, KODA, MAX_UINT256, STAKING_ADDRESS, STAKING_POOL_ADDRESS } from '../../constants'
 import './styles.css'
 import { Deposit as IDeposit } from './types'
 
@@ -125,7 +125,7 @@ export default function Deposit() {
     }
 
     async function getReward(lockFor: number) {
-      let stakedAmount = (await stakingContract!.kCounter(lockFor)) as BigNumber
+      let stakedAmount = (await stakingContract!.depositedAmounts(lockFor)) as BigNumber
 
       if (+lockDuration === lockFor) {
         stakedAmount = stakedAmount.add(utils.parseUnits(amount || '0', stakingToken?.decimals))
@@ -180,16 +180,16 @@ export default function Deposit() {
       return
     }
 
-    const fetchedNoLockingStakedAmount = (await stakingContract.kCounter(0)) as BigNumber
+    const fetchedNoLockingStakedAmount = (await stakingContract.depositedAmounts(0)) as BigNumber
     setNoLockingStakedAmount(utils.formatUnits(fetchedNoLockingStakedAmount, stakingToken.decimals))
 
-    const fetchedThreeMonthsStakedAmount = (await stakingContract.kCounter(7889229)) as BigNumber
+    const fetchedThreeMonthsStakedAmount = (await stakingContract.depositedAmounts(7889229)) as BigNumber
     setThreeMonthsStakedAmount(utils.formatUnits(fetchedThreeMonthsStakedAmount, stakingToken.decimals))
 
-    const fetchedSixMonthsStakedAmount = (await stakingContract.kCounter(15778458)) as BigNumber
+    const fetchedSixMonthsStakedAmount = (await stakingContract.depositedAmounts(15778458)) as BigNumber
     setSixMonthsStakedAmount(utils.formatUnits(fetchedSixMonthsStakedAmount, stakingToken.decimals))
 
-    const fetchedYearStakedAmount = (await stakingContract.kCounter(31556916)) as BigNumber
+    const fetchedYearStakedAmount = (await stakingContract.depositedAmounts(31556916)) as BigNumber
     setYearStakedAmount(utils.formatUnits(fetchedYearStakedAmount, stakingToken.decimals))
   }, [stakingContract, stakingToken])
 
@@ -266,7 +266,7 @@ export default function Deposit() {
       }
 
       setIsLoading(true)
-      const K = (await stakingContract.k(+lockDuration)) as BigNumber
+      const K = (await stakingContract.apys(KODA.address, lockDuration)) as BigNumber
       setIsLoading(false)
 
       setRatingScoreGained(utils.parseUnits(amount, stakingToken.decimals).mul(K))

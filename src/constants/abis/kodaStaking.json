@@ -15,6 +15,11 @@
         "internalType": "address",
         "name": "_stakingToken",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_penaltyReceiver",
+        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
@@ -176,12 +181,31 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "rating",
+        "name": "totalDepositAmount",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "totalDepositAmount",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "apys",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
         "type": "uint256"
       }
     ],
@@ -199,6 +223,49 @@
     "name": "claimPremium",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "claimedTokenAmounts",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "depositedAmounts",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -230,6 +297,11 @@
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "isWithdrawable",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -287,44 +359,6 @@
       }
     ],
     "name": "getUserDepositsLength",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "k",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "kCounter",
     "outputs": [
       {
         "internalType": "uint256",
@@ -455,6 +489,54 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint40",
+        "name": "lockFor",
+        "type": "uint40"
+      }
+    ],
+    "name": "putFakeDeposit",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "ratings",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "renounceOwnership",
     "outputs": [],
@@ -464,17 +546,22 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "_token",
+        "type": "address"
+      },
+      {
         "internalType": "uint256",
         "name": "_lockFor",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "_k",
+        "name": "_apy",
         "type": "uint256"
       }
     ],
-    "name": "setK",
+    "name": "setApy",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -549,7 +636,7 @@
         "type": "address"
       }
     ],
-    "name": "tokenPerRatingPoint",
+    "name": "tokenPerRatingPoints",
     "outputs": [
       {
         "internalType": "uint256",
@@ -561,8 +648,38 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "totalRating",
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "tokensEarned",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "totalRatings",
     "outputs": [
       {
         "internalType": "uint256",
