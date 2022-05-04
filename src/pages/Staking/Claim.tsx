@@ -8,6 +8,8 @@ import { useToken } from 'hooks/Tokens'
 import { useStakingContract } from 'hooks/useContract'
 import { BigNumber, utils } from 'ethers'
 import CurrencyLogo from 'components/CurrencyLogo'
+import useGetKapexPriceData from 'hooks/useGetKapexPriceData'
+import useGetKodaPriceData from 'hooks/useGetKodaPriceData'
 import NavBar from './Navbar'
 import { KAPEX, KODA } from '../../constants'
 
@@ -25,9 +27,20 @@ const ClaimContainer = styled.div`
 const TokenInfo = styled.div`
   display: inline-flex;
   align-items: center;
+  gap: 10px;
+`
+
+const AmountContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 `
 
 export default function Claim() {
+  const kodaPriceData = useGetKodaPriceData()
+  const kodaPrice = kodaPriceData ? Number(kodaPriceData['koda-finance'].usd) : NaN
+  const kapexPrice = useGetKapexPriceData()
+
   const { account, library } = useWeb3React()
 
   const stakingContract = useStakingContract(true)
@@ -88,31 +101,32 @@ export default function Claim() {
       <NavBar activeIndex={1} />
       <p>Pending rewards</p>
       <ClaimContainer>
-        <b>
-          <TokenInfo>
-            <CurrencyLogo currency={kodaToken ?? undefined} size="24px" />
-            &nbsp;
-            {utils.formatUnits(pendingKoda, KODA.decimals)}
-            &nbsp; KODA
-          </TokenInfo>
-        </b>
+        <TokenInfo>
+          <CurrencyLogo currency={kodaToken ?? undefined} size="24px" />
+          <AmountContainer>
+            <b>
+              {utils.formatUnits(pendingKoda, KODA.decimals)}
+              &nbsp; KODA
+            </b>
+            ({(+utils.formatUnits(pendingKoda, KODA.decimals) * kodaPrice).toFixed(8)}$)
+          </AmountContainer>
+        </TokenInfo>
         <Button disabled={isLoading || pendingKoda.lte(BigNumber.from(0))} onClick={() => claim(KODA.address)}>
           CLAIM
         </Button>
       </ClaimContainer>
       <ClaimContainer>
-        <b>
-          <TokenInfo>
-            <CurrencyLogo currency={kapexToken ?? undefined} size="24px" />
-            &nbsp;
-            {utils.formatUnits(pendingKapex, KAPEX.decimals)}
-            &nbsp; KAPEX
-          </TokenInfo>
-        </b>
-        <Button
-          disabled={isLoading || pendingKapex.lte(BigNumber.from(0))}
-          onClick={() => claim(KAPEX.address)}
-        >
+        <TokenInfo>
+          <CurrencyLogo currency={kapexToken ?? undefined} size="24px" />
+          <AmountContainer>
+            <b>
+              {utils.formatUnits(pendingKapex, KAPEX.decimals)}
+              &nbsp; KAPEX
+            </b>
+            ({(+utils.formatUnits(pendingKapex, KAPEX.decimals) * kapexPrice).toFixed(8)}$)
+          </AmountContainer>
+        </TokenInfo>
+        <Button disabled={isLoading || pendingKapex.lte(BigNumber.from(0))} onClick={() => claim(KAPEX.address)}>
           CLAIM
         </Button>
       </ClaimContainer>
