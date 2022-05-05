@@ -877,14 +877,23 @@ export const FILTERED_TRANSACTIONS = gql`
   }
 `
 
-export const REFERRAL_HISTORIES = (walletAddress, outputTokenAddress, page=1, perPage=1000) => {
+export const REFERRAL_HISTORIES = (walletAddress, outputTokenAddress, leadInfAddress, page=1, perPage=1000) => {
   const skip = (page - 1) * perPage
 
   const queryString = `
     query referralHistories {
       account(id: "${walletAddress}") {
         id
-        referralRewards(first: ${perPage}, skip: ${skip}, orderBy: timestamp, orderDirection: desc) {
+        referralRewards(
+          first: ${perPage},
+          skip: ${skip},
+          where: {
+            outputToken_contains: "${outputTokenAddress}"
+            leadInf_contains: "${leadInfAddress}"
+          },
+          orderBy: timestamp,
+          orderDirection: desc
+        ) {
           id
           referrer {
             id
@@ -898,7 +907,7 @@ export const REFERRAL_HISTORIES = (walletAddress, outputTokenAddress, page=1, pe
             name
             symbol
           }
-          outputToken(where: {outputToken_contains: "${outputTokenAddress}"}) {
+          outputToken {
             id
             name
             symbol

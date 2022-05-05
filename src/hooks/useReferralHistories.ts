@@ -56,7 +56,7 @@ type ReferralReward = {
   leadReward: string
 }
 
-const useReferralHistories = (walletAddress?: string | null, outputTokenAddress?: string | null, page = 1, perPage = 20): ReferralReward[] => {
+const useReferralHistories = (walletAddress?: string | null, outputTokenAddress?: string | null, leadInfAddress?: string | null, page = 1, perPage = 20): ReferralReward[] => {
   const [data, setData] = useState<ReferralReward[]>([])
   const { chainId } = useActiveWeb3React()
 
@@ -67,10 +67,11 @@ const useReferralHistories = (walletAddress?: string | null, outputTokenAddress?
 
         const _walletAddress = walletAddress?.toLowerCase() || ""
         const _outputTokenAddress = outputTokenAddress?.toLowerCase() || ""
+        const _leadInfAddress = leadInfAddress?.toLowerCase() || ""
 
         const dataTemp: ReferralReward[] = []
         const referralHistoriesResponse: ReferralHistoriesResponse = await referralClient.query({
-          query: REFERRAL_HISTORIES(_walletAddress, _outputTokenAddress, page, perPage),
+          query: REFERRAL_HISTORIES(_walletAddress, _outputTokenAddress, _leadInfAddress, page, perPage),
           fetchPolicy: 'cache-first',
         });
         if (!referralHistoriesResponse.data.account || referralHistoriesResponse.data.account.referralRewards.length === 0) return
@@ -100,7 +101,7 @@ const useReferralHistories = (walletAddress?: string | null, outputTokenAddress?
     }
 
     fetchData()
-  }, [setData, walletAddress, outputTokenAddress, chainId, page, perPage])
+  }, [setData, walletAddress, outputTokenAddress, chainId, leadInfAddress, page, perPage])
 
   return data
 }

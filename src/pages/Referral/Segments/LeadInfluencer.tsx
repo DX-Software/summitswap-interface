@@ -145,7 +145,8 @@ const LeadInfluencer: React.FC<SegmentsProps> = ({
   const refContract = useReferralContract(true)
   const [subReward, setSubReward] = useState<PaginatedRewards>({})
   const { account } = useWeb3React()
-  const referralHistories = useReferralHistories(account, outputToken?.address)
+  const [page, setPage] = useState(1)
+  const referralHistories = useReferralHistories(account, outputToken?.address, null, page)
   const [selectedAddress, setSelectedAddress] = useState('')
 
   useEffect(() => {
@@ -155,6 +156,9 @@ const LeadInfluencer: React.FC<SegmentsProps> = ({
 
     setSelectedAddress(firstAddress)
     setSubReward(rewards)
+    if (referralHistories.length > 0) {
+      setPage(prevPage => prevPage + 1)
+    }
   }, [referralHistories, referralHistories.length])
 
   const modelFunctions = {

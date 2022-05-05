@@ -13,7 +13,7 @@ export default function SwapList() {
   const { account, chainId } = useActiveWeb3React()
   const [page, setPage] = useState(1)
   const [hasLoadMore, setHasLoadMore] = useState(true)
-  const referralHistories = useReferralHistories(account, null, page)
+  const referralHistories = useReferralHistories(account, null, null, page)
 
   const fetchNextReferralHistories = () => {
     setHasLoadMore(false)
