@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { Dispatch, SetStateAction, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Button, Text } from '@koda-finance/summitswap-uikit'
+import { Button, Text, Input } from '@koda-finance/summitswap-uikit'
 import { Token } from '@koda-finance/summitswap-sdk'
 import { useWeb3React } from '@web3-react/core'
 import { KODA } from '../../constants'
@@ -9,9 +9,10 @@ interface Props {
   token: Token | undefined
   isLoading: boolean
   isEnoughLiquidity: boolean
+  setLiquidityAmount: Dispatch<SetStateAction<string | undefined>>
 }
 
-export default function AddLiquidity({ token, isLoading, isEnoughLiquidity }: Props) {
+export default function AddLiquidity({ token, isLoading, isEnoughLiquidity, setLiquidityAmount }: Props) {
   const { account } = useWeb3React()
 
   return (
@@ -21,9 +22,13 @@ export default function AddLiquidity({ token, isLoading, isEnoughLiquidity }: Pr
       </p>
       {token && account && (
         <>
-          <Button as={Link} to={`/add/${KODA.address}/${token?.address}`} disabled={isLoading} target="_blank" rel="noreferrer">
-            Add Liquidity
-          </Button>
+          <Input
+            disabled={isLoading}
+            type="text"
+            placeholder={`${token?.symbol ?? 'Your Token'} Amount`}
+            onChange={(o) => setLiquidityAmount(o.target.value)}
+            style={{ marginBottom: '20px' }}
+          />
           <p>{!isEnoughLiquidity && <Text color="red">Not enough liquidity, please add more</Text>}</p>
         </>
       )}

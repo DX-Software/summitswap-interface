@@ -44,18 +44,29 @@ export default function Submit({
       setIsLoading(true)
       const { fetchedLpLocks, totalAmountOfLpLocked } = await fetchUserLocked()
 
-      await axios.post(ONBOARDING_API, {
-        message: `
-          Token: ${token.address}
-          %0AUser: ${account}
-          %0APair: ${pairAddress}
-          %0ALockIds: ${fetchedLpLocks?.map((o) => o.lockId)}
-          %0ATotalLocked: ${totalAmountOfLpLocked}
-          %0AReferrer Fee: ${+referrerPercentage * 10 ** 7}
-          %0AFirst Buy Fee: ${+firstBuyPercentage * 10 ** 7}
-          %0ADev Fee: ${+devPercentage * 10 ** 7}
-          %0A(This fees can be directly fed into contract)`,
-      })
+      // await axios.post(ONBOARDING_API, {
+      //   message: `
+      //     Token: ${token.address}
+      //     %0AUser: ${account}
+      //     %0APair: ${pairAddress}
+      //     %0ALockIds: ${fetchedLpLocks?.map((o) => o.lockId)}
+      //     %0ATotalLocked: ${totalAmountOfLpLocked}
+      //     %0AReferrer Fee: ${+referrerPercentage * 10 ** 7}
+      //     %0AFirst Buy Fee: ${+firstBuyPercentage * 10 ** 7}
+      //     %0ADev Fee: ${+devPercentage * 10 ** 7}
+      //     %0A(This fees can be directly fed into contract)`,
+      // })
+      console.log(`
+        Token: ${token.address}
+        %0AUser: ${account}
+        %0APair: ${pairAddress}
+        %0ALockIds: ${fetchedLpLocks?.map((o) => o.lockId)}
+        %0ATotalLocked: ${totalAmountOfLpLocked}
+        %0AReferrer Fee: ${+referrerPercentage * 10 ** 7}
+        %0AFirst Buy Fee: ${+firstBuyPercentage * 10 ** 7}
+        %0ADev Fee: ${+devPercentage * 10 ** 7}
+        %0A(This fees can be directly fed into contract)`
+      )
       setIsLoading(false)
 
       displaySucessModal()

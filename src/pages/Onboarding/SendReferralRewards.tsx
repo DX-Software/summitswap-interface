@@ -12,6 +12,8 @@ interface Props {
   setIsLoading: Dispatch<SetStateAction<boolean>>
   setIsTokensSentToReferral: Dispatch<SetStateAction<boolean>>
   isLiquidityLocked: boolean
+  referralRewardAmount: string | undefined
+  setReferralRewardAmount: Dispatch<SetStateAction<string | undefined>>
 }
 
 export default function SendReferralRewards({
@@ -21,10 +23,10 @@ export default function SendReferralRewards({
   isLiquidityLocked,
   setIsTokensSentToReferral,
   setIsLoading,
+  referralRewardAmount,
+  setReferralRewardAmount
 }: Props) {
   const { account, library } = useWeb3React()
-
-  const [referralRewardAmount, setReferralRewardAmount] = useState<string>()
 
   const sendTokensToReferralContract = useCallback(() => {
     async function send() {
@@ -64,12 +66,6 @@ export default function SendReferralRewards({
             onChange={(o) => setReferralRewardAmount(o.target.value)}
             style={{ marginTop: '10px', marginBottom: '10px' }}
           />
-          <Button
-            disabled={!isLiquidityLocked || isLoading || (+(referralRewardAmount ?? '') || 0) <= 0}
-            onClick={sendTokensToReferralContract}
-          >
-            Transfer
-          </Button>
           <p>
             {!(+(referralRewardAmount || '') > 0) && isLiquidityLocked && (
               <Text color="red">Please enter positive number</Text>
