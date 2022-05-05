@@ -10,7 +10,7 @@ import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { useToken } from 'hooks/Tokens'
 import { useTokenPrice } from 'hooks/useTokenPrice'
 import convertOutputToReward from 'utils/convertOutputToReward'
-import { REFERRAL_ADDRESS, BUSDs, CHAIN_ID, KAPEXs, NULL_ADDRESS } from '../../constants'
+import { REFERRAL_ADDRESS, BUSD, CHAIN_ID, KAPEX, NULL_ADDRESS } from '../../constants'
 import { useClaimingFeeModal } from './useClaimingFeeModal'
 
 interface Props {
@@ -77,7 +77,7 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, bnbPriceInUsd
     if (!outputToken) return
     if (!rewardToken) return
 
-    const tokenList: Token[] = [BUSDs[CHAIN_ID], KAPEXs[CHAIN_ID], outputToken, rewardToken].filter(o => !!o && o !== NULL_ADDRESS);
+    const tokenList: Token[] = [BUSD, KAPEX, outputToken, rewardToken].filter(o => !!o);
     const uniqueTokenAddresses = [...new Set(tokenList.map((o) => o.address))]
     const uniqueTokenList = uniqueTokenAddresses.map((o) => tokenList.find((oo) => oo.address === o)) as Token[]
 
@@ -139,15 +139,15 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, bnbPriceInUsd
     if (!account) return false
     if (!refContract) return false
     if (!balance) return false
-    if (!selectedToken || !outputToken) return true
+    if (!outputToken) return false
 
     try {
       const claimTokenAddress = claimToken?.address ?? outputToken.address ?? WETH[CHAIN_ID].address
-      
+
       const estimatedGasInBNB = await refContract.estimateGas.claimRewardIn(tokenAddress, claimTokenAddress)
       const estimatedGasFormatted = ethers.utils.formatUnits(estimatedGasInBNB.mul(2), 8)
       const estimatedGasInUsd = Number(estimatedGasFormatted) * bnbPriceInUsd
-      
+
       const tokenAmount = outputToken ? await convertOutputToReward(
         library,
         refContract,
@@ -159,7 +159,7 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, bnbPriceInUsd
       const totalTokenPriceInUsd = tokenAmount * (claimToken?.symbol === "BNB" ? bnbPriceInUsd : tokenPriceInUsd)
 
       return totalTokenPriceInUsd === 0 || estimatedGasInUsd === 0 || totalTokenPriceInUsd >= estimatedGasInUsd
-    
+
     } catch (err) {
       console.log("Error: ", err)
       return true
@@ -201,7 +201,7 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, bnbPriceInUsd
   const handleClaim = async () => {
     if (!claimToken) return
 
-    if (claimToken.address === BUSDs[CHAIN_ID].address || claimToken.address === undefined) {
+    if (claimToken.address === BUSD.address || claimToken.address === undefined) {
       openClaimingFeeModal()
     } else {
       await claim()

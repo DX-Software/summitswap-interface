@@ -5,6 +5,8 @@ import { useWalletModal } from '@koda-finance/summitswap-uikit'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import login from 'utils/login'
 import Banner from 'components/Banner'
+import { utils } from 'ethers'
+import InvalidReferralLinkModal from 'components/InvalidReferralLinkModal'
 import Popups from '../components/Popups'
 import Web3ReactManager from '../components/Web3ReactManager'
 import { RedirectDuplicateTokenIds, RedirectOldAddLiquidityPathStructure } from './AddLiquidity/redirects'
@@ -16,6 +18,7 @@ import RemoveLiquidity from './RemoveLiquidity'
 import Swap from './Swap'
 import CrossChainSwap from './CrossChainSwap'
 import Referral from './Referral'
+import Onboarding from './Onboarding'
 import SummitCheck from './SummitCheck'
 import { EN, allLanguages } from '../constants/localisation/languageCodes'
 import { LanguageContext } from '../hooks/LanguageContext'
@@ -24,6 +27,10 @@ import langSrc from '../constants/localisation/translate/index'
 import AppHeader from './AppHeader'
 import Menu from '../components/Menu'
 import SupportChatWidget from '../components/SupportChatWidget'
+import Deposit from './Staking/Deposit'
+import Withdraw from './Staking/Withdraw'
+import Claim from './Staking/Claim'
+
 
 const AppWrapper = styled.div`
   display: flex;
@@ -73,6 +80,7 @@ export default function App() {
   const [selectedLanguage, setSelectedLanguage] = useState<any>(undefined)
   const [translatedLanguage, setTranslatedLanguage] = useState<any>(undefined)
   const [translations, setTranslations] = useState<Array<any>>([])
+  const [isInvalidRefLink, setIsInvalidRefLink] = useState<boolean>(false)
 
   const location = useLocation()
 
@@ -117,7 +125,11 @@ export default function App() {
   useEffect(() => {
     const referrerParam = new URLSearchParams(location.search).get('ref')
     const outputParam = new URLSearchParams(location.search).get('output')
-
+    if (referrerParam && !utils.isAddress(referrerParam)) {
+      setIsInvalidRefLink(true)
+      return
+    }
+    setIsInvalidRefLink(false)
     if (referrerParam && outputParam) {
       const referralCached: Record<string, string> = JSON.parse(localStorage.getItem('referral') ?? '{}')
       referralCached[outputParam] = referrerParam
@@ -127,7 +139,6 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
 
-
   return (
     <Suspense fallback={null}>
       <AppWrapper>
@@ -135,6 +146,7 @@ export default function App() {
           value={{ selectedLanguage, setSelectedLanguage, translatedLanguage, setTranslatedLanguage }}
         >
           <TranslationsContext.Provider value={{ translations, setTranslations }}>
+            <InvalidReferralLinkModal isOpen={isInvalidRefLink} />
             <SupportChatWidget/>
             <Popups />
             <Web3ReactManager>
@@ -150,10 +162,15 @@ export default function App() {
                     <Route exact path="/cross-chain-swap" component={CrossChainSwap} />
                     <Route exact path="/swap?ref=:ref" component={Referral} />
                     <Route exact path="/referral" component={Referral} />
+                    <Route exact path="/onboarding" component={Onboarding} />
                     <Route exact strict path="/find" component={PoolFinder} />
                     <Route exact strict path="/pool" component={Pool} />
                     <Route exact path="/add" component={AddLiquidity} />
+                    <Route exact path="/staking/deposit" component={Deposit} />
+                    <Route exact path="/staking/claim" component={Claim} />
+                    <Route exact path="/staking/withdraw" component={Withdraw} />
                     <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
+                
 
                     {/* Redirection: These old routes are still used in the code base */}
                     <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />

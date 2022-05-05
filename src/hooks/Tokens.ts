@@ -10,7 +10,7 @@ import { isAddress } from '../utils'
 import { useActiveWeb3React } from './index'
 import { useBytes32TokenContract, useTokenContract } from './useContract'
 
-export function useAllTokens(): { [address: string]: Token } {
+export function useAllTokens(showOnlyUnknownTokens = false): { [address: string]: Token } {
   const { chainId } = useActiveWeb3React()
   const userAddedTokens = useUserAddedTokens()
   const allTokens = useSelectedTokenList()
@@ -27,10 +27,10 @@ export function useAllTokens(): { [address: string]: Token } {
           },
           // must make a copy because reduce modifies the map, and we do not
           // want to make a copy in every iteration
-          { ...allTokens[chainId] }
+          showOnlyUnknownTokens ? {} : { ...allTokens[chainId] }
         )
     )
-  }, [chainId, userAddedTokens, allTokens])
+  }, [chainId, userAddedTokens, allTokens, showOnlyUnknownTokens])
 }
 
 // Check if currency is included in custom list from user storage

@@ -1,0 +1,23 @@
+/* TODO: Style using material theming */
+.onboarding-page .MuiButtonBase-root,
+.onboarding-page .MuiOutlinedInput-input,
+.onboarding-page .MuiInputLabel-root {
+  color: white;
+}
+
+.onboarding-page .MuiButtonBase-root.Mui-disabled,
+.onboarding-page .MuiOutlinedInput-input.Mui-disabled,
+.onboarding-page .MuiInputLabel-root.Mui-disabled {
+  color: gray;
+  opacity: 1;
+  -webkit-text-fill-color: gray;
+}
+
+.onboarding-page article {
+  margin-bottom: 40px;
+}
+
+.onboarding-page p {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}

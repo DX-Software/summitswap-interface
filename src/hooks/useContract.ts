@@ -1,17 +1,21 @@
 import { Contract } from '@ethersproject/contracts'
-import { ChainId, WETH } from '@koda-finance/summitswap-sdk'
+import { ChainId, FACTORY_ADDRESS, WETH } from '@koda-finance/summitswap-sdk'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { useMemo } from 'react'
 import ENS_ABI from '../constants/abis/ens-registrar.json'
 import ENS_PUBLIC_RESOLVER_ABI from '../constants/abis/ens-public-resolver.json'
 import { ERC20_BYTES32_ABI } from '../constants/abis/erc20'
-import ERC20_ABI from '../constants/abis/erc20.json'
-import WETH_ABI from '../constants/abis/weth.json'
-import Referral_ABI from '../constants/abis/referral.json'
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall'
 import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
-import { REFERRAL_ADDRESS } from '../constants'
+import { LOCKER_ADDRESS, REFERRAL_ADDRESS, STAKING_ADDRESS } from '../constants'
+import ERC20_ABI from '../constants/abis/erc20.json'
+import WETH_ABI from '../constants/abis/weth.json'
+import REFERRAL_ABI from '../constants/abis/summitReferral.json'
+import FACTORY_ABI from '../constants/abis/summitswapFactory.json'
+import LOCKER_ABI from '../constants/abis/summitswaLocker.json'
+import STAKING_ABI from '../constants/abis/kodaStaking.json'
+import ROUTER_ABI from '../constants/abis/summitswap-router.json'
 
 // returns null on errors
 function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {
@@ -28,8 +32,20 @@ function useContract(address: string | undefined, ABI: any, withSignerIfPossible
   }, [address, ABI, library, withSignerIfPossible, account])
 }
 
+export function useStakingContract(withSignerIfPossible?: boolean): Contract | null {
+  return useContract(STAKING_ADDRESS, STAKING_ABI, withSignerIfPossible)
+}
+
 export function useReferralContract(withSignerIfPossible?: boolean): Contract | null {
-  return useContract(REFERRAL_ADDRESS, Referral_ABI, withSignerIfPossible)
+  return useContract(REFERRAL_ADDRESS, REFERRAL_ABI, withSignerIfPossible)
+}
+
+export function useFactoryContract(withSignerIfPossible?: boolean): Contract | null {
+  return useContract(FACTORY_ADDRESS, FACTORY_ABI, withSignerIfPossible)
+}
+
+export function useLockerContract(withSignerIfPossible?: boolean): Contract | null {
+  return useContract(LOCKER_ADDRESS, LOCKER_ABI, withSignerIfPossible)
 }
 
 export function useTokenContract(tokenAddress?: string, withSignerIfPossible?: boolean): Contract | null {
@@ -68,4 +84,8 @@ export function usePairContract(pairAddress?: string, withSignerIfPossible?: boo
 export function useMulticallContract(): Contract | null {
   const { chainId } = useActiveWeb3React()
   return useContract(chainId && MULTICALL_NETWORKS[chainId], MULTICALL_ABI, false)
+}
+
+export function useRouterContract(routerAddress: string): Contract | null {
+  return useContract(routerAddress, ROUTER_ABI)
 }

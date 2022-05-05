@@ -11,7 +11,7 @@ import { useTokenPrices, useTokenPrice } from 'hooks/useTokenPrice'
 import { ethers, BigNumber } from 'ethers'
 import convertOutputToReward from 'utils/convertOutputToReward'
 import TokenCard from './TokenCard'
-import { BUSDs, CHAIN_ID, KAPEXs, WBNB } from '../../constants'
+import { BUSD, CHAIN_ID, KAPEX, WBNB } from '../../constants'
 import { useClaimingFeeModal } from './useClaimingFeeModal'
 
 interface RewardedTokensProps {
@@ -53,7 +53,7 @@ const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
   const [isLoading, setIsLoading] = useState(false)
   const [rewardTokens, setRewardTokens] = useState<string[]>([])
   const [canClaimAll, setCanClaimAll] = useState(true)
-  const [claimToken, setClaimToken] = useState<Token>(KAPEXs[CHAIN_ID])
+  const [claimToken, setClaimToken] = useState<Token>(KAPEX)
   const [claimableTokens, setClaimableTokens] = useState<Token[]>([])
   const [modalOpen, setModalOpen] = useState(false)
   const [isClaimInSpecificTokenValid, setIsClaimInSpecificTokenValid] = useState<boolean>(false)
@@ -84,7 +84,7 @@ const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
   }, [account, refContract])
 
   useEffect(() => {
-    const tokenList: Token[] = [BUSDs[CHAIN_ID], KAPEXs[CHAIN_ID]].filter((o) => !!o)
+    const tokenList: Token[] = [BUSD, KAPEX].filter((o) => !!o)
     const uniqueTokenAddresses = [...new Set(tokenList.map((o) => o.address))]
     const uniqueTokenList = uniqueTokenAddresses.map((o) => tokenList.find((oo) => oo.address === o)) as Token[]
 
@@ -125,9 +125,9 @@ const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
       }
       const estimatedGasFormatted = ethers.utils.formatUnits(estimatedGasInBNB.mul(2), 8)
       const estimatedGasInUsd = Number(estimatedGasFormatted) * bnbPriceInUsd
-  
+
       let tokenPriceInUsd = 0
-  
+
       for (let i = 0; i < rewardTokens.length; i++) {
         const rewardToken = rewardTokens[i]
         const outputToken = tokens.find((o) => o.address === rewardToken)
@@ -150,7 +150,7 @@ const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
           )
           const tokenPrice = tokenPrices[claimInToken.coingeckoId ?? WBNB.coingeckoId!].usd ?? 0
           const totalTokenPriceInUsd = tokenRewardAmount * tokenPrice
-          tokenPriceInUsd += totalTokenPriceInUsd 
+          tokenPriceInUsd += totalTokenPriceInUsd
         }
       }
 
@@ -213,7 +213,7 @@ const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
   async function handleClaimAllInClaimToken() {
     if (!claimToken) return
 
-    if (claimToken.address === BUSDs[CHAIN_ID].address || claimToken.address === undefined) {
+    if (claimToken.address === BUSD.address || claimToken.address === undefined) {
       openClaimingFeeModal()
     } else {
       await claimAllInClaimToken()
