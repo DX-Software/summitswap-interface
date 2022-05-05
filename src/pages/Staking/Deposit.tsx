@@ -149,9 +149,7 @@ export default function Deposit() {
       const myRating = currentKodaRatingScore.add(kodaRatingScoreGained)
       const kodaTotalRating = kodaRatingScoreGained.add(await stakingContract.totalRatings(KODA.address))
 
-      let totalRewards = myRating.add(await stakingContract.totalRatings(KODA.address))
-
-      totalRewards = totalRewards.gt(maximumKodaReward) ? maximumKodaReward : totalRewards
+      const totalRewards = kodaTotalRating.gt(maximumKodaReward) ? maximumKodaReward : kodaTotalRating
 
       const willEarn = totalRewards.mul(myRating).div(kodaTotalRating)
 
