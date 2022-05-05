@@ -154,7 +154,7 @@ const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
         }
       }
 
-      return tokenPriceInUsd * 5 >= estimatedGasInUsd
+      return tokenPriceInUsd >= estimatedGasInUsd
     } catch (err) {
       console.log("Error: ", err)
       return true
