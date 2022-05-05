@@ -56,7 +56,7 @@ type ReferralReward = {
   leadReward: string
 }
 
-const useReferralHistories = (walletAddress?: string | null, outputTokenAddress?: string | null): ReferralReward[] => {
+const useReferralHistories = (walletAddress?: string | null, outputTokenAddress?: string | null, page = 1, perPage = 20): ReferralReward[] => {
   const [data, setData] = useState<ReferralReward[]>([])
   const { chainId } = useActiveWeb3React()
 
@@ -68,36 +68,31 @@ const useReferralHistories = (walletAddress?: string | null, outputTokenAddress?
         const _walletAddress = walletAddress?.toLowerCase() || ""
         const _outputTokenAddress = outputTokenAddress?.toLowerCase() || ""
 
-        let page = 1
-        const perPage = 20
-        while (true) {
-          const dataTemp: ReferralReward[] = []
-          const referralHistoriesResponse: ReferralHistoriesResponse = await referralClient.query({
-            query: REFERRAL_HISTORIES(_walletAddress, _outputTokenAddress, page, perPage),
-            fetchPolicy: 'cache-first',
-          });
-          if (!referralHistoriesResponse.data.account || referralHistoriesResponse.data.account.referralRewards.length === 0) break
-          referralHistoriesResponse.data.account.referralRewards.forEach((referralReward: ReferralRewardResponse) => {
-            dataTemp.push({
-              id: referralReward.id,
-              timestamp: referralReward.timestamp,
-              inputToken: referralReward.inputToken.id,
-              inputTokenName: referralReward.inputToken.name,
-              inputTokenSymbol: referralReward.inputToken.symbol,
-              inputTokenAmount: referralReward.inputTokenAmount,
-              outputToken: referralReward.outputToken.id,
-              outputTokenName: referralReward.outputToken.name,
-              outputTokenSymbol: referralReward.outputToken.symbol,
-              outputTokenAmount: referralReward.outputTokenAmount,
-              referrer: referralReward.referrer.id,
-              referrerReward: referralReward.referrerReward,
-              lead: referralReward.leadInf.id,
-              leadReward: referralReward.leadReward,
-            })
+        const dataTemp: ReferralReward[] = []
+        const referralHistoriesResponse: ReferralHistoriesResponse = await referralClient.query({
+          query: REFERRAL_HISTORIES(_walletAddress, _outputTokenAddress, page, perPage),
+          fetchPolicy: 'cache-first',
+        });
+        if (!referralHistoriesResponse.data.account || referralHistoriesResponse.data.account.referralRewards.length === 0) return
+        referralHistoriesResponse.data.account.referralRewards.forEach((referralReward: ReferralRewardResponse) => {
+          dataTemp.push({
+            id: referralReward.id,
+            timestamp: referralReward.timestamp,
+            inputToken: referralReward.inputToken.id,
+            inputTokenName: referralReward.inputToken.name,
+            inputTokenSymbol: referralReward.inputToken.symbol,
+            inputTokenAmount: referralReward.inputTokenAmount,
+            outputToken: referralReward.outputToken.id,
+            outputTokenName: referralReward.outputToken.name,
+            outputTokenSymbol: referralReward.outputToken.symbol,
+            outputTokenAmount: referralReward.outputTokenAmount,
+            referrer: referralReward.referrer.id,
+            referrerReward: referralReward.referrerReward,
+            lead: referralReward.leadInf.id,
+            leadReward: referralReward.leadReward,
           })
-          setData((prevValue) => [...prevValue, ...dataTemp])
-          page++;
-        }
+        })
+        setData((prevValue) => [...prevValue, ...dataTemp])
       } catch (error) {
         console.error("Failed to fetch referral histories", error)
         setData([])
@@ -105,7 +100,7 @@ const useReferralHistories = (walletAddress?: string | null, outputTokenAddress?
     }
 
     fetchData()
-  }, [setData, walletAddress, outputTokenAddress, chainId])
+  }, [setData, walletAddress, outputTokenAddress, chainId, page, perPage])
 
   return data
 }
