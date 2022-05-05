@@ -1,7 +1,6 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Button, Text, useModal } from '@koda-finance/summitswap-uikit'
+import { Button, Text } from '@koda-finance/summitswap-uikit'
 import AppBody from 'pages/AppBody'
 import { useWeb3React } from '@web3-react/core'
 import { useStakingContract } from 'hooks/useContract'
@@ -13,6 +12,7 @@ import CustomLightSpinner from 'components/CustomLightSpinner'
 import NavBar from './Navbar'
 import { Deposit } from './types'
 import { KODA } from '../../constants'
+import PenaltyWithdrawModal from './PenaltyWithdrawModal'
 
 const DepositContainer = styled.div`
   display: flex;
@@ -37,9 +37,14 @@ export default function Withdraw() {
   const [isLoading, setIsLoading] = useState(false)
   const [userDeposits, setUserDeposits] = useState<Deposit[]>()
 
+  const [isWarningModalOpen, setIsWarningModalOpen] = useState(false)
+  const [depositSelected, setDepositSelected] = useState<Deposit>()
+
   const kodaToken = useToken(KODA.address)
 
   const fetchUserDeposits = useCallback(async () => {
+    setUserDeposits(undefined)
+
     if (!stakingContract || !account) {
       setUserDeposits([])
       return
@@ -52,7 +57,7 @@ export default function Withdraw() {
       userDepositIds.map(async (depositId) => {
         const fetchedDeposit = await stakingContract.deposits(depositId)
 
-        return {
+        const deposit = {
           id: +depositId,
           penalty:
             (fetchedDeposit.depositAt + fetchedDeposit.lockFor) * 1000 > Date.now()
@@ -60,6 +65,9 @@ export default function Withdraw() {
               : 0,
           ...fetchedDeposit,
         }
+
+        setUserDeposits((prevDeposits) => [...(prevDeposits ?? []), deposit])
+        return deposit
       })
     )) as Deposit[]
 
@@ -68,9 +76,33 @@ export default function Withdraw() {
     setUserDeposits(deposits)
   }, [account, stakingContract])
 
+  const withdrawDirectly = useCallback(async () => {
+    if (!stakingContract || !library || !depositSelected) {
+      return
+    }
+
+    setIsLoading(true)
+    setIsWarningModalOpen(false)
+    try {
+      const receipt = await stakingContract.withdrawDeposit(depositSelected.id, depositSelected.amount)
+      await library.waitForTransaction(receipt.hash)
+      fetchUserDeposits()
+    } catch (err) {
+      console.warn(err)
+    }
+    setIsLoading(false)
+  }, [depositSelected, fetchUserDeposits, library, stakingContract])
+
   const withdraw = useCallback(
     async (deposit: Deposit) => {
       if (!stakingContract || !library) {
+        return
+      }
+
+      setDepositSelected(deposit)
+
+      if (deposit.penalty) {
+        setIsWarningModalOpen(true)
         return
       }
 
@@ -93,10 +125,15 @@ export default function Withdraw() {
 
   return (
     <AppBody>
+      <PenaltyWithdrawModal
+        open={isWarningModalOpen}
+        deposit={depositSelected}
+        handleClose={() => setIsWarningModalOpen(false)}
+        onConfirm={withdrawDirectly}
+      />
       <br />
       <NavBar activeIndex={2} />
-      {!userDeposits && <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="45px" />}
-      {userDeposits?.length === 0 && <p>You dont have any deposits</p>}
+      {!isLoading && userDeposits?.length === 0 && <p>You dont have any deposits</p>}
       {userDeposits && userDeposits.length > 0 && (
         <>
           <p>Deposits</p>
@@ -145,6 +182,7 @@ export default function Withdraw() {
           </div>
         </>
       )}
+      {!userDeposits && <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="45px" />}
     </AppBody>
   )
 }
