@@ -8,8 +8,8 @@ import { BigNumber, utils } from 'ethers'
 import { useToken } from 'hooks/Tokens'
 import AppBody from 'pages/AppBody'
 import CurrencyLogo from 'components/CurrencyLogo'
-import useGetKapexPriceData from 'hooks/useGetKapexPriceData'
-import useGetKodaPriceData from 'hooks/useGetKodaPriceData'
+import useKapexPrice from 'hooks/useKapexPrice'
+import useKodaPrice from 'hooks/useKodaPrice'
 import { APYs, lockingPeriods, maximumKodaYearlyReward } from '../../constants/staking'
 import NavBar from './Navbar'
 import { DEAD_ADDRESS, KAPEX, KODA, MAX_UINT256, STAKING_ADDRESS, STAKING_POOL_ADDRESS } from '../../constants'
@@ -99,9 +99,8 @@ export default function Deposit() {
   const [totalKodaEarned, setTotalKodaEarned] = useState('...')
   const [totalKapexEarned, setTotalKapexEarned] = useState('...')
 
-  const kodaPriceData = useGetKodaPriceData()
-  const kodaPrice = kodaPriceData ? Number(kodaPriceData['koda-finance'].usd) : NaN
-  const kapexPrice = useGetKapexPriceData()
+  const kodaPrice = useKodaPrice()
+  const kapexPrice = useKapexPrice()
 
   const fetchCirculatingSupply = useCallback(async () => {
     if (!kodaTokenContract) {
