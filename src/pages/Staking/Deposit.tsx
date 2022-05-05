@@ -442,35 +442,40 @@ export default function Deposit() {
           DEPOSIT
         </Button>
       </ButtonsContainer>
-      <p>My Statistics </p>
-      <InfoContainer>
-        <p>
-          No locking (APY {APYs[KODA.address][lockingPeriods._0Months].toString()}%):{' '}
-          <b>{userNoLockingStakedAmount} KODA</b>&nbsp;(
-          {(+userNoLockingStakedAmount * kodaPrice).toFixed(2)}$)
-        </p>
-        <p>
-          3 Months (APY {APYs[KODA.address][lockingPeriods._3Months].toString()}%):{' '}
-          <b>{userThreeMonthsStakedAmount} KODA</b>&nbsp;(
-          {(+userThreeMonthsStakedAmount * kodaPrice).toFixed(2)}$)
-        </p>
-        <p>
-          6 Months (APY {APYs[KODA.address][lockingPeriods._6Months].toString()}%):{' '}
-          <b>{userSixMonthsStakedAmount} KODA</b>&nbsp;(
-          {(+userSixMonthsStakedAmount * kodaPrice).toFixed(2)}$)
-        </p>
-        <p>
-          12 Months (APY {APYs[KODA.address][lockingPeriods._12Months].toString()}%): <b>{userYearStakedAmount} KODA</b>
-          &nbsp;(
-          {(+userYearStakedAmount * kodaPrice).toFixed(2)}$)
-        </p>
-        <p>
-          Koda Earned: <b> {totalKodaEarned} KODA</b>&nbsp;({(+totalKodaEarned * kodaPrice).toFixed(2)}$)
-        </p>
-        <p>
-          Kapex Earned: <b> {totalKapexEarned} KAPEX</b>&nbsp;({(+totalKapexEarned * kapexPrice).toFixed(2)}$)
-        </p>
-      </InfoContainer>
+      {account && (
+        <>
+          <p>My Statistics </p>
+          <InfoContainer>
+            <p>
+              No locking (APY {APYs[KODA.address][lockingPeriods._0Months].toString()}%):{' '}
+              <b>{userNoLockingStakedAmount} KODA</b>&nbsp;(
+              {(+userNoLockingStakedAmount * kodaPrice).toFixed(2)}$)
+            </p>
+            <p>
+              3 Months (APY {APYs[KODA.address][lockingPeriods._3Months].toString()}%):{' '}
+              <b>{userThreeMonthsStakedAmount} KODA</b>&nbsp;(
+              {(+userThreeMonthsStakedAmount * kodaPrice).toFixed(2)}$)
+            </p>
+            <p>
+              6 Months (APY {APYs[KODA.address][lockingPeriods._6Months].toString()}%):{' '}
+              <b>{userSixMonthsStakedAmount} KODA</b>&nbsp;(
+              {(+userSixMonthsStakedAmount * kodaPrice).toFixed(2)}$)
+            </p>
+            <p>
+              12 Months (APY {APYs[KODA.address][lockingPeriods._12Months].toString()}%):{' '}
+              <b>{userYearStakedAmount} KODA</b>
+              &nbsp;(
+              {(+userYearStakedAmount * kodaPrice).toFixed(2)}$)
+            </p>
+            <p>
+              Koda Earned: <b> {totalKodaEarned} KODA</b>&nbsp;({(+totalKodaEarned * kodaPrice).toFixed(2)}$)
+            </p>
+            <p>
+              Kapex Earned: <b> {totalKapexEarned} KAPEX</b>&nbsp;({(+totalKapexEarned * kapexPrice).toFixed(2)}$)
+            </p>
+          </InfoContainer>
+        </>
+      )}
       <p>Statistics </p>
       <InfoContainer>
         <p>
