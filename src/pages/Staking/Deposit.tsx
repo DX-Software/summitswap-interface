@@ -8,6 +8,8 @@ import { BigNumber, utils } from 'ethers'
 import { useToken } from 'hooks/Tokens'
 import AppBody from 'pages/AppBody'
 import CurrencyLogo from 'components/CurrencyLogo'
+import useGetKapexPriceData from 'hooks/useGetKapexPriceData'
+import useGetKodaPriceData from 'hooks/useGetKodaPriceData'
 import { APYs, maximumKodaReward } from '../../constants/staking'
 import NavBar from './Navbar'
 import { DEAD_ADDRESS, KAPEX, KODA, MAX_UINT256, STAKING_ADDRESS, STAKING_POOL_ADDRESS } from '../../constants'
@@ -96,6 +98,10 @@ export default function Deposit() {
 
   const [totalKodaEarned, setTotalKodaEarned] = useState('...')
   const [totalKapexEarned, setTotalKapexEarned] = useState('...')
+
+  const kodaPriceData = useGetKodaPriceData()
+  const kodaPrice = kodaPriceData ? Number(kodaPriceData['koda-finance'].usd) : NaN
+  const kapexPrice = useGetKapexPriceData()
 
   const fetchCirculatingSupply = useCallback(async () => {
     if (!kodaTokenContract) {
@@ -410,40 +416,49 @@ export default function Deposit() {
       <p>My Statistics </p>
       <InfoContainer>
         <p>
-          No locking (APY {APYs[KODA.address][0].toString()}%): <b>{userNoLockingStakedAmount} KODA</b>
+          No locking (APY {APYs[KODA.address][0].toString()}%): <b>{userNoLockingStakedAmount} KODA</b>&nbsp;(
+          {(+userNoLockingStakedAmount * kodaPrice).toFixed(2)}$)
         </p>
         <p>
-          3 Months (APY {APYs[KODA.address][7889229].toString()}%): <b>{userThreeMonthsStakedAmount} KODA</b>
+          3 Months (APY {APYs[KODA.address][7889229].toString()}%): <b>{userThreeMonthsStakedAmount} KODA</b>&nbsp;(
+          {(+userThreeMonthsStakedAmount * kodaPrice).toFixed(2)}$)
         </p>
         <p>
-          6 Months (APY {APYs[KODA.address][15778458].toString()}%): <b>{userSixMonthsStakedAmount} KODA</b>
+          6 Months (APY {APYs[KODA.address][15778458].toString()}%): <b>{userSixMonthsStakedAmount} KODA</b>&nbsp;(
+          {(+userSixMonthsStakedAmount * kodaPrice).toFixed(2)}$)
         </p>
         <p>
-          12 Months (APY {APYs[KODA.address][31556916].toString()}%): <b>{userYearStakedAmount} KODA</b>
+          12 Months (APY {APYs[KODA.address][31556916].toString()}%): <b>{userYearStakedAmount} KODA</b>&nbsp;(
+          {(+userYearStakedAmount * kodaPrice).toFixed(2)}$)
         </p>
         <p>
-          Koda Earned: <b> {totalKodaEarned} KODA</b>
+          Koda Earned: <b> {totalKodaEarned} KODA</b>&nbsp;({(+totalKodaEarned * kodaPrice).toFixed(2)}$)
         </p>
         <p>
-          Kapex Earned: <b> {totalKapexEarned} KAPEX</b>
+          Kapex Earned: <b> {totalKapexEarned} KAPEX</b>&nbsp;({(+totalKapexEarned * kapexPrice).toFixed(2)}$)
         </p>
       </InfoContainer>
       <p>Statistics </p>
       <InfoContainer>
         <p>
-          No locking (APY {APYs[KODA.address][0].toString()}%): <b>{noLockingStakedAmount} KODA</b>
+          No locking (APY {APYs[KODA.address][0].toString()}%): <b>{noLockingStakedAmount} KODA</b>&nbsp;(
+          {(+noLockingStakedAmount * kodaPrice).toFixed(2)}$)
         </p>
         <p>
-          3 Months (APY {APYs[KODA.address][7889229].toString()}%): <b>{threeMonthsStakedAmount} KODA</b>
+          3 Months (APY {APYs[KODA.address][7889229].toString()}%): <b>{threeMonthsStakedAmount} KODA</b>&nbsp;(
+          {(+threeMonthsStakedAmount * kodaPrice).toFixed(2)}$)
         </p>
         <p>
-          6 Months (APY {APYs[KODA.address][15778458].toString()}%): <b>{sixMonthsStakedAmount} KODA</b>
+          6 Months (APY {APYs[KODA.address][15778458].toString()}%): <b>{sixMonthsStakedAmount} KODA</b>&nbsp;(
+          {(+sixMonthsStakedAmount * kodaPrice).toFixed(2)}$)
         </p>
         <p>
-          12 Months (APY {APYs[KODA.address][31556916].toString()}%): <b>{yearStakedAmount} KODA</b>
+          12 Months (APY {APYs[KODA.address][31556916].toString()}%): <b>{yearStakedAmount} KODA</b>&nbsp;(
+          {(+yearStakedAmount * kodaPrice).toFixed(2)}$)
         </p>
         <p>
-          Circulating: <b> {circulatingAmount} KODA</b>
+          Circulating: <b> {circulatingAmount} KODA</b>&nbsp;(
+          {(+circulatingAmount * kodaPrice).toFixed(2)}$)
         </p>
       </InfoContainer>
     </AppBody>
