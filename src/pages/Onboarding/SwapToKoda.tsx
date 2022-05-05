@@ -1,16 +1,18 @@
 import { Token } from '@koda-finance/summitswap-sdk'
-import { Button } from '@koda-finance/summitswap-uikit'
+import { Button, Text, Input } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
-import React from 'react'
+import React, { Dispatch, SetStateAction, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 interface Props {
   token: Token | undefined
   isLoading: boolean
+  setBNBAmountForSummitSwap: Dispatch<SetStateAction<string | undefined>>
 }
 
-export default function SwapToKoda({ isLoading, token }: Props) {
+export default function SwapToKoda({ isLoading, token, setBNBAmountForSummitSwap }: Props) {
   const { account } = useWeb3React()
+  // const [bnbAmountForPancakeSwap, setBNBAmountForPancakeSwap] = useState('')
 
   return (
     <article>
@@ -20,17 +22,20 @@ export default function SwapToKoda({ isLoading, token }: Props) {
       </p>
       {account && token && (
         <>
-          <Button as={Link} to="/swap" disabled={isLoading} target="_blank" rel="noreferrer">
-            Swap on SummitSwap
-          </Button>
-          &nbsp;
-          <a
-            href="https://pancakeswap.finance/swap?outputCurrency=0x8094e772fA4A60bdEb1DfEC56AB040e17DD608D5"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <Button disabled={isLoading}>Swap on PancakeSwap</Button>
-          </a>
+          <Input
+            disabled={isLoading}
+            type="text"
+            placeholder="BNB Amount for SummitSwap"
+            onChange={(o) => setBNBAmountForSummitSwap(o.target.value)}
+            style={{ marginBottom: '20px' }}
+          />
+          {/* <Input
+            disabled={isLoading}
+            type="text"
+            placeholder="BNB Amount for PancakeSwap"
+            onChange={(o) => setBNBAmountForPancakeSwap(o.target.value)}
+            style={{ marginBottom: '20px' }}
+          /> */}
         </>
       )}
     </article>

@@ -16,6 +16,8 @@ interface Props {
   isEnoughLiquidity: boolean
   setIsLiquidityLocked: Dispatch<SetStateAction<boolean>>
   pairAddress: string | undefined
+  selectedUnlockDate: Date | null
+  setSelectedUnlockDate: Dispatch<SetStateAction<Date | null>>
 }
 
 const minimumUnlockDate = subDays(addYears(Date.now(), 1), 1)
@@ -27,13 +29,14 @@ export default function LockLiquidity({
   isEnoughLiquidity,
   setIsLiquidityLocked,
   pairAddress,
+  selectedUnlockDate,
+  setSelectedUnlockDate
 }: Props) {
   const { account, library } = useWeb3React()
 
   const [recipient, setRecipient] = useState('')
 
   const [isLiquidityApproved, setIsLiquidityApproved] = useState(false)
-  const [selectedUnlockDate, setSelectedUnlockDate] = useState<Date | null>(addYears(Date.now(), 1))
   const [lpBalance, setLpBalance] = useState<BigNumber | undefined>()
 
   const lpContract = useTokenContract(pairAddress)
@@ -155,27 +158,6 @@ export default function LockLiquidity({
             renderInput={(params) => <TextField {...params} />}
           />
           &nbsp;
-          {!isLiquidityApproved && (
-            <>
-              <Button disabled={!isEnoughLiquidity || isLoading} onClick={approveLiquidity}>
-                Approve Liquidity
-              </Button>
-              &nbsp;
-            </>
-          )}
-          <Button
-            disabled={
-              !isEnoughLiquidity ||
-              !isLiquidityApproved ||
-              !isSelectedDateGood ||
-              isLoading ||
-              (lpBalance?.isZero() ?? true) ||
-              !ethers.utils.isAddress(recipient)
-            }
-            onClick={lockLiquidity}
-          >
-            Lock Liquidity
-          </Button>
           <p>
             {(lpBalance?.isZero() ?? true) && isEnoughLiquidity && (
               <Text color="red">You don&apos;t have enough liquidity tokens</Text>

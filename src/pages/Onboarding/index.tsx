@@ -52,6 +52,11 @@ export default function Onboarding() {
   const [firstBuyPercentage, setFirstBuyPercentage] = useState<string>()
   const [devPercentage, setDevPercentage] = useState<string>()
 
+  const [bnbAmountForSummitSwap, setBNBAmountForSummitSwap] = useState<string>()
+  const [liquidityAmount, setLiquidityAmount] = useState<string>()
+  const [selectedUnlockDate, setSelectedUnlockDate] = useState<Date | null>(addYears(Date.now(), 1))
+  const [referralRewardAmount, setReferralRewardAmount] = useState<string>()
+
   const factoryContract = useFactoryContract()
   const tokenContract = useTokenContract(selectedToken?.address, true)
   const kodaContract = useTokenContract(KODA.address, true)
@@ -206,8 +211,8 @@ export default function Onboarding() {
         </>
       )}
       <h3>Steps:</h3>
-      <SwapToKoda token={selectedToken} isLoading={isLoading} />
-      <AddLiquidity token={selectedToken} isLoading={isLoading} isEnoughLiquidity={isEnoughLiquidity} />
+      <SwapToKoda token={selectedToken} isLoading={isLoading} setBNBAmountForSummitSwap={setBNBAmountForSummitSwap} />
+      <AddLiquidity token={selectedToken} isLoading={isLoading} isEnoughLiquidity={isEnoughLiquidity} setLiquidityAmount={setLiquidityAmount} />
       <LockLiquidity
         token={selectedToken}
         isLoading={isLoading}
@@ -215,6 +220,8 @@ export default function Onboarding() {
         isEnoughLiquidity={isEnoughLiquidity}
         pairAddress={pairAddress}
         setIsLiquidityLocked={setIsLiquidityLocked}
+        selectedUnlockDate={selectedUnlockDate}
+        setSelectedUnlockDate={setSelectedUnlockDate}
       />
       <SendReferralRewards
         token={selectedToken}
@@ -223,6 +230,8 @@ export default function Onboarding() {
         setIsLoading={setIsLoading}
         setIsTokensSentToReferral={setIsTokensSentToReferral}
         isLiquidityLocked={isLiquidityLocked}
+        referralRewardAmount={referralRewardAmount}
+        setReferralRewardAmount={setReferralRewardAmount}
       />
       <SetFeeInfo
         token={selectedToken}
