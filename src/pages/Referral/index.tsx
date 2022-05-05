@@ -13,7 +13,6 @@ import { useTransactionAdder } from 'state/transactions/hooks'
 import ReferalLinkImage from '../../img/referral-link.png'
 import InviteImage from '../../img/invite.png'
 import CoinStackImage from '../../img/coinstack.png'
-import copyText from '../../utils/copyText'
 import login from '../../utils/login'
 
 import ReferralNavCard from '../../components/ReferralNavCard'
@@ -200,10 +199,6 @@ const Referral: React.FC<IProps> = () => {
     setModalOpen(false)
   }, [setModalOpen])
 
-  const copyLink = useCallback((link, displayCopiedTooltip) => {
-    copyText(link, displayCopiedTooltip)
-  }, [])
-
   const isCopySupported = useMemo(() => {
     if ((navigator.clipboard && navigator.permissions) || document.queryCommandSupported('copy')) {
       return true
@@ -221,7 +216,6 @@ const Referral: React.FC<IProps> = () => {
       case 'userDashboard':
         return (
           <ReferralSegment
-            copyReferralLink={copyLink}
             isCopySupported={isCopySupported}
             referralURL={referralURL}
           />
@@ -277,7 +271,6 @@ const Referral: React.FC<IProps> = () => {
             selectedToken={selectedOutputCoin}
             account={account}
             referalContract={refContract}
-            copyAddress={copyLink}
             isCopySupported={isCopySupported}
           />
           <Instructions referalLinkImage={ReferalLinkImage} inviteImage={InviteImage} coinStackImage={CoinStackImage} />
