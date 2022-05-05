@@ -1,9 +1,9 @@
-import React, { useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
+import { Token } from '@koda-finance/summitswap-sdk'
 import { Text, Box } from '@koda-finance/summitswap-uikit'
 import styled from 'styled-components'
-import qrCode from 'img/qrCode.svg'
+import { Contract } from 'ethers'
 import LinkBox from 'components/LinkBox'
-import useReferralLinkQrModal from '../useReferralLinkQrModal'
 
 const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
   display: ${({ isTooltipDisplayed }) => (isTooltipDisplayed ? 'block' : 'none')};
@@ -21,16 +21,35 @@ const Tooltip = styled.div<{ isTooltipDisplayed: boolean }>`
   padding: 10px;
 `
 
-interface ReferralSegmentProps {
-  copyReferralLink: (link: string, displayCopiedTooltip: () => void) => void
+interface Props {
+  referalContract: Contract | null
+  account: string | null | undefined
+  selectedToken: Token | undefined
   isCopySupported: boolean
-  referralURL: string
+  copyAddress: (address: string, displayCopiedTooltip: () => void) => void
 }
 
-const ReferralSegment: React.FC<ReferralSegmentProps> = ({ isCopySupported, referralURL, copyReferralLink }) => {
+export default function TokenReferrer({
+  referalContract,
+  account,
+  selectedToken,
+  isCopySupported,
+  copyAddress,
+}: Props) {
+  const [referrer, setReferrer] = useState<{ token: Token; referrer: string } | null>(null)
   const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
 
-  const [openReferralLinkQrModal] = useReferralLinkQrModal(referralURL)
+  useEffect(() => {
+    async function fetchReferrers() {
+      if (!referalContract || !account || !selectedToken) {
+        return
+      }
+      const isReferrer = await referalContract.referrers(selectedToken.address, account)
+      const isEmptyAddress = /^0x0+$/.test(isReferrer)
+      setReferrer(isEmptyAddress ? null : isReferrer)
+    }
+    fetchReferrers()
+  }, [referalContract, account, selectedToken])
 
   const displayCopiedTooltip = useCallback(() => {
     setIsTooltipDisplayed(true)
@@ -39,21 +58,18 @@ const ReferralSegment: React.FC<ReferralSegmentProps> = ({ isCopySupported, refe
     }, 1000)
   }, [])
 
-  return (
+  return referrer ? (
     <>
       <Text mb="8px" bold>
-        My Referral Link
+        Who invited me
       </Text>
-      <LinkBox mb={3}>
+      <LinkBox>
         <Box>
-          <Text style={{ whiteSpace: isCopySupported ? 'nowrap' : 'normal' }}>{referralURL}</Text>
-        </Box>
-        <Box onClick={openReferralLinkQrModal} mr="10px" style={{ cursor: 'pointer' }}>
-          <img src={qrCode} alt="" width={22} height={22} />
+          <Text style={{ whiteSpace: isCopySupported ? 'nowrap' : 'normal' }}>{referrer}</Text>
         </Box>
         <Box
           style={{ display: isCopySupported ? 'block' : 'none' }}
-          onClick={() => copyReferralLink(referralURL, displayCopiedTooltip)}
+          onClick={() => copyAddress('0x7411184d3b0308Af7c5A14550A9239Aa9db2f45B', displayCopiedTooltip)}
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="19" height="22" viewBox="0 0 19 22" fill="none">
             <path
@@ -65,7 +81,7 @@ const ReferralSegment: React.FC<ReferralSegmentProps> = ({ isCopySupported, refe
         </Box>
       </LinkBox>
     </>
+  ) : (
+    <></>
   )
 }
-
-export default ReferralSegment

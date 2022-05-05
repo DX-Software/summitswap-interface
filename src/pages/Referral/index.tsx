@@ -26,7 +26,7 @@ import { InfInfo } from './types'
 import CurrencySelector from './CurrencySelector'
 import SwapList from './SwapList'
 import Instructions from './Instructions'
-import TokenReferrers from './TokenReferrers'
+import TokenReferrer from './TokenReferrer'
 
 interface IProps {
   isLanding?: boolean
@@ -40,7 +40,6 @@ const Referral: React.FC<IProps> = () => {
   const [selectedOutputCoin, setSelectedOutputCoin] = useState<Token | undefined>()
   const [allTokens, setAllTokens] = useState<Array<Token>>([])
   const [referralURL, setReferralURL] = useState('')
-  const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
   const allTokensTemp = useAllTokens()
   const location = useLocation()
   const refContract = useReferralContract(true)
@@ -201,16 +200,9 @@ const Referral: React.FC<IProps> = () => {
     setModalOpen(false)
   }, [setModalOpen])
 
-  const displayCopiedTooltip = useCallback(() => {
-    setIsTooltipDisplayed(true)
-    setTimeout(() => {
-      setIsTooltipDisplayed(false)
-    }, 1000)
+  const copyLink = useCallback((link, displayCopiedTooltip) => {
+    copyText(link, displayCopiedTooltip)
   }, [])
-
-  const copyReferralLink = useCallback(() => {
-    copyText(referralURL, displayCopiedTooltip)
-  }, [referralURL, displayCopiedTooltip])
 
   const isCopySupported = useMemo(() => {
     if ((navigator.clipboard && navigator.permissions) || document.queryCommandSupported('copy')) {
@@ -229,9 +221,8 @@ const Referral: React.FC<IProps> = () => {
       case 'userDashboard':
         return (
           <ReferralSegment
-            copyReferralLink={copyReferralLink}
+            copyReferralLink={copyLink}
             isCopySupported={isCopySupported}
-            isTooltipDisplayed={isTooltipDisplayed}
             referralURL={referralURL}
           />
         )
@@ -282,10 +273,12 @@ const Referral: React.FC<IProps> = () => {
 
       {segmentControllerIndex === 0 && (
         <>
-          <TokenReferrers
-            tokens={allTokens.filter((token) => token.referralEnabled)}
+          <TokenReferrer
+            selectedToken={selectedOutputCoin}
             account={account}
             referalContract={refContract}
+            copyAddress={copyLink}
+            isCopySupported={isCopySupported}
           />
           <Instructions referalLinkImage={ReferalLinkImage} inviteImage={InviteImage} coinStackImage={CoinStackImage} />
         </>
