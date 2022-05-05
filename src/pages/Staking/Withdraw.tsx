@@ -113,24 +113,33 @@ export default function Withdraw() {
                     </TokenInfo>
                   </b>
                 </p>
-                {!!Number(deposit.lockFor) && (
+                {!deposit.isWithdrawable && (
                   <p>
-                    Unlocks at:&nbsp;
-                    <b>{format(new Date((deposit.depositAt + deposit.lockFor) * 1000), 'dd/MM/yyyy')}</b>
+                    <Text color="yellow">Not withdrawable deposit</Text>
                   </p>
                 )}
-                <p>
-                  Deposited at:&nbsp;
-                  <b>{format(new Date(deposit.depositAt * 1000), 'dd/MM/yyyy HH:mm')}</b>
-                </p>
-                {deposit.penalty !== 0 && (
-                  <Text color="red">
-                    If you claim early, you will lose <b> {deposit.penalty / 100}%</b> of you tokens
-                  </Text>
+                {deposit.isWithdrawable && (
+                  <>
+                    {!!Number(deposit.lockFor) && (
+                      <p>
+                        Unlocks at:&nbsp;
+                        <b>{format(new Date((deposit.depositAt + deposit.lockFor) * 1000), 'dd/MM/yyyy')}</b>
+                      </p>
+                    )}
+                    <p>
+                      Deposited at:&nbsp;
+                      <b>{format(new Date(deposit.depositAt * 1000), 'dd/MM/yyyy HH:mm')}</b>
+                    </p>
+                    {deposit.penalty !== 0 && (
+                      <Text color="red">
+                        If you claim early, you will lose <b> {deposit.penalty / 100}%</b> of you tokens
+                      </Text>
+                    )}
+                    <Button disabled={isLoading} onClick={() => withdraw(deposit)}>
+                      WITHDRAW
+                    </Button>
+                  </>
                 )}
-                <Button disabled={isLoading} onClick={() => withdraw(deposit)}>
-                  WITHDRAW
-                </Button>
               </DepositContainer>
             ))}
           </div>
