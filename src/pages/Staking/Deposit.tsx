@@ -200,6 +200,32 @@ export default function Deposit() {
     fetchStakedAmounts()
   }, [fetchStakedAmounts])
 
+  const fetchPersonalStakedAmounts = useCallback(async () => {
+    if (!stakingContract || !account) {
+      setUserNoLockingStakedAmount('...')
+      setUserThreeMonthsStakedAmount('...')
+      setUserSixMonthsStakedAmount('...')
+      setUserYearStakedAmount('...')
+      return
+    }
+
+    const fetchedNoLockingStakedAmount = (await stakingContract.userDeposits(account, 0)) as BigNumber
+    setUserNoLockingStakedAmount(utils.formatUnits(fetchedNoLockingStakedAmount, KODA.decimals))
+
+    const fetchedThreeMonthsStakedAmount = (await stakingContract.userDeposits(account, 7889229)) as BigNumber
+    setUserThreeMonthsStakedAmount(utils.formatUnits(fetchedThreeMonthsStakedAmount, KODA.decimals))
+
+    const fetchedSixMonthsStakedAmount = (await stakingContract.userDeposits(account, 15778458)) as BigNumber
+    setUserSixMonthsStakedAmount(utils.formatUnits(fetchedSixMonthsStakedAmount, KODA.decimals))
+
+    const fetchedYearStakedAmount = (await stakingContract.userDeposits(account, 31556916)) as BigNumber
+    setUserYearStakedAmount(utils.formatUnits(fetchedYearStakedAmount, KODA.decimals))
+  }, [stakingContract, account])
+
+  useEffect(() => {
+    fetchPersonalStakedAmounts()
+  }, [fetchPersonalStakedAmounts])
+
   useEffect(() => {
     if (!amount || !stakingTokenBalance) {
       return
@@ -258,6 +284,7 @@ export default function Deposit() {
       fetchStakingTokenBalance()
       setCurrentKodaRatingScore(currentKodaRatingScore.add(kodaRatingScoreGained))
       fetchStakedAmounts()
+      fetchPersonalStakedAmounts()
       fetchApy()
     } catch (err) {
       console.warn(err)
@@ -265,15 +292,16 @@ export default function Deposit() {
     setIsLoading(false)
   }, [
     account,
-    amount,
-    currentKodaRatingScore,
-    fetchApy,
-    fetchStakedAmounts,
-    fetchStakingTokenBalance,
-    library,
     lockDuration,
-    kodaRatingScoreGained,
+    amount,
     stakingContract,
+    library,
+    fetchStakingTokenBalance,
+    currentKodaRatingScore,
+    kodaRatingScoreGained,
+    fetchStakedAmounts,
+    fetchPersonalStakedAmounts,
+    fetchApy,
   ])
 
   useEffect(() => {
@@ -292,32 +320,6 @@ export default function Deposit() {
     }
 
     fetchTotalEarned()
-  }, [stakingContract, account])
-
-  useEffect(() => {
-    async function fetchPersonalStakedAmounts() {
-      if (!stakingContract || !account) {
-        setUserNoLockingStakedAmount('...')
-        setUserThreeMonthsStakedAmount('...')
-        setUserSixMonthsStakedAmount('...')
-        setUserYearStakedAmount('...')
-        return
-      }
-
-      const fetchedNoLockingStakedAmount = (await stakingContract.userDeposits(account, 0)) as BigNumber
-      setUserNoLockingStakedAmount(utils.formatUnits(fetchedNoLockingStakedAmount, KODA.decimals))
-
-      const fetchedThreeMonthsStakedAmount = (await stakingContract.userDeposits(account, 7889229)) as BigNumber
-      setUserThreeMonthsStakedAmount(utils.formatUnits(fetchedThreeMonthsStakedAmount, KODA.decimals))
-
-      const fetchedSixMonthsStakedAmount = (await stakingContract.userDeposits(account, 15778458)) as BigNumber
-      setUserSixMonthsStakedAmount(utils.formatUnits(fetchedSixMonthsStakedAmount, KODA.decimals))
-
-      const fetchedYearStakedAmount = (await stakingContract.userDeposits(account, 31556916)) as BigNumber
-      setUserYearStakedAmount(utils.formatUnits(fetchedYearStakedAmount, KODA.decimals))
-    }
-
-    fetchPersonalStakedAmounts()
   }, [stakingContract, account])
 
   const approve = useCallback(async () => {
