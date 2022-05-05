@@ -18,6 +18,11 @@ interface RewardedTokensProps {
   tokens?: Array<Token>
 }
 
+enum ClaimAllType {
+  CLAIM_IN_SPECIFIC_TOKEN,
+  CLAIM_IN_REWARDED_TOKEN,
+}
+
 const StyledContainer = styled(Box)`
   display: grid;
   grid-column-gap: 16px;
@@ -88,7 +93,7 @@ const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
 
   useEffect(() => {
     const handleClaimInSpecificTokenValid = async () => {
-      const _isClaimInSpecificTokenValid = await getIsClaimInSpecificTokenValid()
+      const _isClaimInSpecificTokenValid = await getIsClaimAllTokenValid(ClaimAllType.CLAIM_IN_SPECIFIC_TOKEN)
       setIsClaimInSpecificTokenValid(_isClaimInSpecificTokenValid)
     }
     handleClaimInSpecificTokenValid()
@@ -97,85 +102,58 @@ const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
 
   useEffect(() => {
     const handleIsClaimInRewardedTokenValid = async () => {
-      const _isClaimInRewardedTokenValid = await getIsClaimInRewardedTokenValid()
+      const _isClaimInRewardedTokenValid = await getIsClaimAllTokenValid(ClaimAllType.CLAIM_IN_REWARDED_TOKEN)
       setIsClaimInRewardedTokenValid(_isClaimInRewardedTokenValid)
     }
     handleIsClaimInRewardedTokenValid()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refContract, tokens, tokenPrices, rewardTokens])
 
-  async function getIsClaimInSpecificTokenValid(): Promise<boolean> {
+  async function getIsClaimAllTokenValid(claimAllType: ClaimAllType): Promise<boolean> {
     if (!tokens || tokens.length === 0) return false
-    if (!tokenPrices) return false
-    if (!refContract || !claimToken) return false
+    if (!tokenPrices || !refContract) return false
     if (rewardTokens.length === 0) return false
+    if (claimAllType === ClaimAllType.CLAIM_IN_SPECIFIC_TOKEN && !claimToken) return false
 
     try {
-      const claimTokenAddress = claimToken.address ?? WETH[CHAIN_ID].address
-
-      const estimatedGasInBNB = await refContract.estimateGas.claimAllRewardsIn(claimTokenAddress)
+      let estimatedGasInBNB
+      if (claimAllType === ClaimAllType.CLAIM_IN_SPECIFIC_TOKEN) {
+        const claimTokenAddress = claimToken.address ?? WETH[CHAIN_ID].address
+        estimatedGasInBNB = await refContract.estimateGas.claimAllRewardsIn(claimTokenAddress)
+      } else {
+        estimatedGasInBNB = await refContract.estimateGas.claimAllRewardsInOutput()
+      }
       const estimatedGasFormatted = ethers.utils.formatUnits(estimatedGasInBNB.mul(2), 8)
       const estimatedGasInUsd = Number(estimatedGasFormatted) * bnbPriceInUsd
   
       let tokenPriceInUsd = 0
   
       for (let i = 0; i < rewardTokens.length; i++) {
-        const rewardToken = rewardTokens[i];
+        const rewardToken = rewardTokens[i]
         const outputToken = tokens.find((o) => o.address === rewardToken)
         if (outputToken) {
-          const outputTokenAmount = (await refContract.balances(rewardToken, account)) as BigNumber
+          let outputTokenAmount
+          if (claimAllType === ClaimAllType.CLAIM_IN_SPECIFIC_TOKEN) {
+            outputTokenAmount = (await refContract.balances(rewardToken, account)) as BigNumber
+          } else {
+            outputTokenAmount = (await refContract.balances(rewardToken, account)) as BigNumber
+          }
+          const claimInToken: Token = claimAllType === ClaimAllType.CLAIM_IN_SPECIFIC_TOKEN
+            ? claimToken
+            : outputToken
           const tokenRewardAmount = await convertOutputToReward(
             library,
             refContract,
             outputToken,
             outputTokenAmount,
-            claimToken
+            claimInToken
           )
-          const tokenPrice = tokenPrices[claimToken.coingeckoId ?? WBNB.coingeckoId!].usd ?? 0
+          const tokenPrice = tokenPrices[claimInToken.coingeckoId ?? WBNB.coingeckoId!].usd ?? 0
           const totalTokenPriceInUsd = tokenRewardAmount * tokenPrice
           tokenPriceInUsd += totalTokenPriceInUsd 
         }
       }
-  
-      return tokenPriceInUsd >= estimatedGasInUsd
-    } catch (err) {
-      console.log("Error: ", err)
-      return true
-    }
-  }
 
-  async function getIsClaimInRewardedTokenValid(): Promise<boolean> {
-    if (!tokens || tokens.length === 0) return false
-    if (!tokenPrices || !refContract) return false
-    if (rewardTokens.length === 0) return false
-
-    try {
-      const estimatedGasInBNB = await refContract.estimateGas.claimAllRewardsInOutput()
-      const estimatedGasFormatted = ethers.utils.formatUnits(estimatedGasInBNB.mul(2), 8)
-      const estimatedGasInUsd = Number(estimatedGasFormatted) * bnbPriceInUsd
-  
-      let tokenPriceInUsd = 0
-  
-      for (let i = 0; i < rewardTokens.length; i++) {
-        const rewardToken = rewardTokens[i];
-        const outputToken = tokens.find((o) => o.address === rewardToken)
-        if (outputToken) {
-          const outputTokenAmount = (await refContract.balances(rewardToken, account)) as BigNumber
-          const tokenRewardAmount = await convertOutputToReward(
-            library,
-            refContract,
-            outputToken,
-            outputTokenAmount,
-            outputToken
-          )
-  
-          const tokenPrice = tokenPrices[outputToken.coingeckoId ?? WBNB.coingeckoId!]?.usd ?? 0
-          const totalTokenPriceInUsd = tokenRewardAmount * tokenPrice
-    
-          tokenPriceInUsd += totalTokenPriceInUsd
-        }
-      }
-  
       return tokenPriceInUsd * 5 >= estimatedGasInUsd
     } catch (err) {
       console.log("Error: ", err)
@@ -193,9 +171,9 @@ const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
     if (!claimToken) return
 
     closeClaimingFeeModal()
-    if (!(await getIsClaimInSpecificTokenValid())) {
-      setIsClaimInSpecificTokenValid(false);
-      return;
+    if (!(await getIsClaimAllTokenValid(ClaimAllType.CLAIM_IN_SPECIFIC_TOKEN))) {
+      setIsClaimInSpecificTokenValid(false)
+      return
     }
 
     setIsLoading(true)
@@ -214,9 +192,9 @@ const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
   async function handleClaimAllInRewarded() {
     if (!refContract) return
 
-    if (!(await getIsClaimInRewardedTokenValid())) {
-      setIsClaimInRewardedTokenValid(false);
-      return;
+    if (!(await getIsClaimAllTokenValid(ClaimAllType.CLAIM_IN_REWARDED_TOKEN))) {
+      setIsClaimInRewardedTokenValid(false)
+      return
     }
 
     setIsLoading(true)
@@ -277,7 +255,7 @@ const RewardedTokens: React.FC<RewardedTokensProps> = ({tokens}) => {
               />
             ))}
           </StyledContainer>
-          {rewardTokens.length > 1 && (
+          {rewardTokens.length > 0 && (
             <ClaimButtonsWrapper>
               {!hasClaimedAll && (
                 <Button mt={3} onClick={handleClaimAllInClaimToken} disabled={isLoading || !canClaimAll || !isClaimInSpecificTokenValid}>
