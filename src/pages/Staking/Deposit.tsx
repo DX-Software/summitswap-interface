@@ -10,7 +10,7 @@ import AppBody from 'pages/AppBody'
 import CurrencyLogo from 'components/CurrencyLogo'
 import useGetKapexPriceData from 'hooks/useGetKapexPriceData'
 import useGetKodaPriceData from 'hooks/useGetKodaPriceData'
-import { APYs, lockingPeriods, maximumKodaReward } from '../../constants/staking'
+import { APYs, lockingPeriods, maximumKodaYearlyReward } from '../../constants/staking'
 import NavBar from './Navbar'
 import { DEAD_ADDRESS, KAPEX, KODA, MAX_UINT256, STAKING_ADDRESS, STAKING_POOL_ADDRESS } from '../../constants'
 import './styles.css'
@@ -149,7 +149,8 @@ export default function Deposit() {
       const myRating = currentKodaRatingScore.add(kodaRatingScoreGained)
       const kodaTotalRating = kodaRatingScoreGained.add(await stakingContract.totalRatings(KODA.address))
 
-      const totalRewards = kodaTotalRating.gt(maximumKodaReward) ? maximumKodaReward : kodaTotalRating
+      let totalRewards = kodaTotalRating.div(100)
+      totalRewards = totalRewards.gt(maximumKodaYearlyReward) ? maximumKodaYearlyReward : totalRewards
 
       const willEarn = totalRewards.mul(myRating).div(kodaTotalRating)
 
@@ -158,7 +159,7 @@ export default function Deposit() {
         .add(await stakingContract.userTotalDeposits(account ?? DEAD_ADDRESS)) as BigNumber
 
       const calculatedApy =
-        +utils.formatUnits(willEarn, KODA.decimals) / +utils.formatUnits(myStakedAmount, KODA.decimals)
+        (+utils.formatUnits(willEarn, KODA.decimals) / +utils.formatUnits(myStakedAmount, KODA.decimals)) * 100
 
       setApy(calculatedApy.toFixed(2))
     } catch (err) {

@@ -23,4 +23,4 @@ export const APYs = {
   },
 }
 
-export const maximumKodaReward = BigNumber.from('24657534000000000')
+export const maximumKodaYearlyReward = BigNumber.from('9000000000000000000')
