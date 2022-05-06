@@ -479,6 +479,52 @@ export default function Deposit() {
           DEPOSIT
         </Button>
       </ButtonsContainer>
+
+      {account && (
+        <>
+          <p>My Statistics </p>
+          <InfoContainer>
+            {userNoLockingStakedAmount &&
+            userThreeMonthsStakedAmount &&
+            userSixMonthsStakedAmount &&
+            totalKodaEarned &&
+            totalKapexEarned &&
+            userYearStakedAmount ? (
+              <>
+                <p>
+                  No Lock: <b>{userNoLockingStakedAmount} KODA</b>&nbsp;($
+                  {Math.floor(+userNoLockingStakedAmount * kodaPrice).toLocaleString('en')}) {' | '}
+                  {APYs[KODA.address][lockingPeriods._0Months].toString()}% APY
+                </p>
+                <p>
+                  3 Months: <b>{userThreeMonthsStakedAmount} KODA</b>&nbsp;($
+                  {Math.floor(+userThreeMonthsStakedAmount * kodaPrice).toLocaleString('en')}) {' | '}
+                  {APYs[KODA.address][lockingPeriods._3Months].toString()}% APY
+                </p>
+                <p>
+                  12 Months: <b>{userSixMonthsStakedAmount} KODA</b>&nbsp;($
+                  {Math.floor(+userSixMonthsStakedAmount * kodaPrice).toLocaleString('en')}) {' | '}
+                  {APYs[KODA.address][lockingPeriods._6Months].toString()}% APY
+                </p>
+                <p>
+                  12 Months: <b>{userYearStakedAmount} KODA</b>&nbsp;($
+                  {Math.floor(+userYearStakedAmount * kodaPrice).toLocaleString('en')}) {' | '}
+                  {APYs[KODA.address][lockingPeriods._12Months].toString()}% APY
+                </p>
+                <p>
+                  KODA Earned: <b> {totalKodaEarned} KODA</b>
+                </p>
+                <p>
+                  KAPEX Earned: <b> {totalKapexEarned} KAPEX</b>
+                </p>
+              </>
+            ) : (
+              <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="45px" />
+            )}
+          </InfoContainer>
+        </>
+      )}
+
       <p>Statistics </p>
       <InfoContainer>
         {noLockingStakedAmount &&
@@ -491,22 +537,22 @@ export default function Deposit() {
             <p>
               No Lock: <b>{noLockingStakedAmount} KODA</b>
               {' | '}
-              Currently {APYs[KODA.address][lockingPeriods._0Months].toString()}% APY
+              {APYs[KODA.address][lockingPeriods._0Months].toString()}% APY
             </p>
             <p>
               3 Months: <b>{threeMonthsStakedAmount} KODA</b>
               {' | '}
-              Currently {APYs[KODA.address][lockingPeriods._3Months].toString()}% APY
+              {APYs[KODA.address][lockingPeriods._3Months].toString()}% APY
             </p>
             <p>
               6 Months: <b>{sixMonthsStakedAmount} KODA</b>
               {' | '}
-              Currently {APYs[KODA.address][lockingPeriods._6Months].toString()}% APY
+              {APYs[KODA.address][lockingPeriods._6Months].toString()}% APY
             </p>
             <p>
               12 Months: <b>{yearStakedAmount} KODA</b>
               {' | '}
-              Currently {APYs[KODA.address][lockingPeriods._12Months].toString()}% APY
+              {APYs[KODA.address][lockingPeriods._12Months].toString()}% APY
             </p>
             <p>
               Circulating: <b> {circulatingAmount} KODA</b>
@@ -537,51 +583,6 @@ export default function Deposit() {
           <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="45px" />
         )}
       </InfoContainer>
-      {account && (
-        <>
-          <p>My Statistics </p>
-          <InfoContainer>
-            {userNoLockingStakedAmount &&
-            userThreeMonthsStakedAmount &&
-            userSixMonthsStakedAmount &&
-            totalKodaEarned &&
-            totalKapexEarned &&
-            userYearStakedAmount ? (
-              <>
-                <p>
-                  No locking (APY {APYs[KODA.address][lockingPeriods._0Months].toString()}%):{' '}
-                  <b>{userNoLockingStakedAmount} KODA</b>&nbsp;(
-                  {(+userNoLockingStakedAmount * kodaPrice).toFixed(2)}$)
-                </p>
-                <p>
-                  3 Months (APY {APYs[KODA.address][lockingPeriods._3Months].toString()}%):{' '}
-                  <b>{userThreeMonthsStakedAmount} KODA</b>&nbsp;(
-                  {(+userThreeMonthsStakedAmount * kodaPrice).toFixed(2)}$)
-                </p>
-                <p>
-                  6 Months (APY {APYs[KODA.address][lockingPeriods._6Months].toString()}%):{' '}
-                  <b>{userSixMonthsStakedAmount} KODA</b>&nbsp;(
-                  {(+userSixMonthsStakedAmount * kodaPrice).toFixed(2)}$)
-                </p>
-                <p>
-                  12 Months (APY {APYs[KODA.address][lockingPeriods._12Months].toString()}%):{' '}
-                  <b>{userYearStakedAmount} KODA</b>
-                  &nbsp;(
-                  {(+userYearStakedAmount * kodaPrice).toFixed(2)}$)
-                </p>
-                <p>
-                  Koda Earned: <b> {totalKodaEarned} KODA</b>&nbsp;({(+totalKodaEarned * kodaPrice).toFixed(2)}$)
-                </p>
-                <p>
-                  Kapex Earned: <b> {totalKapexEarned} KAPEX</b>&nbsp;({(+totalKapexEarned * kapexPrice).toFixed(2)}$)
-                </p>
-              </>
-            ) : (
-              <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="45px" />
-            )}
-          </InfoContainer>
-        </>
-      )}
     </AppBody>
   )
 }
