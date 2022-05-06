@@ -203,16 +203,16 @@ export default function Deposit() {
     }
 
     const fetchedNoLockingStakedAmount = (await stakingContract.lockAmounts(lockingPeriods._0Months)) as BigNumber
-    setNoLockingStakedAmount(utils.formatUnits(fetchedNoLockingStakedAmount, KODA.decimals))
+    setNoLockingStakedAmount(utils.formatUnits(fetchedNoLockingStakedAmount, KODA.decimals).split('.')[0])
 
     const fetchedThreeMonthsStakedAmount = (await stakingContract.lockAmounts(lockingPeriods._3Months)) as BigNumber
-    setThreeMonthsStakedAmount(utils.formatUnits(fetchedThreeMonthsStakedAmount, KODA.decimals))
+    setThreeMonthsStakedAmount(utils.formatUnits(fetchedThreeMonthsStakedAmount, KODA.decimals).split('.')[0])
 
     const fetchedSixMonthsStakedAmount = (await stakingContract.lockAmounts(lockingPeriods._6Months)) as BigNumber
-    setSixMonthsStakedAmount(utils.formatUnits(fetchedSixMonthsStakedAmount, KODA.decimals))
+    setSixMonthsStakedAmount(utils.formatUnits(fetchedSixMonthsStakedAmount, KODA.decimals).split('.')[0])
 
     const fetchedYearStakedAmount = (await stakingContract.lockAmounts(lockingPeriods._12Months)) as BigNumber
-    setYearStakedAmount(utils.formatUnits(fetchedYearStakedAmount, KODA.decimals))
+    setYearStakedAmount(utils.formatUnits(fetchedYearStakedAmount, KODA.decimals).split('.')[0])
   }, [stakingContract])
 
   useEffect(() => {
@@ -489,29 +489,27 @@ export default function Deposit() {
         circulatingAmountWithStaking ? (
           <>
             <p>
-              No locking (APY {APYs[KODA.address][lockingPeriods._0Months].toString()}%):{' '}
-              <b>{noLockingStakedAmount} KODA</b>&nbsp;(
-              {(+noLockingStakedAmount * kodaPrice).toFixed(2)}$)
+              No Lock: <b>{noLockingStakedAmount} KODA</b>
+              {' | '}
+              Currently {APYs[KODA.address][lockingPeriods._0Months].toString()}% APY
             </p>
             <p>
-              3 Months (APY {APYs[KODA.address][lockingPeriods._3Months].toString()}%):{' '}
-              <b>{threeMonthsStakedAmount} KODA</b>&nbsp;(
-              {(+threeMonthsStakedAmount * kodaPrice).toFixed(2)}$)
+              3 Months: <b>{threeMonthsStakedAmount} KODA</b>
+              {' | '}
+              Currently {APYs[KODA.address][lockingPeriods._3Months].toString()}% APY
             </p>
             <p>
-              6 Months (APY {APYs[KODA.address][lockingPeriods._6Months].toString()}%):{' '}
-              <b>{sixMonthsStakedAmount} KODA</b>
-              &nbsp;(
-              {(+sixMonthsStakedAmount * kodaPrice).toFixed(2)}$)
+              6 Months: <b>{sixMonthsStakedAmount} KODA</b>
+              {' | '}
+              Currently {APYs[KODA.address][lockingPeriods._6Months].toString()}% APY
             </p>
             <p>
-              12 Months (APY {APYs[KODA.address][lockingPeriods._12Months].toString()}%): <b>{yearStakedAmount} KODA</b>
-              &nbsp;(
-              {(+yearStakedAmount * kodaPrice).toFixed(2)}$)
+              12 Months: <b>{yearStakedAmount} KODA</b>
+              {' | '}
+              Currently {APYs[KODA.address][lockingPeriods._12Months].toString()}% APY
             </p>
             <p>
-              Circulating: <b> {circulatingAmount} KODA</b>&nbsp;(
-              {(+circulatingAmount * kodaPrice).toFixed(2)}$)
+              Circulating: <b> {circulatingAmount} KODA</b>
             </p>
             <p>
               Total staked:{' '}
@@ -520,7 +518,7 @@ export default function Deposit() {
                   ((+noLockingStakedAmount + +threeMonthsStakedAmount + +sixMonthsStakedAmount + +yearStakedAmount) *
                     100) /
                   +circulatingAmountWithStaking
-                ).toFixed(10)}
+                ).toFixed(3)}
                 %
               </b>
             </p>
@@ -530,7 +528,7 @@ export default function Deposit() {
                 {(
                   ((+threeMonthsStakedAmount + +sixMonthsStakedAmount + +yearStakedAmount) * 100) /
                   +circulatingAmountWithStaking
-                ).toFixed(10)}
+                ).toFixed(3)}
                 %
               </b>
             </p>
