@@ -65,8 +65,7 @@ export default function Deposit() {
   const stakingContract = useStakingContract(true)
 
   const [amount, setAmount] = useState('')
-  // Fix magic
-  const [lockDuration, setLockDuration] = useState('31556916')
+  const [lockDuration, setLockDuration] = useState(`${lockingPeriods._12Months}`)
   const [currentKodaRatingScore, setCurrentKodaRatingScore] = useState<BigNumber>()
 
   const kodaRatingScoreGained = useMemo(() => {
