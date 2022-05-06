@@ -99,6 +99,8 @@ export default function Deposit() {
   const [totalKodaEarned, setTotalKodaEarned] = useState('...')
   const [totalKapexEarned, setTotalKapexEarned] = useState('...')
 
+  const [circulatingAmountWithStaking, setCirculatingAmountWithStaking] = useState('1')
+
   const kodaPrice = useKodaPrice()
   const kapexPrice = useKapexPrice()
 
@@ -114,7 +116,9 @@ export default function Deposit() {
     const stakingPoolAmount = (await kodaTokenContract.balanceOf(STAKING_POOL_ADDRESS)) as BigNumber
 
     const circulatingSupply = totalSupply.sub(burnedAmount).sub(stakedAmount).sub(stakingPoolAmount)
+    const circulatingSupplyWithtStaking = totalSupply.sub(burnedAmount).sub(stakingPoolAmount)
 
+    setCirculatingAmountWithStaking(utils.formatUnits(circulatingSupplyWithtStaking, KODA.decimals))
     setCirculatingAmount(Math.floor(Number(utils.formatUnits(circulatingSupply, KODA.decimals))).toString())
   }, [kodaTokenContract])
 
@@ -501,6 +505,26 @@ export default function Deposit() {
         <p>
           Circulating: <b> {circulatingAmount} KODA</b>&nbsp;(
           {(+circulatingAmount * kodaPrice).toFixed(2)}$)
+        </p>
+        <p>
+          Total staked:{' '}
+          <b>
+            {(
+              ((+noLockingStakedAmount + +threeMonthsStakedAmount + +sixMonthsStakedAmount + +yearStakedAmount) * 100) /
+              +circulatingAmountWithStaking
+            ).toFixed(10)}
+            %
+          </b>
+        </p>
+        <p>
+          Total locked staked:{' '}
+          <b>
+            {(
+              ((+threeMonthsStakedAmount + +sixMonthsStakedAmount + +yearStakedAmount) * 100) /
+              +circulatingAmountWithStaking
+            ).toFixed(10)}
+            %
+          </b>
         </p>
       </InfoContainer>
     </AppBody>
