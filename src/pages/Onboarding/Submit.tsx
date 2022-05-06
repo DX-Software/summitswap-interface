@@ -2,6 +2,7 @@ import { Token } from '@koda-finance/summitswap-sdk'
 import { Button, useModal } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
 import axios from 'axios'
+import { useOnboardingContract } from 'hooks/useContract'
 import React, { Dispatch, SetStateAction, useCallback } from 'react'
 import { ONBOARDING_API } from '../../constants'
 import SuccessModal from './SuccessModal'
@@ -17,6 +18,13 @@ interface Props {
   pairAddress: string | undefined
   fetchUserLocked: any
   setIsLoading: Dispatch<SetStateAction<boolean>>
+  bnbAmountForSummitSwap: string | undefined
+  liquidityKodaAmount: string | undefined
+  liquidityUserTokenAmount: string | undefined
+  recipient: string | undefined
+  selectedUnlockDate: Date | null
+  referralRewardAmount: string | undefined
+
 }
 
 export default function Submit({
@@ -30,10 +38,38 @@ export default function Submit({
   pairAddress,
   fetchUserLocked,
   setIsLoading,
+  bnbAmountForSummitSwap,
+  liquidityKodaAmount,
+  liquidityUserTokenAmount,
+  recipient,
+  selectedUnlockDate,
+  referralRewardAmount
+
+
 }: Props) {
   const { account } = useWeb3React()
 
   const [displaySucessModal] = useModal(<SuccessModal title="Success" />)
+
+  const onboardingContract = useOnboardingContract()
+
+  const handleOnboarding = () => {
+    onboardingContract?.onboardToken(
+      bnbAmountForSummitSwap,
+      Math.floor(Date.now().valueOf() / 1000) + 1200,
+      0,
+      token?.address,
+      liquidityKodaAmount,
+      liquidityUserTokenAmount,
+      2**256 - 1,
+      Math.floor((selectedUnlockDate ?? Date.now()).valueOf() / 1000),
+      recipient,
+      referralRewardAmount
+    ).send({
+      from: account,
+      value: bnbAmountForSummitSwap,
+    });
+  }
 
   const submit = useCallback(() => {
     async function submitToken() {

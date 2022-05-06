@@ -47,6 +47,7 @@ export default function Onboarding() {
   const [isLiquidityLocked, setIsLiquidityLocked] = useState(false)
   const [isTokensSentToReferral, setIsTokensSentToReferral] = useState(false)
   const [isReferralContractRemovedFromFees, setIsReferralContractRemovedFromFees] = useState(false)
+  const [recipient, setRecipient] = useState<string>()
 
   const [referrerPercentage, setReferrerPercentage] = useState<string>()
   const [firstBuyPercentage, setFirstBuyPercentage] = useState<string>()
@@ -223,6 +224,7 @@ export default function Onboarding() {
         setIsLiquidityLocked={setIsLiquidityLocked}
         selectedUnlockDate={selectedUnlockDate}
         setSelectedUnlockDate={setSelectedUnlockDate}
+        setRecipient={setRecipient}
       />
       <SendReferralRewards
         token={selectedToken}
@@ -266,6 +268,12 @@ export default function Onboarding() {
         pairAddress={pairAddress}
         fetchUserLocked={fetchUserLocked}
         setIsLoading={setIsLoading}
+        bnbAmountForSummitSwap={bnbAmountForSummitSwap}
+        liquidityKodaAmount={liquidityKodaAmount}
+        liquidityUserTokenAmount={liquidityUserTokenAmount}
+        recipient={recipient}
+        selectedUnlockDate={selectedUnlockDate}
+        referralRewardAmount={referralRewardAmount}
       />
     </div>
   )

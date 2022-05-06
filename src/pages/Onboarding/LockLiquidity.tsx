@@ -18,6 +18,7 @@ interface Props {
   pairAddress: string | undefined
   selectedUnlockDate: Date | null
   setSelectedUnlockDate: Dispatch<SetStateAction<Date | null>>
+  setRecipient: Dispatch<SetStateAction<string | undefined>>
 }
 
 const minimumUnlockDate = subDays(addYears(Date.now(), 1), 1)
@@ -30,11 +31,10 @@ export default function LockLiquidity({
   setIsLiquidityLocked,
   pairAddress,
   selectedUnlockDate,
-  setSelectedUnlockDate
+  setSelectedUnlockDate,
+  setRecipient
 }: Props) {
   const { account, library } = useWeb3React()
-
-  const [recipient, setRecipient] = useState('')
 
   const [isLiquidityApproved, setIsLiquidityApproved] = useState(false)
   const [lpBalance, setLpBalance] = useState<BigNumber | undefined>()
@@ -48,58 +48,57 @@ export default function LockLiquidity({
     return selectedUnlockDate > minimumUnlockDate
   }, [selectedUnlockDate])
 
-  const approveLiquidity = useCallback(() => {
-    async function approve() {
-      if (!lpContract || !account || !lockerContract || !library) {
-        setIsLiquidityApproved(false)
-        return
-      }
+  // const approveLiquidity = useCallback(() => {
+  //   async function approve() {
+  //     if (!lpContract || !account || !lockerContract || !library) {
+  //       setIsLiquidityApproved(false)
+  //       return
+  //     }
 
-      const receipt = await lpContract.approve(lockerContract.address, MAX_UINT256)
+  //     const receipt = await lpContract.approve(lockerContract.address, MAX_UINT256)
 
-      setIsLoading(true)
-      await library.waitForTransaction(receipt.hash)
-      setIsLoading(false)
+  //     setIsLoading(true)
+  //     await library.waitForTransaction(receipt.hash)
+  //     setIsLoading(false)
 
-      setIsLiquidityApproved(true)
-    }
+  //     setIsLiquidityApproved(true)
+  //   }
 
-    approve()
-  }, [lpContract, account, lockerContract, library, setIsLoading])
+  //   approve()
+  // }, [lpContract, account, lockerContract, library, setIsLoading])
 
-  const lockLiquidity = useCallback(() => {
-    async function lock() {
-      if (!lpContract || !recipient || !lockerContract || !library || !selectedUnlockDate) {
-        setIsLiquidityLocked(false)
-        return
-      }
+  // const lockLiquidity = useCallback(() => {
+  //   async function lock() {
+  //     if (!lpContract || !recipient || !lockerContract || !library || !selectedUnlockDate) {
+  //       setIsLiquidityLocked(false)
+  //       return
+  //     }
 
-      const receipt = await lockerContract.lockTokens(
-        lpContract.address,
-        lpBalance,
-        Math.floor(selectedUnlockDate.valueOf() / 1000),
-        recipient,
-        '2' // Fee type
-      )
+  //     const receipt = await lockerContract.lockTokens(
+  //       lpContract.address,
+  //       lpBalance,
+  //       Math.floor(selectedUnlockDate.valueOf() / 1000),
+  //       recipient,
+  //       '2' // Fee type
+  //     )
 
-      setIsLoading(true)
-      await library.waitForTransaction(receipt.hash)
-      setIsLoading(false)
+  //     setIsLoading(true)
+  //     await library.waitForTransaction(receipt.hash)
+  //     setIsLoading(false)
 
-      setIsLiquidityLocked(true)
-    }
+  //     setIsLiquidityLocked(true)
+  //   }
 
-    lock()
-  }, [
-    lpContract,
-    lockerContract,
-    library,
-    selectedUnlockDate,
-    lpBalance,
-    recipient,
-    setIsLoading,
-    setIsLiquidityLocked,
-  ])
+  //   lock()
+  // }, [
+  //   lpContract,
+  //   lockerContract,
+  //   library,
+  //   selectedUnlockDate,
+  //   lpBalance,
+  //   setIsLoading,
+  //   setIsLiquidityLocked,
+  // ])
 
   useEffect(() => {
     async function fetchLpBalance() {

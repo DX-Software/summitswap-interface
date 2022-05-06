@@ -8,13 +8,14 @@ import { ERC20_BYTES32_ABI } from '../constants/abis/erc20'
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall'
 import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
-import { LOCKER_ADDRESS, REFERRAL_ADDRESS } from '../constants'
+import { LOCKER_ADDRESS, ONBOARDING_ADDRESS, REFERRAL_ADDRESS } from '../constants'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import WETH_ABI from '../constants/abis/weth.json'
 import REFERRAL_ABI from '../constants/abis/summitReferral.json'
 import FACTORY_ABI from '../constants/abis/summitswapFactory.json'
 import LOCKER_ABI from '../constants/abis/summitswaLocker.json'
 import ROUTER_ABI from '../constants/abis/summitswap-router.json'
+import ONBOARDING_ABI from '../constants/abis/summitswapOnboarding.json'
 
 // returns null on errors
 function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {
@@ -83,4 +84,8 @@ export function useMulticallContract(): Contract | null {
 
 export function useRouterContract(routerAddress: string): Contract | null {
   return useContract(routerAddress, ROUTER_ABI)
+}
+
+export function useOnboardingContract(): Contract | null {
+  return useContract(ONBOARDING_ADDRESS, ONBOARDING_ABI)
 }

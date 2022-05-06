@@ -22,16 +22,11 @@ export default function SwapToKoda({ isLoading, token, bnbAmountForSummitSwap, s
 
   const summitSwapRouter = useRouterContract(ROUTER_ADDRESS);
 
-  // useEffect(() => {
-  //   console.log(summitSwapRouter)
-  // }, [summitSwapRouter])
-
-  const handleInputChange = async (amount: any) => {
+  const handleInputChange = async (amount: string) => {
     setBNBAmountForSummitSwap(amount)
     try {
       if (summitSwapRouter) {
         const amountsInWei = ethers.utils.parseEther(amount)
-        console.log(amountsInWei.toString())
         const amountsOutInWei = await summitSwapRouter
           .getAmountsOut(amountsInWei, BNB_TO_KODA_ROUTE)
           .then((o) => o[o.length - 1]);
@@ -41,8 +36,6 @@ export default function SwapToKoda({ isLoading, token, bnbAmountForSummitSwap, s
     } catch(err) {
       console.log(err)
     }
-    
-    
   }
 
   return (

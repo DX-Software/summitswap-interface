@@ -21,6 +21,8 @@ export const CHAIN_ID = parseInt(process.env.REACT_APP_CHAIN_ID ?? '56')
 
 export const ONBOARDING_API = `${process.env.REACT_APP_ONBOARDING_API}`
 
+export const ONBOARDING_ADDRESS = `${process.env.REACT_APP_ONBOARDING_ADDRESS}`
+
 export const DEFAULT_SLIPPAGE_TOLERANCE = 0.8
 
 // a list of tokens by chain
