@@ -463,7 +463,7 @@ export default function Deposit() {
           </b>
         </p>
         <p>
-          APY: <b>{apy} % + KAPEX BONUSES</b>
+          APY: <b>{apy}% + KAPEX BONUSES</b>
         </p>
         {(!apy || !currentKodaRatingScore) && (
           <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>

@@ -37,12 +37,16 @@ const ButtonContainer = styled.div`
   align-items: center;
 `
 
+const ButtonsWrapper = styled.div`
+  display: flex;
+  gap: 10px;
+`
+
 export default function PenaltyWithdrawModal({ open, handleClose, onConfirm, deposit }: SettingsModalProps) {
   const [isConfirmed, setIsConfirmed] = useState(false)
 
   return (
     <Modal open={open} onClose={handleClose}>
-      {/* <Box sx={modalBoxStyle}>Hello</Box> */}
       <>
         <ModalContainer />
 
@@ -66,6 +70,7 @@ export default function PenaltyWithdrawModal({ open, handleClose, onConfirm, dep
           )}
 
           <br />
+          <br />
 
           <ButtonContainer>
             <p>
@@ -79,9 +84,12 @@ export default function PenaltyWithdrawModal({ open, handleClose, onConfirm, dep
               &nbsp; I&#8216;m aware of the consequnces
             </p>
 
-            <Button disabled={!isConfirmed} onClick={onConfirm}>
-              CONFIRM
-            </Button>
+            <ButtonsWrapper>
+              <Button disabled={!isConfirmed} onClick={onConfirm}>
+                CONFIRM
+              </Button>
+              <Button onClick={handleClose}>CANCEL</Button>
+            </ButtonsWrapper>
           </ButtonContainer>
         </ModalBox>
       </>
