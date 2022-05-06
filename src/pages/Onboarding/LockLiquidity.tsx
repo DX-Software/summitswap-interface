@@ -134,9 +134,9 @@ export default function LockLiquidity({
       <p>Lock liquidity for minimum 1 year</p>
 
       {token && account && (
-        <p>
+        <>
           <Input
-            disabled={!isEnoughLiquidity || !isLiquidityApproved || isLoading || (lpBalance?.isZero() ?? true)}
+            // disabled={!isEnoughLiquidity || !isLiquidityApproved || isLoading || (lpBalance?.isZero() ?? true)}
             type="text"
             placeholder="Recipient"
             onChange={(o) => setRecipient(o.target.value)}
@@ -144,13 +144,13 @@ export default function LockLiquidity({
           />
           <DatePicker
             label="Unlock date"
-            disabled={
-              !isEnoughLiquidity ||
-              !isLiquidityApproved ||
-              isLoading ||
-              (lpBalance?.isZero() ?? true) ||
-              !ethers.utils.isAddress(recipient)
-            }
+            // disabled={
+            //   !isEnoughLiquidity ||
+            //   !isLiquidityApproved ||
+            //   isLoading ||
+            //   (lpBalance?.isZero() ?? true) ||
+            //   !ethers.utils.isAddress(recipient)
+            // }
             value={selectedUnlockDate}
             onChange={(newValue: Date | null) => {
               setSelectedUnlockDate(newValue)
@@ -158,14 +158,14 @@ export default function LockLiquidity({
             renderInput={(params) => <TextField {...params} />}
           />
           &nbsp;
-          <p>
+          {/* <p>
             {(lpBalance?.isZero() ?? true) && isEnoughLiquidity && (
               <Text color="red">You don&apos;t have enough liquidity tokens</Text>
             )}
             {!isSelectedDateGood && <Text color="red">Please select unlock date minimum 1 year from now</Text>}
             {!ethers.utils.isAddress(recipient) && <Text color="red">Please use valid recipient</Text>}
-          </p>
-        </p>
+          </p> */}
+        </>
       )}
     </article>
   )

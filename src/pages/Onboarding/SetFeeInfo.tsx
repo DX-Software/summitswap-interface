@@ -38,17 +38,17 @@ export default function SetFeeInfo({
         {token && account && (
           <>
             <Input
-              disabled={!isTokensSentToReferral || isLoading || !isLiquidityLocked}
+              // disabled={!isTokensSentToReferral || isLoading || !isLiquidityLocked}
               type="number"
               placeholder="Referrer %"
               onChange={(o) => setReferrerPercentage(o.target.value)}
               style={{ marginTop: '10px', marginBottom: '10px' }}
             />
-            <p>
+            {/* <p>
               {!(parseInt(referrerPercentage ?? '') > 0) && isTokensSentToReferral && isLiquidityLocked && (
                 <Text color="red">Please enter positive number</Text>
               )}
-            </p>
+            </p> */}
           </>
         )}
       </p>
@@ -57,17 +57,17 @@ export default function SetFeeInfo({
         {token && account && (
           <>
             <Input
-              disabled={!isTokensSentToReferral || isLoading || !isLiquidityLocked}
+              // disabled={!isTokensSentToReferral || isLoading || !isLiquidityLocked}
               type="number"
               placeholder="First buy referree %"
               onChange={(o) => setFirstBuyPercentage(o.target.value)}
               style={{ marginTop: '10px', marginBottom: '10px' }}
             />
-            <p>
+            {/* <p>
               {!(+(firstBuyPercentage ?? '') > 0) && isTokensSentToReferral && isLiquidityLocked && (
                 <Text color="red">Please enter positive number</Text>
               )}
-            </p>
+            </p> */}
           </>
         )}
       </p>
@@ -76,17 +76,17 @@ export default function SetFeeInfo({
         {token && account && (
           <>
             <Input
-              disabled={!isTokensSentToReferral || isLoading || !isLiquidityLocked}
+              // disabled={!isTokensSentToReferral || isLoading || !isLiquidityLocked}
               type="number"
               placeholder="SummitSwap %"
               onChange={(o) => setDevPercentage(o.target.value)}
               style={{ marginTop: '10px', marginBottom: '10px' }}
             />
-            <p>
+            {/* <p>
               {!(+(devPercentage ?? '') > 0) && isTokensSentToReferral && isLiquidityLocked && (
                 <Text color="red">Please enter positive number</Text>
               )}
-            </p>
+            </p> */}
           </>
         )}
       </p>

@@ -39,7 +39,7 @@ export default function RemoveFees({
           <Checkbox
             id="agree"
             scale="sm"
-            disabled={!isTokensSentToReferral || !firstBuyPercentage || !referrerPercentage || isLoading}
+            // disabled={!isTokensSentToReferral || !firstBuyPercentage || !referrerPercentage || isLoading}
             onChange={(o) => setIsReferralContractRemovedFromFees(o.target.checked)}
           />
           &nbsp; I confirm that these requirements are satisfied

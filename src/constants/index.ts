@@ -96,6 +96,7 @@ export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } 
 }
 
 export const KAPEX_TO_BUSD_ROUTE = [KAPEX.address, WETH[CHAIN_ID].address, BUSD.address] 
+export const BNB_TO_KODA_ROUTE = [WETH[CHAIN_ID].address, KODA.address] 
 
 export const NetworkContextName = 'NETWORK'
 

@@ -53,7 +53,8 @@ export default function Onboarding() {
   const [devPercentage, setDevPercentage] = useState<string>()
 
   const [bnbAmountForSummitSwap, setBNBAmountForSummitSwap] = useState<string>()
-  const [liquidityAmount, setLiquidityAmount] = useState<string>()
+  const [liquidityKodaAmount, setLiquidityKodaAmount] = useState<string>()
+  const [liquidityUserTokenAmount, setLiquidityUserTokenAmount] = useState<string>()
   const [selectedUnlockDate, setSelectedUnlockDate] = useState<Date | null>(addYears(Date.now(), 1))
   const [referralRewardAmount, setReferralRewardAmount] = useState<string>()
 
@@ -211,8 +212,8 @@ export default function Onboarding() {
         </>
       )}
       <h3>Steps:</h3>
-      <SwapToKoda token={selectedToken} isLoading={isLoading} setBNBAmountForSummitSwap={setBNBAmountForSummitSwap} />
-      <AddLiquidity token={selectedToken} isLoading={isLoading} isEnoughLiquidity={isEnoughLiquidity} setLiquidityAmount={setLiquidityAmount} />
+      <SwapToKoda token={selectedToken} isLoading={isLoading} bnbAmountForSummitSwap={bnbAmountForSummitSwap} setBNBAmountForSummitSwap={setBNBAmountForSummitSwap} />
+      <AddLiquidity token={selectedToken} isLoading={isLoading} isEnoughLiquidity={isEnoughLiquidity} setLiquidityKodaAmount={setLiquidityKodaAmount} setLiquidityUserTokenAmount={setLiquidityUserTokenAmount} />
       <LockLiquidity
         token={selectedToken}
         isLoading={isLoading}

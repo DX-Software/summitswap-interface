@@ -60,17 +60,17 @@ export default function SendReferralRewards({
       {token && account && (
         <>
           <Input
-            disabled={!isLiquidityLocked || isLoading}
+            // disabled={!isLiquidityLocked || isLoading}
             type="number"
             placeholder="Enter token amount"
             onChange={(o) => setReferralRewardAmount(o.target.value)}
             style={{ marginTop: '10px', marginBottom: '10px' }}
           />
-          <p>
+          {/* <p>
             {!(+(referralRewardAmount || '') > 0) && isLiquidityLocked && (
               <Text color="red">Please enter positive number</Text>
             )}
-          </p>
+          </p> */}
         </>
       )}
     </article>

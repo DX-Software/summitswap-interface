@@ -37,9 +37,9 @@ export default function Submit({
 
   const submit = useCallback(() => {
     async function submitToken() {
-      if (!firstBuyPercentage || !referrerPercentage || !token || !pairAddress || !account || !devPercentage) {
-        return
-      }
+      // if (!firstBuyPercentage || !referrerPercentage || !token || !pairAddress || !account || !devPercentage) {
+      //   return
+      // }
 
       setIsLoading(true)
       const { fetchedLpLocks, totalAmountOfLpLocked } = await fetchUserLocked()
@@ -57,14 +57,14 @@ export default function Submit({
       //     %0A(This fees can be directly fed into contract)`,
       // })
       console.log(`
-        Token: ${token.address}
+        Token: ${token?.address}
         %0AUser: ${account}
         %0APair: ${pairAddress}
         %0ALockIds: ${fetchedLpLocks?.map((o) => o.lockId)}
         %0ATotalLocked: ${totalAmountOfLpLocked}
-        %0AReferrer Fee: ${+referrerPercentage * 10 ** 7}
-        %0AFirst Buy Fee: ${+firstBuyPercentage * 10 ** 7}
-        %0ADev Fee: ${+devPercentage * 10 ** 7}
+        %0AReferrer Fee: ${referrerPercentage ? +referrerPercentage : 1 * 10 ** 7}
+        %0AFirst Buy Fee: ${firstBuyPercentage ? +firstBuyPercentage : 1 * 10 ** 7}
+        %0ADev Fee: ${devPercentage ? +devPercentage : 1 * 10 ** 7}
         %0A(This fees can be directly fed into contract)`
       )
       setIsLoading(false)
@@ -89,16 +89,16 @@ export default function Submit({
     <>
       {token && account && (
         <Button
-          disabled={
-            !isTokensSentToReferral ||
-            !firstBuyPercentage ||
-            !referrerPercentage ||
-            !isReferralContractRemovedFromFees ||
-            isLoading ||
-            +(firstBuyPercentage ?? '') <= 0 ||
-            +(referrerPercentage ?? '') <= 0 ||
-            +(devPercentage ?? '') <= 0
-          }
+          // disabled={
+          //   !isTokensSentToReferral ||
+          //   !firstBuyPercentage ||
+          //   !referrerPercentage ||
+          //   !isReferralContractRemovedFromFees ||
+          //   isLoading ||
+          //   +(firstBuyPercentage ?? '') <= 0 ||
+          //   +(referrerPercentage ?? '') <= 0 ||
+          //   +(devPercentage ?? '') <= 0
+          // }
           onClick={submit}
         >
           Submit
