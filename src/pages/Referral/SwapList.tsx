@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Box, Text } from '@koda-finance/summitswap-uikit'
 import _ from 'lodash'
 import { Event } from 'ethers'
+import { Token } from '@koda-finance/summitswap-sdk'
 import CustomLightSpinner from '../../components/CustomLightSpinner'
 import { useReferralContract } from '../../hooks/useContract'
 import { useActiveWeb3React } from '../../hooks'
@@ -12,7 +13,7 @@ import RewardedTokens from './RewardedTokens'
 
 
 
-export default function SwapList() {
+export default function SwapList({ tokens }: { tokens: Token[] }) {
   const { account, library } = useActiveWeb3React()
   const referralContract = useReferralContract(true)
 
@@ -49,13 +50,13 @@ export default function SwapList() {
         try {
           const referrerLogsOnInterval = await referralContract.queryFilter(referrerFilter, queries[i][0], queries[i][1])
           const leadLogsOnInterval = await referralContract.queryFilter(leadFilter, queries[i][0], queries[i][1])
-  
+
           referrerLogs = [...referrerLogs, ...referrerLogsOnInterval]
           leadLogs = [...leadLogs, ...leadLogsOnInterval]
-  
+
           let eventLogs = [...referrerLogs, ...leadLogs].map((oo) => oo.args) as ReferralReward[]
           eventLogs = _.orderBy(eventLogs, (eventLog) => eventLog.timestamp.toNumber(), 'desc')
-  
+
           setSwapList(eventLogs)
         } catch (err) {
           console.log("Error: ", err)

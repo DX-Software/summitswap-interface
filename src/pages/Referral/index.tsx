@@ -97,7 +97,8 @@ const Referral: React.FC<IProps> = () => {
   }
 
   useEffect(() => {
-    setAllTokens(Object.values(allTokensTemp))
+    const tokens = Object.values(allTokensTemp)
+    setAllTokens(tokens.filter((token) => token.referralEnabled))
   }, [allTokensTemp])
 
   useEffect(() => {
@@ -233,7 +234,7 @@ const Referral: React.FC<IProps> = () => {
           />
         )
       case 'history':
-        return <SwapList />
+        return <SwapList tokens={allTokens} />
       default:
         return <p>Segment Index out of range</p>
     }
@@ -285,7 +286,7 @@ const Referral: React.FC<IProps> = () => {
         otherSelectedCurrency={null}
         showETH={false}
         showUnknownTokens={false}
-        tokens={allTokens.filter((token) => token.referralEnabled)}
+        tokens={allTokens}
       />
 
       <TransactionConfirmationModal

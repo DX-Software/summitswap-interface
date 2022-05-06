@@ -8,6 +8,8 @@ import CurrencyLogo from 'components/CurrencyLogo'
 import { Token, WETH } from '@koda-finance/summitswap-sdk'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { useToken } from 'hooks/Tokens'
+import { useTokenPrice } from 'hooks/useTokenPrice'
+import convertOutputToReward from 'utils/convertOutputToReward'
 import { REFERRAL_ADDRESS, BUSD, CHAIN_ID, KAPEX, NULL_ADDRESS } from '../../constants'
 import { useClaimingFeeModal } from './useClaimingFeeModal'
 
@@ -15,17 +17,20 @@ interface Props {
   tokenAddress: string
   hasClaimedAll: boolean
   isLoading: boolean
+  selectedToken?: Token
+  bnbPriceInUsd: number
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
   setCanClaimAll: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const CurrencyLogoWrapper = styled(Box)`
+const CurrencyLogoWrapper = styled(Box)<{ disabled: boolean }>`
   color: ${({ theme }) => theme.colors.invertedContrast};
   border-radius: 5px;
   padding: 3px;
   display: inline-flex;
   align-items: center;
   background: ${({ theme }) => `${theme.colors.sidebarBackground}99`};
+  cursor: ${({ disabled }) => disabled ? "not-allowed" : "pointer"};
 `
 
 const StyledContainer = styled(Box)`
@@ -48,11 +53,12 @@ const ClaimWrapper = styled.div`
   align-items: center;
 `
 
-const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, setIsLoading, setCanClaimAll }) => {
-  const { account } = useWeb3React()
+const TokenCard: React.FC<Props> = ({ tokenAddress, selectedToken, bnbPriceInUsd, hasClaimedAll, isLoading, setIsLoading, setCanClaimAll }) => {
+  const { account, library } = useWeb3React()
 
   const [balance, setBalance] = useState<BigNumber | undefined>(undefined)
-  const [tokenSymbol, setTokenSymbol] = useState('')
+  const [tokenSymbol, setTokenSymbol] = useState<string>('')
+  const [isTokenPriceValid, setIsTokenPriceValid] = useState<boolean>(true);
   const [hasReferralEnough, setHasReferralEnough] = useState(true)
   const [claimed, setClaimed] = useState(false)
 
@@ -65,6 +71,7 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
   const rewardToken = useToken(rewardTokenAddress)
   const tokenContract = useTokenContract(tokenAddress, true)
   const refContract = useReferralContract(true)
+  const tokenPriceInUsd = useTokenPrice(claimToken ?? outputToken ?? selectedToken)
 
   useEffect(() => {
     if (!outputToken) return
@@ -95,7 +102,6 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
 
     fetchRewardToken()
   }, [tokenAddress, refContract])
-
   useEffect(() => {
     const handleGetBasicInfo = async () => {
       if (!tokenContract) return
@@ -117,7 +123,48 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
     }
 
     handleGetBasicInfo()
-  }, [tokenContract, refContract, tokenAddress, account, setIsLoading, setCanClaimAll])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tokenContract, refContract, tokenAddress, account, setIsLoading, setCanClaimAll, selectedToken])
+
+  useEffect(() => {
+    const handleSetIsTokenPriceValid = async () => {
+      setIsTokenPriceValid(await getIsTokenPriceValid())
+    }
+
+    handleSetIsTokenPriceValid()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account, refContract, claimToken, balance, selectedToken, tokenPriceInUsd])
+
+  async function getIsTokenPriceValid(): Promise<boolean> {
+    if (!account) return false
+    if (!refContract) return false
+    if (!balance) return false
+    if (!outputToken) return false
+
+    try {
+      const claimTokenAddress = claimToken?.address ?? outputToken.address ?? WETH[CHAIN_ID].address
+
+      const estimatedGasInBNB = await refContract.estimateGas.claimRewardIn(tokenAddress, claimTokenAddress)
+      const estimatedGasFormatted = ethers.utils.formatUnits(estimatedGasInBNB.mul(2), 8)
+      const estimatedGasInUsd = Number(estimatedGasFormatted) * bnbPriceInUsd
+
+      const tokenAmount = outputToken ? await convertOutputToReward(
+        library,
+        refContract,
+        outputToken,
+        balance,
+        claimToken ?? outputToken
+      ) : 0
+
+      const totalTokenPriceInUsd = tokenAmount * (claimToken?.symbol === "BNB" ? bnbPriceInUsd : tokenPriceInUsd)
+
+      return totalTokenPriceInUsd === 0 || estimatedGasInUsd === 0 || totalTokenPriceInUsd >= estimatedGasInUsd
+
+    } catch (err) {
+      console.log("Error: ", err)
+      return true
+    }
+  }
 
   async function claim() {
     if (!tokenContract) return
@@ -126,6 +173,11 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
 
     closeClaimingFeeModal();
     setIsLoading(true)
+
+    if (!(await getIsTokenPriceValid())) {
+      setIsTokenPriceValid(false);
+      return;
+    }
 
     try {
       await refContract.claimRewardIn(tokenAddress, claimToken.address ?? WETH[CHAIN_ID].address)
@@ -174,7 +226,7 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
             </Text>
 
             <ClaimWrapper>
-              <Button onClick={handleClaim} disabled={isLoading || !hasReferralEnough || claimed || hasClaimedAll}>
+              <Button onClick={handleClaim} disabled={isLoading || !hasReferralEnough || !isTokenPriceValid || claimed || hasClaimedAll}>
                 CLAIM IN&nbsp;
                 <CurrencyLogoWrapper
                   onClick={(e) => {
@@ -183,6 +235,7 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
                     setModalOpen(true)
                     e.stopPropagation()
                   }}
+                  disabled={isLoading || !hasReferralEnough || claimed || hasClaimedAll}
                 >
                   <CurrencyLogo currency={claimToken} size="24px" />
                   &nbsp;{claimToken?.symbol}
@@ -191,11 +244,15 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
             </ClaimWrapper>
           </StyledContainer>
 
-          {!hasReferralEnough && (
+          {!hasReferralEnough ? (
             <Text color="primary" fontSize="14px">
               Doesn&apos;t have enough reward tokens in pool, please contact the project owners
             </Text>
-          )}
+          ) : !isTokenPriceValid ? (
+            <Text color="primary" fontSize="14px">
+              Claim token price must at least double the estimated gas fee.
+            </Text>
+          ) : ""}
         </>
       )}
       <CurrencySearchModal

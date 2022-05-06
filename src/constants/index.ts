@@ -33,11 +33,12 @@ type ChainTokenList = {
 }
 
 export const KODA = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0x8094e772fA4A60bdEb1DfEC56AB040e17DD608D5', 9, 'KODA', 'KODA Token', 100, true, 11.25, 11.23),
-  [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0xa3A654C2369277237372cCce51Ca8403acB4FAe4', 9, 'KODA', 'KODA Token', 100, true, 11.25, 11.23)
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0x8094e772fA4A60bdEb1DfEC56AB040e17DD608D5', 9, 'KODA', 'KODA Token', 100, true, 11.25, 11.23, 'koda-finance', false),
+  [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0xa3A654C2369277237372cCce51Ca8403acB4FAe4', 9, 'KODA', 'KODA Token', 100, true, 11.25, 11.23, 'koda-finance', false)
 }[CHAIN_ID] as Token
 export const DAI = new Token(ChainId.MAINNET, '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3', 18, 'DAI', 'Dai Stablecoin')
 export const USDT = new Token(ChainId.MAINNET, '0x55d398326f99059fF775485246999027B3197955', 18, 'USDT', 'Tether USD')
+export const WBNB = new Token(ChainId.MAINNET, '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', 18, 'WBNB', 'Wrapped BNB', undefined, undefined, undefined, undefined, 'wbnb', undefined)
 
 export const UST = new Token(
   ChainId.MAINNET,
@@ -48,8 +49,8 @@ export const UST = new Token(
 )
 
 export const BUSD = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56', 18, 'BUSD', 'Binance USD'),
-  [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7', 18, 'BUSD', 'Binance USD'),
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56', 18, 'BUSD', 'Binance USD', undefined, undefined, undefined, undefined, 'binance-usd', undefined),
+  [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7', 18, 'BUSD', 'Binance USD', undefined, undefined, undefined, undefined, 'binance-usd', undefined),
 }[CHAIN_ID] as Token;
 
 export const KAPEX = {
@@ -90,10 +91,7 @@ export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
 
 export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } = {
   [ChainId.MAINNET]: [
-    [
-      KODA,
-      new Token(ChainId.MAINNET, '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', 18, 'WBNB', 'Wrapped BNB'),
-    ],
+    [KODA, WBNB],
     [BUSD, USDT],
     [DAI, USDT],
   ],
