@@ -81,7 +81,7 @@ export default function PenaltyWithdrawModal({ open, handleClose, onConfirm, dep
                 onChange={(o) => setIsConfirmed(o.target.checked)}
                 style={{ border: '1px solid #452a7a' }}
               />
-              &nbsp; I&#8216;m aware of the consequnces
+              &nbsp; I&#8216;m aware of the consequences
             </p>
 
             <ButtonsWrapper>
