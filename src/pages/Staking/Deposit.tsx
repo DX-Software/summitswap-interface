@@ -504,7 +504,7 @@ export default function Deposit() {
                   {APYs[KODA.address][lockingPeriods._3Months].toString()}% APY
                 </p>
                 <p>
-                  12 Months: <b>{userSixMonthsStakedAmount} KODA</b>&nbsp;($
+                  6 Months: <b>{userSixMonthsStakedAmount} KODA</b>&nbsp;($
                   {Math.floor(+userSixMonthsStakedAmount * kodaPrice).toLocaleString('en')}) {' | '}
                   {APYs[KODA.address][lockingPeriods._6Months].toString()}% APY
                 </p>
