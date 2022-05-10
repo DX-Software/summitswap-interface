@@ -25,7 +25,8 @@ const ModalBox = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 400;
+  width: 800px;
+  max-width: 95%;
   background-color: #000f18;
   padding: 30px;
   border-radius: 20px;
@@ -35,6 +36,8 @@ const ButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
 `
 
 const ButtonsWrapper = styled.div`
