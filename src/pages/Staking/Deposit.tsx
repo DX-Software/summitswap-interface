@@ -11,6 +11,7 @@ import CurrencyLogo from 'components/CurrencyLogo'
 import useKapexPrice from 'hooks/useKapexPrice'
 import useKodaPrice from 'hooks/useKodaPrice'
 import CustomLightSpinner from 'components/CustomLightSpinner'
+import useDebounce from 'hooks/useDebounce'
 import { APYs, lockingPeriods, maximumKodaYearlyReward } from '../../constants/staking'
 import NavBar from './Navbar'
 import { DEAD_ADDRESS, KAPEX, KODA, MAX_UINT256, STAKING_ADDRESS, STAKING_POOL_ADDRESS } from '../../constants'
@@ -64,7 +65,9 @@ export default function Deposit() {
 
   const stakingContract = useStakingContract(true)
 
-  const [amount, setAmount] = useState('')
+  const [inputAmount, setInputAmount] = useState('')
+  const amount = useDebounce(inputAmount, 1000)
+
   const [lockDuration, setLockDuration] = useState(`${lockingPeriods._12Months}`)
   const [currentKodaRatingScore, setCurrentKodaRatingScore] = useState<BigNumber>()
 
@@ -381,7 +384,7 @@ export default function Deposit() {
       return
     }
 
-    setAmount(utils.formatUnits(stakingTokenBalance ?? BigNumber.from(0), KODA.decimals))
+    setInputAmount(utils.formatUnits(stakingTokenBalance ?? BigNumber.from(0), KODA.decimals))
   }, [stakingTokenBalance])
 
   return (
@@ -392,8 +395,8 @@ export default function Deposit() {
       <Input
         placeholder="0.00"
         type="number"
-        value={amount}
-        onChange={(o) => setAmount(o.target.value)}
+        value={inputAmount}
+        onChange={(o) => setInputAmount(o.target.value)}
         style={{ margin: '10px 0' }}
       />
       {!isAmountValid && <Text color="red">{amountError}</Text>}
