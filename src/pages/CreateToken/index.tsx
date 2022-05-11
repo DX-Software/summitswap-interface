@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { ethers } from 'ethers';
+import axios, { Method } from 'axios';
 import AppBody from '../AppBody';
 import { CREATE_TOKEN_ADDRESS, CREATE_TOKEN_FEE_RECEIVER_ADDRESS } from '../../constants/index';
 import CREATE_TOKEN_ABI from '../../constants/abis/createTokenAbi.json';
@@ -10,7 +11,6 @@ const Form = styled.form`
     flex-direction: column;
     
 `
-
 const Label = styled.label`
     display: flex;
     justify-content: center;
@@ -26,7 +26,6 @@ const LabelText = styled.p`
     padding: 0 1rem 0 1rem;
     flex: 0.4;
 `
-
 const Submit = styled.input`
     color: white;
     background: linear-gradient(#00d4a4,#008668); 
@@ -41,7 +40,6 @@ const Submit = styled.input`
         cursor: pointer;
     }
 `
-
 const Inputs = styled.input`
     height: 2.5rem;
     padding: 0 1rem 0 1rem;
@@ -58,25 +56,29 @@ const CreateToken = () => {
     const [supply, setSupply] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    
+
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const create_token_contract = new ethers.Contract(CREATE_TOKEN_ADDRESS, CREATE_TOKEN_ABI, signer);
-        console.log({name, symbol, decimals, supply, CREATE_TOKEN_FEE_RECEIVER_ADDRESS, CREATE_TOKEN_ADDRESS})
-        try{
-            const tx = await create_token_contract.create(name, symbol, decimals, ethers.utils.parseUnits(supply), CREATE_TOKEN_FEE_RECEIVER_ADDRESS, {value: ethers.utils.parseUnits("0.01")});
-            setLoading(true);
-            await tx.wait();
-            setLoading(false);
-        } catch {
-            setError("It was not possible to create the token");
-        }
+        if (window.ethereum) {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            console.log("1")
+            const signer = provider.getSigner();
+            console.log("2")
+            const create_token_contract = new ethers.Contract(CREATE_TOKEN_ADDRESS, CREATE_TOKEN_ABI, signer);
+            console.log({name, symbol, decimals, supply, CREATE_TOKEN_FEE_RECEIVER_ADDRESS, CREATE_TOKEN_ADDRESS})
+            try{
+                const tx = await create_token_contract.create(name, symbol, decimals, ethers.utils.parseUnits(supply), CREATE_TOKEN_FEE_RECEIVER_ADDRESS, {value: ethers.utils.parseUnits("0.01")});
+                setLoading(true);
+                await tx.wait();
+                setLoading(false);
+            } catch {
+                setError("It was not possible to create the token");
+            }
 
-        const tokens_created = await create_token_contract.tokensMade();
-        const tokenAddress = await create_token_contract.customTokens(tokens_created - 1);
-        console.log(tokenAddress);
+            const tokens_created = await create_token_contract.tokensMade();
+            const tokenAddress = await create_token_contract.customTokens(tokens_created - 1);
+            console.log(tokenAddress);
+        }
     }
     
     return (
@@ -147,5 +149,4 @@ const CreateToken = () => {
         </AppBody>
     );
 }
-
 export default CreateToken;
