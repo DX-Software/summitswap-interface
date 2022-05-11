@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Button } from '@koda-finance/summitswap-uikit'
@@ -8,6 +7,9 @@ import { useToken } from 'hooks/Tokens'
 import { useStakingContract } from 'hooks/useContract'
 import { BigNumber, utils } from 'ethers'
 import CurrencyLogo from 'components/CurrencyLogo'
+import useKapexPrice from 'hooks/useKapexPrice'
+import useKodaPrice from 'hooks/useKodaPrice'
+import CustomLightSpinner from 'components/CustomLightSpinner'
 import NavBar from './Navbar'
 import { KAPEX, KODA } from '../../constants'
 
@@ -25,21 +27,34 @@ const ClaimContainer = styled.div`
 const TokenInfo = styled.div`
   display: inline-flex;
   align-items: center;
+  gap: 10px;
+`
+
+const AmountContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 `
 
 export default function Claim() {
   const { account, library } = useWeb3React()
 
+  const kodaPrice = useKodaPrice()
+  const kapexPrice = useKapexPrice()
+
   const stakingContract = useStakingContract(true)
 
   const [isLoading, setIsLoading] = useState(false)
-  const [pendingKoda, setPendingKoda] = useState(BigNumber.from(0))
-  const [pendingKapex, setPendingKapex] = useState(BigNumber.from(0))
+  const [pendingKoda, setPendingKoda] = useState<BigNumber>()
+  const [pendingKapex, setPendingKapex] = useState<BigNumber>()
 
   const kodaToken = useToken(KODA.address)
   const kapexToken = useToken(KAPEX.address)
 
   const fetchPendingRewards = useCallback(async () => {
+    setPendingKoda(undefined)
+    setPendingKapex(undefined)
+
     if (!stakingContract || !account) {
       setPendingKoda(BigNumber.from(0))
       setPendingKapex(BigNumber.from(0))
@@ -48,15 +63,13 @@ export default function Claim() {
 
     setIsLoading(true)
     const fetchedPendingKoda = (await stakingContract.premiumOf(KODA.address, account)) as BigNumber
-    setIsLoading(false)
-
     setPendingKoda(fetchedPendingKoda)
+    setIsLoading(false)
 
     setIsLoading(true)
     const fetchedPendingKapex = (await stakingContract.premiumOf(KAPEX.address, account)) as BigNumber
-    setIsLoading(false)
-
     setPendingKapex(fetchedPendingKapex)
+    setIsLoading(false)
   }, [account, stakingContract])
 
   useEffect(() => {
@@ -87,35 +100,41 @@ export default function Claim() {
       <br />
       <NavBar activeIndex={1} />
       <p>Pending rewards</p>
-      <ClaimContainer>
-        <b>
+      {pendingKoda && (
+        <ClaimContainer>
           <TokenInfo>
             <CurrencyLogo currency={kodaToken ?? undefined} size="24px" />
-            &nbsp;
-            {utils.formatUnits(pendingKoda, KODA.decimals)}
-            &nbsp; KODA
+            <AmountContainer>
+              <b>
+                {utils.formatUnits(pendingKoda, KODA.decimals)}
+                &nbsp;KODA
+              </b>
+              {(+utils.formatUnits(pendingKoda, KODA.decimals) * kodaPrice).toFixed(8)}$
+            </AmountContainer>
           </TokenInfo>
-        </b>
-        <Button disabled={isLoading || pendingKoda.lte(BigNumber.from(0))} onClick={() => claim(KODA.address)}>
-          CLAIM
-        </Button>
-      </ClaimContainer>
-      <ClaimContainer>
-        <b>
+          <Button disabled={isLoading || pendingKoda.lte(BigNumber.from(0))} onClick={() => claim(KODA.address)}>
+            CLAIM
+          </Button>
+        </ClaimContainer>
+      )}
+      {pendingKapex && (
+        <ClaimContainer>
           <TokenInfo>
             <CurrencyLogo currency={kapexToken ?? undefined} size="24px" />
-            &nbsp;
-            {utils.formatUnits(pendingKapex, KAPEX.decimals)}
-            &nbsp; KAPEX
+            <AmountContainer>
+              <b>
+                {utils.formatUnits(pendingKapex, KAPEX.decimals)}
+                &nbsp;KAPEX
+              </b>
+              {(+utils.formatUnits(pendingKapex, KAPEX.decimals) * kapexPrice).toFixed(8)}$
+            </AmountContainer>
           </TokenInfo>
-        </b>
-        <Button
-          disabled={isLoading || pendingKapex.lte(BigNumber.from(0))}
-          onClick={() => claim(KAPEX.address)}
-        >
-          CLAIM
-        </Button>
-      </ClaimContainer>
+          <Button disabled={isLoading || pendingKapex.lte(BigNumber.from(0))} onClick={() => claim(KAPEX.address)}>
+            CLAIM
+          </Button>
+        </ClaimContainer>
+      )}
+      {isLoading && <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="45px" />}
     </AppBody>
   )
 }

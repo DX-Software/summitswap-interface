@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { Radio, Input, Button, Text } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
@@ -8,15 +8,18 @@ import { BigNumber, utils } from 'ethers'
 import { useToken } from 'hooks/Tokens'
 import AppBody from 'pages/AppBody'
 import CurrencyLogo from 'components/CurrencyLogo'
-import { APY, maximumKodaReward } from 'constants/staking'
+import useKapexPrice from 'hooks/useKapexPrice'
+import useKodaPrice from 'hooks/useKodaPrice'
+import CustomLightSpinner from 'components/CustomLightSpinner'
+import useDebounce from 'hooks/useDebounce'
+import { APYs, lockingPeriods, maximumKodaYearlyReward } from '../../constants/staking'
 import NavBar from './Navbar'
-import { DEAD_ADDRESS, MAX_UINT256, STAKING_ADDRESS, STAKING_POOL_ADDRESS } from '../../constants'
+import { DEAD_ADDRESS, KAPEX, KODA, MAX_UINT256, STAKING_ADDRESS, STAKING_POOL_ADDRESS } from '../../constants'
 import './styles.css'
-import { Deposit as IDeposit } from './types'
 
 const RadioContainer = styled.div`
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   flex-wrap: wrap;
   gap: 10px;
   margin: 10px 0;
@@ -46,6 +49,8 @@ const ButtonsContainer = styled.div`
 `
 
 const InfoContainer = styled.div`
+  overflow: hidden;
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -60,119 +65,139 @@ export default function Deposit() {
 
   const stakingContract = useStakingContract(true)
 
-  const [amount, setAmount] = useState('')
-  const [lockDuration, setLockDuration] = useState('31556916')
-  const [currentRatingScore, setCurrentRatingScore] = useState(BigNumber.from(0))
-  const [ratingScoreGained, setRatingScoreGained] = useState(BigNumber.from(0))
-  const [stakingTokenAddress, setStakingTokenAddress] = useState<string>()
+  const [inputAmount, setInputAmount] = useState('')
+  const amount = useDebounce(inputAmount, 1000)
+
+  const [lockDuration, setLockDuration] = useState(`${lockingPeriods._12Months}`)
+  const [currentKodaRatingScore, setCurrentKodaRatingScore] = useState<BigNumber>()
+
+  const kodaRatingScoreGained = useMemo(() => {
+    if (!amount) {
+      return BigNumber.from(0)
+    }
+
+    return utils.parseUnits(amount, KODA.decimals).mul(APYs[KODA.address][lockDuration])
+  }, [amount, lockDuration])
+
   const [needsToApprove, setNeedsToApprove] = useState(true)
   const [isAmountValid, setIsAmountValid] = useState(false)
   const [amountError, setAmountError] = useState('')
 
   const [isLoading, setIsLoading] = useState(false)
 
-  const stakingTokenContract = useTokenContract(stakingTokenAddress)
-  const stakingToken = useToken(stakingTokenAddress)
+  const kodaTokenContract = useTokenContract(KODA.address)
+  const kodaToken = useToken(KODA.address)
   const [stakingTokenBalance, setStakingTokenBalance] = useState(BigNumber.from(0))
 
-  const [noLockingStakedAmount, setNoLockingStakedAmount] = useState('...')
-  const [threeMonthsStakedAmount, setThreeMonthsStakedAmount] = useState('...')
-  const [sixMonthsStakedAmount, setSixMonthsStakedAmount] = useState('...')
-  const [yearStakedAmount, setYearStakedAmount] = useState('...')
+  // Statistics
+  const [noLockingStakedAmount, setNoLockingStakedAmount] = useState<string>()
+  const [threeMonthsStakedAmount, setThreeMonthsStakedAmount] = useState<string>()
+  const [sixMonthsStakedAmount, setSixMonthsStakedAmount] = useState<string>()
+  const [yearStakedAmount, setYearStakedAmount] = useState<string>()
+  const [apy, setApy] = useState<string>()
+  const [circulatingAmount, setCirculatingAmount] = useState<string>()
+  const [circulatingAmountWithStaking, setCirculatingAmountWithStaking] = useState<string>()
 
-  const [apy, setApy] = useState('...')
-  const [circulatingAmount, setCirculatingAmount] = useState('...')
+  // My statistics
+  const [userNoLockingStakedAmount, setUserNoLockingStakedAmount] = useState<string>()
+  const [userThreeMonthsStakedAmount, setUserThreeMonthsStakedAmount] = useState<string>()
+  const [userSixMonthsStakedAmount, setUserSixMonthsStakedAmount] = useState<string>()
+  const [userYearStakedAmount, setUserYearStakedAmount] = useState<string>()
+  const [totalKodaEarned, setTotalKodaEarned] = useState<string>()
+  const [totalKapexEarned, setTotalKapexEarned] = useState<string>()
+
+  const kodaPrice = useKodaPrice()
+  const kapexPrice = useKapexPrice()
 
   const fetchCirculatingSupply = useCallback(async () => {
-    if (!stakingTokenContract || !stakingToken) {
+    setCirculatingAmountWithStaking(undefined)
+    setCirculatingAmount(undefined)
+
+    if (!kodaTokenContract) {
+      setCirculatingAmountWithStaking('0')
       setCirculatingAmount('...')
       return
     }
 
-    const totalSupply = (await stakingTokenContract.totalSupply()) as BigNumber
-    const burnedAmount = (await stakingTokenContract.balanceOf(DEAD_ADDRESS)) as BigNumber
-    const stakedAmount = (await stakingTokenContract.balanceOf(STAKING_ADDRESS)) as BigNumber
-    const stakingPoolAmount = (await stakingTokenContract.balanceOf(STAKING_POOL_ADDRESS)) as BigNumber
+    const totalSupply = (await kodaTokenContract.totalSupply()) as BigNumber
+    const burnedAmount = (await kodaTokenContract.balanceOf(DEAD_ADDRESS)) as BigNumber
+    const stakedAmount = (await kodaTokenContract.balanceOf(STAKING_ADDRESS)) as BigNumber
+    const stakingPoolAmount = (await kodaTokenContract.balanceOf(STAKING_POOL_ADDRESS)) as BigNumber
 
     const circulatingSupply = totalSupply.sub(burnedAmount).sub(stakedAmount).sub(stakingPoolAmount)
+    const circulatingSupplyWithtStaking = totalSupply.sub(burnedAmount).sub(stakingPoolAmount)
 
-    setCirculatingAmount(Math.floor(Number(utils.formatUnits(circulatingSupply, stakingToken.decimals))).toString())
-  }, [stakingToken, stakingTokenContract])
+    setCirculatingAmountWithStaking(utils.formatUnits(circulatingSupplyWithtStaking, KODA.decimals))
+    setCirculatingAmount(Math.floor(Number(utils.formatUnits(circulatingSupply, KODA.decimals))).toString())
+  }, [kodaTokenContract])
 
   useEffect(() => {
     fetchCirculatingSupply()
   }, [fetchCirculatingSupply])
 
   const fetchStakingTokenBalance = useCallback(async () => {
-    if (!account || !stakingTokenContract) {
+    if (!account || !kodaTokenContract) {
       setStakingTokenBalance(BigNumber.from(0))
       return
     }
 
-    const fetchedBalance = (await stakingTokenContract.balanceOf(account)) as BigNumber
+    const fetchedBalance = (await kodaTokenContract.balanceOf(account)) as BigNumber
 
     setStakingTokenBalance(fetchedBalance)
-  }, [account, stakingTokenContract])
+  }, [account, kodaTokenContract])
 
   useEffect(() => {
     fetchStakingTokenBalance()
   }, [fetchStakingTokenBalance])
 
   const fetchApy = useCallback(async () => {
-    if (!stakingContract || !stakingToken) {
+    setApy(undefined)
+
+    if (!stakingContract || !currentKodaRatingScore) {
       setApy('...')
       return
     }
 
-    async function getReward(lockFor: number) {
-      let stakedAmount = (await stakingContract!.kCounter(lockFor)) as BigNumber
-
-      if (+lockDuration === lockFor) {
-        stakedAmount = stakedAmount.add(utils.parseUnits(amount || '0', stakingToken?.decimals))
-      }
-
-      const reward = stakedAmount.mul(APY[lockFor]).div(100)
-
-      return reward
-    }
-
+    setIsLoading(true)
     try {
-      const _0MonthsRewards = await getReward(0)
-      const _3MonthsRewards = await getReward(7889229)
-      const _6MonthsRewards = await getReward(15778458)
-      const _1YearRewards = await getReward(31556916)
+      const myRating = currentKodaRatingScore.add(kodaRatingScoreGained)
+      const kodaTotalRating = kodaRatingScoreGained.add(await stakingContract.totalRatings(KODA.address))
 
-      let totalRewards = _0MonthsRewards.add(_3MonthsRewards).add(_6MonthsRewards).add(_1YearRewards)
+      let totalRewards = kodaTotalRating.div(100)
+      totalRewards = totalRewards.gt(maximumKodaYearlyReward) ? maximumKodaYearlyReward : totalRewards
 
-      totalRewards = totalRewards.gt(maximumKodaReward) ? maximumKodaReward : totalRewards
-
-      const myRating = currentRatingScore.add(ratingScoreGained)
-      const totalRating = ratingScoreGained.add(await stakingContract.totalRating())
-
-      const willEarn = totalRewards.mul(myRating).div(totalRating)
+      const willEarn = totalRewards.mul(myRating).div(kodaTotalRating)
 
       const myStakedAmount = utils
-        .parseUnits(amount || '0', stakingToken.decimals)
-        .add(await stakingContract.accounts(account ?? DEAD_ADDRESS).then((o) => o.totalDepositAmount)) as BigNumber
+        .parseUnits(amount || '0', KODA.decimals)
+        .add(await stakingContract.userTotalDeposits(account ?? DEAD_ADDRESS)) as BigNumber
 
       const calculatedApy =
-        (+utils.formatUnits(willEarn, stakingToken.decimals) /
-          +utils.formatUnits(myStakedAmount, stakingToken.decimals)) *
-        100
+        (+utils.formatUnits(willEarn, KODA.decimals) / +utils.formatUnits(myStakedAmount, KODA.decimals)) * 100
 
-      setApy(calculatedApy.toFixed(2))
+      if (calculatedApy) {
+        setApy(calculatedApy.toFixed(2))
+      } else {
+        setApy('...')
+      }
     } catch (err) {
       console.warn(err)
       setApy('...')
     }
-  }, [account, amount, currentRatingScore, lockDuration, ratingScoreGained, stakingContract, stakingToken])
+    setIsLoading(false)
+  }, [account, amount, currentKodaRatingScore, kodaRatingScoreGained, stakingContract])
 
   useEffect(() => {
     fetchApy()
   }, [fetchApy])
 
   const fetchStakedAmounts = useCallback(async () => {
-    if (!stakingContract || !stakingToken) {
+    setNoLockingStakedAmount(undefined)
+    setThreeMonthsStakedAmount(undefined)
+    setSixMonthsStakedAmount(undefined)
+    setYearStakedAmount(undefined)
+
+    if (!stakingContract) {
       setNoLockingStakedAmount('...')
       setThreeMonthsStakedAmount('...')
       setSixMonthsStakedAmount('...')
@@ -180,113 +205,124 @@ export default function Deposit() {
       return
     }
 
-    const fetchedNoLockingStakedAmount = (await stakingContract.kCounter(0)) as BigNumber
-    setNoLockingStakedAmount(utils.formatUnits(fetchedNoLockingStakedAmount, stakingToken.decimals))
+    const fetchedNoLockingStakedAmount = (await stakingContract.lockAmounts(lockingPeriods._0Months)) as BigNumber
+    setNoLockingStakedAmount(utils.formatUnits(fetchedNoLockingStakedAmount, KODA.decimals).split('.')[0])
 
-    const fetchedThreeMonthsStakedAmount = (await stakingContract.kCounter(7889229)) as BigNumber
-    setThreeMonthsStakedAmount(utils.formatUnits(fetchedThreeMonthsStakedAmount, stakingToken.decimals))
+    const fetchedThreeMonthsStakedAmount = (await stakingContract.lockAmounts(lockingPeriods._3Months)) as BigNumber
+    setThreeMonthsStakedAmount(utils.formatUnits(fetchedThreeMonthsStakedAmount, KODA.decimals).split('.')[0])
 
-    const fetchedSixMonthsStakedAmount = (await stakingContract.kCounter(15778458)) as BigNumber
-    setSixMonthsStakedAmount(utils.formatUnits(fetchedSixMonthsStakedAmount, stakingToken.decimals))
+    const fetchedSixMonthsStakedAmount = (await stakingContract.lockAmounts(lockingPeriods._6Months)) as BigNumber
+    setSixMonthsStakedAmount(utils.formatUnits(fetchedSixMonthsStakedAmount, KODA.decimals).split('.')[0])
 
-    const fetchedYearStakedAmount = (await stakingContract.kCounter(31556916)) as BigNumber
-    setYearStakedAmount(utils.formatUnits(fetchedYearStakedAmount, stakingToken.decimals))
-  }, [stakingContract, stakingToken])
+    const fetchedYearStakedAmount = (await stakingContract.lockAmounts(lockingPeriods._12Months)) as BigNumber
+    setYearStakedAmount(utils.formatUnits(fetchedYearStakedAmount, KODA.decimals).split('.')[0])
+  }, [stakingContract])
 
   useEffect(() => {
     fetchStakedAmounts()
   }, [fetchStakedAmounts])
 
-  useEffect(() => {
-    if (!amount || !stakingToken || !stakingTokenBalance) {
+  const fetchPersonalStakedAmounts = useCallback(async () => {
+    setUserNoLockingStakedAmount(undefined)
+    setUserThreeMonthsStakedAmount(undefined)
+    setUserSixMonthsStakedAmount(undefined)
+    setUserYearStakedAmount(undefined)
+
+    if (!stakingContract || !account) {
+      setUserNoLockingStakedAmount('...')
+      setUserThreeMonthsStakedAmount('...')
+      setUserSixMonthsStakedAmount('...')
+      setUserYearStakedAmount('...')
       return
     }
-    if (utils.parseUnits(amount, stakingToken.decimals).lte(BigNumber.from(0))) {
+
+    const fetchedNoLockingStakedAmount = (await stakingContract.userDeposits(
+      account,
+      lockingPeriods._0Months
+    )) as BigNumber
+    setUserNoLockingStakedAmount(utils.formatUnits(fetchedNoLockingStakedAmount, KODA.decimals))
+
+    const fetchedThreeMonthsStakedAmount = (await stakingContract.userDeposits(
+      account,
+      lockingPeriods._3Months
+    )) as BigNumber
+    setUserThreeMonthsStakedAmount(utils.formatUnits(fetchedThreeMonthsStakedAmount, KODA.decimals))
+
+    const fetchedSixMonthsStakedAmount = (await stakingContract.userDeposits(
+      account,
+      lockingPeriods._6Months
+    )) as BigNumber
+    setUserSixMonthsStakedAmount(utils.formatUnits(fetchedSixMonthsStakedAmount, KODA.decimals))
+
+    const fetchedYearStakedAmount = (await stakingContract.userDeposits(account, lockingPeriods._12Months)) as BigNumber
+    setUserYearStakedAmount(utils.formatUnits(fetchedYearStakedAmount, KODA.decimals))
+  }, [stakingContract, account])
+
+  useEffect(() => {
+    fetchPersonalStakedAmounts()
+  }, [fetchPersonalStakedAmounts])
+
+  useEffect(() => {
+    if (!amount || !stakingTokenBalance) {
+      return
+    }
+    if (utils.parseUnits(amount, KODA.decimals).lte(BigNumber.from(0))) {
       setIsAmountValid(false)
       setAmountError('Please input a positive amount')
-    } else if (utils.parseUnits(amount, stakingToken.decimals).gt(stakingTokenBalance)) {
+    } else if (utils.parseUnits(amount, KODA.decimals).gt(stakingTokenBalance)) {
       setIsAmountValid(false)
       setAmountError("You don't have enough tokens")
     } else {
       setIsAmountValid(true)
     }
-  }, [amount, stakingToken, stakingTokenBalance])
+  }, [amount, stakingTokenBalance])
 
   useEffect(() => {
     async function fetchAllowance() {
-      if (!account || !amount || !stakingTokenContract || !stakingContract) {
+      if (!account || !amount || !kodaTokenContract || !stakingContract) {
         return
       }
 
-      const allowance = (await stakingTokenContract.allowance(account, stakingContract.address)) as BigNumber
+      const allowance = (await kodaTokenContract.allowance(account, stakingContract.address)) as BigNumber
 
       setNeedsToApprove(allowance.lt(utils.parseUnits(amount, 'gwei')))
     }
 
     fetchAllowance()
-  }, [account, amount, stakingTokenContract, stakingContract])
-
-  useEffect(() => {
-    async function fetchStakingTokenAddress() {
-      if (!stakingContract) {
-        setStakingTokenAddress(undefined)
-        return
-      }
-
-      const fetchedStakingTokenAddress = (await stakingContract.stakingToken()) as string
-
-      setStakingTokenAddress(fetchedStakingTokenAddress)
-    }
-
-    fetchStakingTokenAddress()
-  }, [stakingContract])
+  }, [account, amount, kodaTokenContract, stakingContract])
 
   useEffect(() => {
     async function fetchCurrentRatingScore() {
+      setCurrentKodaRatingScore(undefined)
+
       if (!stakingContract || !account) {
-        setCurrentRatingScore(BigNumber.from(0))
+        setCurrentKodaRatingScore(BigNumber.from(0))
         return
       }
 
       setIsLoading(true)
-      const fetchedRatingScore = (await stakingContract.accounts(account).then((o) => o.rating)) as BigNumber
+      const fetchedKodaRatingScore = (await stakingContract.ratings(KODA.address, account)) as BigNumber
       setIsLoading(false)
 
-      setCurrentRatingScore(fetchedRatingScore)
+      setCurrentKodaRatingScore(fetchedKodaRatingScore)
     }
 
     fetchCurrentRatingScore()
   }, [stakingContract, account])
 
-  useEffect(() => {
-    async function fetchRatingScoreGained() {
-      if (!amount || !stakingContract || !stakingToken || !stakingToken) {
-        setRatingScoreGained(BigNumber.from(0))
-        return
-      }
-
-      setIsLoading(true)
-      const K = (await stakingContract.k(+lockDuration)) as BigNumber
-      setIsLoading(false)
-
-      setRatingScoreGained(utils.parseUnits(amount, stakingToken.decimals).mul(K))
-    }
-
-    fetchRatingScoreGained()
-  }, [amount, lockDuration, stakingContract, stakingToken])
-
   const deposit = useCallback(async () => {
-    if (!account || !lockDuration || !amount || !stakingContract || !stakingToken) {
+    if (!account || !lockDuration || !amount || !stakingContract) {
       return
     }
 
     setIsLoading(true)
     try {
-      const receipt = await stakingContract.putDeposit(utils.parseUnits(amount, stakingToken.decimals), lockDuration)
+      const receipt = await stakingContract.putDeposit(utils.parseUnits(amount, KODA.decimals), lockDuration)
       await library.waitForTransaction(receipt.hash)
       fetchStakingTokenBalance()
-      setCurrentRatingScore(currentRatingScore.add(ratingScoreGained))
+      setCurrentKodaRatingScore((currentKodaRatingScore ?? BigNumber.from(0)).add(kodaRatingScoreGained))
       fetchStakedAmounts()
+      fetchPersonalStakedAmounts()
       fetchApy()
     } catch (err) {
       console.warn(err)
@@ -294,41 +330,62 @@ export default function Deposit() {
     setIsLoading(false)
   }, [
     account,
-    amount,
-    currentRatingScore,
-    fetchApy,
-    fetchStakedAmounts,
-    fetchStakingTokenBalance,
-    library,
     lockDuration,
-    ratingScoreGained,
+    amount,
     stakingContract,
-    stakingToken,
+    library,
+    fetchStakingTokenBalance,
+    currentKodaRatingScore,
+    kodaRatingScoreGained,
+    fetchStakedAmounts,
+    fetchPersonalStakedAmounts,
+    fetchApy,
   ])
 
+  useEffect(() => {
+    async function fetchTotalEarned() {
+      setTotalKodaEarned(undefined)
+      setTotalKapexEarned(undefined)
+
+      if (!stakingContract || !account) {
+        setTotalKodaEarned('...')
+        setTotalKapexEarned('...')
+        return
+      }
+
+      const fetchedTotalKodaEarned = (await stakingContract.tokensEarned(KODA.address, account)) as BigNumber
+      setTotalKodaEarned(utils.formatUnits(fetchedTotalKodaEarned, KODA.decimals))
+
+      const fetchedTotalKapexEarned = (await stakingContract.tokensEarned(KAPEX.address, account)) as BigNumber
+      setTotalKapexEarned(utils.formatUnits(fetchedTotalKapexEarned, KAPEX.decimals))
+    }
+
+    fetchTotalEarned()
+  }, [stakingContract, account])
+
   const approve = useCallback(async () => {
-    if (!account || !stakingTokenContract || !stakingContract) {
+    if (!account || !kodaTokenContract || !stakingContract) {
       return
     }
 
     setIsLoading(true)
     try {
-      const receipt = await stakingTokenContract.approve(stakingContract.address, MAX_UINT256)
+      const receipt = await kodaTokenContract.approve(stakingContract.address, MAX_UINT256)
       await library.waitForTransaction(receipt.hash)
       setNeedsToApprove(false)
     } catch (err) {
       console.warn(err)
     }
     setIsLoading(false)
-  }, [account, stakingTokenContract, stakingContract, library])
+  }, [account, kodaTokenContract, stakingContract, library])
 
   const onMax = useCallback(() => {
-    if (!stakingTokenBalance || !stakingToken) {
+    if (!stakingTokenBalance) {
       return
     }
 
-    setAmount(utils.formatUnits(stakingTokenBalance ?? BigNumber.from(0), stakingToken.decimals))
-  }, [stakingTokenBalance, stakingToken])
+    setInputAmount(utils.formatUnits(stakingTokenBalance ?? BigNumber.from(0), KODA.decimals))
+  }, [stakingTokenBalance])
 
   return (
     <AppBody>
@@ -338,15 +395,15 @@ export default function Deposit() {
       <Input
         placeholder="0.00"
         type="number"
-        value={amount}
-        onChange={(o) => setAmount(o.target.value)}
+        value={inputAmount}
+        onChange={(o) => setInputAmount(o.target.value)}
         style={{ margin: '10px 0' }}
       />
       {!isAmountValid && <Text color="red">{amountError}</Text>}
       <BalanceContainer>
         <Balance>
-          <CurrencyLogo currency={stakingToken ?? undefined} size="24px" style={{ marginRight: '8px' }} />
-          Balance: {utils.formatUnits(stakingTokenBalance ?? BigNumber.from(0), stakingToken?.decimals)}
+          <CurrencyLogo currency={kodaToken ?? undefined} size="24px" style={{ marginRight: '8px' }} />
+          Balance: {utils.formatUnits(stakingTokenBalance ?? BigNumber.from(0), KODA.decimals)}
         </Balance>
         <Button onClick={onMax} scale="xxs" variant="tertiary">
           MAX
@@ -356,37 +413,69 @@ export default function Deposit() {
         <p>Locking period</p>
         <RadioContainer onChange={(o: React.ChangeEvent<HTMLInputElement>) => setLockDuration(o.target.value)}>
           <label>
-            <Radio id="name" name="locking-duration" value="7889229" checked={lockDuration === '7889229'} /> 3 Months
+            <Radio
+              id="name"
+              name="locking-duration"
+              value={lockingPeriods._0Months}
+              checked={+lockDuration === lockingPeriods._0Months}
+            />{' '}
+            No locking (APY {APYs[KODA.address][lockingPeriods._0Months].toString()}%)
           </label>
           <label>
-            <Radio id="name" name="locking-duration" value="15778458" checked={lockDuration === '15778458'} /> 6 Months
+            <Radio
+              id="name"
+              name="locking-duration"
+              value={lockingPeriods._3Months}
+              checked={+lockDuration === lockingPeriods._3Months}
+            />{' '}
+            3 Months (APY {APYs[KODA.address][lockingPeriods._3Months].toString()}%)
           </label>
           <label>
-            <Radio id="name" name="locking-duration" value="31556916" checked={lockDuration === '31556916'} /> 12 Months
+            <Radio
+              id="name"
+              name="locking-duration"
+              value={lockingPeriods._6Months}
+              checked={+lockDuration === lockingPeriods._6Months}
+            />{' '}
+            6 Months (APY {APYs[KODA.address][lockingPeriods._6Months].toString()}%)
           </label>
           <label>
-            <Radio id="name" name="locking-duration" value="0" checked={lockDuration === '0'} /> No locking
+            <Radio
+              id="name"
+              name="locking-duration"
+              value={lockingPeriods._12Months}
+              checked={+lockDuration === lockingPeriods._12Months}
+            />{' '}
+            12 Months (APY {APYs[KODA.address][lockingPeriods._12Months].toString()}%)
           </label>
         </RadioContainer>
       </LockingPeriod>
       <InfoContainer>
         <p>
           Current rating score:&nbsp;
-          <b>{utils.formatUnits(currentRatingScore, stakingToken?.decimals)}</b>
+          <b>{utils.formatUnits(currentKodaRatingScore ?? BigNumber.from(0), KODA.decimals)}</b>
         </p>
         <p>
           Gained rating score:&nbsp;
-          <b>{utils.formatUnits(ratingScoreGained, stakingToken?.decimals)}</b>
+          <b>{utils.formatUnits(kodaRatingScoreGained, KODA.decimals)}</b>
         </p>
         <p>
           New rating score:&nbsp;
-          <b>{utils.formatUnits(currentRatingScore.add(ratingScoreGained), stakingToken?.decimals)}</b>
+          <b>
+            {utils.formatUnits((currentKodaRatingScore ?? BigNumber.from(0)).add(kodaRatingScoreGained), KODA.decimals)}
+          </b>
         </p>
-
         <p>
-          APY: <b>{apy} % + KAPEX BONUSES</b>
+          APY: <b>{apy}% + KAPEX BONUSES</b>
         </p>
+        {(!apy || !currentKodaRatingScore) && (
+          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+            <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="45px" />
+          </div>
+        )}
       </InfoContainer>
+      <Text fontSize="14px">*APY is variable and based on the overall staking statistics.</Text>
+      <Text fontSize="14px">*APY will reduce as more of the supply is staked.</Text>
       <ButtonsContainer>
         <Button disabled={!amount || isLoading || !needsToApprove || !isAmountValid} onClick={approve}>
           APPROVE
@@ -395,23 +484,109 @@ export default function Deposit() {
           DEPOSIT
         </Button>
       </ButtonsContainer>
+
+      {account && (
+        <>
+          <p>My Statistics </p>
+          <InfoContainer>
+            {userNoLockingStakedAmount &&
+            userThreeMonthsStakedAmount &&
+            userSixMonthsStakedAmount &&
+            totalKodaEarned &&
+            totalKapexEarned &&
+            userYearStakedAmount ? (
+              <>
+                <p>
+                  No Lock: <b>{userNoLockingStakedAmount} KODA</b>&nbsp;($
+                  {Math.floor(+userNoLockingStakedAmount * kodaPrice).toLocaleString('en')}) {' | '}
+                  {APYs[KODA.address][lockingPeriods._0Months].toString()}% APY
+                </p>
+                <p>
+                  3 Months: <b>{userThreeMonthsStakedAmount} KODA</b>&nbsp;($
+                  {Math.floor(+userThreeMonthsStakedAmount * kodaPrice).toLocaleString('en')}) {' | '}
+                  {APYs[KODA.address][lockingPeriods._3Months].toString()}% APY
+                </p>
+                <p>
+                  6 Months: <b>{userSixMonthsStakedAmount} KODA</b>&nbsp;($
+                  {Math.floor(+userSixMonthsStakedAmount * kodaPrice).toLocaleString('en')}) {' | '}
+                  {APYs[KODA.address][lockingPeriods._6Months].toString()}% APY
+                </p>
+                <p>
+                  12 Months: <b>{userYearStakedAmount} KODA</b>&nbsp;($
+                  {Math.floor(+userYearStakedAmount * kodaPrice).toLocaleString('en')}) {' | '}
+                  {APYs[KODA.address][lockingPeriods._12Months].toString()}% APY
+                </p>
+                <p>
+                  KODA Earned: <b> {totalKodaEarned} KODA</b>
+                </p>
+                <p>
+                  KAPEX Earned: <b> {totalKapexEarned} KAPEX</b>
+                </p>
+              </>
+            ) : (
+              <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="45px" />
+            )}
+          </InfoContainer>
+        </>
+      )}
+
       <p>Statistics </p>
       <InfoContainer>
-        <p>
-          No locking: <b>{noLockingStakedAmount} KODA</b>
-        </p>
-        <p>
-          3 Months: <b>{threeMonthsStakedAmount} KODA</b>
-        </p>
-        <p>
-          6 Months: <b>{sixMonthsStakedAmount} KODA</b>
-        </p>
-        <p>
-          12 Months: <b>{yearStakedAmount} KODA</b>
-        </p>
-        <p>
-          Circulating: <b> {circulatingAmount} KODA</b>
-        </p>
+        {noLockingStakedAmount &&
+        threeMonthsStakedAmount &&
+        sixMonthsStakedAmount &&
+        yearStakedAmount &&
+        circulatingAmount &&
+        circulatingAmountWithStaking ? (
+          <>
+            <p>
+              No Lock: <b>{noLockingStakedAmount} KODA</b>
+              {' | '}
+              {APYs[KODA.address][lockingPeriods._0Months].toString()}% APY
+            </p>
+            <p>
+              3 Months: <b>{threeMonthsStakedAmount} KODA</b>
+              {' | '}
+              {APYs[KODA.address][lockingPeriods._3Months].toString()}% APY
+            </p>
+            <p>
+              6 Months: <b>{sixMonthsStakedAmount} KODA</b>
+              {' | '}
+              {APYs[KODA.address][lockingPeriods._6Months].toString()}% APY
+            </p>
+            <p>
+              12 Months: <b>{yearStakedAmount} KODA</b>
+              {' | '}
+              {APYs[KODA.address][lockingPeriods._12Months].toString()}% APY
+            </p>
+            <p>
+              Circulating: <b> {circulatingAmount} KODA</b>
+            </p>
+            <p>
+              Total staked:{' '}
+              <b>
+                {(
+                  ((+noLockingStakedAmount + +threeMonthsStakedAmount + +sixMonthsStakedAmount + +yearStakedAmount) *
+                    100) /
+                  +circulatingAmountWithStaking
+                ).toFixed(3)}
+                %
+              </b>
+            </p>
+            <p>
+              Total locked staked:{' '}
+              <b>
+                {(
+                  ((+threeMonthsStakedAmount + +sixMonthsStakedAmount + +yearStakedAmount) * 100) /
+                  +circulatingAmountWithStaking
+                ).toFixed(3)}
+                %
+              </b>
+            </p>
+          </>
+        ) : (
+          <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="45px" />
+        )}
       </InfoContainer>
     </AppBody>
   )

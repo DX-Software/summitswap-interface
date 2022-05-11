@@ -1,7 +1,6 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Button, Text, useModal } from '@koda-finance/summitswap-uikit'
+import { Button, Text } from '@koda-finance/summitswap-uikit'
 import AppBody from 'pages/AppBody'
 import { useWeb3React } from '@web3-react/core'
 import { useStakingContract } from 'hooks/useContract'
@@ -12,6 +11,8 @@ import { useToken } from 'hooks/Tokens'
 import CustomLightSpinner from 'components/CustomLightSpinner'
 import NavBar from './Navbar'
 import { Deposit } from './types'
+import { KODA } from '../../constants'
+import PenaltyWithdrawModal from './PenaltyWithdrawModal'
 
 const DepositContainer = styled.div`
   display: flex;
@@ -33,28 +34,17 @@ export default function Withdraw() {
 
   const stakingContract = useStakingContract(true)
 
-  const [stakingTokenAddress, setStakingTokenAddress] = useState<string>()
   const [isLoading, setIsLoading] = useState(false)
   const [userDeposits, setUserDeposits] = useState<Deposit[]>()
 
-  const premiumToken = useToken(stakingTokenAddress)
+  const [isWarningModalOpen, setIsWarningModalOpen] = useState(false)
+  const [depositSelected, setDepositSelected] = useState<Deposit>()
 
-  useEffect(() => {
-    async function fetchStakingTokenAddress() {
-      if (!stakingContract) {
-        setStakingTokenAddress(undefined)
-        return
-      }
-
-      const fetchedStakingTokenAddress = (await stakingContract.stakingToken()) as string
-
-      setStakingTokenAddress(fetchedStakingTokenAddress)
-    }
-
-    fetchStakingTokenAddress()
-  }, [stakingContract])
+  const kodaToken = useToken(KODA.address)
 
   const fetchUserDeposits = useCallback(async () => {
+    setUserDeposits(undefined)
+
     if (!stakingContract || !account) {
       setUserDeposits([])
       return
@@ -67,7 +57,7 @@ export default function Withdraw() {
       userDepositIds.map(async (depositId) => {
         const fetchedDeposit = await stakingContract.deposits(depositId)
 
-        return {
+        const deposit = {
           id: +depositId,
           penalty:
             (fetchedDeposit.depositAt + fetchedDeposit.lockFor) * 1000 > Date.now()
@@ -75,6 +65,9 @@ export default function Withdraw() {
               : 0,
           ...fetchedDeposit,
         }
+
+        setUserDeposits((prevDeposits) => [...(prevDeposits ?? []), deposit])
+        return deposit
       })
     )) as Deposit[]
 
@@ -83,9 +76,33 @@ export default function Withdraw() {
     setUserDeposits(deposits)
   }, [account, stakingContract])
 
+  const withdrawDirectly = useCallback(async () => {
+    if (!stakingContract || !library || !depositSelected) {
+      return
+    }
+
+    setIsLoading(true)
+    setIsWarningModalOpen(false)
+    try {
+      const receipt = await stakingContract.withdrawDeposit(depositSelected.id, depositSelected.amount)
+      await library.waitForTransaction(receipt.hash)
+      fetchUserDeposits()
+    } catch (err) {
+      console.warn(err)
+    }
+    setIsLoading(false)
+  }, [depositSelected, fetchUserDeposits, library, stakingContract])
+
   const withdraw = useCallback(
     async (deposit: Deposit) => {
       if (!stakingContract || !library) {
+        return
+      }
+
+      setDepositSelected(deposit)
+
+      if (deposit.penalty) {
+        setIsWarningModalOpen(true)
         return
       }
 
@@ -108,10 +125,15 @@ export default function Withdraw() {
 
   return (
     <AppBody>
+      <PenaltyWithdrawModal
+        open={isWarningModalOpen}
+        deposit={depositSelected}
+        handleClose={() => setIsWarningModalOpen(false)}
+        onConfirm={withdrawDirectly}
+      />
       <br />
       <NavBar activeIndex={2} />
-      {!userDeposits && <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="45px" />}
-      {userDeposits?.length === 0 && <p>You dont have any deposits</p>}
+      {!isLoading && userDeposits?.length === 0 && <p>You dont have any deposits</p>}
       {userDeposits && userDeposits.length > 0 && (
         <>
           <p>Deposits</p>
@@ -121,36 +143,46 @@ export default function Withdraw() {
                 <p>
                   Amount:&nbsp;
                   <b>
-                    {utils.formatUnits(deposit.amount, premiumToken?.decimals)}&nbsp;
+                    {utils.formatUnits(deposit.amount, kodaToken?.decimals)}&nbsp;
                     <TokenInfo>
                       KODA&nbsp;
-                      <CurrencyLogo currency={premiumToken ?? undefined} size="24px" />
+                      <CurrencyLogo currency={kodaToken ?? undefined} size="24px" />
                     </TokenInfo>
                   </b>
                 </p>
-                {!!Number(deposit.lockFor) && (
+                {!deposit.isWithdrawable && (
                   <p>
-                    Unlocks at:&nbsp;
-                    <b>{format(new Date((deposit.depositAt + deposit.lockFor) * 1000), 'dd/MM/yyyy')}</b>
+                    <Text color="yellow">Not withdrawable deposit</Text>
                   </p>
                 )}
-                <p>
-                  Deposited at:&nbsp;
-                  <b>{format(new Date(deposit.depositAt * 1000), 'dd/MM/yyyy HH:mm')}</b>
-                </p>
-                {deposit.penalty !== 0 && (
-                  <Text color="red">
-                    If you claim early, you will lose <b> {deposit.penalty / 100}%</b> of you tokens
-                  </Text>
+                {deposit.isWithdrawable && (
+                  <>
+                    {!!Number(deposit.lockFor) && (
+                      <p>
+                        Unlocks at:&nbsp;
+                        <b>{format(new Date((deposit.depositAt + deposit.lockFor) * 1000), 'dd/MM/yyyy')}</b>
+                      </p>
+                    )}
+                    <p>
+                      Deposited at:&nbsp;
+                      <b>{format(new Date(deposit.depositAt * 1000), 'dd/MM/yyyy HH:mm')}</b>
+                    </p>
+                    {deposit.penalty !== 0 && (
+                      <Text color="red">
+                        If you claim early, you will lose <b> {deposit.penalty / 100}%</b> of you tokens
+                      </Text>
+                    )}
+                    <Button disabled={isLoading} onClick={() => withdraw(deposit)}>
+                      WITHDRAW
+                    </Button>
+                  </>
                 )}
-                <Button disabled={isLoading} onClick={() => withdraw(deposit)}>
-                  WITHDRAW
-                </Button>
               </DepositContainer>
             ))}
           </div>
         </>
       )}
+      {!userDeposits && <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="45px" />}
     </AppBody>
   )
 }
