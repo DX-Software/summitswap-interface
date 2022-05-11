@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { ethers } from 'ethers';
 import axios, { Method } from 'axios';
@@ -48,6 +48,25 @@ const Inputs = styled.input`
     color: white;
     flex: 1;
 `
+const MessageContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    height: 100px;
+`
+
+const Message = styled.p`
+    font-size: 1.2rem;
+    a {
+        :hover {
+            cursor: pointer;
+            color: #00d4a4;
+            text-decoration: none;
+        }
+        text-decoration: underline #00d4a4;
+    }
+`
 
 const CreateToken = () => {
     const [name, setName] = useState('');
@@ -55,7 +74,10 @@ const CreateToken = () => {
     const [decimals, setDecimals] = useState('');
     const [supply, setSupply] = useState('');
     const [loading, setLoading] = useState(false);
+    const [created, setCreated] = useState(false);
     const [error, setError] = useState('');
+    const [tokenAddress, setTokenAddress] = useState('');
+    const [txAddress, setTxAddress] = useState('');
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -69,83 +91,103 @@ const CreateToken = () => {
             try{
                 const tx = await create_token_contract.create(name, symbol, decimals, ethers.utils.parseUnits(supply), CREATE_TOKEN_FEE_RECEIVER_ADDRESS, {value: ethers.utils.parseUnits("0.01")});
                 setLoading(true);
+                console.log(tx);
+                setTxAddress(tx.hash)
                 await tx.wait();
                 setLoading(false);
+                setCreated(true);
             } catch {
                 setError("It was not possible to create the token");
             }
 
             const tokens_created = await create_token_contract.tokensMade();
-            const tokenAddress = await create_token_contract.customTokens(tokens_created - 1);
-            console.log(tokenAddress);
+            const tkAddress = await create_token_contract.customTokens(tokens_created - 1);
+            setTokenAddress(tkAddress);
         }
     }
-    
+
+    useEffect(() => {
+        console.log(loading, created)
+    }, [loading, created, txAddress, tokenAddress])
+
     return (
         <AppBody>
-            <Form onSubmit={(e) => {handleSubmit(e)}}>
-                <div>
-                    <Label htmlFor="name"> 
-                        <LabelText>
-                            Name
-                        </LabelText> 
-                        <Inputs 
-                            type="text" 
-                            name="name" 
-                            value={name} 
-                            placeholder='Ex: Ethereum' 
-                            required
-                            onChange={(e) => {setName(e.target.value)}}
-                        />
-                    </Label>
-                </div>
-                <div>
-                    <Label htmlFor="symbol"> 
-                        <LabelText>
-                            Symbol
-                        </LabelText>  
-                        <Inputs 
-                            type="text" 
-                            name="symbol" 
-                            value={symbol} 
-                            placeholder='Ex: ETH' 
-                            required
-                            onChange={(e) => {setSymbol(e.target.value)}}
-                        />
-                    </Label>
-                </div>
-                <div>
-                     <Label htmlFor="decimals"> 
-                        <LabelText>
-                            Decimals
-                        </LabelText>  
-                        <Inputs 
-                            type="number" 
-                            name="decimals" 
-                            value={decimals} 
-                            placeholder='Ex: 18' 
-                            required
-                            onChange={(e) => {setDecimals(e.target.value)}}
-                        />
-                    </Label>
-                </div>
-                <div>
-                    <Label htmlFor="supply"> 
-                        <LabelText>
-                            Total Supply
-                        </LabelText> 
-                        <Inputs 
-                            type="number" 
-                            name="supply" 
-                            value={supply} 
-                            placeholder='Ex: 100000000000' 
-                            required
-                            onChange={(e) => {setSupply(e.target.value)}}
-                        />
-                    </Label>
-                </div>
-                <Submit type="submit" value="CREATE TOKEN" />
-            </Form>
+            {!created && !loading && (
+                    <Form onSubmit={(e) => {handleSubmit(e)}}>
+                    <div>
+                        <Label htmlFor="name"> 
+                            <LabelText>
+                                Name
+                            </LabelText> 
+                            <Inputs 
+                                type="text" 
+                                name="name" 
+                                value={name} 
+                                placeholder='Ex: Ethereum' 
+                                required
+                                onChange={(e) => {setName(e.target.value)}}
+                            />
+                        </Label>
+                    </div>
+                    <div>
+                        <Label htmlFor="symbol"> 
+                            <LabelText>
+                                Symbol
+                            </LabelText>  
+                            <Inputs 
+                                type="text" 
+                                name="symbol" 
+                                value={symbol} 
+                                placeholder='Ex: ETH' 
+                                required
+                                onChange={(e) => {setSymbol(e.target.value)}}
+                            />
+                        </Label>
+                    </div>
+                    <div>
+                        <Label htmlFor="decimals"> 
+                            <LabelText>
+                                Decimals
+                            </LabelText>  
+                            <Inputs 
+                                type="number" 
+                                name="decimals" 
+                                value={decimals} 
+                                placeholder='Ex: 18' 
+                                required
+                                onChange={(e) => {setDecimals(e.target.value)}}
+                            />
+                        </Label>
+                    </div>
+                    <div>
+                        <Label htmlFor="supply"> 
+                            <LabelText>
+                                Total Supply
+                            </LabelText> 
+                            <Inputs 
+                                type="number" 
+                                name="supply" 
+                                value={supply} 
+                                placeholder='Ex: 100000000000' 
+                                required
+                                onChange={(e) => {setSupply(e.target.value)}}
+                            />
+                        </Label>
+                    </div>
+                    <Submit type="submit" value="CREATE TOKEN" />
+                </Form>
+            )}
+            {loading && (
+                <Message>Please wait until the transaction is complete...</Message>
+            )}
+            {created && (
+                <MessageContainer>
+                    <Message>Your token was successfully created!!</Message>
+                    <Message><a href={`https://testnet.bscscan.com/tx/${txAddress}`}>View your Transaction</a></Message>
+                    <Message><a href={`https://testnet.bscscan.com/address/${tokenAddress}`}>View your Token contract</a></Message>
+                </MessageContainer>
+                
+            )}
         </AppBody>
     );
 }
