@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Text, Checkbox, Button } from '@koda-finance/summitswap-uikit'
 import Modal from '@mui/material/Modal'
 import { utils } from 'ethers'
@@ -47,6 +47,10 @@ const ButtonsWrapper = styled.div`
 
 export default function PenaltyWithdrawModal({ open, handleClose, onConfirm, deposit }: SettingsModalProps) {
   const [isConfirmed, setIsConfirmed] = useState(false)
+
+  useEffect(() => {
+    setIsConfirmed(false)
+  }, [open])
 
   return (
     <Modal open={open} onClose={handleClose}>
