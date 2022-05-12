@@ -160,7 +160,7 @@ export default function Withdraw() {
                     {!!Number(deposit.lockFor) && (
                       <p>
                         Unlocks at:&nbsp;
-                        <b>{format(new Date((deposit.depositAt + deposit.lockFor) * 1000), 'dd/MM/yyyy')}</b>
+                        <b>{format(new Date((deposit.depositAt + deposit.lockFor) * 1000), 'dd/MM/yyyy HH:mm')}</b>
                       </p>
                     )}
                     <p>
