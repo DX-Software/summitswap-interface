@@ -482,9 +482,9 @@ export default function Deposit() {
         <p>
           Current APY: <b>{currentApy}% + KAPEX BONUSES</b>
         </p>
-        {(!combinedApy || !currentKodaRatingScore) && (
+        {currentApy && (
           <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-            <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="45px" />
+            <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="35px" />
           </div>
         )}
       </InfoContainer>
@@ -508,7 +508,8 @@ export default function Deposit() {
             userSixMonthsStakedAmount &&
             totalKodaEarned &&
             totalKapexEarned &&
-            userYearStakedAmount ? (
+            userYearStakedAmount &&
+            combinedApy ? (
               <>
                 <p>
                   No Lock: <b>{userNoLockingStakedAmount} KODA</b>&nbsp;($
