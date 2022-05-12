@@ -146,39 +146,39 @@ export default function Deposit() {
     fetchStakingTokenBalance()
   }, [fetchStakingTokenBalance])
 
-  const calculateCurrentApy = useCallback(async () => {
-    setCurrentApy(undefined)
+  useEffect(() => {
+    async function fetchCurrentApy() {
+      setCurrentApy(undefined)
 
-    if (!stakingContract) {
-      setCurrentApy('...')
-      return
-    }
+      if (!stakingContract) {
+        setCurrentApy('...')
+        return
+      }
 
-    setIsLoading(true)
-    try {
-      const myRating = kodaRatingScoreGained
-      const kodaTotalRating = kodaRatingScoreGained.add(await stakingContract.totalRatings(KODA.address))
-      let totalRewards = kodaTotalRating.div(100)
-      totalRewards = totalRewards.gt(maximumKodaYearlyReward) ? maximumKodaYearlyReward : totalRewards
-      const willEarn = totalRewards.mul(myRating).div(kodaTotalRating)
-      const myStakedAmount = utils.parseUnits(amount || '1', KODA.decimals)
-      const calculatedApy =
-        (+utils.formatUnits(willEarn, KODA.decimals) / +utils.formatUnits(myStakedAmount, KODA.decimals)) * 100
-      if (calculatedApy) {
-        setCurrentApy(calculatedApy.toFixed(2))
-      } else {
+      setIsLoading(true)
+      try {
+        const myRating = kodaRatingScoreGained
+        const kodaTotalRating = kodaRatingScoreGained.add(await stakingContract.totalRatings(KODA.address))
+        let totalRewards = kodaTotalRating.div(100)
+        totalRewards = totalRewards.gt(maximumKodaYearlyReward) ? maximumKodaYearlyReward : totalRewards
+        const willEarn = totalRewards.mul(myRating).div(kodaTotalRating)
+        const myStakedAmount = utils.parseUnits(amount || '1', KODA.decimals)
+        const calculatedApy =
+          (+utils.formatUnits(willEarn, KODA.decimals) / +utils.formatUnits(myStakedAmount, KODA.decimals)) * 100
+        if (calculatedApy) {
+          setCurrentApy(calculatedApy.toFixed(2))
+        } else {
+          setCurrentApy('...')
+        }
+      } catch (err) {
+        console.warn(err)
         setCurrentApy('...')
       }
-    } catch (err) {
-      console.warn(err)
-      setCurrentApy('...')
+      setIsLoading(false)
     }
-    setIsLoading(false)
-  }, [amount, kodaRatingScoreGained, stakingContract])
 
-  useEffect(() => {
-    calculateCurrentApy()
-  }, [calculateCurrentApy])
+    fetchCurrentApy()
+  }, [amount, kodaRatingScoreGained, stakingContract])
 
   const fetchCombinedApy = useCallback(async () => {
     setCombinedApy(undefined)
@@ -482,7 +482,7 @@ export default function Deposit() {
         <p>
           Current APY: <b>{currentApy}% + KAPEX BONUSES</b>
         </p>
-        {currentApy && (
+        {!currentApy && (
           <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
             <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="35px" />
           </div>
