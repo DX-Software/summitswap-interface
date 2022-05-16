@@ -29,7 +29,7 @@ const TokenInfo = styled.div`
   align-items: center;
 `
 
-export default function Withdraw() {
+export default function WithdrawPage() {
   const { account, library } = useWeb3React()
 
   const stakingContract = useStakingContract(true)

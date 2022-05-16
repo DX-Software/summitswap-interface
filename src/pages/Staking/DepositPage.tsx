@@ -60,7 +60,7 @@ const InfoContainer = styled.div`
   margin: 10px 0;
 `
 
-export default function Deposit() {
+export default function DepositPage() {
   const { account, library } = useWeb3React()
 
   const stakingContract = useStakingContract(true)
