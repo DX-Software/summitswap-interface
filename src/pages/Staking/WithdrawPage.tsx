@@ -58,12 +58,12 @@ export default function WithdrawPage() {
         const fetchedDeposit = await stakingContract.deposits(depositId)
 
         const deposit = {
+          ...fetchedDeposit,
           id: +depositId,
           penalty:
             (fetchedDeposit.depositAt + fetchedDeposit.lockFor) * 1000 > Date.now()
               ? +(await stakingContract.penalties(fetchedDeposit.lockFor))
               : 0,
-          ...fetchedDeposit,
         }
 
         setUserDeposits((prevDeposits) => [...(prevDeposits ?? []), deposit])
@@ -71,9 +71,29 @@ export default function WithdrawPage() {
       })
     )) as Deposit[]
 
+    const depositsWithBonuses = await Promise.all(
+      deposits.map(async (deposit) => {
+        if (!deposit.isWithdrawable) {
+          return deposit
+        }
+
+        const fakeDepositId = (await stakingContract.correspondingFakeDepositId(deposit.id)) as BigNumber
+        const fakeDeposit = deposits.find((d) => d.id === +fakeDepositId) as Deposit | undefined
+
+        if (!fakeDeposit || fakeDeposit?.id === 0) {
+          return deposit
+        }
+
+        return {
+          ...deposit,
+          bonus: fakeDeposit.amount,
+        }
+      })
+    )
+
     setIsLoading(false)
 
-    setUserDeposits(deposits)
+    setUserDeposits(depositsWithBonuses)
   }, [account, stakingContract])
 
   const withdrawDirectly = useCallback(async () => {
@@ -138,47 +158,56 @@ export default function WithdrawPage() {
         <>
           <p>Deposits</p>
           <div>
-            {userDeposits?.map((deposit) => (
-              <DepositContainer key={deposit.id}>
-                <p>
-                  Amount:&nbsp;
-                  <b>
-                    {utils.formatUnits(deposit.amount, kodaToken?.decimals)}&nbsp;
-                    <TokenInfo>
-                      KODA&nbsp;
-                      <CurrencyLogo currency={kodaToken ?? undefined} size="24px" />
-                    </TokenInfo>
-                  </b>
-                </p>
-                {!deposit.isWithdrawable && (
+            {userDeposits
+              ?.filter((o) => o.isWithdrawable)
+              .map((deposit) => (
+                <DepositContainer key={deposit.id}>
                   <p>
-                    <Text color="yellow">Not withdrawable deposit</Text>
+                    Amount:&nbsp;
+                    <b>
+                      {utils.formatUnits(deposit.amount, kodaToken?.decimals)}&nbsp;
+                      <TokenInfo>
+                        KODA&nbsp;
+                        <CurrencyLogo currency={kodaToken ?? undefined} size="24px" />
+                      </TokenInfo>
+                    </b>
                   </p>
-                )}
-                {deposit.isWithdrawable && (
-                  <>
-                    {!!Number(deposit.lockFor) && (
-                      <p>
-                        Unlocks at:&nbsp;
-                        <b>{format(new Date((deposit.depositAt + deposit.lockFor) * 1000), 'dd/MM/yyyy HH:mm')}</b>
-                      </p>
-                    )}
+                  {deposit.bonus && (
                     <p>
-                      Deposited at:&nbsp;
-                      <b>{format(new Date(deposit.depositAt * 1000), 'dd/MM/yyyy HH:mm')}</b>
+                      Bonus:&nbsp;
+                      <b>
+                        {utils.formatUnits(deposit.bonus, kodaToken?.decimals)}&nbsp;
+                        <TokenInfo>
+                          KODA&nbsp;
+                          <CurrencyLogo currency={kodaToken ?? undefined} size="24px" />
+                        </TokenInfo>
+                      </b>
                     </p>
-                    {deposit.penalty !== 0 && (
-                      <Text color="red">
-                        If you claim early, you will lose <b> {deposit.penalty / 100}%</b> of you tokens
-                      </Text>
-                    )}
-                    <Button disabled={isLoading} onClick={() => withdraw(deposit)}>
-                      WITHDRAW
-                    </Button>
-                  </>
-                )}
-              </DepositContainer>
-            ))}
+                  )}
+                  {deposit.isWithdrawable && (
+                    <>
+                      {!!Number(deposit.lockFor) && (
+                        <p>
+                          Unlocks at:&nbsp;
+                          <b>{format(new Date((deposit.depositAt + deposit.lockFor) * 1000), 'dd/MM/yyyy HH:mm')}</b>
+                        </p>
+                      )}
+                      <p>
+                        Deposited at:&nbsp;
+                        <b>{format(new Date(deposit.depositAt * 1000), 'dd/MM/yyyy HH:mm')}</b>
+                      </p>
+                      {deposit.penalty !== 0 && (
+                        <Text color="red">
+                          If you claim early, you will lose <b> {deposit.penalty / 100}%</b> of you tokens
+                        </Text>
+                      )}
+                      <Button disabled={isLoading} onClick={() => withdraw(deposit)}>
+                        WITHDRAW
+                      </Button>
+                    </>
+                  )}
+                </DepositContainer>
+              ))}
           </div>
         </>
       )}

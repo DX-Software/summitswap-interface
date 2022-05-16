@@ -9,4 +9,5 @@ export interface Deposit {
   penalty: number
   apy: BigNumber
   isWithdrawable: boolean
+  bonus?: BigNumber
 }
