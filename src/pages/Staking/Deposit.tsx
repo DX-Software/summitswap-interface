@@ -319,24 +319,24 @@ export default function Deposit() {
     fetchAllowance()
   }, [account, amount, kodaTokenContract, stakingContract])
 
-  useEffect(() => {
-    async function fetchCurrentRatingScore() {
-      setCurrentKodaRatingScore(undefined)
+  const fetchCurrentKodaRatingScore = useCallback(async () => {
+    setCurrentKodaRatingScore(undefined)
 
-      if (!stakingContract || !account) {
-        setCurrentKodaRatingScore(BigNumber.from(0))
-        return
-      }
-
-      setIsLoading(true)
-      const fetchedKodaRatingScore = (await stakingContract.ratings(KODA.address, account)) as BigNumber
-      setIsLoading(false)
-
-      setCurrentKodaRatingScore(fetchedKodaRatingScore)
+    if (!stakingContract || !account) {
+      setCurrentKodaRatingScore(BigNumber.from(0))
+      return
     }
 
-    fetchCurrentRatingScore()
-  }, [stakingContract, account])
+    setIsLoading(true)
+    const fetchedKodaRatingScore = (await stakingContract.ratings(KODA.address, account)) as BigNumber
+    setIsLoading(false)
+
+    setCurrentKodaRatingScore(fetchedKodaRatingScore)
+  }, [account, stakingContract])
+
+  useEffect(() => {
+    fetchCurrentKodaRatingScore()
+  }, [fetchCurrentKodaRatingScore])
 
   const deposit = useCallback(async () => {
     if (!account || !lockDuration || !amount || !stakingContract) {
@@ -348,7 +348,7 @@ export default function Deposit() {
       const receipt = await stakingContract.putDeposit(utils.parseUnits(amount, KODA.decimals), lockDuration)
       await library.waitForTransaction(receipt.hash)
       fetchStakingTokenBalance()
-      setCurrentKodaRatingScore((currentKodaRatingScore ?? BigNumber.from(0)).add(kodaRatingScoreGained))
+      fetchCurrentKodaRatingScore()
       fetchStakedAmounts()
       fetchPersonalStakedAmounts()
       fetchCombinedApy()
@@ -363,11 +363,10 @@ export default function Deposit() {
     stakingContract,
     library,
     fetchStakingTokenBalance,
-    currentKodaRatingScore,
-    kodaRatingScoreGained,
     fetchStakedAmounts,
     fetchPersonalStakedAmounts,
     fetchCombinedApy,
+    fetchCurrentKodaRatingScore,
   ])
 
   useEffect(() => {
