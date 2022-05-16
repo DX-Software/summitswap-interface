@@ -268,22 +268,22 @@ export default function Deposit() {
       account,
       lockingPeriods._0Months
     )) as BigNumber
-    setUserNoLockingStakedAmount(utils.formatUnits(fetchedNoLockingStakedAmount, KODA.decimals))
+    setUserNoLockingStakedAmount(utils.formatUnits(fetchedNoLockingStakedAmount, KODA.decimals).split('.')[0])
 
     const fetchedThreeMonthsStakedAmount = (await stakingContract.userDeposits(
       account,
       lockingPeriods._3Months
     )) as BigNumber
-    setUserThreeMonthsStakedAmount(utils.formatUnits(fetchedThreeMonthsStakedAmount, KODA.decimals))
+    setUserThreeMonthsStakedAmount(utils.formatUnits(fetchedThreeMonthsStakedAmount, KODA.decimals).split('.')[0])
 
     const fetchedSixMonthsStakedAmount = (await stakingContract.userDeposits(
       account,
       lockingPeriods._6Months
     )) as BigNumber
-    setUserSixMonthsStakedAmount(utils.formatUnits(fetchedSixMonthsStakedAmount, KODA.decimals))
+    setUserSixMonthsStakedAmount(utils.formatUnits(fetchedSixMonthsStakedAmount, KODA.decimals).split('.')[0])
 
     const fetchedYearStakedAmount = (await stakingContract.userDeposits(account, lockingPeriods._12Months)) as BigNumber
-    setUserYearStakedAmount(utils.formatUnits(fetchedYearStakedAmount, KODA.decimals))
+    setUserYearStakedAmount(utils.formatUnits(fetchedYearStakedAmount, KODA.decimals).split('.')[0])
   }, [stakingContract, account])
 
   useEffect(() => {
