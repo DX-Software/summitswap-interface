@@ -368,6 +368,7 @@ export default function Deposit() {
     try {
       const receipt = await stakingContract.putDeposit(utils.parseUnits(amount, KODA.decimals), lockDuration)
       await library.waitForTransaction(receipt.hash)
+      setInputAmount('')
       fetchStakingTokenBalance()
       fetchCurrentKodaRatingScore()
       fetchStakedAmounts()
