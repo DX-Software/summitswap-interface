@@ -71,9 +71,27 @@ export default function Deposit() {
   const [lockDuration, setLockDuration] = useState(`${lockingPeriods._12Months}`)
   const [currentKodaRatingScore, setCurrentKodaRatingScore] = useState<BigNumber>()
 
-  const kodaRatingScoreGained = useMemo(() => {
-    return utils.parseUnits(amount || '1', KODA.decimals).mul(APYs[KODA.address][lockDuration])
-  }, [amount, lockDuration])
+  const [kodaRatingScoreGained, setKodaRatingScoreGained] = useState<BigNumber>()
+
+  useEffect(() => {
+    async function fetchKodaRatingScoreGained() {
+      if (!account || !stakingContract) {
+        setKodaRatingScoreGained(utils.parseUnits(amount || '1', KODA.decimals).mul(APYs[KODA.address][lockDuration]))
+        return
+      }
+
+      const status = (await stakingContract.statuses(account)) as BigNumber
+      const statusBoost = (await stakingContract.statusBoosts(status)) as BigNumber
+      const totalAmount = utils
+        .parseUnits(amount || '1', KODA.decimals)
+        .mul(statusBoost.add(10000))
+        .div(10000)
+
+      setKodaRatingScoreGained(totalAmount.mul(APYs[KODA.address][lockDuration]))
+    }
+
+    fetchKodaRatingScoreGained()
+  }, [account, amount, lockDuration, stakingContract])
 
   const [needsToApprove, setNeedsToApprove] = useState(true)
   const [isAmountValid, setIsAmountValid] = useState(false)
@@ -150,7 +168,7 @@ export default function Deposit() {
     async function fetchCurrentApy() {
       setCurrentApy(undefined)
 
-      if (!stakingContract) {
+      if (!stakingContract || !kodaRatingScoreGained) {
         setCurrentApy('...')
         return
       }
@@ -159,12 +177,15 @@ export default function Deposit() {
       try {
         const myRating = kodaRatingScoreGained
         const kodaTotalRating = kodaRatingScoreGained.add(await stakingContract.totalRatings(KODA.address))
+
         let totalRewards = kodaTotalRating.div(100)
         totalRewards = totalRewards.gt(maximumKodaYearlyReward) ? maximumKodaYearlyReward : totalRewards
+
         const willEarn = totalRewards.mul(myRating).div(kodaTotalRating)
         const myStakedAmount = utils.parseUnits(amount || '1', KODA.decimals)
         const calculatedApy =
           (+utils.formatUnits(willEarn, KODA.decimals) / +utils.formatUnits(myStakedAmount, KODA.decimals)) * 100
+
         if (calculatedApy) {
           setCurrentApy(calculatedApy.toFixed(2))
         } else {
