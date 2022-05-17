@@ -36,7 +36,7 @@ const AmountContainer = styled.div`
   gap: 10px;
 `
 
-export default function Claim() {
+export default function ClaimPage() {
   const { account, library } = useWeb3React()
 
   const kodaPrice = useKodaPrice()

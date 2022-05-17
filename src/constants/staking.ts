@@ -5,7 +5,7 @@ export const lockingPeriods = {
   _0Months: 0,
   _3Months: 7889229,
   _6Months: 15778458,
-  _12Months: 31556916,
+  _12Months: 31556926,
 }
 
 export const APYs = {
