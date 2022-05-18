@@ -477,7 +477,7 @@ export default function DepositPage() {
               value={lockingPeriods._3Months}
               checked={+lockDuration === lockingPeriods._3Months}
             />{' '}
-            3 Months
+            92 Days (~3 Months)
           </label>
           <label>
             <Radio
@@ -486,7 +486,7 @@ export default function DepositPage() {
               value={lockingPeriods._6Months}
               checked={+lockDuration === lockingPeriods._6Months}
             />{' '}
-            6 Months
+            183 Days (~6 Months)
           </label>
           <label>
             <Radio
@@ -495,7 +495,7 @@ export default function DepositPage() {
               value={lockingPeriods._12Months}
               checked={+lockDuration === lockingPeriods._12Months}
             />{' '}
-            12 Months (Highest APY)
+            365 Days (~12 Months) (Highest APY)
           </label>
         </RadioContainer>
       </LockingPeriod>
