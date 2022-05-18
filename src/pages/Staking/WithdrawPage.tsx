@@ -160,6 +160,7 @@ export default function WithdrawPage() {
           <div>
             {userDeposits
               ?.filter((o) => o.isWithdrawable)
+              .sort((a, b) => b.depositAt - a.depositAt)
               .map((deposit) => (
                 <DepositContainer key={deposit.id}>
                   <p>
