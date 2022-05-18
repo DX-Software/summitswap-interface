@@ -66,14 +66,25 @@ export default function PenaltyWithdrawModal({ open, handleClose, onConfirm, dep
           <br />
 
           {deposit && (
-            <p>
-              By removing your stake there is a penalty of{' '}
-              <span style={{ color: 'red' }}>{deposit.penalty / 100}%</span> of staked KODA which is{' '}
-              <span style={{ color: 'red' }}>
-                {utils.formatUnits(deposit.amount.mul(deposit.penalty).div(10000), KODA.decimals)}{' '}
-              </span>
-              <b>KODA</b>
-            </p>
+            <>
+              <p>
+                By removing your stake there is a penalty of{' '}
+                <span style={{ color: 'red' }}>{deposit.penalty / 100}%</span> of staked KODA which is{' '}
+                <span style={{ color: 'red' }}>
+                  {utils.formatUnits(deposit.amount.mul(deposit.penalty).div(10000), KODA.decimals)}{' '}
+                </span>
+                <b>KODA</b>
+              </p>
+              {deposit.bonus && (
+                <>
+                  <br />
+                  <p>
+                    Note: You will lose bonus of{' '}
+                    <span style={{ color: 'red' }}>{utils.formatUnits(deposit.bonus, KODA.decimals)}</span> <b>KODA</b>
+                  </p>
+                </>
+              )}
+            </>
           )}
 
           <br />

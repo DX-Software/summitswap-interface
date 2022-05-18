@@ -165,7 +165,7 @@ export default function WithdrawPage() {
                   <p>
                     Amount:&nbsp;
                     <b>
-                      {utils.formatUnits(deposit.amount, kodaToken?.decimals)}&nbsp;
+                      {utils.formatUnits(deposit.amount, KODA.decimals)}&nbsp;
                       <TokenInfo>
                         KODA&nbsp;
                         <CurrencyLogo currency={kodaToken ?? undefined} size="24px" />
@@ -176,7 +176,7 @@ export default function WithdrawPage() {
                     <p>
                       Bonus:&nbsp;
                       <b>
-                        {utils.formatUnits(deposit.bonus, kodaToken?.decimals)}&nbsp;
+                        {utils.formatUnits(deposit.bonus, KODA.decimals)}&nbsp;
                         <TokenInfo>
                           KODA&nbsp;
                           <CurrencyLogo currency={kodaToken ?? undefined} size="24px" />
