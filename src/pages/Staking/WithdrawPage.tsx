@@ -142,7 +142,7 @@ export default function WithdrawPage() {
 
       setDepositSelected(deposit)
 
-      if (deposit.penalty) {
+      if (deposit.penalty || deposit.bonus) {
         setIsWarningModalOpen(true)
         return
       }
