@@ -3,9 +3,9 @@ import { KODA, KAPEX } from '.'
 
 export const lockingPeriods = {
   _0Months: 0,
-  _3Months: 7889229,
-  _6Months: 15778458,
-  _12Months: 31556926,
+  _3Months: 7948800,
+  _6Months: 15811200,
+  _12Months: 31536000,
 }
 
 export const APYs = {
