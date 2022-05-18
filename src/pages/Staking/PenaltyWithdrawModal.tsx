@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Text, Checkbox, Button } from '@koda-finance/summitswap-uikit'
 import Modal from '@mui/material/Modal'
-import { utils } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import styled from 'styled-components'
+import { STATUSES } from 'constants/staking'
 import { Deposit } from './types'
 import { KODA } from '../../constants'
 
@@ -11,6 +12,7 @@ type SettingsModalProps = {
   handleClose?: () => void
   onConfirm?: () => void
   deposit?: Deposit
+  status?: BigNumber
 }
 
 const ModalContainer = styled.div`
@@ -45,7 +47,7 @@ const ButtonsWrapper = styled.div`
   gap: 10px;
 `
 
-export default function PenaltyWithdrawModal({ open, handleClose, onConfirm, deposit }: SettingsModalProps) {
+export default function PenaltyWithdrawModal({ open, handleClose, onConfirm, deposit, status }: SettingsModalProps) {
   const [isConfirmed, setIsConfirmed] = useState(false)
 
   useEffect(() => {
@@ -75,13 +77,10 @@ export default function PenaltyWithdrawModal({ open, handleClose, onConfirm, dep
                 </span>
                 <b>KODA</b>
               </p>
-              {deposit.bonus && (
+              {deposit.bonus && status && STATUSES[+status] && (
                 <>
                   <br />
-                  <p>
-                    Note: You will lose bonus of{' '}
-                    <span style={{ color: 'red' }}>{utils.formatUnits(deposit.bonus, KODA.decimals)}</span> <b>KODA</b>
-                  </p>
+                  <p>Note: *Bonus is for {STATUSES[+status]} members and itsn&apos;t not withdrawable</p>
                 </>
               )}
             </>

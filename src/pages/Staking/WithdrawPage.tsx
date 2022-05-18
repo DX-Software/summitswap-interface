@@ -41,6 +41,27 @@ export default function WithdrawPage() {
   const [depositSelected, setDepositSelected] = useState<Deposit>()
 
   const kodaToken = useToken(KODA.address)
+  const [status, setStatus] = useState<BigNumber>()
+
+  useEffect(() => {
+    async function fetchStatus() {
+      setStatus(undefined)
+
+      if (!stakingContract || !account) {
+        setStatus(BigNumber.from(0))
+        return
+      }
+
+      setIsLoading(true)
+
+      const fetchedStatus = (await stakingContract.statuses(account)) as BigNumber
+      setStatus(fetchedStatus)
+
+      setIsLoading(false)
+    }
+
+    fetchStatus()
+  }, [account, stakingContract])
 
   const fetchUserDeposits = useCallback(async () => {
     setUserDeposits(undefined)
@@ -148,6 +169,7 @@ export default function WithdrawPage() {
       <PenaltyWithdrawModal
         open={isWarningModalOpen}
         deposit={depositSelected}
+        status={status}
         handleClose={() => setIsWarningModalOpen(false)}
         onConfirm={withdrawDirectly}
       />
