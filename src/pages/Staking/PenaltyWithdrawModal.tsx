@@ -95,7 +95,7 @@ export default function PenaltyWithdrawModal({ open, handleClose, onConfirm, dep
 
           <ButtonContainer>
             <div>
-              {!!deposit?.penalty && !deposit?.bonus && (
+              {(!!deposit?.penalty || !deposit?.bonus) && (
                 <p>
                   <Checkbox
                     id="agree"
