@@ -86,7 +86,7 @@ export default function PenaltyWithdrawModal({ open, handleClose, onConfirm, dep
           {!!deposit?.bonus && status && STATUSES[+status] && (
             <>
               <br />
-              <p>Note: *Bonus is for {STATUSES[+status]} members and itsn&apos;t not withdrawable</p>
+              <p>Note: *Bonus is for {STATUSES[+status]} members and itsn&apos;t withdrawable</p>
             </>
           )}
 
