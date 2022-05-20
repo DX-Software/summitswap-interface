@@ -12,7 +12,7 @@ import useKapexPrice from 'hooks/useKapexPrice'
 import useKodaPrice from 'hooks/useKodaPrice'
 import CustomLightSpinner from 'components/CustomLightSpinner'
 import useDebounce from 'hooks/useDebounce'
-import { APYs, lockingPeriods, maximumKodaYearlyReward } from '../../constants/staking'
+import { APYS, LOCKING_PERIODS, maximumKodaYearlyReward } from '../../constants/staking'
 import NavBar from './Navbar'
 import { DEAD_ADDRESS, KAPEX, KODA, MAX_UINT256, STAKING_ADDRESS, STAKING_POOL_ADDRESS } from '../../constants'
 import './styles.css'
@@ -68,7 +68,7 @@ export default function DepositPage() {
   const [inputAmount, setInputAmount] = useState('')
   const amount = useDebounce(inputAmount, 1000)
 
-  const [lockDuration, setLockDuration] = useState(`${lockingPeriods._12Months}`)
+  const [lockDuration, setLockDuration] = useState(`${LOCKING_PERIODS._12Months}`)
   const [currentKodaRatingScore, setCurrentKodaRatingScore] = useState<BigNumber>()
 
   const [kodaRatingScoreGained, setKodaRatingScoreGained] = useState<BigNumber>()
@@ -76,7 +76,7 @@ export default function DepositPage() {
   useEffect(() => {
     async function fetchKodaRatingScoreGained() {
       if (!account || !stakingContract) {
-        setKodaRatingScoreGained(utils.parseUnits(amount || '1', KODA.decimals).mul(APYs[KODA.address][lockDuration]))
+        setKodaRatingScoreGained(utils.parseUnits(amount || '1', KODA.decimals).mul(APYS[KODA.address][lockDuration]))
         return
       }
 
@@ -87,7 +87,7 @@ export default function DepositPage() {
         .mul(statusBoost.add(10000))
         .div(10000)
 
-      setKodaRatingScoreGained(totalAmount.mul(APYs[KODA.address][lockDuration]))
+      setKodaRatingScoreGained(totalAmount.mul(APYS[KODA.address][lockDuration]))
     }
 
     fetchKodaRatingScoreGained()
@@ -254,16 +254,16 @@ export default function DepositPage() {
       return
     }
 
-    const fetchedNoLockingStakedAmount = (await stakingContract.lockAmounts(lockingPeriods._0Months)) as BigNumber
+    const fetchedNoLockingStakedAmount = (await stakingContract.lockAmounts(LOCKING_PERIODS._0Months)) as BigNumber
     setNoLockingStakedAmount(utils.formatUnits(fetchedNoLockingStakedAmount, KODA.decimals).split('.')[0])
 
-    const fetchedThreeMonthsStakedAmount = (await stakingContract.lockAmounts(lockingPeriods._3Months)) as BigNumber
+    const fetchedThreeMonthsStakedAmount = (await stakingContract.lockAmounts(LOCKING_PERIODS._3Months)) as BigNumber
     setThreeMonthsStakedAmount(utils.formatUnits(fetchedThreeMonthsStakedAmount, KODA.decimals).split('.')[0])
 
-    const fetchedSixMonthsStakedAmount = (await stakingContract.lockAmounts(lockingPeriods._6Months)) as BigNumber
+    const fetchedSixMonthsStakedAmount = (await stakingContract.lockAmounts(LOCKING_PERIODS._6Months)) as BigNumber
     setSixMonthsStakedAmount(utils.formatUnits(fetchedSixMonthsStakedAmount, KODA.decimals).split('.')[0])
 
-    const fetchedYearStakedAmount = (await stakingContract.lockAmounts(lockingPeriods._12Months)) as BigNumber
+    const fetchedYearStakedAmount = (await stakingContract.lockAmounts(LOCKING_PERIODS._12Months)) as BigNumber
     setYearStakedAmount(utils.formatUnits(fetchedYearStakedAmount, KODA.decimals).split('.')[0])
   }, [stakingContract])
 
@@ -287,23 +287,23 @@ export default function DepositPage() {
 
     const fetchedNoLockingStakedAmount = (await stakingContract.userDeposits(
       account,
-      lockingPeriods._0Months
+      LOCKING_PERIODS._0Months
     )) as BigNumber
     setUserNoLockingStakedAmount(utils.formatUnits(fetchedNoLockingStakedAmount, KODA.decimals).split('.')[0])
 
     const fetchedThreeMonthsStakedAmount = (await stakingContract.userDeposits(
       account,
-      lockingPeriods._3Months
+      LOCKING_PERIODS._3Months
     )) as BigNumber
     setUserThreeMonthsStakedAmount(utils.formatUnits(fetchedThreeMonthsStakedAmount, KODA.decimals).split('.')[0])
 
     const fetchedSixMonthsStakedAmount = (await stakingContract.userDeposits(
       account,
-      lockingPeriods._6Months
+      LOCKING_PERIODS._6Months
     )) as BigNumber
     setUserSixMonthsStakedAmount(utils.formatUnits(fetchedSixMonthsStakedAmount, KODA.decimals).split('.')[0])
 
-    const fetchedYearStakedAmount = (await stakingContract.userDeposits(account, lockingPeriods._12Months)) as BigNumber
+    const fetchedYearStakedAmount = (await stakingContract.userDeposits(account, LOCKING_PERIODS._12Months)) as BigNumber
     setUserYearStakedAmount(utils.formatUnits(fetchedYearStakedAmount, KODA.decimals).split('.')[0])
   }, [stakingContract, account])
 
@@ -465,8 +465,8 @@ export default function DepositPage() {
             <Radio
               id="name"
               name="locking-duration"
-              value={lockingPeriods._0Months}
-              checked={+lockDuration === lockingPeriods._0Months}
+              value={LOCKING_PERIODS._0Months}
+              checked={+lockDuration === LOCKING_PERIODS._0Months}
             />{' '}
             No locking (Lowest APY)
           </label>
@@ -474,28 +474,28 @@ export default function DepositPage() {
             <Radio
               id="name"
               name="locking-duration"
-              value={lockingPeriods._3Months}
-              checked={+lockDuration === lockingPeriods._3Months}
+              value={LOCKING_PERIODS._3Months}
+              checked={+lockDuration === LOCKING_PERIODS._3Months}
             />{' '}
-            3 Months
+            92 Days (~3 Months)
           </label>
           <label>
             <Radio
               id="name"
               name="locking-duration"
-              value={lockingPeriods._6Months}
-              checked={+lockDuration === lockingPeriods._6Months}
+              value={LOCKING_PERIODS._6Months}
+              checked={+lockDuration === LOCKING_PERIODS._6Months}
             />{' '}
-            6 Months
+            183 Days (~6 Months)
           </label>
           <label>
             <Radio
               id="name"
               name="locking-duration"
-              value={lockingPeriods._12Months}
-              checked={+lockDuration === lockingPeriods._12Months}
+              value={LOCKING_PERIODS._12Months}
+              checked={+lockDuration === LOCKING_PERIODS._12Months}
             />{' '}
-            12 Months (Highest APY)
+            365 Days (~12 Months) (Highest APY)
           </label>
         </RadioContainer>
       </LockingPeriod>

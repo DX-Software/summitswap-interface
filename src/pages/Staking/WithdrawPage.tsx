@@ -41,6 +41,27 @@ export default function WithdrawPage() {
   const [depositSelected, setDepositSelected] = useState<Deposit>()
 
   const kodaToken = useToken(KODA.address)
+  const [status, setStatus] = useState<BigNumber>()
+
+  useEffect(() => {
+    async function fetchStatus() {
+      setStatus(undefined)
+
+      if (!stakingContract || !account) {
+        setStatus(BigNumber.from(0))
+        return
+      }
+
+      setIsLoading(true)
+
+      const fetchedStatus = (await stakingContract.statuses(account)) as BigNumber
+      setStatus(fetchedStatus)
+
+      setIsLoading(false)
+    }
+
+    fetchStatus()
+  }, [account, stakingContract])
 
   const fetchUserDeposits = useCallback(async () => {
     setUserDeposits(undefined)
@@ -121,7 +142,7 @@ export default function WithdrawPage() {
 
       setDepositSelected(deposit)
 
-      if (deposit.penalty) {
+      if (deposit.penalty || deposit.bonus) {
         setIsWarningModalOpen(true)
         return
       }
@@ -148,6 +169,7 @@ export default function WithdrawPage() {
       <PenaltyWithdrawModal
         open={isWarningModalOpen}
         deposit={depositSelected}
+        status={status}
         handleClose={() => setIsWarningModalOpen(false)}
         onConfirm={withdrawDirectly}
       />
@@ -160,12 +182,13 @@ export default function WithdrawPage() {
           <div>
             {userDeposits
               ?.filter((o) => o.isWithdrawable)
+              .sort((a, b) => b.depositAt - a.depositAt)
               .map((deposit) => (
                 <DepositContainer key={deposit.id}>
                   <p>
                     Amount:&nbsp;
                     <b>
-                      {utils.formatUnits(deposit.amount, kodaToken?.decimals)}&nbsp;
+                      {utils.formatUnits(deposit.amount, KODA.decimals)}&nbsp;
                       <TokenInfo>
                         KODA&nbsp;
                         <CurrencyLogo currency={kodaToken ?? undefined} size="24px" />
@@ -176,7 +199,7 @@ export default function WithdrawPage() {
                     <p>
                       Bonus:&nbsp;
                       <b>
-                        {utils.formatUnits(deposit.bonus, kodaToken?.decimals)}&nbsp;
+                        {utils.formatUnits(deposit.bonus, KODA.decimals)}&nbsp;
                         <TokenInfo>
                           KODA&nbsp;
                           <CurrencyLogo currency={kodaToken ?? undefined} size="24px" />

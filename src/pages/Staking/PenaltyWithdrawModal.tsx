@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Text, Checkbox, Button } from '@koda-finance/summitswap-uikit'
 import Modal from '@mui/material/Modal'
-import { utils } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import styled from 'styled-components'
+import { STATUSES } from 'constants/staking'
 import { Deposit } from './types'
 import { KODA } from '../../constants'
 
@@ -11,6 +12,7 @@ type SettingsModalProps = {
   handleClose?: () => void
   onConfirm?: () => void
   deposit?: Deposit
+  status?: BigNumber
 }
 
 const ModalContainer = styled.div`
@@ -45,12 +47,16 @@ const ButtonsWrapper = styled.div`
   gap: 10px;
 `
 
-export default function PenaltyWithdrawModal({ open, handleClose, onConfirm, deposit }: SettingsModalProps) {
+export default function PenaltyWithdrawModal({ open, handleClose, onConfirm, deposit, status }: SettingsModalProps) {
   const [isConfirmed, setIsConfirmed] = useState(false)
 
   useEffect(() => {
-    setIsConfirmed(false)
-  }, [open])
+    if (deposit?.penalty) {
+      setIsConfirmed(false)
+    } else if (deposit?.bonus) {
+      setIsConfirmed(true)
+    }
+  }, [deposit, open])
 
   return (
     <Modal open={open} onClose={handleClose}>
@@ -59,37 +65,49 @@ export default function PenaltyWithdrawModal({ open, handleClose, onConfirm, dep
 
         <ModalBox>
           <Text fontSize="25px">WARNING</Text>
-          <Text color="red" fontSize="20px">
-            DO NOT PROCEED UNLESS YOU UNDERSTAND THE FOLLOWING
-          </Text>
 
-          <br />
+          {!!deposit?.penalty && (
+            <>
+              <Text color="red" fontSize="20px">
+                DO NOT PROCEED UNLESS YOU UNDERSTAND THE FOLLOWING
+              </Text>
+              <br />
+              <p>
+                By removing your stake there is a penalty of{' '}
+                <span style={{ color: 'red' }}>{deposit.penalty / 100}%</span> of staked KODA which is{' '}
+                <span style={{ color: 'red' }}>
+                  {utils.formatUnits(deposit.amount.mul(deposit.penalty).div(10000), KODA.decimals)}{' '}
+                </span>
+                <b>KODA</b>
+              </p>
+            </>
+          )}
 
-          {deposit && (
-            <p>
-              By removing your stake there is a penalty of{' '}
-              <span style={{ color: 'red' }}>{deposit.penalty / 100}%</span> of staked KODA which is{' '}
-              <span style={{ color: 'red' }}>
-                {utils.formatUnits(deposit.amount.mul(deposit.penalty).div(10000), KODA.decimals)}{' '}
-              </span>
-              <b>KODA</b>
-            </p>
+          {!!deposit?.bonus && status && STATUSES[+status] && (
+            <>
+              <br />
+              <p>Note: *Bonus is for {STATUSES[+status]} members and itsn&apos;t withdrawable</p>
+            </>
           )}
 
           <br />
           <br />
 
           <ButtonContainer>
-            <p>
-              <Checkbox
-                id="agree"
-                scale="sm"
-                checked={isConfirmed}
-                onChange={(o) => setIsConfirmed(o.target.checked)}
-                style={{ border: '1px solid #452a7a' }}
-              />
-              &nbsp; I&#8216;m aware of the consequences
-            </p>
+            <div>
+              {(!!deposit?.penalty || !deposit?.bonus) && (
+                <p>
+                  <Checkbox
+                    id="agree"
+                    scale="sm"
+                    checked={isConfirmed}
+                    onChange={(o) => setIsConfirmed(o.target.checked)}
+                    style={{ border: '1px solid #452a7a' }}
+                  />
+                  &nbsp; I&#8216;m aware of the consequences
+                </p>
+              )}
+            </div>
 
             <ButtonsWrapper>
               <Button disabled={!isConfirmed} onClick={onConfirm}>
