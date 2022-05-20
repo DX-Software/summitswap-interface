@@ -4,6 +4,7 @@ import AppBody from '../AppBody';
 import LiquidityTokenForm from './liquidityTokenForm';
 import StandardTokenForm from './standardTokenForm';
 import BabyTokenForm from './babyTokenForm';
+import BuybackTokenForm from './buybackTokenForm';
 
 const CreateToken = () => {
     const [tokenType, setTokenType] = useState("standard");
@@ -24,6 +25,9 @@ const CreateToken = () => {
             )}
             {tokenType === "babytoken" && (
                 <BabyTokenForm />
+            )}
+            {tokenType === "buyback" && (
+                <BuybackTokenForm />
             )}
         </AppBody>
     );
