@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import styled from 'styled-components';
-import { CREATE_TOKEN_ADDRESS, CREATE_TOKEN_FEE_RECEIVER_ADDRESS } from '../../constants/index';
-import CREATE_TOKEN_ABI from '../../constants/abis/createTokenAbi.json';
+import { CREATE_STANDARD_TOKEN_ADDRESS, CREATE_TOKEN_FEE_RECEIVER_ADDRESS } from '../../constants/index';
+import CREATE_TOKEN_ABI from '../../constants/abis/createStandardToken.json';
 
 
 export const Form = styled.form`
@@ -93,8 +93,8 @@ const StandardTokenForm = () => {
         if (window.ethereum) {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
-            const create_token_contract = new ethers.Contract(CREATE_TOKEN_ADDRESS, CREATE_TOKEN_ABI, signer);
-            console.log({name, symbol, decimals, supply, CREATE_TOKEN_FEE_RECEIVER_ADDRESS, CREATE_TOKEN_ADDRESS})
+            const create_token_contract = new ethers.Contract(CREATE_STANDARD_TOKEN_ADDRESS, CREATE_TOKEN_ABI, signer);
+            console.log({name, symbol, decimals, supply, CREATE_TOKEN_FEE_RECEIVER_ADDRESS, CREATE_STANDARD_TOKEN_ADDRESS})
             try{
                 const tx = await create_token_contract.createStandardToken(name, symbol, decimals, ethers.utils.parseUnits(supply), CREATE_TOKEN_FEE_RECEIVER_ADDRESS, {value: ethers.utils.parseUnits("0.01")});
                 setLoading(true);
@@ -104,7 +104,6 @@ const StandardTokenForm = () => {
             } catch {
                 setError("It was not possible to create the token");
             }
-            
         }
     }
 

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import AppBody from '../AppBody';
 import LiquidityTokenForm from './liquidityTokenForm';
 import StandardTokenForm from './standardTokenForm';
+import BabyTokenForm from './babyTokenForm';
 
 const CreateToken = () => {
     const [tokenType, setTokenType] = useState("standard");
@@ -20,6 +21,9 @@ const CreateToken = () => {
             )}
             {tokenType === "liquidity" && (
                 <LiquidityTokenForm />
+            )}
+            {tokenType === "babytoken" && (
+                <BabyTokenForm />
             )}
         </AppBody>
     );
