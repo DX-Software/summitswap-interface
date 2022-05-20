@@ -221,7 +221,7 @@ export default function WithdrawPage() {
                       </p>
                       {deposit.penalty !== 0 && (
                         <Text color="red">
-                          If you withdraw early, you will lose <b> {deposit.penalty / 100}%</b> of you tokens
+                          WARNING: If you withdraw early, you will lose <b> {deposit.penalty / 100}%</b> of your tokens
                         </Text>
                       )}
                       <Button disabled={isLoading} onClick={() => withdraw(deposit)}>
