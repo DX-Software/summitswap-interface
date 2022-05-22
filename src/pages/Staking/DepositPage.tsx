@@ -509,8 +509,9 @@ export default function DepositPage() {
           </div>
         )}
       </InfoContainer>
-      <Text fontSize="14px">*APY is variable and based on the overall staking statistics.</Text>
-      <Text fontSize="14px">*APY will reduce as more of the supply is staked.</Text>
+      <Text fontSize="14px">*APY is variable and based on the overall staking statistics</Text>
+      <Text fontSize="14px">*APY will reduce as more of the supply is staked</Text>
+      <Text fontSize="14px">*Any rewards you have accrued will be claimed with deposit</Text>
       <ButtonsContainer>
         <Button disabled={!amount || isLoading || !needsToApprove || !isAmountValid} onClick={approve}>
           APPROVE
