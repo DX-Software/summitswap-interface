@@ -28,7 +28,6 @@ const BabyTokenForm = () => {
     const [loading, setLoading] = useState(false);
     const [created, setCreated] = useState(false);
     const [error, setError] = useState('');
-    const [tokenAddress, setTokenAddress] = useState('');
     const [txAddress, setTxAddress] = useState('');
     const dividendTracker = "0x87064D365710C0C025628ed1294548FEA4f5AD67";
 
@@ -75,7 +74,7 @@ const BabyTokenForm = () => {
 
     useEffect(() => {
         console.log(loading, created)
-    }, [loading, created, txAddress, tokenAddress])
+    }, [loading, created, txAddress])
 
     return (
         <>

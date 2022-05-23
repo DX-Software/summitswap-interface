@@ -26,7 +26,6 @@ const LiquidityTokenForm = () => {
     const [loading, setLoading] = useState(false);
     const [created, setCreated] = useState(false);
     const [error, setError] = useState('');
-    const [tokenAddress, setTokenAddress] = useState('');
     const [txAddress, setTxAddress] = useState('');
 
     const handleSubmit = async (event) => {
@@ -61,7 +60,7 @@ const LiquidityTokenForm = () => {
 
     useEffect(() => {
         console.log(loading, created)
-    }, [loading, created, txAddress, tokenAddress])
+    }, [loading, created, txAddress])
 
     return (
         <>
@@ -181,6 +180,7 @@ const LiquidityTokenForm = () => {
                             />
                         </Label>
                     </div>
+                    {error && <p>{error}</p>}
                     <Submit type="submit" value="CREATE TOKEN" />
                 </Form>
             )}
