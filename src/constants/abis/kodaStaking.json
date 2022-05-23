@@ -576,24 +576,6 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_user",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_status",
-        "type": "uint256"
-      }
-    ],
-    "name": "setStatus",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "uint256",
         "name": "_status",
         "type": "uint256"
@@ -605,6 +587,24 @@
       }
     ],
     "name": "setStatusBoost",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "_users",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "_statuses",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "setStatuses",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
