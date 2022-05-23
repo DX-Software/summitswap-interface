@@ -12,7 +12,7 @@ const TopLogo = styled.img`
   height: calc(100% + 40px);
 `
 
-const StyledContainer = styled(Box) <{ theme: any; }>`
+const StyledContainer = styled(Box)<{ theme: any }>`
   margin-top: 135px;
   @media (min-width: 440px) {
     margin-top: 85px;
@@ -29,7 +29,7 @@ const StyledContainer = styled(Box) <{ theme: any; }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  >div {
+  > div {
     color: ${({ theme }) => theme.colors.sidebarColor};
     font-weight: 900;
     font-size: 30px;
@@ -39,7 +39,6 @@ const StyledContainer = styled(Box) <{ theme: any; }>`
 
 export default function AppHeader() {
   const location = useLocation()
-
   return (
     <StyledContainer>
       <Box>
@@ -51,8 +50,9 @@ export default function AppHeader() {
         {location.pathname === '/referral' && 'Summit Referral'}
         {location.pathname === '/cross-chain-swap' && 'Cross-Chain Swap'}
         {location.pathname === '/onboarding' && 'Onboarding'}
+        {location.pathname.search('/staking') !== -1 && 'Staking'}
       </Box>
-      <TopLogo src={TopLogoIcon} alt='' />
+      <TopLogo src={TopLogoIcon} alt="" />
     </StyledContainer>
   )
 }

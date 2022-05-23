@@ -1,5 +1,8 @@
 import { ChainId, JSBI, Percent, Token, WETH } from '@koda-finance/summitswap-sdk'
 
+export const STAKING_ADDRESS = `${process.env.REACT_APP_STAKING_ADDRESS}`
+export const STAKING_POOL_ADDRESS = `${process.env.REACT_APP_STAKING_POOL_ADDRESS}`
+
 export const MAX_QUERYING_BLOCK_AMOUNT = 5000;
 export const NETWORK_URL = `${process.env.REACT_APP_NETWORK_URL}`
 export const ROUTER_ADDRESS = `${process.env.REACT_APP_ROUTER_ADDRESS}`
@@ -15,6 +18,7 @@ export const ADDITIONAL_FACTORY_ADDRESSES: string[] = process.env.REACT_APP_ADDI
 export const ADDITIONAL_INIT_CODE_HASHES: string[] = process.env.REACT_APP_ADDITIONAL_INIT_CODE_HASH?.split(",") ?? []
 
 export const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
+export const DEAD_ADDRESS = '0x000000000000000000000000000000000000dEaD'
 export const MAX_UINT256 = '115792089237316195423570985008687907853269984665640564039457584007913129639935'
 export const SUMMITCHECK_API = `${process.env.REACT_APP_SUMMITCHECK_API}`
 export const CHAIN_ID = parseInt(process.env.REACT_APP_CHAIN_ID ?? '56')
@@ -30,7 +34,7 @@ type ChainTokenList = {
 
 export const KODA = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0x8094e772fA4A60bdEb1DfEC56AB040e17DD608D5', 9, 'KODA', 'KODA Token', 100, true, 11.25, 11.23),
-  [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0x063646d9C4eCB1c341bECdEE162958f072C43561', 9, 'KODA', 'KODA Token', 100, true, 11.25, 11.23)
+  [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0xa3A654C2369277237372cCce51Ca8403acB4FAe4', 9, 'KODA', 'KODA Token', 100, true, 11.25, 11.23)
 }[CHAIN_ID] as Token
 export const DAI = new Token(ChainId.MAINNET, '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3', 18, 'DAI', 'Dai Stablecoin')
 export const USDT = new Token(ChainId.MAINNET, '0x55d398326f99059fF775485246999027B3197955', 18, 'USDT', 'Tether USD')
@@ -41,7 +45,7 @@ export const UST = new Token(
   18,
   'UST',
   'Wrapped UST Token'
-) 
+)
 
 export const BUSD = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56', 18, 'BUSD', 'Binance USD'),
@@ -50,7 +54,7 @@ export const BUSD = {
 
 export const KAPEX = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0x11441AFb1D10E3Ce4E39666FC4F4A2A5d6d8C0Da', 18, 'KAPEX', 'KAPEX Token'),
-  [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0x4e35b5D0Fc6A410e7Dd09C02673b5110c1B1D5a5', 18, 'KAPEX', 'KAPEX Token'),
+  [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0x8df2813ED24d1c27a9299226c812CfD7217eb99b', 18, 'KAPEX', 'KAPEX Token'),
 }[CHAIN_ID] as Token;
 
 const WETH_ONLY: ChainTokenList = {
@@ -95,7 +99,7 @@ export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } 
   ],
 }
 
-export const KAPEX_TO_BUSD_ROUTE = [KAPEX.address, WETH[CHAIN_ID].address, BUSD.address] 
+export const KAPEX_TO_BUSD_ROUTE = [KAPEX.address, WETH[CHAIN_ID].address, BUSD.address]
 
 export const NetworkContextName = 'NETWORK'
 

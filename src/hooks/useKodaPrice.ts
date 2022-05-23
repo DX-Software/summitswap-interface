@@ -13,7 +13,7 @@ type ApiResponse = {
  */
 const api = `https://api.coingecko.com/api/v3/simple/price?ids=koda-finance&vs_currencies=usd`
 
-const useGetKodaPriceData = () => {
+const useKodaPrice = () => {
   const [data, setData] = useState<ApiResponse | null>(null)
 
   useEffect(() => {
@@ -21,7 +21,7 @@ const useGetKodaPriceData = () => {
       try {
         const response = await fetch(api)
         const res: ApiResponse = await response.json()
-        
+
         setData(res)
       } catch (error) {
         console.error('Unable to fetch price data:', error)
@@ -31,7 +31,7 @@ const useGetKodaPriceData = () => {
     fetchData()
   }, [setData])
 
-  return data
+  return data ? Number(data['koda-finance'].usd) : NaN
 }
 
-export default useGetKodaPriceData
+export default useKodaPrice
