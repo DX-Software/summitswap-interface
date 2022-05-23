@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Radio, Input, Button, Text } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
@@ -8,13 +8,19 @@ import { BigNumber, utils } from 'ethers'
 import { useToken } from 'hooks/Tokens'
 import AppBody from 'pages/AppBody'
 import CurrencyLogo from 'components/CurrencyLogo'
-import useKapexPrice from 'hooks/useKapexPrice'
 import useKodaPrice from 'hooks/useKodaPrice'
 import CustomLightSpinner from 'components/CustomLightSpinner'
 import useDebounce from 'hooks/useDebounce'
-import { APYS, LOCKING_PERIODS, maximumKodaYearlyReward } from '../../constants/staking'
+import {
+  APYS,
+  LOCKING_PERIODS,
+  maximumKodaYearlyReward,
+  STAKING_ADDRESS,
+  STAKING_DISTRIBUTOR_ADDRESS,
+  STAKING_POOL_ADDRESS,
+} from '../../constants/staking'
 import NavBar from './Navbar'
-import { DEAD_ADDRESS, KAPEX, KODA, MAX_UINT256, STAKING_ADDRESS, STAKING_POOL_ADDRESS } from '../../constants'
+import { DEAD_ADDRESS, KAPEX, KODA, MAX_UINT256 } from '../../constants'
 import './styles.css'
 
 const RadioContainer = styled.div`
@@ -137,9 +143,14 @@ export default function DepositPage() {
     const burnedAmount = (await kodaTokenContract.balanceOf(DEAD_ADDRESS)) as BigNumber
     const stakedAmount = (await kodaTokenContract.balanceOf(STAKING_ADDRESS)) as BigNumber
     const stakingPoolAmount = (await kodaTokenContract.balanceOf(STAKING_POOL_ADDRESS)) as BigNumber
+    const distributorAmount = (await kodaTokenContract.balanceOf(STAKING_DISTRIBUTOR_ADDRESS)) as BigNumber
 
-    const circulatingSupply = totalSupply.sub(burnedAmount).sub(stakedAmount).sub(stakingPoolAmount)
-    const circulatingSupplyWithtStaking = totalSupply.sub(burnedAmount).sub(stakingPoolAmount)
+    const circulatingSupply = totalSupply
+      .sub(burnedAmount)
+      .sub(stakedAmount)
+      .sub(stakingPoolAmount)
+      .sub(distributorAmount)
+    const circulatingSupplyWithtStaking = circulatingSupply.add(stakedAmount)
 
     setCirculatingAmountWithStaking(utils.formatUnits(circulatingSupplyWithtStaking, KODA.decimals))
     setCirculatingAmount(Math.floor(Number(utils.formatUnits(circulatingSupply, KODA.decimals))).toString())
@@ -303,7 +314,10 @@ export default function DepositPage() {
     )) as BigNumber
     setUserSixMonthsStakedAmount(utils.formatUnits(fetchedSixMonthsStakedAmount, KODA.decimals).split('.')[0])
 
-    const fetchedYearStakedAmount = (await stakingContract.userDeposits(account, LOCKING_PERIODS._12Months)) as BigNumber
+    const fetchedYearStakedAmount = (await stakingContract.userDeposits(
+      account,
+      LOCKING_PERIODS._12Months
+    )) as BigNumber
     setUserYearStakedAmount(utils.formatUnits(fetchedYearStakedAmount, KODA.decimals).split('.')[0])
   }, [stakingContract, account])
 
