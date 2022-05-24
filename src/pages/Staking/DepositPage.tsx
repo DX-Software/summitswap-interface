@@ -150,9 +150,9 @@ export default function DepositPage() {
       .sub(stakedAmount)
       .sub(stakingPoolAmount)
       .sub(distributorAmount)
-    const circulatingSupplyWithtStaking = circulatingSupply.add(stakedAmount)
+    const circulatingSupplyWithStaking = circulatingSupply.add(stakedAmount)
 
-    setCirculatingAmountWithStaking(utils.formatUnits(circulatingSupplyWithtStaking, KODA.decimals))
+    setCirculatingAmountWithStaking(utils.formatUnits(circulatingSupplyWithStaking, KODA.decimals))
     setCirculatingAmount(Math.floor(Number(utils.formatUnits(circulatingSupply, KODA.decimals))).toString())
   }, [kodaTokenContract])
 
