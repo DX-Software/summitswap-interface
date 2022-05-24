@@ -1,6 +1,10 @@
 import { BigNumber } from 'ethers'
 import { KODA, KAPEX } from '.'
 
+export const STAKING_ADDRESS = `${process.env.REACT_APP_STAKING_ADDRESS}`
+export const STAKING_POOL_ADDRESS = `${process.env.REACT_APP_STAKING_POOL_ADDRESS}`
+export const STAKING_DISTRIBUTOR_ADDRESS = `${process.env.REACT_APP_STAKING_DISTRIBUTOR_ADDRESS}`
+
 export const LOCKING_PERIODS = {
   _0Months: 0,
   _3Months: 7948800,
