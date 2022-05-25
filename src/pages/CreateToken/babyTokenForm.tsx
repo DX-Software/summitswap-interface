@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import styled from 'styled-components';
-import { CREATE_BABY_TOKEN_ADDRESS, CREATE_TOKEN_FEE_RECEIVER_ADDRESS, ROUTER_ADDRESS } from '../../constants/index';
-import CREATE_TOKEN_ABI from '../../constants/abis/createBabyToken.json';
+import { useBabyTokenContract } from 'hooks/useContract';
+import { CREATE_TOKEN_FEE_RECEIVER_ADDRESS, ROUTER_ADDRESS } from '../../constants/index';
 import { Form, Label, LabelText, BigLabelText, Submit, Inputs, MessageContainer, Message } from './standardTokenForm';
 
 export const Select = styled.select`
@@ -31,16 +31,14 @@ const BabyTokenForm = () => {
     const [txAddress, setTxAddress] = useState('');
     const dividendTracker = "0x87064D365710C0C025628ed1294548FEA4f5AD67";
 
+    const factory = useBabyTokenContract();
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (window.ethereum) {
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            const signer = provider.getSigner();
-            const create_token_contract = new ethers.Contract(CREATE_BABY_TOKEN_ADDRESS, CREATE_TOKEN_ABI, signer);
-            console.log({name, symbol, supply, router, tokenFeeBps, liquidityFeeBps, marketingFeeBps, CREATE_TOKEN_FEE_RECEIVER_ADDRESS, CREATE_BABY_TOKEN_ADDRESS})
             if ((parseInt(minimumTokenBalanceForDividends)) < ((parseInt(supply)) / 1000)){
                 try{
-                    const tx = await create_token_contract.createBabyToken(
+                    if (!factory){return}
+                    const tx = await factory.createBabyToken(
                         name,
                         symbol,
                         ethers.utils.parseUnits(supply, 18),
@@ -56,7 +54,6 @@ const BabyTokenForm = () => {
                           (parseInt(marketingFeeBps)),
                         ],
                         ethers.utils.parseUnits(minimumTokenBalanceForDividends, 18),
-                        CREATE_TOKEN_FEE_RECEIVER_ADDRESS,
                         {value: ethers.utils.parseUnits("0.01")}
                     );
                     setLoading(true);

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import styled from 'styled-components';
-import { CREATE_LIQUIDITY_TOKEN_ADDRESS, CREATE_TOKEN_FEE_RECEIVER_ADDRESS, ROUTER_ADDRESS } from '../../constants/index';
-import CREATE_TOKEN_ABI from '../../constants/abis/createLiquidityToken.json';
+import { useLiquidityTokenContract } from 'hooks/useContract';
+import { CREATE_TOKEN_FEE_RECEIVER_ADDRESS, ROUTER_ADDRESS } from '../../constants/index';
 import { Form, Label, LabelText, BigLabelText, Submit, Inputs, MessageContainer, Message } from './standardTokenForm';
+
 
 export const Select = styled.select`
     height: 2.5rem;
@@ -28,15 +29,13 @@ const LiquidityTokenForm = () => {
     const [error, setError] = useState('');
     const [txAddress, setTxAddress] = useState('');
 
+    const factory = useLiquidityTokenContract();
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (window.ethereum) {
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            const signer = provider.getSigner();
-            const create_token_contract = new ethers.Contract(CREATE_LIQUIDITY_TOKEN_ADDRESS, CREATE_TOKEN_ABI, signer);
-            console.log({name, symbol, supply, router, charityAddress, taxFeeBps, liquidityFeeBps, charityFeeBps, CREATE_TOKEN_FEE_RECEIVER_ADDRESS, CREATE_LIQUIDITY_TOKEN_ADDRESS})
             try{
-                const tx = await create_token_contract.createLiquidityToken(
+                if (!factory){return}
+                const tx = await factory.createLiquidityToken(
                     name,
                     symbol,
                     ethers.utils.parseUnits(supply, 9),
@@ -45,7 +44,6 @@ const LiquidityTokenForm = () => {
                     (parseInt(taxFeeBps) * 100),
                     (parseInt(liquidityFeeBps) * 100),
                     (parseInt(charityFeeBps !== '' ? charityFeeBps : '0') * 100),
-                    CREATE_TOKEN_FEE_RECEIVER_ADDRESS,
                     {value: ethers.utils.parseUnits("0.01")}
                 );
                 setLoading(true);

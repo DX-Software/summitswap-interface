@@ -8,7 +8,19 @@ import { ERC20_BYTES32_ABI } from '../constants/abis/erc20'
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall'
 import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
-import { LOCKER_ADDRESS, REFERRAL_ADDRESS, STAKING_ADDRESS } from '../constants'
+import { 
+  LOCKER_ADDRESS,
+  REFERRAL_ADDRESS,
+  STAKING_ADDRESS,
+  CREATE_STANDARD_TOKEN_ADDRESS,
+  CREATE_LIQUIDITY_TOKEN_ADDRESS, 
+  CREATE_BABY_TOKEN_ADDRESS,
+  CREATE_BUYBACK_TOKEN_ADDRESS
+} from '../constants'
+import CREATE_STANDARD_TOKEN_ABI from '../constants/abis/createStandardToken.json';
+import CREATE_LIQUIDITY_TOKEN_ABI from '../constants/abis/createLiquidityToken.json';
+import CREATE_BABY_TOKEN_ABI from '../constants/abis/createBabyToken.json';
+import CREATE_BUYBACK_TOKEN_ABI from '../constants/abis/createBuybackToken.json';
 import ERC20_ABI from '../constants/abis/erc20.json'
 import WETH_ABI from '../constants/abis/weth.json'
 import REFERRAL_ABI from '../constants/abis/summitReferral.json'
@@ -88,4 +100,20 @@ export function useMulticallContract(): Contract | null {
 
 export function useRouterContract(routerAddress: string): Contract | null {
   return useContract(routerAddress, ROUTER_ABI)
+}
+
+export function useStandardTokenContract(): Contract | null {
+  return useContract(CREATE_STANDARD_TOKEN_ADDRESS, CREATE_STANDARD_TOKEN_ABI, true);
+}
+
+export function useLiquidityTokenContract(): Contract | null {
+  return useContract(CREATE_LIQUIDITY_TOKEN_ADDRESS, CREATE_LIQUIDITY_TOKEN_ABI, true);
+}
+
+export function useBabyTokenContract(): Contract | null {
+  return useContract(CREATE_BABY_TOKEN_ADDRESS, CREATE_BABY_TOKEN_ABI, true);
+}
+
+export function useBuyBackTokenContract(): Contract | null {
+  return useContract(CREATE_BUYBACK_TOKEN_ADDRESS, CREATE_BUYBACK_TOKEN_ABI, true);
 }

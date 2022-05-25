@@ -1,6 +1,12 @@
 [
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_serviceFeeReceiver",
+        "type": "address"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
@@ -34,6 +40,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_serviceFeeReceiver",
+        "type": "address"
+      }
+    ],
+    "name": "changeFeeReceiver",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -77,11 +96,6 @@
         "internalType": "uint16",
         "name": "_charityFeeBps",
         "type": "uint16"
-      },
-      {
-        "internalType": "address",
-        "name": "_serviceFeeReceiver",
-        "type": "address"
       }
     ],
     "name": "createLiquidityToken",
@@ -159,6 +173,19 @@
     "name": "renounceOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "serviceFeeReceiver",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {

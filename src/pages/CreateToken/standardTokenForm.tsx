@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import styled from 'styled-components';
-import { CREATE_STANDARD_TOKEN_ADDRESS, CREATE_TOKEN_FEE_RECEIVER_ADDRESS } from '../../constants/index';
-import CREATE_TOKEN_ABI from '../../constants/abis/createStandardToken.json';
+import { CREATE_TOKEN_FEE_RECEIVER_ADDRESS } from '../../constants/index';
+import { useStandardTokenContract } from '../../hooks/useContract';
 
 
 export const Form = styled.form`
@@ -87,15 +87,14 @@ const StandardTokenForm = () => {
     const [error, setError] = useState('');
     const [txAddress, setTxAddress] = useState('');
 
+    // Using the Website own connectors instead of only metamask as I did
+    const factory = useStandardTokenContract();
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (window.ethereum) {
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            const signer = provider.getSigner();
-            const create_token_contract = new ethers.Contract(CREATE_STANDARD_TOKEN_ADDRESS, CREATE_TOKEN_ABI, signer);
-            console.log({name, symbol, decimals, supply, CREATE_TOKEN_FEE_RECEIVER_ADDRESS, CREATE_STANDARD_TOKEN_ADDRESS})
             try{
-                const tx = await create_token_contract.createStandardToken(name, symbol, decimals, ethers.utils.parseUnits(supply), CREATE_TOKEN_FEE_RECEIVER_ADDRESS, {value: ethers.utils.parseUnits("0.01")});
+                if (!factory){return}
+                const tx = await factory.createStandardToken(name, symbol, decimals, ethers.utils.parseUnits(supply), {value: ethers.utils.parseUnits("0.01")});
                 setLoading(true);
                 setTxAddress(tx.hash)
                 setLoading(false);
@@ -105,7 +104,7 @@ const StandardTokenForm = () => {
             }
         }
     }
-
+    
     useEffect(() => {
         console.log(loading, created)
     }, [loading, created, txAddress])
@@ -113,7 +112,7 @@ const StandardTokenForm = () => {
     return (
         <>
             {!created && !loading && (
-                    <Form onSubmit={(e) => {handleSubmit(e)}}>
+                  <Form onSubmit={(e) => {handleSubmit(e)}}>
                     <div>
                         <Label htmlFor="name"> 
                             <LabelText>
@@ -176,7 +175,7 @@ const StandardTokenForm = () => {
                     </div>
                     {error && <p>{error}</p>}
                     <Submit type="submit" value="CREATE TOKEN" />
-                </Form>
+                  </Form>
             )}
             {loading && (
                 <Message>Please wait until the transaction is complete...</Message>
@@ -186,7 +185,6 @@ const StandardTokenForm = () => {
                     <Message>Your token was successfully created!!</Message>
                     <Message><a href={`https://testnet.bscscan.com/tx/${txAddress}`}>View your Transaction</a></Message>
                 </MessageContainer>
-                
             )}
         </>
     )
