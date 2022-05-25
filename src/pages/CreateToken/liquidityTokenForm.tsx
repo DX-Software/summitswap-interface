@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import styled from 'styled-components';
 import { useLiquidityTokenContract } from 'hooks/useContract';
 import { CREATE_TOKEN_FEE_RECEIVER_ADDRESS, ROUTER_ADDRESS } from '../../constants/index';
-import { Form, Label, LabelText, BigLabelText, Submit, Inputs, MessageContainer, Message } from './standardTokenForm';
+import { Form, Label, LabelText, BigLabelText, Submit, Inputs, MessageContainer, Message, Required, Relative, Error } from './standardTokenForm';
 
 
 export const Select = styled.select`
@@ -28,6 +28,7 @@ const LiquidityTokenForm = () => {
     const [created, setCreated] = useState(false);
     const [error, setError] = useState('');
     const [txAddress, setTxAddress] = useState('');
+    const [verified, setVerified] = useState(false);
 
     const factory = useLiquidityTokenContract();
     const handleSubmit = async (event) => {
@@ -56,9 +57,19 @@ const LiquidityTokenForm = () => {
         }
     }
 
+    const verifyAddress = async (address) => {
+      try {
+        ethers.utils.getAddress(address)
+        setVerified(true)
+      } catch {
+        console.log('false')
+        setVerified(false)
+      }
+    }
+
     useEffect(() => {
         console.log(loading, created)
-    }, [loading, created, txAddress])
+    }, [loading, created, txAddress, verified])
 
     return (
         <>
@@ -68,6 +79,7 @@ const LiquidityTokenForm = () => {
                         <Label htmlFor="name"> 
                             <LabelText>
                                 Name
+                                <Required>*</Required>
                             </LabelText> 
                             <Inputs 
                                 type="text" 
@@ -83,6 +95,7 @@ const LiquidityTokenForm = () => {
                         <Label htmlFor="symbol"> 
                             <LabelText>
                                 Symbol
+                                <Required>*</Required>
                             </LabelText>  
                             <Inputs 
                                 type="text" 
@@ -98,6 +111,7 @@ const LiquidityTokenForm = () => {
                         <Label htmlFor="supply"> 
                             <LabelText>
                                 Total Supply
+                                <Required>*</Required>
                             </LabelText> 
                             <Inputs 
                                 type="number" 
@@ -113,6 +127,7 @@ const LiquidityTokenForm = () => {
                         <Label htmlFor="router"> 
                             <LabelText>
                                 Router
+                                <Required>*</Required>
                             </LabelText> 
                             <Select onChange={(e) => {setRouter(e.target.value)}} name="router" id="router">
                                 <option value="0xD99D1c33F9fC3444f8101754aBC46c52416550D1" selected>PancakeSwap</option>
@@ -120,24 +135,25 @@ const LiquidityTokenForm = () => {
                             </Select>
                         </Label>
                     </div>
-                    <div>
+                    <Relative>
                         <Label htmlFor="charityAddress"> 
                             <BigLabelText>
                                 Charity Address
                             </BigLabelText> 
-                            <Inputs 
+                            <Inputs
                                 type="text" 
                                 name="charityAddress" 
                                 value={charityAddress} 
                                 placeholder='Ex: 0x...' 
-                                onChange={(e) => {setCharityAddress(e.target.value)}}
+                                onChange={(e) => {setCharityAddress(e.target.value); verifyAddress(e.target.value)}}
                             />
                         </Label>
-                    </div>
-                    <div>
+                    </Relative>
+                    <Relative>
                         <Label htmlFor="taxfee"> 
                             <BigLabelText>
                                 Transaction fee to generate yield (%)
+                                <Required>*</Required>
                             </BigLabelText> 
                             <Inputs 
                                 type="number" 
@@ -148,11 +164,12 @@ const LiquidityTokenForm = () => {
                                 onChange={(e) => {setTaxFeeBps(e.target.value)}}
                             />
                         </Label>
-                    </div>
-                    <div>
+                    </Relative>
+                    <Relative>
                         <Label htmlFor="liquidityfee"> 
                             <BigLabelText>
                                 Transaction fee to generate liquidity (%)
+                                <Required>*</Required>
                             </BigLabelText> 
                             <Inputs 
                                 type="number" 
@@ -163,8 +180,17 @@ const LiquidityTokenForm = () => {
                                 onChange={(e) => {setLiquidityFee(e.target.value)}}
                             />
                         </Label>
-                    </div>
-                    <div>
+                    </Relative>
+                    <Relative>
+                        {(parseInt(charityFeeBps) > 25 && parseInt(charityFeeBps) + parseInt(liquidityFeeBps) + parseInt(taxFeeBps) <= 25) && (
+                          <Error>Charity fee has to be less or equal to 25</Error>
+                        )}
+                        {(verified && parseInt(charityFeeBps) <= 0) && (
+                          <Error>Charity Fee cant be 0 if you have a charity address</Error>
+                        )}
+                        {(verified && charityFeeBps === '') && (
+                          <Error>Charity Fee cant be empty if you have a charity address</Error>
+                        )}
                         <Label htmlFor="charityfee"> 
                             <BigLabelText>
                                 Charity/Marketing percent (%)
@@ -177,8 +203,13 @@ const LiquidityTokenForm = () => {
                                 onChange={(e) => {setCharityFee(e.target.value)}}
                             />
                         </Label>
-                    </div>
+                    </Relative>
                     {error && <p>{error}</p>}
+                    <Relative>
+                      {(parseInt(charityFeeBps) || 0) + (parseInt(liquidityFeeBps) || 0) + (parseInt(taxFeeBps) || 0) > 25 && (
+                            <Error>The fees combined cannot be larger than 25%</Error>
+                      )}
+                    </Relative>
                     <Submit type="submit" value="CREATE TOKEN" />
                 </Form>
             )}

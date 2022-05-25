@@ -23,6 +23,7 @@ export const LabelText = styled.p`
     border-radius: 30px 0 0 30px;
     padding: 0 1rem 0 1rem;
     flex: 0.4;
+    position: relative;
 `
 export const BigLabelText = styled.p`
     display: flex;
@@ -33,6 +34,7 @@ export const BigLabelText = styled.p`
     border-radius: 30px 0 0 30px;
     padding: 0 1rem 0 1rem;
     flex: 0.4;
+    position: relative;
 `
 
 export const Submit = styled.input`
@@ -77,6 +79,28 @@ export const Message = styled.p`
     }
 `
 
+export const Required = styled.span`
+    color: red;
+    font-size: 1.5rem;
+    font-weight: bold;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+`
+
+export const Relative = styled.div`
+    position: relative;
+`
+
+export const Error = styled.span`
+    color: red;
+    font-size: 0.8rem;
+    font-weight: bold;
+    position: absolute;
+    bottom: -3px;
+    left: 15px;
+`
+
 const StandardTokenForm = () => {
     const [name, setName] = useState('');
     const [symbol, setSymbol] = useState('');
@@ -117,6 +141,7 @@ const StandardTokenForm = () => {
                         <Label htmlFor="name"> 
                             <LabelText>
                                 Name
+                                <Required>*</Required>
                             </LabelText> 
                             <Inputs 
                                 type="text" 
@@ -132,6 +157,7 @@ const StandardTokenForm = () => {
                         <Label htmlFor="symbol"> 
                             <LabelText>
                                 Symbol
+                                <Required>*</Required>
                             </LabelText>  
                             <Inputs 
                                 type="text" 
@@ -147,6 +173,7 @@ const StandardTokenForm = () => {
                         <Label htmlFor="decimals"> 
                             <LabelText>
                                 Decimals
+                                <Required>*</Required>
                             </LabelText>  
                             <Inputs 
                                 type="number" 
@@ -162,6 +189,7 @@ const StandardTokenForm = () => {
                         <Label htmlFor="supply"> 
                             <LabelText>
                                 Total Supply
+                                <Required>*</Required>
                             </LabelText> 
                             <Inputs 
                                 type="number" 

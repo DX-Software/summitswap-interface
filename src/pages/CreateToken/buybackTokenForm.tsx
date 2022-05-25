@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { useBuyBackTokenContract } from 'hooks/useContract';
 import { CREATE_BUYBACK_TOKEN_ADDRESS, CREATE_TOKEN_FEE_RECEIVER_ADDRESS, ROUTER_ADDRESS } from '../../constants/index';
 import CREATE_TOKEN_ABI from '../../constants/abis/createBuybackToken.json';
-import { Form, Label, LabelText, BigLabelText, Submit, Inputs, MessageContainer, Message } from './standardTokenForm';
+import { Form, Label, LabelText, BigLabelText, Submit, Inputs, MessageContainer, Message, Required } from './standardTokenForm';
 
 export const Select = styled.select`
     height: 2.5rem;
@@ -73,6 +73,7 @@ const BuybackTokenForm = () => {
                         <Label htmlFor="name"> 
                             <LabelText>
                                 Name
+                                <Required>*</Required>
                             </LabelText> 
                             <Inputs 
                                 type="text" 
@@ -88,6 +89,7 @@ const BuybackTokenForm = () => {
                         <Label htmlFor="symbol"> 
                             <LabelText>
                                 Symbol
+                                <Required>*</Required>
                             </LabelText>  
                             <Inputs 
                                 type="text" 
@@ -103,6 +105,7 @@ const BuybackTokenForm = () => {
                         <Label htmlFor="supply"> 
                             <LabelText>
                                 Total Supply
+                                <Required>*</Required>
                             </LabelText> 
                             <Inputs 
                                 type="number" 
@@ -118,6 +121,7 @@ const BuybackTokenForm = () => {
                         <Label htmlFor="rewardTokenAddress"> 
                             <BigLabelText>
                                 Reward Token Address
+                                <Required>*</Required>
                             </BigLabelText> 
                             <Inputs 
                                 type="text" 
@@ -133,6 +137,7 @@ const BuybackTokenForm = () => {
                         <Label htmlFor="router"> 
                             <LabelText>
                                 Router
+                                <Required>*</Required>
                             </LabelText> 
                             <Select onChange={(e) => {setRouter(e.target.value)}} name="router" id="router">
                                 <option value="0xD99D1c33F9fC3444f8101754aBC46c52416550D1" selected>PancakeSwap</option>
@@ -144,6 +149,7 @@ const BuybackTokenForm = () => {
                         <Label htmlFor="liquidityfee"> 
                             <BigLabelText>
                                 Transaction fee to generate liquidity (%)
+                                <Required>*</Required>
                             </BigLabelText> 
                             <Inputs 
                                 type="number" 
@@ -159,6 +165,7 @@ const BuybackTokenForm = () => {
                         <Label htmlFor="buybackFee"> 
                             <BigLabelText>
                                 Transaction fee to generate liquidity (%)
+                                <Required>*</Required>
                             </BigLabelText> 
                             <Inputs 
                                 type="number" 
@@ -174,6 +181,7 @@ const BuybackTokenForm = () => {
                         <Label htmlFor="reflectionFee"> 
                             <BigLabelText>
                                 Transaction fee to generate liquidity (%)
+                                <Required>*</Required>
                             </BigLabelText> 
                             <Inputs 
                                 type="number" 
@@ -189,6 +197,7 @@ const BuybackTokenForm = () => {
                         <Label htmlFor="marketingFee"> 
                             <BigLabelText>
                                 Marketing fee (%)
+                                <Required>*</Required>
                             </BigLabelText> 
                             <Inputs 
                                 type="number" 

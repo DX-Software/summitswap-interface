@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import styled from 'styled-components';
 import { useBabyTokenContract } from 'hooks/useContract';
 import { CREATE_TOKEN_FEE_RECEIVER_ADDRESS, ROUTER_ADDRESS } from '../../constants/index';
-import { Form, Label, LabelText, BigLabelText, Submit, Inputs, MessageContainer, Message } from './standardTokenForm';
+import { Form, Label, LabelText, BigLabelText, Submit, Inputs, MessageContainer, Message, Required } from './standardTokenForm';
 
 export const Select = styled.select`
     height: 2.5rem;
@@ -81,6 +81,7 @@ const BabyTokenForm = () => {
                         <Label htmlFor="name"> 
                             <LabelText>
                                 Name
+                                <Required>*</Required>
                             </LabelText> 
                             <Inputs 
                                 type="text" 
@@ -96,6 +97,7 @@ const BabyTokenForm = () => {
                         <Label htmlFor="symbol"> 
                             <LabelText>
                                 Symbol
+                                <Required>*</Required>
                             </LabelText>  
                             <Inputs 
                                 type="text" 
@@ -111,6 +113,7 @@ const BabyTokenForm = () => {
                         <Label htmlFor="supply"> 
                             <LabelText>
                                 Total Supply
+                                <Required>*</Required>
                             </LabelText> 
                             <Inputs 
                                 type="number" 
@@ -126,6 +129,7 @@ const BabyTokenForm = () => {
                         <Label htmlFor="rewardTokenAddress"> 
                             <BigLabelText>
                                 Reward Token Address
+                                <Required>*</Required>
                             </BigLabelText> 
                             <Inputs 
                                 type="text" 
@@ -141,6 +145,7 @@ const BabyTokenForm = () => {
                         <Label htmlFor="router"> 
                             <LabelText>
                                 Router
+                                <Required>*</Required>
                             </LabelText> 
                             <Select onChange={(e) => {setRouter(e.target.value)}} name="router" id="router">
                                 <option value="0xD99D1c33F9fC3444f8101754aBC46c52416550D1" selected>PancakeSwap</option>
@@ -152,6 +157,7 @@ const BabyTokenForm = () => {
                         <Label htmlFor="marketingWallet"> 
                             <BigLabelText>
                                 Marketing Wallet Address
+                                <Required>*</Required>
                             </BigLabelText> 
                             <Inputs 
                                 type="text" 
@@ -167,6 +173,7 @@ const BabyTokenForm = () => {
                         <Label htmlFor="tokenFee"> 
                             <BigLabelText>
                                 Token reward fee (%)
+                                <Required>*</Required>
                             </BigLabelText> 
                             <Inputs 
                                 type="number" 
@@ -182,6 +189,7 @@ const BabyTokenForm = () => {
                         <Label htmlFor="liquidityfee"> 
                             <BigLabelText>
                                 Transaction fee to generate liquidity (%)
+                                <Required>*</Required>
                             </BigLabelText> 
                             <Inputs 
                                 type="number" 
@@ -197,6 +205,7 @@ const BabyTokenForm = () => {
                         <Label htmlFor="marketingFee"> 
                             <BigLabelText>
                                 Marketing fee (%)
+                                <Required>*</Required>
                             </BigLabelText> 
                             <Inputs 
                                 type="number" 
@@ -212,6 +221,7 @@ const BabyTokenForm = () => {
                         <Label htmlFor="minimumTokenBalanceForDividends"> 
                             <BigLabelText>
                                 Minimum token balance for dividends 
+                                <Required>*</Required>
                             </BigLabelText> 
                             <Inputs 
                                 type="number" 
