@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import { ethers } from 'ethers';
 import styled from 'styled-components';
-import { CREATE_TOKEN_FEE_RECEIVER_ADDRESS } from '../../constants/index';
 import { useStandardTokenContract } from '../../hooks/useContract';
 
 
@@ -175,7 +174,7 @@ const StandardTokenForm = () => {
           setLoading(false);
           setCreated(true);
         } catch (e) {
-          console.log(e);
+          console.error(e);
         }
       },
       validate
@@ -265,7 +264,6 @@ const StandardTokenForm = () => {
                             />
                         </Label>
                     </Relative>
-                    {error && <p>{error}</p>}
                     {formik.isValid && <Submit type="submit" value="CREATE TOKEN" />}
                     {!formik.isValid && <Disabled type="submit" value="CREATE TOKEN" />}
                   </Form>

@@ -15,7 +15,7 @@ export const Select = styled.select`
     flex: 1;
 `
 
-const BuybackTokenForm = () => {
+const BuybackTokenForm = ({account}) => {
     const [name, setName] = useState('');
     const [symbol, setSymbol] = useState('');
     const [supply, setSupply] = useState('');

@@ -56,10 +56,10 @@ const CreateToken = () => {
                     <LiquidityTokenForm account={account} />
                 )}
                 {tokenType === "babytoken" && (
-                    <BabyTokenForm />
+                    <BabyTokenForm account={account} />
                 )}
                 {tokenType === "buyback" && (
-                    <BuybackTokenForm />
+                    <BuybackTokenForm account={account} />
                 )}
               </>
             )}

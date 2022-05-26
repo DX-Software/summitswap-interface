@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import { useFormik } from 'formik';
 import styled from 'styled-components';
 import { useLiquidityTokenContract } from 'hooks/useContract';
-import { CREATE_TOKEN_FEE_RECEIVER_ADDRESS, ROUTER_ADDRESS } from '../../constants/index';
+import { ROUTER_ADDRESS } from '../../constants/index';
 import { Form, Label, LabelText, BigLabelText, Submit, Inputs, MessageContainer, Message, Required, Relative, Error, Disabled } from './standardTokenForm';
 
 
@@ -16,20 +16,20 @@ export const Select = styled.select`
     flex: 1;
 `
 
+export const verifyAddress = async (address) => {
+  try {
+    ethers.utils.getAddress(address)
+    return true
+  } catch {
+    return false
+  }
+}
+
 const LiquidityTokenForm = ({account}) => {
     const [loading, setLoading] = useState(false);
     const [created, setCreated] = useState(false);
     const [error, setError] = useState('');
     const [txAddress, setTxAddress] = useState('');
-
-    const verifyAddress = async (address) => {
-      try {
-        ethers.utils.getAddress(address)
-        return true
-      } catch {
-        return false
-      }
-    }
 
     interface ValueErrors {
       name?: string;
@@ -92,7 +92,7 @@ const LiquidityTokenForm = ({account}) => {
         name: '',
         symbol: '',
         supply: '',
-        router: '0xD99D1c33F9fC3444f8101754aBC46c52416550D1',
+        router: '0xD99D1c33F9fC3444f8101754aBC46c52416550D1', // PancakeSwap
         charityAddress: '',
         taxFeeBps: '',
         liquidityFeeBps: '',
@@ -132,7 +132,10 @@ const LiquidityTokenForm = ({account}) => {
         <>
             {!created && !loading && (
               <Form onSubmit={formik.handleSubmit}>
-                <div>
+                <Relative>
+                    {formik.errors.name && (
+                      <Error className='error'>{formik.errors.name}</Error>
+                    )}
                     <Label htmlFor="name"> 
                         <LabelText>
                             Name
@@ -147,8 +150,11 @@ const LiquidityTokenForm = ({account}) => {
                             value={formik.values.name}
                         />
                     </Label>
-                </div>
-                <div>
+                </Relative>
+                <Relative>
+                    {formik.errors.symbol && (
+                      <Error className='error'>{formik.errors.symbol}</Error>
+                    )}
                     <Label htmlFor="symbol"> 
                         <LabelText>
                             Symbol
@@ -162,8 +168,11 @@ const LiquidityTokenForm = ({account}) => {
                             value={formik.values.symbol}
                         />
                     </Label>
-                </div>
-                <div>
+                </Relative>
+                <Relative>
+                    {formik.errors.supply && (
+                      <Error className='error'>{formik.errors.supply}</Error>
+                    )}
                     <Label htmlFor="supply"> 
                         <LabelText>
                             Total Supply
@@ -178,8 +187,8 @@ const LiquidityTokenForm = ({account}) => {
                             value={formik.values.supply}
                         />
                     </Label>
-                </div>
-                <div>
+                </Relative>
+                <Relative>
                     <Label htmlFor="router"> 
                         <LabelText>
                             Router
@@ -189,11 +198,11 @@ const LiquidityTokenForm = ({account}) => {
                           onChange={formik.handleChange}
                           value={formik.values.router} name="router" id="router"
                         >
-                          <option value="0xD99D1c33F9fC3444f8101754aBC46c52416550D1" selected>PancakeSwap</option>
+                          <option value="0xD99D1c33F9fC3444f8101754aBC46c52416550D1">PancakeSwap</option>
                           <option value={ROUTER_ADDRESS}>SummitSwap</option>
                         </Select>
                     </Label>
-                </div>
+                </Relative>
                 <Relative>
                     {formik.errors.charityAddress && (
                       <Error className='error'>{formik.errors.charityAddress}</Error>
@@ -212,6 +221,9 @@ const LiquidityTokenForm = ({account}) => {
                     </Label>
                 </Relative>
                 <Relative>
+                    {formik.errors.taxFeeBps && (
+                      <Error className='error'>{formik.errors.taxFeeBps}</Error>
+                    )}
                     <Label htmlFor="taxFeeBps"> 
                         <BigLabelText>
                             Transaction fee to generate yield (%)
@@ -228,6 +240,9 @@ const LiquidityTokenForm = ({account}) => {
                     </Label>
                 </Relative>
                 <Relative>
+                    {formik.errors.liquidityFeeBps && (
+                      <Error className='error'>{formik.errors.liquidityFeeBps}</Error>
+                    )}
                     <Label htmlFor="liquidityFeeBps"> 
                         <BigLabelText>
                             Transaction fee to generate liquidity (%)
@@ -260,7 +275,6 @@ const LiquidityTokenForm = ({account}) => {
                         />
                     </Label>
                 </Relative>
-                {error && <p>{error}</p>}
                 <Relative style={{marginTop: '3rem'}}>
                   { formik.errors.taxes && (
                     <Error className='error'>{formik.errors.taxes}</Error>

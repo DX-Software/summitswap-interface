@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
+import { useFormik } from 'formik';
 import styled from 'styled-components';
 import { useBabyTokenContract } from 'hooks/useContract';
-import { CREATE_TOKEN_FEE_RECEIVER_ADDRESS, ROUTER_ADDRESS } from '../../constants/index';
-import { Form, Label, LabelText, BigLabelText, Submit, Inputs, MessageContainer, Message, Required } from './standardTokenForm';
+import { ROUTER_ADDRESS } from '../../constants/index';
+import { Form, Label, LabelText, BigLabelText, Submit, Inputs, MessageContainer, Message, Required, Disabled, Relative, Error } from './standardTokenForm';
+import { verifyAddress } from './liquidityTokenForm';
 
 export const Select = styled.select`
     height: 2.5rem;
@@ -14,17 +16,7 @@ export const Select = styled.select`
     flex: 1;
 `
 
-const BabyTokenForm = () => {
-    const [name, setName] = useState('');
-    const [symbol, setSymbol] = useState('');
-    const [supply, setSupply] = useState('');
-    const [router, setRouter] = useState('0xD99D1c33F9fC3444f8101754aBC46c52416550D1'); // PancakeSwap
-    const [rewardToken, setRewardToken] = useState('');
-    const [marketingWallet, setMarketingWallet] = useState('');
-    const [tokenFeeBps, setTokenFee] = useState('');
-    const [liquidityFeeBps, setLiquidityFee] = useState('');
-    const [marketingFeeBps, setMarketingFee] = useState('');
-    const [minimumTokenBalanceForDividends, setMinimumBalance] = useState('');
+const BabyTokenForm = ({account}) => {
     const [loading, setLoading] = useState(false);
     const [created, setCreated] = useState(false);
     const [error, setError] = useState('');
@@ -32,42 +24,118 @@ const BabyTokenForm = () => {
     const dividendTracker = "0x87064D365710C0C025628ed1294548FEA4f5AD67";
 
     const factory = useBabyTokenContract();
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        if (window.ethereum) {
-            if ((parseInt(minimumTokenBalanceForDividends)) < ((parseInt(supply)) / 1000)){
-                try{
-                    if (!factory){return}
-                    const tx = await factory.createBabyToken(
-                        name,
-                        symbol,
-                        ethers.utils.parseUnits(supply, 18),
-                        [
-                          rewardToken,
-                          router,
-                          marketingWallet,
-                          dividendTracker
-                        ],
-                        [
-                          (parseInt(tokenFeeBps)),
-                          (parseInt(liquidityFeeBps)),
-                          (parseInt(marketingFeeBps)),
-                        ],
-                        ethers.utils.parseUnits(minimumTokenBalanceForDividends, 18),
-                        {value: ethers.utils.parseUnits("0.01")}
-                    );
-                    setLoading(true);
-                    setTxAddress(tx.hash)
-                    setLoading(false);
-                    setCreated(true);
-                } catch {
-                    setError("It was not possible to create the token");
-                }
-            } else {
-              setError("Minimum Token Balance must be 0.1% or less than Total Supply")
-            }
-        }
+    interface ValueErrors {
+      name?: string;
+      symbol?: string;
+      supply?: string;
+      rewardToken?:string;
+      marketingWallet?: string;
+      tokenFeeBps?: string;
+      liquidityFeeBps?: string;
+      marketingFeeBps?: string;
+      minimumTokenBalanceForDividends?: string;
+      taxes?: string;
     }
+
+    const validate = async (values) => {
+      const errors: ValueErrors = {};
+
+      if(!values.name){
+        errors.name = 'This field is Required';
+      }
+
+      if(!values.symbol){
+        errors.symbol = 'This field is Required';
+      }
+
+      if(!values.supply){
+        errors.supply = 'This field is Required';
+      }
+
+      if(!values.rewardToken){
+        errors.rewardToken = 'This field is Required';
+      } else if(values.rewardToken && !(await verifyAddress(values.rewardToken))){
+        errors.rewardToken = 'This is not a valid address'
+      }
+
+      if(!values.marketingWallet){
+        errors.marketingWallet = 'This field is Required';
+      } else if(values.marketingWallet && !(await verifyAddress(values.marketingWallet))) {
+        errors.marketingWallet = 'This is not a valid address';
+      } else if(values.marketingWallet === account){
+        errors.marketingWallet = 'This account cannot be the same as the owners account'
+      }
+
+      if(!values.tokenFeeBps){
+        errors.tokenFeeBps = 'This field is Required'
+      }
+
+      if(!values.liquidityFeeBps){
+        errors.liquidityFeeBps = 'This field is Required'
+      }
+      
+      if(!values.marketingFeeBps){
+        errors.marketingFeeBps = 'This field is Required'
+      }
+
+      if(!values.minimumTokenBalanceForDividends){
+        errors.minimumTokenBalanceForDividends = 'This field is Required'
+      } else if(values.minimumTokenBalanceForDividends > (values.supply / 1000)){
+        errors.minimumTokenBalanceForDividends = 'Minimum Token Balance must be 0.1% or less than Total Supply'
+      }
+
+      if((parseInt(values.tokenFeeBps) || 0) + (parseInt(values.liquidityFeeBps) || 0) + (parseInt(values.marketingFeeBps) || 0) > 100){
+        errors.taxes = 'Fees need to be less than or equal to 100%'
+      }
+
+      return errors;
+    }
+
+    const formik = useFormik({
+      initialValues: {
+        name: '',
+        symbol: '',
+        supply: '',
+        rewardToken:'',
+        router: '0xD99D1c33F9fC3444f8101754aBC46c52416550D1', // PancakeSwap
+        marketingWallet: '',
+        tokenFeeBps: '',
+        liquidityFeeBps: '',
+        marketingFeeBps: '',
+        minimumTokenBalanceForDividends: '',
+        taxes:''
+      },
+      onSubmit: async (values) => {
+        try{
+          if (!factory){return}
+          const tx = await factory.createBabyToken(
+              values.name,
+              values.symbol,
+              ethers.utils.parseUnits(String(values.supply), 18),
+              [
+                values.rewardToken,
+                values.router,
+                values.marketingWallet,
+                dividendTracker
+              ],
+              [
+                (parseInt(values.tokenFeeBps)),
+                (parseInt(values.liquidityFeeBps)),
+                (parseInt(values.marketingFeeBps)),
+              ],
+              ethers.utils.parseUnits(String(values.minimumTokenBalanceForDividends), 18),
+              {value: ethers.utils.parseUnits("0.01")}
+          );
+          setLoading(true);
+          setTxAddress(tx.hash)
+          setLoading(false);
+          setCreated(true);
+        } catch (e){
+          console.error(e);
+        }
+      },
+      validate
+    })
 
     useEffect(() => {
         console.log(loading, created)
@@ -76,8 +144,11 @@ const BabyTokenForm = () => {
     return (
         <>
             {!created && !loading && (
-                    <Form onSubmit={(e) => {handleSubmit(e)}}>
-                    <div>
+                    <Form onSubmit={formik.handleSubmit}>
+                    <Relative>
+                        {formik.errors.name && (
+                          <Error className='error'>{formik.errors.name}</Error>
+                        )}
                         <Label htmlFor="name"> 
                             <LabelText>
                                 Name
@@ -85,15 +156,18 @@ const BabyTokenForm = () => {
                             </LabelText> 
                             <Inputs 
                                 type="text" 
-                                name="name" 
-                                value={name} 
+                                name="name"
                                 placeholder='Ex: Ethereum' 
                                 required
-                                onChange={(e) => {setName(e.target.value)}}
+                                onChange={formik.handleChange}
+                                value={formik.values.name}
                             />
                         </Label>
-                    </div>
-                    <div>
+                    </Relative>
+                    <Relative>
+                        {formik.errors.symbol && (
+                          <Error className='error'>{formik.errors.symbol}</Error>
+                        )}
                         <Label htmlFor="symbol"> 
                             <LabelText>
                                 Symbol
@@ -102,14 +176,17 @@ const BabyTokenForm = () => {
                             <Inputs 
                                 type="text" 
                                 name="symbol" 
-                                value={symbol} 
                                 placeholder='Ex: ETH' 
                                 required
-                                onChange={(e) => {setSymbol(e.target.value)}}
+                                onChange={formik.handleChange}
+                                value={formik.values.symbol}
                             />
                         </Label>
-                    </div>
-                    <div>
+                    </Relative>
+                    <Relative>
+                        {formik.errors.supply && (
+                          <Error className='error'>{formik.errors.supply}</Error>
+                        )}
                         <Label htmlFor="supply"> 
                             <LabelText>
                                 Total Supply
@@ -118,42 +195,51 @@ const BabyTokenForm = () => {
                             <Inputs 
                                 type="number" 
                                 name="supply" 
-                                value={supply} 
                                 placeholder='Ex: 10000' 
                                 required
-                                onChange={(e) => {setSupply(e.target.value)}}
+                                onChange={formik.handleChange}
+                                value={formik.values.supply}
                             />
                         </Label>
-                    </div>
-                    <div>
-                        <Label htmlFor="rewardTokenAddress"> 
+                    </Relative>
+                    <Relative>
+                        {formik.errors.rewardToken && (
+                          <Error className='error'>{formik.errors.rewardToken}</Error>
+                        )}
+                        <Label htmlFor="rewardToken"> 
                             <BigLabelText>
                                 Reward Token Address
                                 <Required>*</Required>
                             </BigLabelText> 
                             <Inputs 
                                 type="text" 
-                                name="rewardTokenAddress" 
-                                value={rewardToken} 
+                                name="rewardToken" 
                                 placeholder='Ex: 0x...'
                                 required
-                                onChange={(e) => {setRewardToken(e.target.value)}}
+                                onChange={formik.handleChange}
+                                value={formik.values.rewardToken}
                             />
                         </Label>
-                    </div>
-                    <div>
+                    </Relative>
+                    <Relative>
                         <Label htmlFor="router"> 
                             <LabelText>
                                 Router
                                 <Required>*</Required>
                             </LabelText> 
-                            <Select onChange={(e) => {setRouter(e.target.value)}} name="router" id="router">
-                                <option value="0xD99D1c33F9fC3444f8101754aBC46c52416550D1" selected>PancakeSwap</option>
-                                <option value={ROUTER_ADDRESS}>SummitSwap</option>
+                            <Select 
+                              onChange={formik.handleChange}
+                              value={formik.values.router} name="router" id="router"
+                            >
+                              <option value="0xD99D1c33F9fC3444f8101754aBC46c52416550D1">PancakeSwap</option>
+                              <option value={ROUTER_ADDRESS}>SummitSwap</option>
                             </Select>
                         </Label>
-                    </div>
-                    <div>
+                    </Relative>
+                    <Relative>
+                        {formik.errors.marketingWallet && (
+                          <Error className='error'>{formik.errors.marketingWallet}</Error>
+                        )}
                         <Label htmlFor="marketingWallet"> 
                             <BigLabelText>
                                 Marketing Wallet Address
@@ -162,62 +248,73 @@ const BabyTokenForm = () => {
                             <Inputs 
                                 type="text" 
                                 name="marketingWallet" 
-                                value={marketingWallet} 
                                 placeholder='Ex: 0x...'
-                                required
-                                onChange={(e) => {setMarketingWallet(e.target.value)}}
+                                onChange={formik.handleChange}
+                                value={formik.values.marketingWallet}
                             />
                         </Label>
-                    </div>
-                    <div>
-                        <Label htmlFor="tokenFee"> 
+                    </Relative>
+                    <Relative>
+                        {formik.errors.tokenFeeBps && (
+                          <Error className='error'>{formik.errors.tokenFeeBps}</Error>
+                        )}
+                        <Label htmlFor="tokenFeeBps"> 
                             <BigLabelText>
                                 Token reward fee (%)
                                 <Required>*</Required>
                             </BigLabelText> 
                             <Inputs 
                                 type="number" 
-                                name="tokenFee" 
-                                value={tokenFeeBps} 
+                                name="tokenFeeBps"
                                 placeholder='Ex: 1' 
                                 required
-                                onChange={(e) => {setTokenFee(e.target.value)}}
+                                onChange={formik.handleChange}
+                                value={formik.values.tokenFeeBps}
                             />
                         </Label>
-                    </div>
-                    <div>
-                        <Label htmlFor="liquidityfee"> 
+                    </Relative>
+                    <Relative>
+                        {formik.errors.liquidityFeeBps && (
+                          <Error className='error'>{formik.errors.liquidityFeeBps}</Error>
+                        )}
+                        <Label htmlFor="liquidityFeeBps"> 
                             <BigLabelText>
                                 Transaction fee to generate liquidity (%)
                                 <Required>*</Required>
                             </BigLabelText> 
                             <Inputs 
                                 type="number" 
-                                name="liquidityfee" 
-                                value={liquidityFeeBps} 
+                                name="liquidityFeeBps" 
                                 placeholder='Ex: 1' 
                                 required
-                                onChange={(e) => {setLiquidityFee(e.target.value)}}
+                                onChange={formik.handleChange}
+                                value={formik.values.liquidityFeeBps}
                             />
                         </Label>
-                    </div>
-                    <div>
-                        <Label htmlFor="marketingFee"> 
+                    </Relative>
+                    <Relative>
+                        {formik.errors.marketingFeeBps && (
+                          <Error className='error'>{formik.errors.marketingFeeBps}</Error>
+                        )}
+                        <Label htmlFor="marketingFeeBps"> 
                             <BigLabelText>
                                 Marketing fee (%)
                                 <Required>*</Required>
                             </BigLabelText> 
                             <Inputs 
                                 type="number" 
-                                name="marketingFee" 
-                                value={marketingFeeBps} 
+                                name="marketingFeeBps" 
                                 placeholder='Ex: 1' 
                                 required
-                                onChange={(e) => {setMarketingFee(e.target.value)}}
+                                onChange={formik.handleChange}
+                                value={formik.values.marketingFeeBps}
                             />
                         </Label>
-                    </div>
-                    <div>
+                    </Relative>
+                    <Relative>
+                        {formik.errors.minimumTokenBalanceForDividends && (
+                          <Error className='error'>{formik.errors.minimumTokenBalanceForDividends}</Error>
+                        )}
                         <Label htmlFor="minimumTokenBalanceForDividends"> 
                             <BigLabelText>
                                 Minimum token balance for dividends 
@@ -226,15 +323,20 @@ const BabyTokenForm = () => {
                             <Inputs 
                                 type="number" 
                                 name="minimumTokenBalanceForDividends" 
-                                value={minimumTokenBalanceForDividends} 
                                 placeholder='Ex: 1000' 
                                 required
-                                onChange={(e) => {setMinimumBalance(e.target.value)}}
+                                onChange={formik.handleChange}
+                                value={formik.values.minimumTokenBalanceForDividends}
                             />
                         </Label>
-                    </div>
-                    {error && <p>{error}</p>}
-                    <Submit type="submit" value="CREATE TOKEN" />
+                    </Relative>
+                    <Relative style={{marginTop: '3rem'}}>
+                      { formik.errors.taxes && (
+                        <Error className='error'>{formik.errors.taxes}</Error>
+                      )}
+                    </Relative>
+                    {formik.isValid && <Submit type="submit" value="CREATE TOKEN" />}
+                    {!formik.isValid && <Disabled type="submit" value="CREATE TOKEN" />}
                 </Form>
             )}
             {loading && (
