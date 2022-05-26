@@ -53,7 +53,7 @@ const CreateToken = () => {
                     <StandardTokenForm />
                 )}
                 {tokenType === "liquidity" && (
-                    <LiquidityTokenForm />
+                    <LiquidityTokenForm account={account} />
                 )}
                 {tokenType === "babytoken" && (
                     <BabyTokenForm />

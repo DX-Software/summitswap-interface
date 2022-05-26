@@ -15,7 +15,7 @@ export const Select = styled.select`
     flex: 1;
 `
 
-const LiquidityTokenForm = () => {
+const LiquidityTokenForm = ({account}) => {
     const [name, setName] = useState('');
     const [symbol, setSymbol] = useState('');
     const [supply, setSupply] = useState('');
@@ -29,6 +29,7 @@ const LiquidityTokenForm = () => {
     const [error, setError] = useState('');
     const [txAddress, setTxAddress] = useState('');
     const [verified, setVerified] = useState(false);
+    const [valid, setValid] = useState(false);
 
     const factory = useLiquidityTokenContract();
     const handleSubmit = async (event) => {
@@ -62,14 +63,41 @@ const LiquidityTokenForm = () => {
         ethers.utils.getAddress(address)
         setVerified(true)
       } catch {
-        console.log('false')
         setVerified(false)
       }
     }
 
+    const invalidForm = () => {
+      if(((parseInt(charityFeeBps) > 0 && charityFeeBps !== '') && !verified)) {
+        setValid(false)
+      }
+
+      if(charityAddress === account) {
+        setValid(false)
+      }
+
+      if((parseInt(charityFeeBps) > 25 && parseInt(charityFeeBps) + parseInt(liquidityFeeBps) + parseInt(taxFeeBps) <= 25)) {
+        setValid(false)
+      }
+      
+      if(verified && parseInt(charityFeeBps) <= 0) {
+        setValid(false)
+      }
+
+      if(verified && charityFeeBps === '') {
+        setValid(false)
+      }
+
+      if((parseInt(charityFeeBps) || 0) + (parseInt(liquidityFeeBps) || 0) + (parseInt(taxFeeBps) || 0)) {
+        setValid(false)
+      }
+      
+      setValid(true)
+    }
+
     useEffect(() => {
         console.log(loading, created)
-    }, [loading, created, txAddress, verified])
+    }, [loading, created, txAddress, verified, valid])
 
     return (
         <>
@@ -136,6 +164,12 @@ const LiquidityTokenForm = () => {
                         </Label>
                     </div>
                     <Relative>
+                        {((parseInt(charityFeeBps) > 0 && charityFeeBps !== '') && !verified) && (
+                          <Error className='error'>You need a valid Charity Address if you have charity fee</Error>
+                        )}
+                        {charityAddress === account && (
+                          <Error className='error'>Your charity address cant be the same as your address</Error>
+                        )}
                         <Label htmlFor="charityAddress"> 
                             <BigLabelText>
                                 Charity Address
@@ -183,13 +217,13 @@ const LiquidityTokenForm = () => {
                     </Relative>
                     <Relative>
                         {(parseInt(charityFeeBps) > 25 && parseInt(charityFeeBps) + parseInt(liquidityFeeBps) + parseInt(taxFeeBps) <= 25) && (
-                          <Error>Charity fee has to be less or equal to 25</Error>
+                          <Error className='error'>Charity fee has to be less or equal to 25</Error>
                         )}
                         {(verified && parseInt(charityFeeBps) <= 0) && (
-                          <Error>Charity Fee cant be 0 if you have a charity address</Error>
+                          <Error className='error'>Charity Fee cant be 0 if you have a charity address</Error>
                         )}
                         {(verified && charityFeeBps === '') && (
-                          <Error>Charity Fee cant be empty if you have a charity address</Error>
+                          <Error className='error'>Charity Fee cant be empty if you have a charity address</Error>
                         )}
                         <Label htmlFor="charityfee"> 
                             <BigLabelText>
@@ -200,17 +234,17 @@ const LiquidityTokenForm = () => {
                                 name="charityfee" 
                                 value={charityFeeBps} 
                                 placeholder='Ex: 1' 
-                                onChange={(e) => {setCharityFee(e.target.value)}}
+                                onChange={(e) => {setCharityFee(e.target.value); invalidForm()}}
                             />
                         </Label>
                     </Relative>
                     {error && <p>{error}</p>}
                     <Relative>
                       {(parseInt(charityFeeBps) || 0) + (parseInt(liquidityFeeBps) || 0) + (parseInt(taxFeeBps) || 0) > 25 && (
-                            <Error>The fees combined cannot be larger than 25%</Error>
+                        <Error className='error'>The fees combined cannot be larger than 25%</Error>
                       )}
                     </Relative>
-                    <Submit type="submit" value="CREATE TOKEN" />
+                    <Submit type="submit" value="CREATE TOKEN" disabled={!valid}/>
                 </Form>
             )}
             {loading && (
