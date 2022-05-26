@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useFormik } from 'formik';
 import { ethers } from 'ethers';
 import styled from 'styled-components';
 import { CREATE_TOKEN_FEE_RECEIVER_ADDRESS } from '../../constants/index';
@@ -49,6 +50,20 @@ export const Submit = styled.input`
     :hover {
         opacity: 0.75;
         cursor: pointer;
+    }
+`
+export const Disabled = styled.input`
+    color: white;
+    background: linear-gradient(#00d4a4,#008668); 
+    width: 30%;
+    height: 2.5rem;
+    margin: 1rem auto;
+    border-radius: 30px;
+    box-shadow: 0px 0px 10px 1px grey;
+    transition: 0.5s;
+    :hover {
+        opacity: 0.75;
+        cursor: not-allowed;
     }
 `
 export const Inputs = styled.input`
@@ -102,10 +117,6 @@ export const Error = styled.span`
 `
 
 const StandardTokenForm = () => {
-    const [name, setName] = useState('');
-    const [symbol, setSymbol] = useState('');
-    const [supply, setSupply] = useState('');
-    const [decimals, setDecimals] = useState('');
     const [loading, setLoading] = useState(false);
     const [created, setCreated] = useState(false);
     const [error, setError] = useState('');
@@ -113,21 +124,57 @@ const StandardTokenForm = () => {
 
     // Using the Website own connectors instead of only metamask as I did
     const factory = useStandardTokenContract();
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        if (window.ethereum) {
-            try{
-                if (!factory){return}
-                const tx = await factory.createStandardToken(name, symbol, decimals, ethers.utils.parseUnits(supply), {value: ethers.utils.parseUnits("0.01")});
-                setLoading(true);
-                setTxAddress(tx.hash)
-                setLoading(false);
-                setCreated(true);
-            } catch {
-                setError("It was not possible to create the token");
-            }
-        }
+
+    interface ValueErrors {
+      name?: string;
+      symbol?: string;
+      supply?: string;
+      decimals?: string;
     }
+
+    const validate = (values) => {
+      const errors: ValueErrors = {};
+
+      if(!values.name){
+        errors.name = 'This field is Required';
+      }
+
+      if(!values.symbol){
+        errors.symbol = 'This field is Required';
+      }
+
+      if(!values.supply){
+        errors.supply = 'This field is Required';
+      }
+
+      if(!values.decimals){
+        errors.decimals = 'This field is Required';
+      }
+
+      return errors;
+    }
+
+    const formik = useFormik({
+      initialValues: {
+        name: '',
+        symbol: '',
+        supply: '',
+        decimals: ''
+      },
+      onSubmit: async (values) => {
+        try{
+          if (!factory){return}
+          const tx = await factory.createStandardToken(values.name, values.symbol, values.decimals, ethers.utils.parseUnits(values.supply), {value: ethers.utils.parseUnits("0.01")});
+          setLoading(true);
+          setTxAddress(tx.hash)
+          setLoading(false);
+          setCreated(true);
+        } catch {
+          setError("It was not possible to create the token");
+        }
+      },
+      validate
+    })
     
     useEffect(() => {
         console.log(loading, created)
@@ -136,8 +183,11 @@ const StandardTokenForm = () => {
     return (
         <>
             {!created && !loading && (
-                  <Form onSubmit={(e) => {handleSubmit(e)}}>
-                    <div>
+                  <Form onSubmit={formik.handleSubmit}>
+                    <Relative>
+                        {formik.errors.name && (
+                          <Error>This Field is required!</Error>
+                        )}
                         <Label htmlFor="name"> 
                             <LabelText>
                                 Name
@@ -146,14 +196,17 @@ const StandardTokenForm = () => {
                             <Inputs 
                                 type="text" 
                                 name="name" 
-                                value={name} 
                                 placeholder='Ex: Ethereum' 
                                 required
-                                onChange={(e) => {setName(e.target.value)}}
+                                onChange={formik.handleChange}
+                                value={formik.values.name}
                             />
                         </Label>
-                    </div>
-                    <div>
+                    </Relative>
+                    <Relative>
+                        {formik.errors.symbol && (
+                          <Error>This Field is required!</Error>
+                        )}
                         <Label htmlFor="symbol"> 
                             <LabelText>
                                 Symbol
@@ -162,14 +215,17 @@ const StandardTokenForm = () => {
                             <Inputs 
                                 type="text" 
                                 name="symbol" 
-                                value={symbol} 
                                 placeholder='Ex: ETH' 
                                 required
-                                onChange={(e) => {setSymbol(e.target.value)}}
+                                onChange={formik.handleChange}
+                                value={formik.values.symbol}
                             />
                         </Label>
-                    </div>
-                    <div>
+                    </Relative>
+                    <Relative>
+                        {formik.errors.decimals && (
+                          <Error>This Field is required!</Error>
+                        )}
                         <Label htmlFor="decimals"> 
                             <LabelText>
                                 Decimals
@@ -178,14 +234,17 @@ const StandardTokenForm = () => {
                             <Inputs 
                                 type="number" 
                                 name="decimals" 
-                                value={decimals} 
                                 placeholder='Ex: 18' 
                                 required
-                                onChange={(e) => {setDecimals(e.target.value)}}
+                                onChange={formik.handleChange}
+                                value={formik.values.decimals}
                             />
                         </Label>
-                    </div>
-                    <div>
+                    </Relative>
+                    <Relative>
+                        {formik.errors.supply && (
+                          <Error>This Field is required!</Error>
+                        )}
                         <Label htmlFor="supply"> 
                             <LabelText>
                                 Total Supply
@@ -194,15 +253,17 @@ const StandardTokenForm = () => {
                             <Inputs 
                                 type="number" 
                                 name="supply" 
-                                value={supply} 
                                 placeholder='Ex: 10000' 
                                 required
-                                onChange={(e) => {setSupply(e.target.value)}}
+                                onChange={formik.handleChange}
+                                value={formik.values.supply}
                             />
                         </Label>
-                    </div>
+                    </Relative>
                     {error && <p>{error}</p>}
-                    <Submit type="submit" value="CREATE TOKEN" />
+                    {formik.isValid && <Submit type="submit" value="CREATE TOKEN" />}
+                    {!formik.isValid && <Disabled type="submit" value="CREATE TOKEN" />}
+                    
                   </Form>
             )}
             {loading && (
