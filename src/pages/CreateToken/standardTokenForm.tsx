@@ -54,7 +54,7 @@ export const Submit = styled.input`
 `
 export const Disabled = styled.input`
     color: white;
-    background: linear-gradient(#00d4a4,#008668); 
+    background: grey; 
     width: 30%;
     height: 2.5rem;
     margin: 1rem auto;
@@ -164,13 +164,18 @@ const StandardTokenForm = () => {
       onSubmit: async (values) => {
         try{
           if (!factory){return}
-          const tx = await factory.createStandardToken(values.name, values.symbol, values.decimals, ethers.utils.parseUnits(values.supply), {value: ethers.utils.parseUnits("0.01")});
+          const tx = await factory.createStandardToken(
+            values.name,
+            values.symbol,
+            values.decimals,
+            ethers.utils.parseUnits(String(values.supply)),
+            {value: ethers.utils.parseUnits("0.01")});
           setLoading(true);
           setTxAddress(tx.hash)
           setLoading(false);
           setCreated(true);
-        } catch {
-          setError("It was not possible to create the token");
+        } catch (e) {
+          console.log(e);
         }
       },
       validate
@@ -263,7 +268,6 @@ const StandardTokenForm = () => {
                     {error && <p>{error}</p>}
                     {formik.isValid && <Submit type="submit" value="CREATE TOKEN" />}
                     {!formik.isValid && <Disabled type="submit" value="CREATE TOKEN" />}
-                    
                   </Form>
             )}
             {loading && (
