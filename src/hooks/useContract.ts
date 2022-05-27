@@ -17,6 +17,7 @@ import FACTORY_ABI from '../constants/abis/summitswapFactory.json'
 import LOCKER_ABI from '../constants/abis/summitswaLocker.json'
 import STAKING_ABI from '../constants/abis/kodaStaking.json'
 import ROUTER_ABI from '../constants/abis/summitswap-router.json'
+import PRESALE_FACOTRY_ABI from '../constants/abis/summit-factory-presale.json'
 
 // returns null on errors
 function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {
@@ -89,4 +90,8 @@ export function useMulticallContract(): Contract | null {
 
 export function useRouterContract(routerAddress: string): Contract | null {
   return useContract(routerAddress, ROUTER_ABI)
+}
+
+export function useFactoryPresaleContract(factoryAddress: string): Contract | null {
+  return useContract(factoryAddress,PRESALE_FACOTRY_ABI )
 }
