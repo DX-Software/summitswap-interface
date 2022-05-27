@@ -118,7 +118,6 @@ export const Error = styled.span`
 const StandardTokenForm = () => {
     const [loading, setLoading] = useState(false);
     const [created, setCreated] = useState(false);
-    const [error, setError] = useState('');
     const [txAddress, setTxAddress] = useState('');
 
     // Using the Website own connectors instead of only metamask as I did

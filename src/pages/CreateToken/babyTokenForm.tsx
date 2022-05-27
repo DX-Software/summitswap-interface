@@ -19,7 +19,6 @@ export const Select = styled.select`
 const BabyTokenForm = ({account}) => {
     const [loading, setLoading] = useState(false);
     const [created, setCreated] = useState(false);
-    const [error, setError] = useState('');
     const [txAddress, setTxAddress] = useState('');
     const dividendTracker = "0x87064D365710C0C025628ed1294548FEA4f5AD67";
 

@@ -28,7 +28,6 @@ export const verifyAddress = async (address) => {
 const LiquidityTokenForm = ({account}) => {
     const [loading, setLoading] = useState(false);
     const [created, setCreated] = useState(false);
-    const [error, setError] = useState('');
     const [txAddress, setTxAddress] = useState('');
 
     interface ValueErrors {
