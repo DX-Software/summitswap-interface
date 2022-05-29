@@ -51,6 +51,7 @@ export default function AppHeader() {
         {location.pathname === '/cross-chain-swap' && 'Cross-Chain Swap'}
         {location.pathname === '/onboarding' && 'Onboarding'}
         {location.pathname.search('/staking') !== -1 && 'Staking'}
+        {location.pathname === '/presale' && 'Create Presale'}
       </Box>
       <TopLogo src={TopLogoIcon} alt="" />
     </StyledContainer>
