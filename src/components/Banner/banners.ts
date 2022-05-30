@@ -1,9 +1,9 @@
-import KapexSmallBanner from '../../img/banners/kapex_small_v3.gif'
-import KapexMediumBanner from '../../img/banners/kapex_medium_v3.gif'
-import KapexLargeBanner from '../../img/banners/kapex_large_v3.gif'
-import KodaSmallBanner from '../../img/banners/koda_small.gif'
-import KodaMediumBanner from '../../img/banners/koda_medium.gif'
-import KodaLargeBanner from '../../img/banners/koda_large.gif'
+import KapexSmallBanner from '../../img/banners/kapex/kapex_small_v3.gif'
+import KapexMediumBanner from '../../img/banners/kapex/kapex_medium_v3.gif'
+import KapexLargeBanner from '../../img/banners/kapex/kapex_large_v3.gif'
+import KodaSmallBanner from '../../img/banners/koda/koda_small_v2.gif'
+import KodaMediumBanner from '../../img/banners/koda/koda_medium_v2.gif'
+import KodaLargeBanner from '../../img/banners/koda/koda_large_v2.gif'
 
 const BANNERS = {
     kapex: {
