@@ -18,10 +18,6 @@ interface Props {
   setIsLoading: Dispatch<SetStateAction<boolean>>
 }
 
-// Token which have locked pairs with Koda(For testing)
-const t2 = '0xDB80F77FcBC4AF4E45754Ce0D7C1533a6655b9E7'
-const t3 = '0x0437B41fdE39a4C992f9646B0217b4D652A016d0'
-
 export default function WithdrawLiquidity({ token, isLoading, setIsLoading, pairAddress, fetchUserLocked }: Props) {
   const { account, library } = useWeb3React()
 

@@ -27,11 +27,10 @@ import langSrc from '../constants/localisation/translate/index'
 import AppHeader from './AppHeader'
 import Menu from '../components/Menu'
 import SupportChatWidget from '../components/SupportChatWidget'
-import Deposit from './Staking/Deposit'
-import Withdraw from './Staking/Withdraw'
-import Claim from './Staking/Claim'
 import CreateToken from './CreateToken'
-
+import DepositPage from './Staking/DepositPage'
+import WithdrawPage from './Staking/WithdrawPage'
+import ClaimPage from './Staking/ClaimPage'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -168,11 +167,11 @@ export default function App() {
                     <Route exact strict path="/find" component={PoolFinder} />
                     <Route exact strict path="/pool" component={Pool} />
                     <Route exact path="/add" component={AddLiquidity} />
-                    <Route exact path="/staking/deposit" component={Deposit} />
-                    <Route exact path="/staking/claim" component={Claim} />
-                    <Route exact path="/staking/withdraw" component={Withdraw} />
+                    <Route exact path="/staking/deposit" component={DepositPage} />
+                    <Route exact path="/staking/claim" component={ClaimPage} />
+                    <Route exact path="/staking/withdraw" component={WithdrawPage} />
                     <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
-                
+
 
                     {/* Redirection: These old routes are still used in the code base */}
                     <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />

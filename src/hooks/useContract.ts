@@ -2,6 +2,7 @@ import { Contract } from '@ethersproject/contracts'
 import { ChainId, FACTORY_ADDRESS, WETH } from '@koda-finance/summitswap-sdk'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { useMemo } from 'react'
+import { STAKING_ADDRESS } from 'constants/staking'
 import ENS_ABI from '../constants/abis/ens-registrar.json'
 import ENS_PUBLIC_RESOLVER_ABI from '../constants/abis/ens-public-resolver.json'
 import { ERC20_BYTES32_ABI } from '../constants/abis/erc20'
@@ -18,6 +19,7 @@ import CREATE_STANDARD_TOKEN_ABI from '../constants/abis/createStandardToken.jso
 import CREATE_LIQUIDITY_TOKEN_ABI from '../constants/abis/createLiquidityToken.json';
 import CREATE_BABY_TOKEN_ABI from '../constants/abis/createBabyToken.json';
 import CREATE_BUYBACK_TOKEN_ABI from '../constants/abis/createBuybackToken.json';
+import { LOCKER_ADDRESS, REFERRAL_ADDRESS } from '../constants'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import WETH_ABI from '../constants/abis/weth.json'
 import REFERRAL_ABI from '../constants/abis/summitReferral.json'
