@@ -121,7 +121,6 @@ const StandardTokenForm = () => {
 
     // Using the Website own connectors instead of only metamask as I did
     const factory = useTokenCreatorContract('STANDARD');
-
     interface ValueErrors {
       name?: string;
       symbol?: string;
@@ -165,7 +164,7 @@ const StandardTokenForm = () => {
             values.name,
             values.symbol,
             values.decimals,
-            ethers.utils.parseUnits(String(values.supply)),
+            ethers.utils.parseUnits(String(values.supply), values.decimals),
             {value: ethers.utils.parseUnits("0.01")});
           setLoading(true);
           setTxAddress(tx.hash);
