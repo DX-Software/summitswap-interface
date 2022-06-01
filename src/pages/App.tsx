@@ -160,7 +160,7 @@ export default function App() {
                     <AppHeader />
                     <Banner />
                     <Route exact path="/swap" component={Swap} />
-                    <Route exact path="/createToken" component={CreateToken} />
+                    <Route exact path="/create-token" component={CreateToken} />
                     <Route exact path="/cross-chain-swap" component={CrossChainSwap} />
                     <Route exact path="/swap?ref=:ref" component={Referral} />
                     <Route exact path="/referral" component={Referral} />

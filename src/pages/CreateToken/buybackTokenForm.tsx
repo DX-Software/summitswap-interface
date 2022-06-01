@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { useFormik } from 'formik';
 import styled from 'styled-components';
-import { useBuyBackTokenContract } from 'hooks/useContract';
+import { useTokenCreatorContract } from 'hooks/useContract';
 import { ROUTER_ADDRESS } from '../../constants/index';
 import { Form, Label, LabelText, BigLabelText, Submit, Inputs, MessageContainer, Message, Required, Relative, Disabled, Error } from './standardTokenForm';
 import { verifyAddress } from './liquidityTokenForm';
@@ -21,7 +21,7 @@ const BuybackTokenForm = ({account}) => {
     const [created, setCreated] = useState(false);
     const [txAddress, setTxAddress] = useState('');
 
-    const factory = useBuyBackTokenContract();
+    const factory = useTokenCreatorContract('BUYBACK');
 
     interface ValueErrors {
       name?: string,
@@ -53,23 +53,23 @@ const BuybackTokenForm = ({account}) => {
       if(!values.rewardToken){
         errors.rewardToken = 'This field is Required';
       } else if(values.rewardToken && !(await verifyAddress(values.rewardToken))){
-        errors.rewardToken = 'This is not a valid address'
+        errors.rewardToken = 'This is not a valid address';
       }
 
       if(!values.liquidityFeeBps){
-        errors.liquidityFeeBps = 'This field is Required'
+        errors.liquidityFeeBps = 'This field is Required';
       }
 
       if(!values.buybackFee){
-        errors.buybackFee = 'This field is Required'
+        errors.buybackFee = 'This field is Required';
       }
 
       if(!values.reflectionFee){
-        errors.reflectionFee = 'This field is Required'
+        errors.reflectionFee = 'This field is Required';
       }
       
       if(!values.marketingFeeBps){
-        errors.marketingFeeBps = 'This field is Required'
+        errors.marketingFeeBps = 'This field is Required';
       }
 
       if
@@ -77,7 +77,7 @@ const BuybackTokenForm = ({account}) => {
         (parseInt(values.liquidityFeeBps) || 0) + (parseInt(values.buybackFee) || 0) + (parseInt(values.reflectionFee) || 0) + (parseInt(values.marketingFeeBps)) > 100
       )
       {
-        errors.taxes = 'Fees need to be less than or equal to 100%'
+        errors.taxes = 'Fees need to be less than or equal to 100%';
       }
 
       return errors;
@@ -115,7 +115,7 @@ const BuybackTokenForm = ({account}) => {
               {value: ethers.utils.parseUnits("0.01")}
           );
           setLoading(true);
-          setTxAddress(tx.hash)
+          setTxAddress(tx.hash);
           setLoading(false);
           setCreated(true);
         } catch (e){
@@ -126,7 +126,7 @@ const BuybackTokenForm = ({account}) => {
     })
 
     useEffect(() => {
-        console.log(loading, created)
+      console.log(loading, created);
     }, [loading, created, txAddress])
 
     return (
@@ -323,7 +323,7 @@ const BuybackTokenForm = ({account}) => {
                 
             )}
         </>
-    )
-}
+    );
+};
 
 export default BuybackTokenForm;

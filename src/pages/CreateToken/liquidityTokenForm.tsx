@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { useFormik } from 'formik';
 import styled from 'styled-components';
-import { useLiquidityTokenContract } from 'hooks/useContract';
+import { useTokenCreatorContract } from 'hooks/useContract';
 import { ROUTER_ADDRESS } from '../../constants/index';
 import { Form, Label, LabelText, BigLabelText, Submit, Inputs, MessageContainer, Message, Required, Relative, Error, Disabled } from './standardTokenForm';
 
@@ -23,7 +23,7 @@ export const verifyAddress = async (address) => {
   } catch {
     return false
   }
-}
+};
 
 const LiquidityTokenForm = ({account}) => {
     const [loading, setLoading] = useState(false);
@@ -57,11 +57,11 @@ const LiquidityTokenForm = ({account}) => {
       }
 
       if(!values.taxFeeBps){
-        errors.taxFeeBps = 'This field is Required'
+        errors.taxFeeBps = 'This field is Required';
       }
 
       if(!values.liquidityFeeBps){
-        errors.liquidityFeeBps = 'This field is Required'
+        errors.liquidityFeeBps = 'This field is Required';
       }
 
       if(!values.charityAddress && values.charityFeeBps){
@@ -69,23 +69,23 @@ const LiquidityTokenForm = ({account}) => {
       } else if(values.charityAddress && !(await verifyAddress(values.charityAddress))) {
         errors.charityAddress = 'This is not a valid address';
       } else if(values.charityAddress === account){
-        errors.charityAddress = 'This account cannot be the same as the owners account'
+        errors.charityAddress = 'This account cannot be the same as the owners account';
       }
 
       if((!values.charityFeeBps && values.charityFeeBps !== 0) && await verifyAddress(values.charityAddress)){
-        errors.charityFeeBps = 'This field is required if you have a Charity Address'
+        errors.charityFeeBps = 'This field is required if you have a Charity Address';
       } else if(parseInt(values.charityFeeBps) <= 0 && await verifyAddress(values.charityAddress)){
-        errors.charityFeeBps = 'This field cannot be 0 if you have a Charity Address'
+        errors.charityFeeBps = 'This field cannot be 0 if you have a Charity Address';
       }
       
       if((parseInt(values.taxFeeBps) || 0) + (parseInt(values.liquidityFeeBps) || 0) + (parseInt(values.charityFeeBps) || 0) > 25){
-        errors.taxes = 'Fees cannot exceed 25%'
+        errors.taxes = 'Fees cannot exceed 25%';
       }
 
       return errors;
     }
 
-    const factory = useLiquidityTokenContract();
+    const factory = useTokenCreatorContract('LIQUIDITY');
     const formik = useFormik({
       initialValues: {
         name: '',
@@ -113,15 +113,15 @@ const LiquidityTokenForm = ({account}) => {
             {value: ethers.utils.parseUnits("0.01")}
           );
           setLoading(true);
-          setTxAddress(tx.hash)
+          setTxAddress(tx.hash);
           setLoading(false);
           setCreated(true);
         } catch (e){
-          console.error(e)
+          console.error(e);
         }
       },
       validate
-    })
+    });
 
     useEffect(() => {
         console.log(loading, created)
@@ -293,7 +293,7 @@ const LiquidityTokenForm = ({account}) => {
                 </MessageContainer>
             )}
         </>
-    )
+    );
 }
 // const [charityFeeBps, setCharityFee] = useState('');
 

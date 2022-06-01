@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { useFormik } from 'formik';
 import styled from 'styled-components';
-import { useBabyTokenContract } from 'hooks/useContract';
+import { useTokenCreatorContract } from 'hooks/useContract';
 import { ROUTER_ADDRESS } from '../../constants/index';
 import { Form, Label, LabelText, BigLabelText, Submit, Inputs, MessageContainer, Message, Required, Disabled, Relative, Error } from './standardTokenForm';
 import { verifyAddress } from './liquidityTokenForm';
@@ -22,7 +22,7 @@ const BabyTokenForm = ({account}) => {
     const [txAddress, setTxAddress] = useState('');
     const dividendTracker = "0x87064D365710C0C025628ed1294548FEA4f5AD67";
 
-    const factory = useBabyTokenContract();
+    const factory = useTokenCreatorContract('BABY');
     interface ValueErrors {
       name?: string;
       symbol?: string;
@@ -54,7 +54,7 @@ const BabyTokenForm = ({account}) => {
       if(!values.rewardToken){
         errors.rewardToken = 'This field is Required';
       } else if(values.rewardToken && !(await verifyAddress(values.rewardToken))){
-        errors.rewardToken = 'This is not a valid address'
+        errors.rewardToken = 'This is not a valid address';
       }
 
       if(!values.marketingWallet){
@@ -62,29 +62,29 @@ const BabyTokenForm = ({account}) => {
       } else if(values.marketingWallet && !(await verifyAddress(values.marketingWallet))) {
         errors.marketingWallet = 'This is not a valid address';
       } else if(values.marketingWallet === account){
-        errors.marketingWallet = 'This account cannot be the same as the owners account'
+        errors.marketingWallet = 'This account cannot be the same as the owners account';
       }
 
       if(!values.tokenFeeBps){
-        errors.tokenFeeBps = 'This field is Required'
+        errors.tokenFeeBps = 'This field is Required';
       }
 
       if(!values.liquidityFeeBps){
-        errors.liquidityFeeBps = 'This field is Required'
+        errors.liquidityFeeBps = 'This field is Required';
       }
       
       if(!values.marketingFeeBps){
-        errors.marketingFeeBps = 'This field is Required'
+        errors.marketingFeeBps = 'This field is Required';
       }
 
       if(!values.minimumTokenBalanceForDividends){
-        errors.minimumTokenBalanceForDividends = 'This field is Required'
+        errors.minimumTokenBalanceForDividends = 'This field is Required';
       } else if(values.minimumTokenBalanceForDividends > (values.supply / 1000)){
-        errors.minimumTokenBalanceForDividends = 'Minimum Token Balance must be 0.1% or less than Total Supply'
+        errors.minimumTokenBalanceForDividends = 'Minimum Token Balance must be 0.1% or less than Total Supply';
       }
 
       if((parseInt(values.tokenFeeBps) || 0) + (parseInt(values.liquidityFeeBps) || 0) + (parseInt(values.marketingFeeBps) || 0) > 100){
-        errors.taxes = 'Fees need to be less than or equal to 100%'
+        errors.taxes = 'Fees need to be less than or equal to 100%';
       }
 
       return errors;
@@ -126,7 +126,7 @@ const BabyTokenForm = ({account}) => {
               {value: ethers.utils.parseUnits("0.01")}
           );
           setLoading(true);
-          setTxAddress(tx.hash)
+          setTxAddress(tx.hash);
           setLoading(false);
           setCreated(true);
         } catch (e){
@@ -349,7 +349,7 @@ const BabyTokenForm = ({account}) => {
                 
             )}
         </>
-    )
-}
+    );
+};
 
 export default BabyTokenForm;

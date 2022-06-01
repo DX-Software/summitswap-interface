@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import login from 'utils/login';
 import { useWeb3React } from '@web3-react/core';
 import { Button, Flex, useWalletModal } from '@koda-finance/summitswap-uikit';
 import { TranslateString } from 'utils/translateTextHelpers';
-import styled from 'styled-components';
 import AppBody from '../AppBody';
 import LiquidityTokenForm from './liquidityTokenForm';
 import StandardTokenForm from './standardTokenForm';
@@ -12,7 +11,7 @@ import BuybackTokenForm from './buybackTokenForm';
 
 
 const CreateToken = () => {
-    const { account, activate, deactivate, library } = useWeb3React()
+    const { account, activate, deactivate } = useWeb3React();
 
     const [tokenType, setTokenType] = useState("standard");
 
@@ -21,9 +20,9 @@ const CreateToken = () => {
         login(connectorId, activate)
       },
       [activate]
-    )
+    );
     
-    const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
+    const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string);
 
     return (
         <AppBody>

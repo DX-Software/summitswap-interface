@@ -12,10 +12,7 @@ import {
   LOCKER_ADDRESS,
   REFERRAL_ADDRESS,
   STAKING_ADDRESS,
-  CREATE_STANDARD_TOKEN_ADDRESS,
-  CREATE_LIQUIDITY_TOKEN_ADDRESS, 
-  CREATE_BABY_TOKEN_ADDRESS,
-  CREATE_BUYBACK_TOKEN_ADDRESS
+  TOKEN_CREATOR_ADDRESS
 } from '../constants'
 import CREATE_STANDARD_TOKEN_ABI from '../constants/abis/createStandardToken.json';
 import CREATE_LIQUIDITY_TOKEN_ABI from '../constants/abis/createLiquidityToken.json';
@@ -102,18 +99,36 @@ export function useRouterContract(routerAddress: string): Contract | null {
   return useContract(routerAddress, ROUTER_ABI)
 }
 
-export function useStandardTokenContract(): Contract | null {
-  return useContract(CREATE_STANDARD_TOKEN_ADDRESS, CREATE_STANDARD_TOKEN_ABI, true);
-}
+// export function useStandardTokenContract(): Contract | null {
+//   return useContract(TOKEN_CREATOR_ADDRESS.STANDARD, CREATE_STANDARD_TOKEN_ABI, true);
+// }
 
-export function useLiquidityTokenContract(): Contract | null {
-  return useContract(CREATE_LIQUIDITY_TOKEN_ADDRESS, CREATE_LIQUIDITY_TOKEN_ABI, true);
-}
+// export function useLiquidityTokenContract(): Contract | null {
+//   return useContract(TOKEN_CREATOR_ADDRESS.LIQUIDITY, CREATE_LIQUIDITY_TOKEN_ABI, true);
+// }
 
-export function useBabyTokenContract(): Contract | null {
-  return useContract(CREATE_BABY_TOKEN_ADDRESS, CREATE_BABY_TOKEN_ABI, true);
-}
+// export function useBabyTokenContract(): Contract | null {
+//   return useContract(TOKEN_CREATOR_ADDRESS.BABY, CREATE_BABY_TOKEN_ABI, true);
+// }
 
-export function useBuyBackTokenContract(): Contract | null {
-  return useContract(CREATE_BUYBACK_TOKEN_ADDRESS, CREATE_BUYBACK_TOKEN_ABI, true);
+// export function useBuyBackTokenContract(): Contract | null {
+//   return useContract(TOKEN_CREATOR_ADDRESS.BUYBACK, CREATE_BUYBACK_TOKEN_ABI, true);
+// }
+export function useTokenCreatorContract(tokenType: 'STANDARD' | 'LIQUIDITY' | 'BABY' | 'BUYBACK'): Contract | null {
+  let createTokenAbi
+  switch(tokenType) {
+    case 'STANDARD':
+      createTokenAbi = CREATE_STANDARD_TOKEN_ABI
+      break
+    case 'LIQUIDITY':
+      createTokenAbi = CREATE_LIQUIDITY_TOKEN_ABI
+      break
+    case 'BABY':
+      createTokenAbi = CREATE_BABY_TOKEN_ABI
+      break
+    case 'BUYBACK':
+      createTokenAbi = CREATE_BUYBACK_TOKEN_ABI
+      break
+  }
+  return useContract(TOKEN_CREATOR_ADDRESS[tokenType], createTokenAbi)
 }

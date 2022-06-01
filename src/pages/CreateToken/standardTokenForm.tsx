@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import { ethers } from 'ethers';
 import styled from 'styled-components';
-import { useStandardTokenContract } from '../../hooks/useContract';
-
+import { useTokenCreatorContract } from '../../hooks/useContract';
 
 export const Form = styled.form`
     display: flex;
@@ -121,7 +120,7 @@ const StandardTokenForm = () => {
     const [txAddress, setTxAddress] = useState('');
 
     // Using the Website own connectors instead of only metamask as I did
-    const factory = useStandardTokenContract();
+    const factory = useTokenCreatorContract('STANDARD');
 
     interface ValueErrors {
       name?: string;
@@ -169,7 +168,7 @@ const StandardTokenForm = () => {
             ethers.utils.parseUnits(String(values.supply)),
             {value: ethers.utils.parseUnits("0.01")});
           setLoading(true);
-          setTxAddress(tx.hash)
+          setTxAddress(tx.hash);
           setLoading(false);
           setCreated(true);
         } catch (e) {
@@ -180,7 +179,7 @@ const StandardTokenForm = () => {
     })
     
     useEffect(() => {
-        console.log(loading, created)
+      console.log(loading, created);
     }, [loading, created, txAddress])
 
     return (
@@ -277,7 +276,7 @@ const StandardTokenForm = () => {
                 </MessageContainer>
             )}
         </>
-    )
-}
+    );
+};
 
 export default StandardTokenForm;
