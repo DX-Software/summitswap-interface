@@ -12,14 +12,12 @@ import { useActiveWeb3React } from './index'
 import { 
   LOCKER_ADDRESS,
   REFERRAL_ADDRESS,
-  STAKING_ADDRESS,
   TOKEN_CREATOR_ADDRESS
 } from '../constants'
 import CREATE_STANDARD_TOKEN_ABI from '../constants/abis/createStandardToken.json';
 import CREATE_LIQUIDITY_TOKEN_ABI from '../constants/abis/createLiquidityToken.json';
 import CREATE_BABY_TOKEN_ABI from '../constants/abis/createBabyToken.json';
 import CREATE_BUYBACK_TOKEN_ABI from '../constants/abis/createBuybackToken.json';
-import { LOCKER_ADDRESS, REFERRAL_ADDRESS } from '../constants'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import WETH_ABI from '../constants/abis/weth.json'
 import REFERRAL_ABI from '../constants/abis/summitReferral.json'
