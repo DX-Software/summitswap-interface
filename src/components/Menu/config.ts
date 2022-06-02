@@ -27,6 +27,11 @@ const config: MenuEntry[] = [
     href: '/cross-chain-swap',
     showConnectButton: false,
   },
+  {
+    label: 'Presale',
+    icon: 'RubicIcon',
+    href: '/presale',
+  },
   // {
   //   label: "Onboarding",
   //   icon: "OnboardingIcon",

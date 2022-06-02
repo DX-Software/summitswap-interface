@@ -1,124 +1,21 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useState, useEffect, InputHTMLAttributes, useCallback } from 'react'
-import styled from 'styled-components'
+import React, { useState, useEffect, useCallback } from 'react'
 import { BigNumber, ethers } from 'ethers'
 import { useFormik, FormikProps } from 'formik'
 import { useWeb3React } from '@web3-react/core'
 import { Token } from '@koda-finance/summitswap-sdk'
 import { TranslateString } from 'utils/translateTextHelpers'
-
-import { Input, Text, Radio, Button, AutoRenewIcon, useWalletModal } from '@koda-finance/summitswap-uikit'
+import { Text, Button, AutoRenewIcon, useWalletModal } from '@koda-finance/summitswap-uikit'
 import { HelpCircle } from 'react-feather'
 import login from 'utils/login'
-
 import { useFactoryPresaleContract, useTokenContract } from '../../hooks/useContract'
 import TokenDropdown from '../../components/TokenDropdown'
 import { RowBetween, AutoRow, RowFlatCenter, ColumnFlatCenter } from '../../components/Row'
 import { Values, ValueErrors, FieldNames, FieldValues } from './types'
 import { MouseoverTooltip } from '../../components/Tooltip'
 import CustomLightSpinner from '../../components/CustomLightSpinner'
-
-const FormCard = styled.div`
-  background: #011724;
-  border-radius: 20px;
-  padding: 25px 28px;
-  width: 85%;
-  margin-top: 20px;
-`
-const commonInputStyles = `
-  width: 250px;
-  border-radius: 7px;
-`
-
-const RadioContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 10px 0;
-  font-size: 12px;
-  flex-direction: column;
-  ${commonInputStyles}
-  label {
-    width: fit-content;
-  }
-`
-
-const StyledRadio = styled(Radio)`
-  width: 18px;
-  height: 18px;
-  margin-right: 10px;
-  box-sizing: content-box;
-  &:after {
-    border-radius: 50%;
-    content: '';
-    height: 10px;
-    width: 10px;
-    left: 4px;
-    top: 4px;
-    position: absolute;
-  }
-`
-const StyledDateTimeInput = styled(Input)`
-  ::-webkit-calendar-picker-indicator {
-    filter: invert(100%) sepia(1%) saturate(2177%) hue-rotate(118deg) brightness(119%) contrast(97%);
-    &:hover {
-      cursor: pointer;
-    }
-  }
-  height: 55px;
-  ${commonInputStyles}
-`
-
-const StyledInput = styled(Input)`
-  ${commonInputStyles}
-`
-
-interface InputFieldProps {
-  formik: FormikProps<Values>
-  message: string
-  label: string
-  inputAttributes: InputHTMLAttributes<HTMLInputElement>
-}
-
-function InputField({ formik, message, inputAttributes, label }: InputFieldProps) {
-  const propertyName = inputAttributes.name as keyof Values
-  return (
-    <div>
-      <label htmlFor={propertyName}>
-        <RowBetween ml="3px" mb="5px">
-          <Text bold fontSize="14px">
-            {label}
-          </Text>
-          <MouseoverTooltip size="12px" text={message}>
-            <span>
-              <HelpCircle size={18} />
-            </span>
-          </MouseoverTooltip>
-        </RowBetween>
-        <StyledInput
-          value={formik.values[propertyName]}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          name={propertyName}
-          id={propertyName}
-          isWarning={formik.touched[propertyName] && !!formik.errors[propertyName]}
-          {...inputAttributes}
-        />
-      </label>
-      {formik.touched[propertyName] && formik.errors[propertyName] ? (
-        <Text ml="3px" mt="2px" fontSize="10px" color="#ED4B9E">
-          {formik.errors[propertyName]}
-        </Text>
-      ) : (
-        <>
-          &nbsp;
-          <Text> </Text>
-        </>
-      )}
-    </div>
-  )
-}
-const factoryAddress = '0x97841174aa175879cE0DEABcB74EC9DE73eDb276'
+import { InputField, FormCard, StyledRadio, RadioContainer, StyledDateTimeInput, MessageDiv } from './components'
+import { factoryAddress, maxHexValue, MESSAGE_ERROR, MESSAGE_SUCCESS } from './contants'
 
 export default function CustomPresale() {
   const { account, library, activate, deactivate } = useWeb3React()
@@ -132,7 +29,6 @@ export default function CustomPresale() {
 
   const tokenContract = useTokenContract(selectedToken?.address, true)
   const factoryContract = useFactoryPresaleContract(factoryAddress)
-  const maxHexValue = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
 
   const handleLogin = useCallback(
     (connectorId: string) => {
@@ -144,13 +40,18 @@ export default function CustomPresale() {
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
 
   useEffect(() => {
-    // const onboardingTokenAddress = new URLSearchParams(location.search).get('token')
     if (selectedToken && !account) {
       onPresentConnectModal()
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, selectedToken])
+
+  useEffect(() => {
+    if (presaleAddress) {
+      window.location.href = `/#/presale/${presaleAddress}`
+    }
+  }, [presaleAddress])
 
   useEffect(() => {
     async function checkPresaleExists() {
@@ -277,7 +178,7 @@ export default function CustomPresale() {
         const tokenAmount =
           values.presaleRate * values.hardcap + values.hardcap * (values.liquidity / 100) * values.listingRate * 1.025
         setTokensForPresale(tokenAmount)
-        if (BigNumber.from(tokenAmount).gt(ethers.utils.formatUnits(accountBalance, selectedToken.decimals))) {
+        if (tokenAmount > Number(ethers.utils.formatUnits(accountBalance, selectedToken.decimals))) {
           errors.tokenAmount = 'Token Amounts Exceeds Balance'
         }
       } else {
@@ -344,10 +245,8 @@ export default function CustomPresale() {
         const preSaleAdd = await factoryContract.tokenPresales(selectedToken.address)
         setIsLoading(false)
         setPresaleAddress(preSaleAdd)
-        console.log(preSaleAdd)
       } catch (err) {
         setIsLoading(false)
-
         console.log(err)
       }
     },
@@ -406,13 +305,15 @@ export default function CustomPresale() {
               {isFactoryApproved === undefined ? (
                 <CustomLightSpinner src="/images/blue-loader.svg" size="50px" />
               ) : (
-                <Button
-                  disabled={isFactoryApproved || !selectedToken || !account || isLoading}
-                  onClick={onApproveTokenHandler}
-                  endIcon={isLoading && !isFactoryApproved && <AutoRenewIcon spin color="currentColor" />}
-                >
-                  {isFactoryApproved ? 'Token Is Approved' : 'Approve'}
-                </Button>
+                !presaleAddress && (
+                  <Button
+                    disabled={isFactoryApproved || !selectedToken || !account || isLoading}
+                    onClick={onApproveTokenHandler}
+                    endIcon={isLoading && !isFactoryApproved && <AutoRenewIcon spin color="currentColor" />}
+                  >
+                    {isFactoryApproved ? 'Token Is Approved' : 'Approve'}
+                  </Button>
+                )
               )}
             </RowFlatCenter>
           </>
@@ -430,8 +331,8 @@ export default function CustomPresale() {
                   formik={formik}
                   label="Presale Rate: "
                   inputAttributes={{ name: FieldNames.presaleRate, placeholder: '0.00', type: 'number' }}
-                  message="(If
-          I spend 1 BNB HOW MANY TOKENS WILL I RECIEVE ?)"
+                  message="If
+          I spend 1 BNB HOW MANY TOKENS WILL I RECIEVE ?"
                 />
                 <InputField
                   formik={formik}
@@ -446,14 +347,13 @@ export default function CustomPresale() {
                   formik={formik}
                   label="Softcap: "
                   inputAttributes={{ name: FieldNames.softcap, placeholder: '0.00', type: 'number' }}
-                  message="Soft cap should be >= 50% of Hard cap"
+                  message="Softcap is the Min amount of BNB that should be raised for for a Presale to be successfull."
                 />
                 <InputField
                   formik={formik}
                   label="Hardcap: "
                   inputAttributes={{ name: FieldNames.hardcap, placeholder: '0.00', type: 'number' }}
-                  message="(If
-          I spend 1 BNB HOW MANY TOKENS WILL I RECIEVE ?)"
+                  message="Hardcap is the Max amount of BNB that can be raised by a Presale."
                 />
               </AutoRow>
               <AutoRow justifyContent="space-around">
@@ -461,14 +361,13 @@ export default function CustomPresale() {
                   formik={formik}
                   label="Minimum Buy(BNB): "
                   inputAttributes={{ name: FieldNames.minBuyBnb, placeholder: '0.00', type: 'number' }}
-                  message=""
+                  message="Minimun Buy is the minimun amount of Bnb that can used to buy Tokens."
                 />
                 <InputField
                   formik={formik}
                   label="Maximun buy(BNB): "
                   inputAttributes={{ name: FieldNames.maxBuyBnb, placeholder: '0.00', type: 'number' }}
-                  message="(If
-          I spend 1 BNB HOW MANY TOKENS WILL I RECIEVE ?)"
+                  message="Maximun Buy is the maximun amount of Bnb that can used to buy Tokens"
                 />
               </AutoRow>
               <AutoRow justifyContent="space-around">
@@ -601,16 +500,11 @@ export default function CustomPresale() {
                       type="datetime-local"
                     />
                   </label>
-                  {formik.touched.startPresaleTime && formik.errors.startPresaleTime ? (
-                    <Text ml="3px" mt="2px" fontSize="10px" color="#ED4B9E">
-                      {formik.errors.startPresaleTime}
-                    </Text>
-                  ) : (
-                    <>
-                      &nbsp;
-                      <Text> </Text>
-                    </>
-                  )}
+                  <MessageDiv type={MESSAGE_ERROR}>
+                    {formik.touched.startPresaleTime && formik.errors.startPresaleTime
+                      ? formik.errors.startPresaleTime
+                      : ''}
+                  </MessageDiv>
                 </div>
                 <div>
                   <label>
@@ -636,28 +530,21 @@ export default function CustomPresale() {
                       type="datetime-local"
                     />
                   </label>
-                  {formik.touched.endPresaleTime && formik.errors.endPresaleTime ? (
-                    <Text ml="3px" mt="2px" fontSize="10px" color="#ED4B9E">
-                      {formik.errors.endPresaleTime}
-                    </Text>
-                  ) : (
-                    <>
-                      &nbsp;
-                      <Text> </Text>
-                    </>
-                  )}
+                  <MessageDiv type={MESSAGE_ERROR}>
+                    {formik.touched.endPresaleTime && formik.errors.endPresaleTime ? formik.errors.endPresaleTime : ''}
+                  </MessageDiv>
                 </div>
               </AutoRow>
               <ColumnFlatCenter>
                 {formik.errors.tokenAmount ? (
-                  <div style={{ fontSize: '10px', color: '#ED4B9E' }}>{formik.errors.tokenAmount}</div>
+                  <MessageDiv type={MESSAGE_ERROR}>{formik.errors.tokenAmount}</MessageDiv>
                 ) : (
-                  <div style={{ color: 'green' }}>
-                    {tokensForPresale ? `${tokensForPresale} Tokens for Presale` : ''}
-                  </div>
+                  <MessageDiv type={MESSAGE_SUCCESS}>
+                    {tokensForPresale && isFactoryApproved ? `${tokensForPresale} Tokens for Presale` : ''}
+                  </MessageDiv>
                 )}
                 {!isFactoryApproved ? (
-                  <div style={{ fontSize: '10px', color: '#ED4B9E' }}>Please First Approve Token for Presale</div>
+                  <MessageDiv type={MESSAGE_ERROR}>Please First Approve Token for Presale</MessageDiv>
                 ) : (
                   <Button
                     m={30}
@@ -688,26 +575,3 @@ export default function CustomPresale() {
     </Button>
   )
 }
-
-// const StyledTextField = muiStyled(TextField)({
-//   input: { color: '#ffffff', width: '222px' },
-//   background: '#001018',
-//   '& ::-webkit-calendar-picker-indicator': {
-//     filter: 'invert(100%) sepia(1%) saturate(2177%) hue-rotate(118deg) brightness(119%) contrast(97%)',
-//   },
-//   borderRadius: '8px',
-//   '& .MuiOutlinedInput-root': {
-//     '&:hover fieldset': {
-//       borderColor: '#7645D9',
-//     },
-//     '&.Mui-focused fieldset': {
-//       borderColor: '#7645D9',
-//     },
-//     '& input:valid + fieldset': {
-//       borderColor: 'green',
-//     },
-//     '& input:invalid + fieldset': {
-//       borderColor: 'red',
-//     },
-//   },
-// })
