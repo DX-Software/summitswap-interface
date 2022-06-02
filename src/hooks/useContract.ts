@@ -99,21 +99,6 @@ export function useRouterContract(routerAddress: string): Contract | null {
   return useContract(routerAddress, ROUTER_ABI)
 }
 
-// export function useStandardTokenContract(): Contract | null {
-//   return useContract(TOKEN_CREATOR_ADDRESS.STANDARD, CREATE_STANDARD_TOKEN_ABI, true);
-// }
-
-// export function useLiquidityTokenContract(): Contract | null {
-//   return useContract(TOKEN_CREATOR_ADDRESS.LIQUIDITY, CREATE_LIQUIDITY_TOKEN_ABI, true);
-// }
-
-// export function useBabyTokenContract(): Contract | null {
-//   return useContract(TOKEN_CREATOR_ADDRESS.BABY, CREATE_BABY_TOKEN_ABI, true);
-// }
-
-// export function useBuyBackTokenContract(): Contract | null {
-//   return useContract(TOKEN_CREATOR_ADDRESS.BUYBACK, CREATE_BUYBACK_TOKEN_ABI, true);
-// }
 export function useTokenCreatorContract(tokenType: 'STANDARD' | 'LIQUIDITY' | 'BABY' | 'BUYBACK'): Contract | null {
   let createTokenAbi
   switch(tokenType) {
