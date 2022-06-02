@@ -9,14 +9,14 @@ import { PresaleInfo, FieldProps, PresalePhases, LoadingButtonTypes, LoadingForB
 import { MESSAGE_ERROR, MESSAGE_SUCCESS } from './contants'
 
 interface Props {
-  isAccountTokensClaimed: boolean // check this in this component
+  isAccountTokensClaimed: boolean
   isLoading: boolean
   presalePhase: PresalePhases | ''
   presaleInfo: PresaleInfo | undefined
   youBought: BigNumber | undefined
   loadingForButton: LoadingForButton
   buyBnbAmount: FieldProps
-  contributors: string[] // also set contributors in this component
+  contributors: string[]
   buyBnbAmountChangeHandler: React.ChangeEventHandler<HTMLInputElement> | undefined
   onClaimHandler: () => Promise<void>
   onWithdrawBnbHandler: () => Promise<void>
@@ -175,11 +175,6 @@ export default function BuyTokens({
         <Text bold>Contributors</Text>
         <Text>{contributors.length}</Text>
       </RowBetween>
-      <RowBetween>
-        <Text bold>Total Contributors</Text>
-        {/* <StyledDropdownWrapper options={['Hide  ', 'Show']} onChange={selectSaleTypeHandler} value="Hide" /> */}
-      </RowBetween>
-      {/* show contributors here */}
     </Card>
   )
 }

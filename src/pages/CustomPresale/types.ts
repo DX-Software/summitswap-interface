@@ -1,7 +1,6 @@
 import { BigNumber } from "ethers";
 import { FormikProps } from "formik";
 
-// used on presale page
 export interface FieldProps {
   value: string;
   error: string;

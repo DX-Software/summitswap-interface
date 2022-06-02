@@ -209,7 +209,6 @@ export default function Presale() {
   }
   const addWhitelistSubmitHandler = async () => {
     const list = newWhitelistAddresses.value.split(',').map((address) => {
-      // use this to check address ethers.utils.isAddress(e.target.value)
       return address.trim()
     })
     if (!presaleContract || !list.length || !account) {
@@ -321,7 +320,7 @@ export default function Presale() {
       console.log(e)
     }
   }
-  // add Is Loading
+
   const onWithdrawBnbHandler = async () => {
     if (!presaleContract || !account || youBought?.eq(0) || presaleInfo?.isClaimPhase) {
       return
@@ -532,7 +531,6 @@ export default function Presale() {
         error: 'Withdrawl Failed.',
       })
       setIsLoading(true)
-
       console.log(err)
     }
   }

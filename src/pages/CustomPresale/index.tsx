@@ -331,15 +331,13 @@ export default function CustomPresale() {
                   formik={formik}
                   label="Presale Rate: "
                   inputAttributes={{ name: FieldNames.presaleRate, placeholder: '0.00', type: 'number' }}
-                  message="If
-          I spend 1 BNB HOW MANY TOKENS WILL I RECIEVE ?"
+                  message="If I spend 1 BNB how many tokens will I recieve?"
                 />
                 <InputField
                   formik={formik}
                   label="Listing Rate: "
                   inputAttributes={{ name: FieldNames.listingRate, placeholder: '0.00', type: 'number' }}
-                  message="If I spend 1 BNB on how many tokens will I receive? Usually this amount is lower than presale rate to allow
-          for a higher listing price on"
+                  message="If I spend 1 BNB on how many tokens will I receive after the token has listed on the exchange? Usually this amount is lower than presale rate."
                 />
               </AutoRow>
               <AutoRow justifyContent="space-around">
@@ -347,7 +345,7 @@ export default function CustomPresale() {
                   formik={formik}
                   label="Softcap: "
                   inputAttributes={{ name: FieldNames.softcap, placeholder: '0.00', type: 'number' }}
-                  message="Softcap is the Min amount of BNB that should be raised for for a Presale to be successfull."
+                  message="Softcap is the Min amount of BNB that should be raised for a Presale to be successfull."
                 />
                 <InputField
                   formik={formik}
@@ -361,13 +359,13 @@ export default function CustomPresale() {
                   formik={formik}
                   label="Minimum Buy(BNB): "
                   inputAttributes={{ name: FieldNames.minBuyBnb, placeholder: '0.00', type: 'number' }}
-                  message="Minimun Buy is the minimun amount of Bnb that can used to buy Tokens."
+                  message="minimun buy is the minimun amount of Bnb that can used to buy Tokens."
                 />
                 <InputField
                   formik={formik}
                   label="Maximun buy(BNB): "
                   inputAttributes={{ name: FieldNames.maxBuyBnb, placeholder: '0.00', type: 'number' }}
-                  message="Maximun Buy is the maximun amount of Bnb that can used to buy Tokens"
+                  message="maximun buy is the maximun amount of Bnb that can used to buy Tokens"
                 />
               </AutoRow>
               <AutoRow justifyContent="space-around">
@@ -375,7 +373,7 @@ export default function CustomPresale() {
                   formik={formik}
                   label="Liquidity: "
                   inputAttributes={{ name: FieldNames.liquidity, placeholder: '0%', type: 'number' }}
-                  message="Enter the percentage of raised funds that should be allocated to Liquidity on (Min 51%, Max 100%)"
+                  message="Enter the percentage of raised funds that should be allocated to Liquidity(Min 51%, Max 100%)"
                 />
                 <InputField
                   formik={formik}
@@ -384,7 +382,6 @@ export default function CustomPresale() {
                   message="Minimun liquidity lockup time should be 5 mins"
                 />
               </AutoRow>
-
               <AutoRow justifyContent="space-around">
                 <Text bold fontSize="14px">
                   Fee Options:
@@ -484,7 +481,7 @@ export default function CustomPresale() {
                       </Text>
                       <MouseoverTooltip
                         size="12px"
-                        text="Start Presale time is the time when the presale starts.So, this time should be greater than current time and less than presale end time."
+                        text="Start Presale time is the time when the presale starts. So, this time should be greater than current time and less than presale end time."
                       >
                         <span>
                           <HelpCircle size={18} />
@@ -514,7 +511,7 @@ export default function CustomPresale() {
                       </Text>
                       <MouseoverTooltip
                         size="12px"
-                        text="End Presale time is the time when presale ends.So, this should be greater than current time and start presale time."
+                        text="End Presale time is the time when presale ends. So, this should be greater than current time and start presale time."
                       >
                         <span>
                           <HelpCircle size={18} />
