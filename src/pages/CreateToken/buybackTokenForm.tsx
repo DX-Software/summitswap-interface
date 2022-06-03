@@ -1,27 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { ethers } from 'ethers';
-import { useFormik } from 'formik';
-import styled from 'styled-components';
-import { useTokenCreatorContract } from 'hooks/useContract';
-import { ROUTER_ADDRESS } from '../../constants/index';
-import { Form, Label, LabelText, BigLabelText, Submit, Inputs, MessageContainer, Message, Required, Relative, Disabled, Error } from './standardTokenForm';
-import { verifyAddress } from './liquidityTokenForm';
-
-export const Select = styled.select`
-    height: 2.5rem;
-    padding: 0 1rem 0 1rem;
-    border-radius: 0 30px 30px 0;
-    background-color: #011724;
-    color: white;
-    flex: 1;
-`
+import React, { useEffect, useState } from 'react' 
+import { ethers } from 'ethers' 
+import { useFormik } from 'formik' 
+import styled from 'styled-components' 
+import { useTokenCreatorContract } from 'hooks/useContract' 
+import { ROUTER_ADDRESS } from '../../constants/index' 
+import { Form, Label, LabelText, BigLabelText, Submit, Inputs, MessageContainer, Message, Required, Relative, Disabled, Error } from './standardTokenForm' 
+import { verifyAddress, Select } from './liquidityTokenForm'
 
 const BuybackTokenForm = ({account}) => {
-    const [loading, setLoading] = useState(false);
-    const [created, setCreated] = useState(false);
-    const [txAddress, setTxAddress] = useState('');
+    const [loading, setLoading] = useState(false) 
+    const [created, setCreated] = useState(false) 
+    const [txAddress, setTxAddress] = useState('') 
 
-    const factory = useTokenCreatorContract('BUYBACK');
+    const factory = useTokenCreatorContract('BUYBACK') 
 
     interface ValueErrors {
       name?: string,
@@ -36,40 +27,40 @@ const BuybackTokenForm = ({account}) => {
     }
 
     const validate = async (values) => {
-      const errors: ValueErrors = {};
+      const errors: ValueErrors = {} 
 
       if(!values.name){
-        errors.name = 'This field is Required';
+        errors.name = 'This field is Required' 
       }
 
       if(!values.symbol){
-        errors.symbol = 'This field is Required';
+        errors.symbol = 'This field is Required' 
       }
 
       if(!values.supply){
-        errors.supply = 'This field is Required';
+        errors.supply = 'This field is Required' 
       }
 
       if(!values.rewardToken){
-        errors.rewardToken = 'This field is Required';
+        errors.rewardToken = 'This field is Required' 
       } else if(values.rewardToken && !(await verifyAddress(values.rewardToken))){
-        errors.rewardToken = 'This is not a valid address';
+        errors.rewardToken = 'This is not a valid address' 
       }
 
       if(!values.liquidityFeeBps){
-        errors.liquidityFeeBps = 'This field is Required';
+        errors.liquidityFeeBps = 'This field is Required' 
       }
 
       if(!values.buybackFee){
-        errors.buybackFee = 'This field is Required';
+        errors.buybackFee = 'This field is Required' 
       }
 
       if(!values.reflectionFee){
-        errors.reflectionFee = 'This field is Required';
+        errors.reflectionFee = 'This field is Required' 
       }
       
       if(!values.marketingFeeBps){
-        errors.marketingFeeBps = 'This field is Required';
+        errors.marketingFeeBps = 'This field is Required' 
       }
 
       if
@@ -77,10 +68,10 @@ const BuybackTokenForm = ({account}) => {
         (parseInt(values.liquidityFeeBps) || 0) + (parseInt(values.buybackFee) || 0) + (parseInt(values.reflectionFee) || 0) + (parseInt(values.marketingFeeBps)) > 100
       )
       {
-        errors.taxes = 'Fees need to be less than or equal to 100%';
+        errors.taxes = 'Fees need to be less than or equal to 100%' 
       }
 
-      return errors;
+      return errors 
     }
 
     const formik = useFormik({
@@ -113,20 +104,20 @@ const BuybackTokenForm = ({account}) => {
                 10000
               ],
               {value: ethers.utils.parseUnits("0.01")}
-          );
-          setLoading(true);
-          setTxAddress(tx.hash);
-          setLoading(false);
-          setCreated(true);
+          ) 
+          setLoading(true) 
+          setTxAddress(tx.hash) 
+          setLoading(false) 
+          setCreated(true) 
         } catch (e){
-          console.error(e);
+          console.error(e) 
         }
       },
       validate
     })
 
     useEffect(() => {
-      console.log(loading, created);
+      console.log(loading, created) 
     }, [loading, created, txAddress])
 
     return (
@@ -323,7 +314,7 @@ const BuybackTokenForm = ({account}) => {
                 
             )}
         </>
-    );
-};
+    ) 
+} 
 
-export default BuybackTokenForm;
+export default BuybackTokenForm 

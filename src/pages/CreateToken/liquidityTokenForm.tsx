@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { ethers } from 'ethers';
-import { useFormik } from 'formik';
-import styled from 'styled-components';
-import { useTokenCreatorContract } from 'hooks/useContract';
-import { ROUTER_ADDRESS } from '../../constants/index';
-import { Form, Label, LabelText, BigLabelText, Submit, Inputs, MessageContainer, Message, Required, Relative, Error, Disabled } from './standardTokenForm';
+import React, { useEffect, useState } from 'react'
+import { ethers } from 'ethers'
+import { useFormik } from 'formik'
+import styled from 'styled-components'
+import { useTokenCreatorContract } from 'hooks/useContract'
+import { ROUTER_ADDRESS } from '../../constants/index'
+import { Form, Label, LabelText, BigLabelText, Submit, Inputs, MessageContainer, Message, Required, Relative, Error, Disabled } from './standardTokenForm'
 
 
 export const Select = styled.select`
@@ -23,69 +23,69 @@ export const verifyAddress = async (address) => {
   } catch {
     return false
   }
-};
+}
 
 const LiquidityTokenForm = ({account}) => {
-    const [loading, setLoading] = useState(false);
-    const [created, setCreated] = useState(false);
-    const [txAddress, setTxAddress] = useState('');
+    const [loading, setLoading] = useState(false)
+    const [created, setCreated] = useState(false)
+    const [txAddress, setTxAddress] = useState('')
 
     interface ValueErrors {
-      name?: string;
-      symbol?: string;
-      supply?: string;
-      charityAddress?: string;
-      taxFeeBps?: string;
-      liquidityFeeBps?: string;
-      charityFeeBps?: string;
-      taxes?: string;
+      name?: string
+      symbol?: string
+      supply?: string
+      charityAddress?: string
+      taxFeeBps?: string
+      liquidityFeeBps?: string
+      charityFeeBps?: string
+      taxes?: string
     }
 
     const validate = async (values) => {
-      const errors: ValueErrors = {};
+      const errors: ValueErrors = {}
 
       if(!values.name){
-        errors.name = 'This field is Required';
+        errors.name = 'This field is Required'
       }
 
       if(!values.symbol){
-        errors.symbol = 'This field is Required';
+        errors.symbol = 'This field is Required'
       }
 
       if(!values.supply){
-        errors.supply = 'This field is Required';
+        errors.supply = 'This field is Required'
       }
 
       if(!values.taxFeeBps){
-        errors.taxFeeBps = 'This field is Required';
+        errors.taxFeeBps = 'This field is Required'
       }
 
       if(!values.liquidityFeeBps){
-        errors.liquidityFeeBps = 'This field is Required';
+        errors.liquidityFeeBps = 'This field is Required'
       }
 
       if(!values.charityAddress && values.charityFeeBps){
-        errors.charityAddress = 'This field is required if you have a Tax Fee';
+        errors.charityAddress = 'This field is required if you have a Tax Fee'
       } else if(values.charityAddress && !(await verifyAddress(values.charityAddress))) {
-        errors.charityAddress = 'This is not a valid address';
+        errors.charityAddress = 'This is not a valid address'
       } else if(values.charityAddress === account){
-        errors.charityAddress = 'This account cannot be the same as the owners account';
+        errors.charityAddress = 'This account cannot be the same as the owners account'
       }
 
       if((!values.charityFeeBps && values.charityFeeBps !== 0) && await verifyAddress(values.charityAddress)){
-        errors.charityFeeBps = 'This field is required if you have a Charity Address';
+        errors.charityFeeBps = 'This field is required if you have a Charity Address'
       } else if(parseInt(values.charityFeeBps) <= 0 && await verifyAddress(values.charityAddress)){
-        errors.charityFeeBps = 'This field cannot be 0 if you have a Charity Address';
+        errors.charityFeeBps = 'This field cannot be 0 if you have a Charity Address'
       }
       
       if((parseInt(values.taxFeeBps) || 0) + (parseInt(values.liquidityFeeBps) || 0) + (parseInt(values.charityFeeBps) || 0) > 25){
-        errors.taxes = 'Fees cannot exceed 25%';
+        errors.taxes = 'Fees cannot exceed 25%'
       }
 
-      return errors;
+      return errors
     }
 
-    const factory = useTokenCreatorContract('LIQUIDITY');
+    const factory = useTokenCreatorContract('LIQUIDITY')
     const formik = useFormik({
       initialValues: {
         name: '',
@@ -111,17 +111,17 @@ const LiquidityTokenForm = ({account}) => {
             (parseInt(values.liquidityFeeBps) * 100),
             (parseInt(values.charityFeeBps !== '' ? values.charityFeeBps : '0') * 100),
             {value: ethers.utils.parseUnits("0.01")}
-          );
-          setLoading(true);
-          setTxAddress(tx.hash);
-          setLoading(false);
-          setCreated(true);
+          )
+          setLoading(true)
+          setTxAddress(tx.hash)
+          setLoading(false)
+          setCreated(true)
         } catch (e){
-          console.error(e);
+          console.error(e)
         }
       },
       validate
-    });
+    })
 
     useEffect(() => {
         console.log(loading, created)
@@ -293,8 +293,8 @@ const LiquidityTokenForm = ({account}) => {
                 </MessageContainer>
             )}
         </>
-    );
+    )
 }
-// const [charityFeeBps, setCharityFee] = useState('');
+// const [charityFeeBps, setCharityFee] = useState('')
 
-export default LiquidityTokenForm;
+export default LiquidityTokenForm

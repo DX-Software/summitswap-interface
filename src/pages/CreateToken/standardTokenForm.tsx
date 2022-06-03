@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { useFormik } from 'formik';
-import { ethers } from 'ethers';
-import styled from 'styled-components';
-import { useTokenCreatorContract } from '../../hooks/useContract';
+import React, { useEffect, useState } from 'react'
+import { useFormik } from 'formik'
+import { ethers } from 'ethers'
+import styled from 'styled-components'
+import { useTokenCreatorContract } from '../../hooks/useContract'
 
 export const Form = styled.form`
     display: flex;
@@ -115,39 +115,39 @@ export const Error = styled.span`
 `
 
 const StandardTokenForm = () => {
-    const [loading, setLoading] = useState(false);
-    const [created, setCreated] = useState(false);
-    const [txAddress, setTxAddress] = useState('');
+    const [loading, setLoading] = useState(false)
+    const [created, setCreated] = useState(false)
+    const [txAddress, setTxAddress] = useState('')
 
     // Using the Website own connectors instead of only metamask as I did
-    const factory = useTokenCreatorContract('STANDARD');
+    const factory = useTokenCreatorContract('STANDARD')
     interface ValueErrors {
-      name?: string;
-      symbol?: string;
-      supply?: string;
-      decimals?: string;
+      name?: string
+      symbol?: string
+      supply?: string
+      decimals?: string
     }
 
     const validate = (values) => {
-      const errors: ValueErrors = {};
+      const errors: ValueErrors = {}
 
       if(!values.name){
-        errors.name = 'This field is Required';
+        errors.name = 'This field is Required'
       }
 
       if(!values.symbol){
-        errors.symbol = 'This field is Required';
+        errors.symbol = 'This field is Required'
       }
 
       if(!values.supply){
-        errors.supply = 'This field is Required';
+        errors.supply = 'This field is Required'
       }
 
       if(!values.decimals){
-        errors.decimals = 'This field is Required';
+        errors.decimals = 'This field is Required'
       }
 
-      return errors;
+      return errors
     }
 
     const formik = useFormik({
@@ -165,20 +165,20 @@ const StandardTokenForm = () => {
             values.symbol,
             values.decimals,
             ethers.utils.parseUnits(String(values.supply), values.decimals),
-            {value: ethers.utils.parseUnits("0.01")});
-          setLoading(true);
-          setTxAddress(tx.hash);
-          setLoading(false);
-          setCreated(true);
+            {value: ethers.utils.parseUnits("0.01")})
+          setLoading(true)
+          setTxAddress(tx.hash)
+          setLoading(false)
+          setCreated(true)
         } catch (e) {
-          console.error(e);
+          console.error(e)
         }
       },
       validate
     })
     
     useEffect(() => {
-      console.log(loading, created);
+      console.log(loading, created)
     }, [loading, created, txAddress])
 
     return (
@@ -275,7 +275,7 @@ const StandardTokenForm = () => {
                 </MessageContainer>
             )}
         </>
-    );
-};
+    )
+}
 
-export default StandardTokenForm;
+export default StandardTokenForm

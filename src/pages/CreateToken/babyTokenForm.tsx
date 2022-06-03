@@ -1,93 +1,84 @@
-import React, { useEffect, useState } from 'react';
-import { ethers } from 'ethers';
-import { useFormik } from 'formik';
-import styled from 'styled-components';
-import { useTokenCreatorContract } from 'hooks/useContract';
-import { ROUTER_ADDRESS } from '../../constants/index';
-import { Form, Label, LabelText, BigLabelText, Submit, Inputs, MessageContainer, Message, Required, Disabled, Relative, Error } from './standardTokenForm';
-import { verifyAddress } from './liquidityTokenForm';
-
-export const Select = styled.select`
-    height: 2.5rem;
-    padding: 0 1rem 0 1rem;
-    border-radius: 0 30px 30px 0;
-    background-color: #011724;
-    color: white;
-    flex: 1;
-`
+import React, { useEffect, useState } from 'react'
+import { ethers } from 'ethers'
+import { useFormik } from 'formik'
+import styled from 'styled-components'
+import { useTokenCreatorContract } from 'hooks/useContract'
+import { ROUTER_ADDRESS } from '../../constants/index'
+import { Form, Label, LabelText, BigLabelText, Submit, Inputs, MessageContainer, Message, Required, Disabled, Relative, Error } from './standardTokenForm'
+import { verifyAddress, Select } from './liquidityTokenForm'
 
 const BabyTokenForm = ({account}) => {
-    const [loading, setLoading] = useState(false);
-    const [created, setCreated] = useState(false);
-    const [txAddress, setTxAddress] = useState('');
-    const dividendTracker = "0x87064D365710C0C025628ed1294548FEA4f5AD67";
+    const [loading, setLoading] = useState(false)
+    const [created, setCreated] = useState(false)
+    const [txAddress, setTxAddress] = useState('')
+    const dividendTracker = "0x87064D365710C0C025628ed1294548FEA4f5AD67"
 
-    const factory = useTokenCreatorContract('BABY');
+    const factory = useTokenCreatorContract('BABY')
     interface ValueErrors {
-      name?: string;
-      symbol?: string;
-      supply?: string;
-      rewardToken?:string;
-      marketingWallet?: string;
-      tokenFeeBps?: string;
-      liquidityFeeBps?: string;
-      marketingFeeBps?: string;
-      minimumTokenBalanceForDividends?: string;
-      taxes?: string;
+      name?: string
+      symbol?: string
+      supply?: string
+      rewardToken?:string
+      marketingWallet?: string
+      tokenFeeBps?: string
+      liquidityFeeBps?: string
+      marketingFeeBps?: string
+      minimumTokenBalanceForDividends?: string
+      taxes?: string
     }
 
     const validate = async (values) => {
-      const errors: ValueErrors = {};
+      const errors: ValueErrors = {}
 
       if(!values.name){
-        errors.name = 'This field is Required';
+        errors.name = 'This field is Required'
       }
 
       if(!values.symbol){
-        errors.symbol = 'This field is Required';
+        errors.symbol = 'This field is Required'
       }
 
       if(!values.supply){
-        errors.supply = 'This field is Required';
+        errors.supply = 'This field is Required'
       }
 
       if(!values.rewardToken){
-        errors.rewardToken = 'This field is Required';
+        errors.rewardToken = 'This field is Required'
       } else if(values.rewardToken && !(await verifyAddress(values.rewardToken))){
-        errors.rewardToken = 'This is not a valid address';
+        errors.rewardToken = 'This is not a valid address'
       }
 
       if(!values.marketingWallet){
-        errors.marketingWallet = 'This field is Required';
+        errors.marketingWallet = 'This field is Required'
       } else if(values.marketingWallet && !(await verifyAddress(values.marketingWallet))) {
-        errors.marketingWallet = 'This is not a valid address';
+        errors.marketingWallet = 'This is not a valid address'
       } else if(values.marketingWallet === account){
-        errors.marketingWallet = 'This account cannot be the same as the owners account';
+        errors.marketingWallet = 'This account cannot be the same as the owners account'
       }
 
       if(!values.tokenFeeBps){
-        errors.tokenFeeBps = 'This field is Required';
+        errors.tokenFeeBps = 'This field is Required'
       }
 
       if(!values.liquidityFeeBps){
-        errors.liquidityFeeBps = 'This field is Required';
+        errors.liquidityFeeBps = 'This field is Required'
       }
       
       if(!values.marketingFeeBps){
-        errors.marketingFeeBps = 'This field is Required';
+        errors.marketingFeeBps = 'This field is Required'
       }
 
       if(!values.minimumTokenBalanceForDividends){
-        errors.minimumTokenBalanceForDividends = 'This field is Required';
+        errors.minimumTokenBalanceForDividends = 'This field is Required'
       } else if(values.minimumTokenBalanceForDividends > (values.supply / 1000)){
-        errors.minimumTokenBalanceForDividends = 'Minimum Token Balance must be 0.1% or less than Total Supply';
+        errors.minimumTokenBalanceForDividends = 'Minimum Token Balance must be 0.1% or less than Total Supply'
       }
 
       if((parseInt(values.tokenFeeBps) || 0) + (parseInt(values.liquidityFeeBps) || 0) + (parseInt(values.marketingFeeBps) || 0) > 100){
-        errors.taxes = 'Fees need to be less than or equal to 100%';
+        errors.taxes = 'Fees need to be less than or equal to 100%'
       }
 
-      return errors;
+      return errors
     }
 
     const formik = useFormik({
@@ -124,13 +115,13 @@ const BabyTokenForm = ({account}) => {
               ],
               ethers.utils.parseUnits(String(values.minimumTokenBalanceForDividends), 18),
               {value: ethers.utils.parseUnits("0.01")}
-          );
-          setLoading(true);
-          setTxAddress(tx.hash);
-          setLoading(false);
-          setCreated(true);
+          )
+          setLoading(true)
+          setTxAddress(tx.hash)
+          setLoading(false)
+          setCreated(true)
         } catch (e){
-          console.error(e);
+          console.error(e)
         }
       },
       validate
@@ -349,7 +340,7 @@ const BabyTokenForm = ({account}) => {
                 
             )}
         </>
-    );
-};
+    )
+}
 
-export default BabyTokenForm;
+export default BabyTokenForm
