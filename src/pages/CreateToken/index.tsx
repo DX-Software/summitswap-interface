@@ -1,65 +1,101 @@
-import React, { useCallback, useState } from 'react' 
-import login from 'utils/login' 
-import { useWeb3React } from '@web3-react/core' 
-import { Button, Flex, useWalletModal } from '@koda-finance/summitswap-uikit' 
-import { TranslateString } from 'utils/translateTextHelpers' 
-import AppBody from '../AppBody' 
-import LiquidityTokenForm from './liquidityTokenForm' 
-import StandardTokenForm from './standardTokenForm' 
-import BabyTokenForm from './babyTokenForm' 
-import BuybackTokenForm from './buybackTokenForm' 
+import React, { useCallback, useState } from 'react'
+import login from 'utils/login'
+import { useWeb3React } from '@web3-react/core'
+import { Button, Flex, useWalletModal } from '@koda-finance/summitswap-uikit'
+import styled from 'styled-components'
+import { Option } from 'react-dropdown'
+import { TranslateString } from 'utils/translateTextHelpers'
+import { TokenType } from '../../constants'
+import StandardTokenForm from './StandardTokenForm'
+import LiquidityTokenForm from './LiquidityTokenForm'
+import { useToken } from '../../hooks/Tokens'
+import TokenDashboard from './TokenDashboard'
+import { StyledDropdownWrapper } from './components'
 
+const FlexDropdown = styled(Flex)`
+  width: 85%;
+  @media (min-width: 500px) {
+    width: 436px;
+  }
+`
 
 const CreateToken = () => {
-    const { account, activate, deactivate } = useWeb3React() 
+  const { account, activate, deactivate } = useWeb3React()
+  const [showTokenDropdown, setShowTokenDropdown] = useState(true)
+  const [tokenAddress, setTokenAddress] = useState('') // 0xF87cE0ea6612C6A362f45ccbdaf56C3a8363e5a2
+  const [txAddress, setTxAddress] = useState('')
+  const [totalSupply, setTotalSupply] = useState('')
 
-    const [tokenType, setTokenType] = useState("standard") 
+  const [tokenType, setTokenType] = useState<Option>({
+    value: TokenType.Standard,
+    label: `${TokenType.Standard} Token`,
+  })
 
-    const handleLogin = useCallback(
-      (connectorId: string) => {
-        login(connectorId, activate)
-      },
-      [activate]
-    )
-    
-    const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string) 
+  const token = useToken(tokenAddress)
 
-    return (
-        <AppBody>
-            {!account && (
-              <>
-                <Flex mb={3} justifyContent="center">
-                  <Button style={{ fontFamily: 'Poppins' }} onClick={onPresentConnectModal}>
-                    {TranslateString(292, 'CONNECT WALLET')}
-                  </Button>
-                </Flex>
-              </>
+  const handleLogin = useCallback(
+    (connectorId: string) => {
+      login(connectorId, activate)
+    },
+    [activate]
+  )
+
+  const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
+  return token ? (
+    <TokenDashboard txAddress={txAddress} tokenSupply={totalSupply} token={token} />
+  ) : (
+    <>
+      {!account && (
+        <>
+          <Flex mb={3} mt={40} justifyContent="center">
+            <Button style={{ fontFamily: 'Poppins' }} onClick={onPresentConnectModal}>
+              {TranslateString(292, 'CONNECT WALLET')}
+            </Button>
+          </Flex>
+        </>
+      )}
+      {account && (
+        <>
+          <FlexDropdown mb={3} mt={3} justifyContent="center">
+            {showTokenDropdown && (
+              <StyledDropdownWrapper
+                value={tokenType}
+                options={[
+                  {
+                    value: TokenType.Standard,
+                    label: `${TokenType.Standard} Token`,
+                  },
+                  {
+                    value: TokenType.Liquidity,
+                    label: `${TokenType.Liquidity} Token`,
+                  },
+                ]}
+                onChange={(option: Option) => {
+                  setTokenType(option)
+                }}
+              />
             )}
-            {account && (
-              <>
-                <Flex mb={3} mt={3} justifyContent="center">
-                  <select defaultValue="standard" onChange={(e) => {setTokenType(e.target.value)}} name="tokenType" id="tokenType">
-                    <option value="standard">Standard Token</option>
-                    <option value="liquidity">Liquidity Generator Token</option>
-                    <option value="babytoken">Baby Token</option>
-                    <option value="buyback">Buyback Baby Token</option>
-                  </select>
-                </Flex>
-                {tokenType === "standard" && (
-                    <StandardTokenForm />
-                )}
-                {tokenType === "liquidity" && (
-                    <LiquidityTokenForm account={account} />
-                )}
-                {tokenType === "babytoken" && (
-                    <BabyTokenForm account={account} />
-                )}
-                {tokenType === "buyback" && (
-                    <BuybackTokenForm account={account} />
-                )}
-              </>
-            )}
-        </AppBody>
-    ) 
+          </FlexDropdown>
+          {tokenType.value === TokenType.Standard && (
+            <StandardTokenForm
+              setShowTokenDropdown={setShowTokenDropdown}
+              setTotalSupply={setTotalSupply}
+              setTxAddress={setTxAddress}
+              setTokenAddress={setTokenAddress}
+            />
+          )}
+          {tokenType.value === TokenType.Liquidity && (
+            <LiquidityTokenForm
+              setTotalSupply={setTotalSupply}
+              setTxAddress={setTxAddress}
+              setShowTokenDropdown={setShowTokenDropdown}
+              setTokenAddress={setTokenAddress}
+              account={account}
+            />
+          )}
+        </>
+      )}
+    </>
+  )
 }
-export default CreateToken 
+export default CreateToken

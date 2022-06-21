@@ -12,6 +12,7 @@ import { useActiveWeb3React } from './index'
 import { 
   LOCKER_ADDRESS,
   REFERRAL_ADDRESS,
+  TokenType,
   TOKEN_CREATOR_ADDRESS
 } from '../constants'
 import CREATE_STANDARD_TOKEN_ABI from '../constants/abis/createStandardToken.json';
@@ -99,19 +100,19 @@ export function useRouterContract(routerAddress: string): Contract | null {
   return useContract(routerAddress, ROUTER_ABI)
 }
 
-export function useTokenCreatorContract(tokenType: 'STANDARD' | 'LIQUIDITY' | 'BABY' | 'BUYBACK'): Contract | null {
+export function useTokenCreatorContract(tokenType: TokenType): Contract | null {
   let createTokenAbi
   switch(tokenType) {
-    case 'STANDARD':
+    case TokenType.Standard:
       createTokenAbi = CREATE_STANDARD_TOKEN_ABI
       break
-    case 'LIQUIDITY':
+    case TokenType.Liquidity:
       createTokenAbi = CREATE_LIQUIDITY_TOKEN_ABI
       break
-    case 'BABY':
+    case TokenType.Baby:
       createTokenAbi = CREATE_BABY_TOKEN_ABI
       break
-    case 'BUYBACK':
+    case TokenType.BuyBack:
       createTokenAbi = CREATE_BUYBACK_TOKEN_ABI
       break
   }

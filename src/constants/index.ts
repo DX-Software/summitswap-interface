@@ -9,11 +9,19 @@ export const FACTORY_ADDRESS = `${process.env.REACT_APP_FACTORY_ADDRESS}`
 export const INIT_CODE_HASH = `${process.env.REACT_APP_INIT_CODE_HASH}`
 export const REFERRAL_ADDRESS = `${process.env.REACT_APP_REFERRAL_ADDRESS}`
 export const REFERRAL_DEPLOYMENT_BLOCKNUMBER = +`${process.env.REACT_APP_REFERRAL_DEPLOYMENT_BLOCKNUMBER}`
+
+export enum TokenType {
+  Standard = 'Standard',
+  Liquidity = 'Liquidity',
+  Baby = 'Baby',
+  BuyBack = 'BuyBack'
+}
+
 export const TOKEN_CREATOR_ADDRESS = {
-  'STANDARD': `${process.env.REACT_APP_STANDARD_TOKEN_CREATOR_ADDRESS}`,
-  'LIQUIDITY': `${process.env.REACT_APP_LIQUIDITY_TOKEN_CREATOR_ADDRESS}`,
-  'BABY': `${process.env.REACT_APP_BABY_TOKEN_CREATOR_ADDRESS}`,
-  'BUYBACK': `${process.env.REACT_APP_BUYBACK_TOKEN_CREATOR_ADDRESS}`,
+  [TokenType.Standard]: `${process.env.REACT_APP_STANDARD_TOKEN_CREATOR_ADDRESS}`,
+  [TokenType.Liquidity]: `${process.env.REACT_APP_LIQUIDITY_TOKEN_CREATOR_ADDRESS}`,
+  [TokenType.Baby]: `${process.env.REACT_APP_BABY_TOKEN_CREATOR_ADDRESS}`,
+  [TokenType.BuyBack]: `${process.env.REACT_APP_BUYBACK_TOKEN_CREATOR_ADDRESS}`,
 }
 
 export const ADDITIONAL_ROUTER_ADDRESSES: string[] = process.env.REACT_APP_ADDITIONAL_ROUTER_ADDRESS?.split(",") ?? []

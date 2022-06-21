@@ -27,6 +27,11 @@ const config: MenuEntry[] = [
     href: '/cross-chain-swap',
     showConnectButton: false,
   },
+  {
+    label: 'Create Token',
+    icon: 'SunIcon',
+    href: '/create-token',
+  },
   // {
   //   label: "Onboarding",
   //   icon: "OnboardingIcon",
