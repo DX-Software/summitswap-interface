@@ -71,7 +71,8 @@ export default function Onboarding() {
 
   const handleTokenSelect = useCallback((inputCurrency) => {
     setSelectedToken(inputCurrency)
-  }, [])
+    history.push({ search: `?token=${inputCurrency.address}` })
+  }, [history])
 
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
 
@@ -84,12 +85,6 @@ export default function Onboarding() {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, location])
-
-  useEffect(() => {
-    if (selectedToken) {
-      history.push({ search: `?token=${selectedToken.address}` })
-    }
-  }, [history, selectedToken])
 
   useEffect(() => {
     if (tokenFromUrl && selectedToken?.address !== tokenFromUrl.address) {
