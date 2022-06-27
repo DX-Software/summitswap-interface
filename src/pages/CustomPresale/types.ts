@@ -1,3 +1,4 @@
+import { InputHTMLAttributes } from 'react'
 import { BigNumber } from "ethers";
 import { FormikProps } from "formik";
 
@@ -30,8 +31,6 @@ export enum FieldNames {
   isWithdrawCancelledTokens = "isWithdrawCancelledTokens",
 }
 
-export const FEE_DECIMALS = 9;
-
 export interface PresaleInfo {
   [FieldNames.owner]: string;
   [FieldNames.presaleToken]: string;
@@ -46,8 +45,8 @@ export interface PresaleInfo {
   [FieldNames.liquidity]: BigNumber;
   [FieldNames.startPresaleTime]: BigNumber;
   [FieldNames.endPresaleTime]: BigNumber;
-  [FieldNames.feeType]: BigNumber;
-  [FieldNames.refundType]: BigNumber;
+  [FieldNames.feeType]: number;
+  [FieldNames.refundType]: number;
   [FieldNames.totalBought]: BigNumber;
   [FieldNames.isWhitelistEnabled]: boolean;
   [FieldNames.isClaimPhase]: boolean;
@@ -55,15 +54,13 @@ export interface PresaleInfo {
   [FieldNames.isWithdrawCancelledTokens]: boolean;
 }
 
-export enum FieldValues {
+export enum RadioFieldValues {
   whitelistEnable = 'enable',
   whitelistDisable = "disable",
   refundTypeRefund = 'refund',
   refundTypeBurn = 'burn',
   feeTypeOnlyBnb = "feeTypeOnlyBnb",
   feeTypeBnbnToken = "feeTypeBnbnToken",
-  RouterAddressPancakeswap = "0x10ED43C718714eb63d5aA57B78B54704E256024E",
-  RouterAddressSummitswap = "0xD7803eB47da0B1Cf569F5AFf169DA5373Ef3e41B"
 }
 
 export interface Values {
@@ -83,7 +80,6 @@ export interface Values {
   [FieldNames.feeType]: string;
   [FieldNames.refundType]: string;
 }
-
 
 export interface ValueErrors {
   [FieldNames.tokenAmount]?: string;
@@ -107,14 +103,6 @@ export enum PresalePhases {
   ClaimPhase = "CLAIM PHASE",
 }
 
-export interface InputFieldProps {
-  formik: FormikProps<Values>;
-  name: string;
-  label: string;
-  type: string;
-  message: string;
-}
-
 export enum LoadingButtonTypes {
   NotSelected,
   Withdraw,
@@ -124,6 +112,13 @@ export enum LoadingButtonTypes {
   Finalize,
   CancelPool,
   WithdrawCancelledTokens,
+}
+
+export interface InputFieldPropsFormik {
+  formik: FormikProps<Values>
+  message: string
+  label: string
+  inputAttributes: InputHTMLAttributes<HTMLInputElement>
 }
 
 export interface LoadingForButton {

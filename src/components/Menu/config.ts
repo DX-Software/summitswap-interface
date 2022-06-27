@@ -28,8 +28,8 @@ const config: MenuEntry[] = [
     showConnectButton: false,
   },
   {
-    label: 'Presale',
-    icon: 'RubicIcon',
+    label: 'Pre-sale',
+    icon: 'RubicIcon', // TODO:: will be changed after Ui-kit is updated
     href: '/presale',
   },
   // {

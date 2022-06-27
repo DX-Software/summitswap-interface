@@ -1,10 +1,17 @@
 import React from 'react'
 import { Option } from 'react-dropdown'
-import { Text, Box, AutoRenewIcon } from '@koda-finance/summitswap-uikit'
-import { PresaleInfo, LoadingForButton, LoadingButtonTypes, FieldProps } from './types'
+import styled from 'styled-components'
+import { Box, AutoRenewIcon, Button } from '@koda-finance/summitswap-uikit'
 import { RowBetween } from '../../components/Row'
-import { StyledDropdownWrapper, Card, MessageDiv, ButtonWithMessage } from './components'
-import { MESSAGE_ERROR, MESSAGE_SUCCESS, WHITELIST_SALE, PUBLIC_SALE } from './contants'
+import DropdownWrapper from '../../components/DropdownWrapper'
+import MessageDiv from '../../components/MessageDiv'
+import { MESSAGE_ERROR, MESSAGE_SUCCESS, WHITELIST_SALE, PUBLIC_SALE } from '../../constants/presale'
+import { PresaleInfo, LoadingForButton, LoadingButtonTypes, FieldProps } from './types'
+import { TextHeading, TextSubHeading } from './BuyTokens'
+
+export const StyledDropdownWrapper = styled(DropdownWrapper)`
+  width: 120px;
+`
 
 interface Props {
   presaleInfo: PresaleInfo
@@ -22,6 +29,19 @@ interface Props {
   onPresaleCancelHandler: () => Promise<void>
 }
 
+const RemoveAddressButton = styled(Button)`
+  background: #011724;
+  border: 2px solid #0fd6a9;
+  border-radius: 50px;
+  height: 36px;
+  box-shadow: 0 0;
+  &:disabled {
+    background: #011724;
+    border: 2px solid #0fd6a9;
+    opacity: 0.6;
+  }
+`
+
 export default function OwnerZone({
   presaleInfo,
   loadingForButton,
@@ -38,135 +58,127 @@ export default function OwnerZone({
   onPresaleCancelHandler,
 }: Props) {
   return (
-    <Box width="50%">
-      <Text bold fontSize="20px" ml="10px" mb="5px">
-        Owner Zone
-      </Text>
-      <Card style={{ width: '100%' }}>
-        <RowBetween>
-          <Text bold>Sale Type </Text>
-          <StyledDropdownWrapper
-            disabled={loadingForButton.isClicked}
-            value={saleType}
-            options={[WHITELIST_SALE, PUBLIC_SALE]}
-            onChange={selectSaleTypeHandler}
-          />
-        </RowBetween>
-        <MessageDiv type={loadingForButton.error !== '' ? MESSAGE_ERROR : MESSAGE_SUCCESS}>
-          {loadingForButton.type === LoadingButtonTypes.ChangeSaleType
-            ? loadingForButton.isClicked
-              ? 'Changing Sale Type'
-              : loadingForButton.error
-            : ''}
-        </MessageDiv>
-        {presaleInfo?.isWhitelistEnabled && (
-          <>
-            <Text bold>Whitelist Actions </Text>
-            <ButtonWithMessage
-              endIcon={
-                newWhitelistAddresses.value &&
-                isLoading &&
-                !loadingForButton.isClicked && <AutoRenewIcon spin color="currentColor" />
-              }
-              msg={newWhitelistAddresses.value && isLoading ? 'Adding Addresses' : newWhitelistAddresses.error}
-              buttonText="Add Addresses"
-              type={isLoading ? MESSAGE_SUCCESS : MESSAGE_ERROR}
-              variant="awesome"
-              mt="5px"
-              scale="xxs"
-              onClick={() => setIsAddWhitelistModalOpen(true)}
-            />
-            <ButtonWithMessage
-              endIcon={
-                removeWhitelistAddresses.value &&
-                isLoading &&
-                !loadingForButton.isClicked && <AutoRenewIcon spin color="currentColor" />
-              }
-              msg={removeWhitelistAddresses.value && isLoading ? 'Removing Addresses' : removeWhitelistAddresses.error}
-              buttonText="Remove Addresses"
-              type={isLoading ? MESSAGE_SUCCESS : MESSAGE_ERROR}
-              variant="awesome"
-              mt="5px"
-              scale="xxs"
-              onClick={() => setIsRemoveWhitelistModalOpen(true)}
-            />
-          </>
-        )}
-        <Text bold>Pool Actions </Text>
-        <RowBetween>
-          <ButtonWithMessage
-            endIcon={
-              loadingForButton.type === LoadingButtonTypes.Finalize &&
-              loadingForButton.isClicked && <AutoRenewIcon spin color="currentColor" />
-            }
-            msg={
-              loadingForButton.type === LoadingButtonTypes.Finalize
-                ? loadingForButton.isClicked
-                  ? 'Finalizing Presale'
-                  : loadingForButton.error
-                : ''
-            }
-            buttonText="Finalize"
-            type={loadingForButton.error !== '' ? MESSAGE_ERROR : MESSAGE_SUCCESS}
-            disabled={
-              !canPresaleBeFinalized ||
-              presaleInfo?.isClaimPhase ||
-              isLoading ||
-              loadingForButton.isClicked ||
-              presaleInfo?.isPresaleCancelled
-            }
-            variant="awesome"
-            mt="10px"
-            scale="xxs"
-            onClick={onPresaleFinalizeHandler}
-          />
-          {presaleInfo?.isPresaleCancelled ? (
-            <ButtonWithMessage
-              endIcon={
-                loadingForButton.type === LoadingButtonTypes.WithdrawCancelledTokens &&
-                loadingForButton.isClicked && <AutoRenewIcon spin color="currentColor" />
-              }
-              msg={
-                loadingForButton.type === LoadingButtonTypes.WithdrawCancelledTokens
-                  ? loadingForButton.isClicked
-                    ? 'Wirhdraing Tokens'
-                    : loadingForButton.error
-                  : ''
-              }
-              buttonText="Withdraw Cancelled Tokens"
-              type={loadingForButton.error !== '' ? MESSAGE_ERROR : MESSAGE_SUCCESS}
-              disabled={isLoading || loadingForButton.isClicked || presaleInfo.isWithdrawCancelledTokens}
-              variant="awesome"
-              mt="10px"
-              scale="xxs"
-              onClick={onWithdrawCancelledTokenHandler}
-            />
-          ) : (
-            <ButtonWithMessage
-              endIcon={
-                loadingForButton.type === LoadingButtonTypes.CancelPool &&
-                loadingForButton.isClicked && <AutoRenewIcon spin color="currentColor" />
-              }
-              msg={
-                loadingForButton.type === LoadingButtonTypes.CancelPool
-                  ? loadingForButton.isClicked
-                    ? 'Cancelling Presale'
-                    : loadingForButton.error
-                  : ''
-              }
-              buttonText="Cancel"
-              type={loadingForButton?.error !== '' ? MESSAGE_ERROR : MESSAGE_SUCCESS}
-              disabled={
-                presaleInfo?.isClaimPhase || presaleInfo?.isPresaleCancelled || isLoading || loadingForButton.isClicked
-              }
-              variant="text"
-              ml="10px"
-              scale="xxs"
-              onClick={onPresaleCancelHandler}
-            />
-          )}
-        </RowBetween>
-      </Card>
+    <Box marginBottom="30px" padding="25px" width="100%" borderRadius="20px" background="#011724">
+      <RowBetween>
+        <TextHeading>
+          Sale Type{' '}
+          <MessageDiv type={loadingForButton.error !== '' ? MESSAGE_ERROR : MESSAGE_SUCCESS}>
+            {loadingForButton.type === LoadingButtonTypes.ChangeSaleType
+              ? loadingForButton.isClicked
+                ? 'Changing Sale Type.'
+                : loadingForButton.error
+              : ''}
+          </MessageDiv>
+        </TextHeading>
+        <StyledDropdownWrapper
+          disabled={loadingForButton.isClicked}
+          value={saleType}
+          options={[WHITELIST_SALE, PUBLIC_SALE]}
+          onChange={selectSaleTypeHandler}
+        />
+      </RowBetween>
+      <TextSubHeading marginTop="30px">Whitelist actions :</TextSubHeading>
+      <Button
+        endIcon={
+          newWhitelistAddresses.value &&
+          isLoading &&
+          !loadingForButton.isClicked && <AutoRenewIcon spin color="currentColor" />
+        }
+        disabled={!presaleInfo.isWhitelistEnabled || !!removeWhitelistAddresses.value}
+        onClick={() => setIsAddWhitelistModalOpen(true)}
+        style={{ boxShadow: '0 0' }}
+        height="36px"
+        marginTop="15px"
+        scale="sm"
+      >
+        Add address
+      </Button>
+      <br />
+      <RemoveAddressButton
+        endIcon={
+          removeWhitelistAddresses.value &&
+          isLoading &&
+          !loadingForButton.isClicked && <AutoRenewIcon spin color="currentColor" />
+        }
+        disabled={!presaleInfo.isWhitelistEnabled || !!newWhitelistAddresses.value}
+        onClick={() => setIsRemoveWhitelistModalOpen(true)}
+        marginTop="15px"
+        scale="sm"
+      >
+        Remove address
+      </RemoveAddressButton>
+      <MessageDiv marginTop="10px" type={MESSAGE_ERROR}>
+        {removeWhitelistAddresses.error ? removeWhitelistAddresses.error : newWhitelistAddresses.error}
+      </MessageDiv>
+
+      <TextSubHeading marginTop="10px">Pool actions :</TextSubHeading>
+      <Button
+        endIcon={
+          loadingForButton.type === LoadingButtonTypes.Finalize &&
+          loadingForButton.isClicked && <AutoRenewIcon spin color="currentColor" />
+        }
+        disabled={
+          !canPresaleBeFinalized ||
+          !!loadingForButton.error ||
+          presaleInfo?.isClaimPhase ||
+          isLoading ||
+          loadingForButton.isClicked ||
+          presaleInfo?.isPresaleCancelled
+        }
+        onClick={onPresaleFinalizeHandler}
+        height="36px"
+        variant="awesome"
+        marginTop="15px"
+        scale="sm"
+      >
+        Finalize
+      </Button>
+      <br />
+      {presaleInfo?.isPresaleCancelled ? (
+        <Button
+          disabled={
+            !!loadingForButton.error || isLoading || loadingForButton.isClicked || presaleInfo.isWithdrawCancelledTokens
+          }
+          endIcon={
+            loadingForButton.type === LoadingButtonTypes.WithdrawCancelledTokens &&
+            loadingForButton.isClicked && <AutoRenewIcon spin color="currentColor" />
+          }
+          height="36px"
+          variant="danger"
+          marginTop="15px"
+          scale="sm"
+          onClick={onWithdrawCancelledTokenHandler}
+        >
+          Withdraw Cancelled Tokens
+        </Button>
+      ) : (
+        <Button
+          endIcon={
+            loadingForButton.type === LoadingButtonTypes.CancelPool &&
+            loadingForButton.isClicked && <AutoRenewIcon spin color="currentColor" />
+          }
+          disabled={
+            !!loadingForButton.error ||
+            presaleInfo?.isClaimPhase ||
+            presaleInfo?.isPresaleCancelled ||
+            isLoading ||
+            loadingForButton.isClicked
+          }
+          height="36px"
+          variant="danger"
+          marginTop="15px"
+          scale="sm"
+          onClick={onPresaleCancelHandler}
+        >
+          Cancel
+        </Button>
+      )}
+      <MessageDiv marginTop="10px" type={MESSAGE_ERROR}>
+        {(loadingForButton.type === LoadingButtonTypes.Finalize ||
+          loadingForButton.type === LoadingButtonTypes.CancelPool ||
+          loadingForButton.type === LoadingButtonTypes.WithdrawCancelledTokens) &&
+          loadingForButton.error}
+      </MessageDiv>
     </Box>
   )
 }

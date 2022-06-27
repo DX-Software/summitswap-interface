@@ -172,7 +172,6 @@ export default function App() {
                     <Route exact path="/staking/withdraw" component={WithdrawPage} />
                     <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
                     <Route exact path="/presale" component={CustomPresale} />
-                    <Route exact path="/presale/:id" component={Presale} />
 
                     {/* Redirection: These old routes are still used in the code base */}
                     <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />

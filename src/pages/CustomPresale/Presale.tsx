@@ -1,28 +1,71 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { ethers, BigNumber } from 'ethers'
 import { useLocation } from 'react-router-dom'
+import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
+import { Box } from '@koda-finance/summitswap-uikit'
 import Modal from '@mui/material/Modal'
 import { usePresaleContract } from '../../hooks/useContract'
 import { useToken } from '../../hooks/Tokens'
 import { PresaleInfo, PresalePhases, FieldNames, FieldProps, LoadingButtonTypes, LoadingForButton } from './types'
-import { RowBetween } from '../../components/Row'
-
 import OwnerZone from './OwnerZone'
-import PresaleDashboard from './PresaleDashboard'
+import TokenDetails from './TokenDetails'
 import BuyTokens from './BuyTokens'
-import { WhitelistModal } from './components'
-import { WHITELIST_SALE, PUBLIC_SALE } from './contants'
+import PresaleDetail from './PresaleDetail'
+import WhitelistModal from './WhitelistModal'
+import { WHITELIST_SALE, PUBLIC_SALE } from '../../constants/presale'
+
+const StyledFlex = styled(Box)`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  align-items: flex-start;
+  margin-top: 70px;
+  width: 90%;
+  max-width: 1200px;
+`
+
+const BoxBuyBNB = styled(Box)`
+  width: 60%;
+  margin: 0 10px;
+  max-width: 630px;
+  margin-bottom: 20px;
+  @media (max-width: 1200px) {
+    width: 100%;
+    max-width: 100%;
+  }
+  @media (max-width: 967px) {
+    width: 52%;
+  }
+  @media (max-width: 800px) {
+    width: 100%;
+  }
+`
+
+const BoxPresaleDetail = styled(Box)`
+  display: flex;
+  flex-direction: column;
+  margin: 0 10px;
+  width: 35%;
+  max-width: 400px;
+  @media (max-width: 1200px) {
+    max-width: 100%;
+    width: 100%;
+  }
+  @media (max-width: 967px) {
+    width: 42%;
+  }
+  @media (max-width: 800px) {
+    width: 100%;
+  }
+`
 
 export default function Presale() {
   const { account } = useWeb3React()
   const [whitelistAddresses, setWhitelistAddresses] = useState<string[]>([])
   const [contributors, setContributors] = useState<string[]>([])
   const [iseAccountWhitelisted, setIsAccountWhitelisted] = useState(false)
-  const [isPresalePhase, setIsPresalePhase] = useState(false)
   const [youBought, setYouBought] = useState<BigNumber>()
-  const [currentTime, setCurrentTime] = useState(Date.now())
-  const [presaleCountDown, setPresaleCountDown] = useState<BigNumber>() // TODO:: May be used in the design proved by vincent
   const [canPresaleBeFinalized, setCanPresaleBeFinalized] = useState(false)
   const [isAccountTokensClaimed, setIsAccountTokensClaimed] = useState(false)
   const [saleType, setSaleType] = useState(WHITELIST_SALE)
@@ -43,8 +86,9 @@ export default function Presale() {
   const location = useLocation()
 
   useEffect(() => {
-    if (!presaleAddress && ethers.utils.isAddress(location.pathname.substring(9))) {
-      setPresaleAddress(location.pathname.substring(9))
+    const presaleAddressUrl = new URLSearchParams(location.search).get('address')
+    if (!presaleAddress && ethers.utils.isAddress(presaleAddressUrl || '')) {
+      setPresaleAddress(presaleAddressUrl || '')
     }
   }, [presaleAddress, location])
 
@@ -64,7 +108,7 @@ export default function Presale() {
   }, [loadingForButton])
 
   const presaleContract = usePresaleContract(presaleAddress)
-  const token = useToken(presaleInfo?.presaleToken) // TODO:: will be used later in vincent design
+  const token = useToken(presaleInfo?.presaleToken)
 
   useEffect(() => {
     if (whitelistAddresses && account) {
@@ -72,16 +116,16 @@ export default function Presale() {
     }
   }, [whitelistAddresses, account])
 
-  const checkPhase = useCallback(() => {
-    if (presaleInfo) {
-      if (presaleInfo.isPresaleCancelled) {
+  const checkPhase = useCallback((presale: PresaleInfo | undefined) => {
+    if (presale) {
+      if (presale.isPresaleCancelled) {
         return PresalePhases.PresaleCancelled
       }
-      if (presaleInfo.isClaimPhase) {
+      if (presale.isClaimPhase) {
         return PresalePhases.ClaimPhase
       }
-      if (presaleInfo.startPresaleTime.mul(1000).lt(BigNumber.from(Date.now()))) {
-        if (presaleInfo.endPresaleTime.mul(1000).gt(BigNumber.from(Date.now()))) {
+      if (presale.startPresaleTime.mul(1000).lt(BigNumber.from(Date.now()))) {
+        if (presale.endPresaleTime.mul(1000).gt(BigNumber.from(Date.now()))) {
           return PresalePhases.PresalePhase
         }
         return PresalePhases.PresaleEnded
@@ -89,24 +133,7 @@ export default function Presale() {
       return PresalePhases.PresaleNotStarted
     }
     return ''
-  }, [presaleInfo])
-
-  useEffect(() => {
-    if (checkPhase() === PresalePhases.PresaleNotStarted) {
-      const timer = setTimeout(() => {
-        if (presaleInfo) {
-          const presaleStartTime = presaleInfo.startPresaleTime.mul(1000)
-          if (presaleStartTime.lt(BigNumber.from(currentTime))) {
-            setIsPresalePhase(true)
-          }
-          setPresaleCountDown(presaleStartTime.sub(currentTime).div(1000))
-          setCurrentTime(Date.now())
-        }
-      }, 1000)
-      return () => clearTimeout(timer)
-    }
-    return undefined
-  }, [presaleInfo, isPresalePhase, currentTime, checkPhase])
+  }, [])
 
   useEffect(() => {
     if (presaleInfo && account && !canPresaleBeFinalized) {
@@ -122,7 +149,7 @@ export default function Presale() {
 
   useEffect(() => {
     async function getContributorsnWhitelist() {
-      setContributors(await presaleContract?.showContributors())
+      setContributors(await presaleContract?.getContributors())
       setWhitelistAddresses(await presaleContract?.getWhitelist())
     }
     if (presaleInfo && presaleContract) getContributorsnWhitelist()
@@ -178,18 +205,25 @@ export default function Presale() {
         FieldNames.isWithdrawCancelledTokens,
       ]
       const preInfo: PresaleInfo = info.reduce(
-        (acc: any, cur: string | BigNumber | boolean, i: number) => {
+        (acc: any, cur: string | BigNumber | number | boolean, i: number) => {
           acc[obKeys[i]] = cur
           return acc
         },
         { owner }
       )
       setPresaleInfo({ ...preInfo })
+    }
+    if (presaleContract) {
+      fetchData()
+    }
+  }, [presaleContract])
 
+  useEffect(() => {
+    async function fetchYouBought() {
       setYouBought(await presaleContract?.bought(account))
     }
     if (presaleContract && account) {
-      fetchData()
+      fetchYouBought()
     }
   }, [presaleContract, account])
 
@@ -207,11 +241,19 @@ export default function Presale() {
       error,
     })
   }
+
+  const closeAddWhitelistModalHandler = (_, reason) => {
+    if (reason !== 'backdropClick') {
+      setIsAddWhitelistModalOpen(false)
+      setNewWhitelistAddresses((prevState) => (isLoading ? { ...prevState } : { error: '', value: '' }))
+    }
+  }
+
   const addWhitelistSubmitHandler = async () => {
     const list = newWhitelistAddresses.value.split(',').map((address) => {
       return address.trim()
     })
-    if (!presaleContract || !list.length || !account) {
+    if (!presaleContract || !list.length || presaleInfo?.owner !== account) {
       return
     }
     try {
@@ -229,13 +271,6 @@ export default function Presale() {
     }
   }
 
-  const closeAddWhitelistModalHandler = (_, reason) => {
-    if (reason !== 'backdropClick') {
-      setIsAddWhitelistModalOpen(false)
-      setNewWhitelistAddresses((prevState) => (isLoading ? { ...prevState } : { error: '', value: '' }))
-    }
-  }
-
   const removeWhitelistAddressesChangeHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     let error = ''
     if (e.target.value) {
@@ -246,11 +281,18 @@ export default function Presale() {
     setRemoveWhitelistAddresses({ value: e.target.value, error })
   }
 
+  const closeRemoveWhitelistModalHandler = (_, reason) => {
+    if (reason !== 'backdropClick') {
+      setIsRemoveWhitelistModalOpen(false)
+      setRemoveWhitelistAddresses((prevState) => (isLoading ? { ...prevState } : { error: '', value: '' }))
+    }
+  }
+
   const removeWhitelistSubmitHandler = async () => {
     const list = removeWhitelistAddresses.value.split(',').map((address) => {
       return address.trim()
     })
-    if (!presaleContract || !list.length || !account) {
+    if (!presaleContract || !list.length || presaleInfo?.owner !== account) {
       return
     }
     try {
@@ -268,25 +310,22 @@ export default function Presale() {
     }
   }
 
-  const closeRemoveWhitelistModalHandler = (_, reason) => {
-    if (reason !== 'backdropClick') {
-      setIsRemoveWhitelistModalOpen(false)
-      setRemoveWhitelistAddresses((prevState) => (isLoading ? { ...prevState } : { error: '', value: '' }))
-    }
-  }
-
   const buyBnbAmountChangeHandler = (e: any) => {
     let error = ''
     const bigAmount = BigNumber.from(e.target.value ? parseUnits(e.target.value, 18) : '0')
     if (!bigAmount.isZero()) {
-      if (bigAmount.lt(0)) {
-        error = 'Buy Bnb Amount should be a positive number'
-      } else if (presaleInfo && bigAmount.add(presaleInfo.totalBought).gt(presaleInfo.hardcap)) {
-        error = 'Buy Bnb Amount should be less than hardcap'
-      } else if (youBought && presaleInfo && bigAmount.add(youBought).gt(presaleInfo.maxBuyBnb)) {
-        error = 'Buy Bnb amount should be less max bnb amount'
-      } else if (presaleInfo && bigAmount.lt(presaleInfo.minBuyBnb)) {
-        error = 'Buy Bnb amount should be greater min bnb amount'
+      if (checkPhase(presaleInfo) === PresalePhases.PresalePhase) {
+        if (bigAmount.lt(0)) {
+          error = 'Buy Bnb Amount should be a positive number'
+        } else if (presaleInfo && bigAmount.add(presaleInfo.totalBought).gt(presaleInfo.hardcap)) {
+          error = 'Buy Bnb Amount should be less than hardcap'
+        } else if (youBought && presaleInfo && bigAmount.add(youBought).gt(presaleInfo.maxBuyBnb)) {
+          error = 'Buy Bnb amount should be less max bnb amount'
+        } else if (presaleInfo && bigAmount.lt(presaleInfo.minBuyBnb)) {
+          error = 'Buy Bnb amount should be greater min bnb amount'
+        }
+      } else {
+        error = 'Not Presale Phase'
       }
     }
     setBuyBnbAmount({ value: e.target.value, error })
@@ -314,10 +353,10 @@ export default function Presale() {
       setYouBought((prev) => prev?.add(bnbVal))
       setBuyBnbAmount({ error: '', value: '' })
       setIsLoading(false)
-    } catch (e) {
+    } catch (err) {
       setIsLoading(false)
       setBuyBnbAmount((prevState) => ({ ...prevState, error: 'Buying Failed' }))
-      console.log(e)
+      console.log(err)
     }
   }
 
@@ -332,7 +371,7 @@ export default function Presale() {
         isClicked: true,
         error: '',
       })
-      const result = await presaleContract[presaleInfo?.isPresaleCancelled ? 'widhrawBnb' : 'emergencyWithdraw']()
+      const result = await presaleContract[presaleInfo?.isPresaleCancelled ? 'widhrawBNB' : 'emergencyWithdrawBNB']()
       await result.wait()
       const yourBoughtAmount = youBought
       setYouBought(BigNumber.from(0))
@@ -350,14 +389,14 @@ export default function Presale() {
         isClicked: false,
         error: '',
       })
-    } catch (e) {
+    } catch (err) {
       setIsLoading(false)
       setLoadingForButton({
         type: LoadingButtonTypes.Withdraw,
         isClicked: false,
         error: 'Withdrawl Failed.',
       })
-      console.log(e)
+      console.log(err)
     }
   }
 
@@ -530,7 +569,7 @@ export default function Presale() {
         type: LoadingButtonTypes.WithdrawCancelledTokens,
         error: 'Withdrawl Failed.',
       })
-      setIsLoading(true)
+      setIsLoading(false)
       console.log(err)
     }
   }
@@ -559,48 +598,60 @@ export default function Presale() {
           buttonText="Remove Addresses"
         />
       </Modal>
-      <RowBetween style={{ width: '90%' }}>
-        {account && (
+      <StyledFlex>
+        <BoxBuyBNB>
           <BuyTokens
+            token={token}
             loadingForButton={loadingForButton}
             isLoading={isLoading}
-            presalePhase={checkPhase()}
+            presalePhase={checkPhase(presaleInfo)}
             isAccountTokensClaimed={isAccountTokensClaimed}
             youBought={youBought}
             buyBnbAmount={buyBnbAmount}
             presaleInfo={presaleInfo}
             contributors={contributors}
+            whitelistAddresses={whitelistAddresses}
             onBuyBnbHandler={onBuyBnbHandler}
             onClaimHandler={onClaimHandler}
             onWithdrawBnbHandler={onWithdrawBnbHandler}
             buyBnbAmountChangeHandler={buyBnbAmountChangeHandler}
             formatUnits={formatUnits}
           />
-        )}
-        {account && account === presaleInfo?.owner && (
-          <OwnerZone
+          {account === presaleInfo?.owner && (
+            <TokenDetails formatUnits={formatUnits} token={token} presaleInfo={presaleInfo} />
+          )}
+        </BoxBuyBNB>
+        <BoxPresaleDetail>
+          {presaleInfo && account === presaleInfo.owner && (
+            <OwnerZone
+              presaleInfo={presaleInfo}
+              loadingForButton={loadingForButton}
+              saleType={saleType}
+              isLoading={isLoading}
+              newWhitelistAddresses={newWhitelistAddresses}
+              removeWhitelistAddresses={removeWhitelistAddresses}
+              canPresaleBeFinalized={canPresaleBeFinalized}
+              selectSaleTypeHandler={selectSaleTypeHandler}
+              onPresaleFinalizeHandler={onPresaleFinalizeHandler}
+              setIsAddWhitelistModalOpen={setIsAddWhitelistModalOpen}
+              onWithdrawCancelledTokenHandler={onWithdrawCancelledTokenHandler}
+              setIsRemoveWhitelistModalOpen={setIsRemoveWhitelistModalOpen}
+              onPresaleCancelHandler={onPresaleCancelHandler}
+            />
+          )}
+          <PresaleDetail
+            presalePhase={checkPhase(presaleInfo)}
+            token={token}
             presaleInfo={presaleInfo}
-            loadingForButton={loadingForButton}
-            saleType={saleType}
-            isLoading={isLoading}
-            newWhitelistAddresses={newWhitelistAddresses}
-            removeWhitelistAddresses={removeWhitelistAddresses}
-            canPresaleBeFinalized={canPresaleBeFinalized}
-            selectSaleTypeHandler={selectSaleTypeHandler}
-            onPresaleFinalizeHandler={onPresaleFinalizeHandler}
-            setIsAddWhitelistModalOpen={setIsAddWhitelistModalOpen}
-            onWithdrawCancelledTokenHandler={onWithdrawCancelledTokenHandler}
-            setIsRemoveWhitelistModalOpen={setIsRemoveWhitelistModalOpen}
-            onPresaleCancelHandler={onPresaleCancelHandler}
+            presaleAddress={presaleAddress}
+            formatUnits={formatUnits}
           />
-        )}
-      </RowBetween>
-      <PresaleDashboard
-        presaleInfo={presaleInfo}
-        presaleAddress={presaleAddress}
-        whitelistAddresses={whitelistAddresses}
-        formatUnits={formatUnits}
-      />
+
+          {account !== presaleInfo?.owner && (
+            <TokenDetails formatUnits={formatUnits} token={token} presaleInfo={presaleInfo} />
+          )}
+        </BoxPresaleDetail>
+      </StyledFlex>
     </>
   )
 }
