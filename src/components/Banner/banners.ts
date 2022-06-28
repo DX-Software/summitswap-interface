@@ -30,7 +30,7 @@ const BANNERS = {
     hbsPresale: {
       gifs: [HbsPresaleLargeBanner, HbsPresaleMediumBanner, HbsPresaleSmallBanner],
       link: "https://hbs.presale.summitstudios.xyz/",
-      delay: 5200
+      delay: 7880
     }
 
 }
