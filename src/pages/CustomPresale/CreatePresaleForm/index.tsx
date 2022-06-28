@@ -14,9 +14,16 @@ import { RowBetween, AutoRow, RowFlatCenter, ColumnFlatCenter } from 'components
 import { MouseoverTooltip } from 'components/Tooltip'
 import MessageDiv from 'components/MessageDiv'
 import CustomLightSpinner from 'components/CustomLightSpinner'
-import { PRESALE_FACTORY_ADDRESS, MAX_APPROVE_VALUE, MESSAGE_ERROR, MESSAGE_SUCCESS } from '../../../constants/presale'
+import {
+  PRESALE_FACTORY_ADDRESS,
+  MAX_APPROVE_VALUE,
+  MESSAGE_ERROR,
+  MESSAGE_SUCCESS,
+  RadioFieldValues,
+  FEE_BNB_N_TOKEN,
+} from '../../../constants/presale'
 import { ROUTER_ADDRESS, PANCAKESWAP_ROUTER_V2_ADDRESS } from '../../../constants'
-import { Values, ValueErrors, FieldNames, RadioFieldValues } from '../types'
+import { Values, ValueErrors, FieldNames } from '../types'
 import { InputField, StyledRadio, RadioContainer, StyledDateTimeInput } from './FormFields'
 
 export const FormCard = styled.div`
@@ -186,8 +193,10 @@ const CreatePresaleForm = () => {
         accountBalance &&
         selectedToken
       ) {
-        const tokenAmount =
-          values.presaleRate * values.hardcap + values.hardcap * (values.liquidity / 100) * values.listingRate * 1.025
+        const presaleTokenAmount = values.presaleRate * values.hardcap
+        const tokensForLiquidity = (values.liquidity / 100) * values.hardcap * values.listingRate
+        const feeTokens = values.feeType === 0 ? 0 : presaleTokenAmount * (FEE_BNB_N_TOKEN / 100)
+        const tokenAmount = presaleTokenAmount + tokensForLiquidity + feeTokens
         setTokensForPresale(tokenAmount)
         if (tokenAmount > Number(ethers.utils.formatUnits(accountBalance, selectedToken.decimals))) {
           errors.tokenAmount = 'Token Amounts Exceeds Balance'
@@ -245,7 +254,7 @@ const CreatePresaleForm = () => {
           values.refundType === RadioFieldValues.refundTypeRefund ? 0 : 1,
           values.isWhitelistEnabled === RadioFieldValues.whitelistEnable,
           {
-            value: ethers.utils.parseEther('0.0001'),
+            value: await factoryContract.preSaleFee(),
           }
         )
 
@@ -408,8 +417,8 @@ const CreatePresaleForm = () => {
                         <label>
                           <StyledRadio
                             name={FieldNames.feeType}
-                            value={RadioFieldValues.feeTypeBnbnToken}
-                            checked={formik.values.feeType === RadioFieldValues.feeTypeBnbnToken}
+                            value={RadioFieldValues.feeTypeBnbAndToken}
+                            checked={formik.values.feeType === RadioFieldValues.feeTypeBnbAndToken}
                           />
                           2% BNB Raised + 2% Token Raised
                         </label>

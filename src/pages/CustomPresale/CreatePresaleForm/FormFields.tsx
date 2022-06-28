@@ -1,23 +1,23 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { HelpCircle } from 'react-feather'
 import { Text, Input, Radio, Box } from '@koda-finance/summitswap-uikit'
 import { MouseoverTooltip } from 'components/Tooltip'
 import { RowBetween } from 'components/Row'
 import { Values, InputFieldPropsFormik } from '../types'
 
-export const commonInputStyles = `
-width: 350px;
-border-radius: 7px;
-@media (max-width: 1250px) {
-  width: 245px;
-}
-@media (max-width: 725px) {
-  width: 275px;
-}
-@media (max-width: 350px) {
-  width: 200px;
-}
+const commonInputStyles = css`
+  width: 350px;
+  border-radius: 7px;
+  @media (max-width: 1250px) {
+    width: 245px;
+  }
+  @media (max-width: 725px) {
+    width: 275px;
+  }
+  @media (max-width: 350px) {
+    width: 200px;
+  }
 `
 
 export const RadioContainer = styled.div`

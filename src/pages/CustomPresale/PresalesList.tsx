@@ -4,11 +4,12 @@ import { Option } from 'react-dropdown'
 import { Pagination } from '@mui/material'
 import { Contract } from 'ethers'
 import styled from 'styled-components'
+import { AddressZero } from '@ethersproject/constants'
 import { Text, Box, SearchIcon, Button, Flex, Input } from '@koda-finance/summitswap-uikit'
 import { isAddress } from '../../utils'
 import DropdownWrapper from '../../components/DropdownWrapper'
 import CustomLightSpinner from '../../components/CustomLightSpinner'
-import { NO_FILTER, FILTER_OWNER } from '../../constants/presale'
+import { NO_FILTER, FILTER_OWNER, PRESALE_CARDS_PER_PAGE } from '../../constants/presale'
 import PresaleCard from './PresaleCard'
 
 interface Props {
@@ -48,14 +49,12 @@ const StyledDropdownWrapper = styled(DropdownWrapper)`
   }
 `
 
-const PRESALE_CARDS_PER_PAGE = 5
-
 const PresalesList = ({ presaleFactoryContract, account, setButtonIndex }: Props) => {
   const [presaleAddresses, setPresaleAddresses] = useState<string[]>([])
   const [filteredAddresses, setFilteredAddresses] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [selectedOption, setSelectedOption] = useState(NO_FILTER)
-  const [page, setPage] = React.useState(1)
+  const [page, setPage] = useState(1)
 
   useEffect(() => {
     async function fetchPresaleAddresses() {
@@ -68,23 +67,16 @@ const PresalesList = ({ presaleFactoryContract, account, setButtonIndex }: Props
   }, [presaleFactoryContract])
 
   useEffect(() => {
-    async function fetchOwnerPresales() {
-      setIsLoading(true)
-      setPresaleAddresses(await presaleFactoryContract?.getAccountPresales(account))
-      setIsLoading(false)
-    }
-    if (presaleFactoryContract && account && selectedOption.value === FILTER_OWNER.value) {
-      fetchOwnerPresales()
-    }
-  }, [presaleFactoryContract, account, selectedOption])
-
-  useEffect(() => {
     async function fetchPresales() {
       setIsLoading(true)
-      setPresaleAddresses(await presaleFactoryContract?.getPresaleAddresses())
+      setPresaleAddresses(
+        selectedOption.value === NO_FILTER.value
+          ? await presaleFactoryContract?.getPresaleAddresses()
+          : await presaleFactoryContract?.getAccountPresales(account)
+      )
       setIsLoading(false)
     }
-    if (presaleFactoryContract && account && selectedOption.value === NO_FILTER.value) {
+    if (presaleFactoryContract && account) {
       fetchPresales()
     }
   }, [presaleFactoryContract, account, selectedOption])
@@ -95,7 +87,7 @@ const PresalesList = ({ presaleFactoryContract, account, setButtonIndex }: Props
 
   const inputChnageHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const search = e.target.value
-    if (search.length === 0 || !presaleFactoryContract) return
+    if (!presaleFactoryContract) return
 
     const searchingAddress = isAddress(search.trim())
 
@@ -105,7 +97,7 @@ const PresalesList = ({ presaleFactoryContract, account, setButtonIndex }: Props
         setFilteredAddresses(filterPresaleAddresses)
       } else {
         const isValidAddress = await presaleFactoryContract.tokenPresales(searchingAddress)
-        setFilteredAddresses(isValidAddress ? [isValidAddress] : [])
+        setFilteredAddresses(isValidAddress !== AddressZero ? [isValidAddress] : [])
       }
     } else {
       setFilteredAddresses([])
@@ -145,7 +137,7 @@ const PresalesList = ({ presaleFactoryContract, account, setButtonIndex }: Props
             value={selectedOption}
             options={[NO_FILTER, FILTER_OWNER]}
             onChange={(option: Option) => {
-              setSelectedOption(option)
+              if (option.value !== selectedOption.value) setSelectedOption(option)
             }}
           />
         )}

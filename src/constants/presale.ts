@@ -21,3 +21,18 @@ export const FILTER_OWNER: Option = { value: 'OWNER', label: 'Owner' }
 export const FEE_BNB_ONLY = 5 // 5%
 export const FEE_BNB_N_TOKEN = 2 // 2%
 export const FEE_DECIMALS = 9;
+
+export const PRESALE_CARDS_PER_PAGE = 6
+export const WHITELIST_ADDRESSES_PER_PAGE = 10
+
+
+
+export enum RadioFieldValues {
+  whitelistEnable = 'enable',
+  whitelistDisable = "disable",
+  refundTypeRefund = 'refund',
+  refundTypeBurn = 'burn',
+  feeTypeOnlyBnb = "feeTypeOnlyBnb",
+  feeTypeBnbAndToken = "feeTypeBnbAndToken",
+}
+

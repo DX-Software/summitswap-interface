@@ -54,15 +54,6 @@ export interface PresaleInfo {
   [FieldNames.isWithdrawCancelledTokens]: boolean;
 }
 
-export enum RadioFieldValues {
-  whitelistEnable = 'enable',
-  whitelistDisable = "disable",
-  refundTypeRefund = 'refund',
-  refundTypeBurn = 'burn',
-  feeTypeOnlyBnb = "feeTypeOnlyBnb",
-  feeTypeBnbnToken = "feeTypeBnbnToken",
-}
-
 export interface Values {
   [FieldNames.presaleRate]?: number;
   [FieldNames.isWhitelistEnabled]: string;

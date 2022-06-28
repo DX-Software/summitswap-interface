@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useState, useCallback } from 'react'
 import { BigNumber } from 'ethers'
 import styled from 'styled-components'
 import { Pagination } from '@mui/material'
@@ -12,7 +12,7 @@ import CopyButton from '../../components/CopyButton'
 import MessageDiv from '../../components/MessageDiv'
 import Tag from '../../components/Tag'
 import { PresaleInfo, FieldProps, PresalePhases, LoadingButtonTypes, LoadingForButton } from './types'
-import { MESSAGE_ERROR, MESSAGE_SUCCESS } from '../../constants/presale'
+import { MESSAGE_ERROR, MESSAGE_SUCCESS, WHITELIST_ADDRESSES_PER_PAGE } from '../../constants/presale'
 
 interface Props {
   token: Token | null | undefined
@@ -131,8 +131,6 @@ const style = {
   },
 }
 
-const WHITELIST_ADDRESSES_PER_PAGE = 10
-
 export default function BuyTokens({
   token,
   loadingForButton,
@@ -152,7 +150,7 @@ export default function BuyTokens({
 }: Props) {
   const { account, activate, deactivate } = useWeb3React()
 
-  const [page, setPage] = React.useState(1)
+  const [page, setPage] = useState(1)
 
   const handleLogin = useCallback(
     (connectorId: string) => {
