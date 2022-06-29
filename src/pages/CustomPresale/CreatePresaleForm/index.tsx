@@ -363,13 +363,13 @@ const CreatePresaleForm = () => {
                   <AutoRow justifyContent="space-around">
                     <InputField
                       formik={formik}
-                      label="Softcap: "
+                      label="Softcap (BNB): "
                       inputAttributes={{ name: FieldNames.softcap, placeholder: '0.00', type: 'number' }}
                       message="Softcap is the Min amount of BNB that should be raised for a Presale to be successfull."
                     />
                     <InputField
                       formik={formik}
-                      label="Hardcap: "
+                      label="Hardcap (BNB): "
                       inputAttributes={{ name: FieldNames.hardcap, placeholder: '0.00', type: 'number' }}
                       message="Hardcap is the Max amount of BNB that can be raised by a Presale."
                     />
@@ -377,13 +377,13 @@ const CreatePresaleForm = () => {
                   <AutoRow justifyContent="space-around">
                     <InputField
                       formik={formik}
-                      label="Minimum Buy(BNB): "
+                      label="Minimum Buy (BNB): "
                       inputAttributes={{ name: FieldNames.minBuyBnb, placeholder: '0.00', type: 'number' }}
                       message="minimun buy is the minimun amount of Bnb that can used to buy Tokens."
                     />
                     <InputField
                       formik={formik}
-                      label="Maximun buy(BNB): "
+                      label="Maximun Buy (BNB): "
                       inputAttributes={{ name: FieldNames.maxBuyBnb, placeholder: '0.00', type: 'number' }}
                       message="maximun buy is the maximun amount of Bnb that can used to buy Tokens"
                     />
