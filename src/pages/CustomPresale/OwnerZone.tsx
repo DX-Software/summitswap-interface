@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Option } from 'react-dropdown'
+import { Contract } from 'ethers'
 import styled from 'styled-components'
 import { Box, AutoRenewIcon, Button } from '@koda-finance/summitswap-uikit'
 import { RowBetween } from '../../components/Row'
@@ -16,17 +17,16 @@ export const StyledDropdownWrapper = styled(DropdownWrapper)`
 interface Props {
   presaleInfo: PresaleInfo
   loadingForButton: LoadingForButton
-  saleType: Option
   isLoading: boolean
-  canPresaleBeFinalized: boolean
   newWhitelistAddresses: FieldProps
   removeWhitelistAddresses: FieldProps
+  account: string
+  presaleContract: Contract | null
+  setPresaleInfo: React.Dispatch<React.SetStateAction<PresaleInfo | undefined>>
+  setLoadingForButton: React.Dispatch<React.SetStateAction<LoadingForButton>>
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
   setIsAddWhitelistModalOpen: React.Dispatch<React.SetStateAction<boolean>>
   setIsRemoveWhitelistModalOpen: React.Dispatch<React.SetStateAction<boolean>>
-  selectSaleTypeHandler: (option: Option) => Promise<void>
-  onPresaleFinalizeHandler: () => Promise<void>
-  onWithdrawCancelledTokenHandler: () => Promise<void>
-  onPresaleCancelHandler: () => Promise<void>
 }
 
 const RemoveAddressButton = styled(Button)`
@@ -45,18 +45,183 @@ const RemoveAddressButton = styled(Button)`
 export default function OwnerZone({
   presaleInfo,
   loadingForButton,
-  saleType,
+  account,
   isLoading,
   newWhitelistAddresses,
   removeWhitelistAddresses,
-  canPresaleBeFinalized,
-  selectSaleTypeHandler,
-  onPresaleFinalizeHandler,
+  presaleContract,
+  setIsLoading,
+  setPresaleInfo,
+  setLoadingForButton,
   setIsAddWhitelistModalOpen,
-  onWithdrawCancelledTokenHandler,
   setIsRemoveWhitelistModalOpen,
-  onPresaleCancelHandler,
 }: Props) {
+  const [saleType, setSaleType] = useState(WHITELIST_SALE)
+  const [canPresaleBeFinalized, setCanPresaleBeFinalized] = useState(false)
+
+  useEffect(() => {
+    if (presaleInfo?.isWhitelistEnabled) {
+      setSaleType(WHITELIST_SALE)
+    } else {
+      setSaleType(PUBLIC_SALE)
+    }
+  }, [presaleInfo])
+
+  useEffect(() => {
+    if (presaleInfo && account && !canPresaleBeFinalized) {
+      if (
+        !presaleInfo.isPresaleCancelled &&
+        (presaleInfo.hardcap.eq(presaleInfo.totalBought) ||
+          (presaleInfo.totalBought.gte(presaleInfo.softcap) && presaleInfo.endPresaleTime.mul(1000).lt(Date.now())))
+      ) {
+        setCanPresaleBeFinalized(true)
+      }
+    }
+  }, [presaleInfo, account, canPresaleBeFinalized])
+
+  const selectSaleTypeHandler = async (option: Option) => {
+    if (presaleInfo?.owner !== account || !presaleContract) {
+      return
+    }
+    const type = option.value
+    try {
+      setIsLoading(true)
+      setLoadingForButton({
+        type: LoadingButtonTypes.ChangeSaleType,
+        isClicked: true,
+        error: '',
+      })
+      const result = await presaleContract.toggleWhitelistPhase()
+      await result.wait()
+      setIsLoading(false)
+      setSaleType({ value: type, label: type })
+      setPresaleInfo((prevState) =>
+        prevState ? { ...prevState, isWhitelistEnabled: type === WHITELIST_SALE.value } : prevState
+      )
+      setLoadingForButton({
+        type: LoadingButtonTypes.NotSelected,
+        isClicked: false,
+        error: '',
+      })
+    } catch (err) {
+      setSaleType((prevState) => ({
+        ...prevState,
+      }))
+
+      setIsLoading(false)
+      setLoadingForButton({
+        type: LoadingButtonTypes.ChangeSaleType,
+        isClicked: false,
+        error: 'Changing Sale Type Failed.',
+      })
+      console.error(err)
+    }
+  }
+
+  const onPresaleCancelHandler = async () => {
+    if (!presaleContract || presaleInfo?.owner !== account) {
+      return
+    }
+    try {
+      setIsLoading(true)
+      setLoadingForButton({
+        isClicked: true,
+        type: LoadingButtonTypes.CancelPool,
+        error: '',
+      })
+      const result = await presaleContract.cancelPresale()
+      await result.wait()
+
+      setPresaleInfo((prevState) =>
+        prevState ? { ...prevState, isPresaleCancelled: true, isClaimPhase: false } : prevState
+      )
+      setLoadingForButton({
+        isClicked: false,
+        type: LoadingButtonTypes.NotSelected,
+        error: '',
+      })
+      setIsLoading(false)
+    } catch (err) {
+      setIsLoading(false)
+      setLoadingForButton({
+        isClicked: false,
+        type: LoadingButtonTypes.CancelPool,
+        error: 'Cancelling Failed.',
+      })
+      console.log(err)
+    }
+  }
+
+  const onWithdrawCancelledTokenHandler = async () => {
+    if (presaleInfo?.owner !== account || !presaleContract) {
+      return
+    }
+    try {
+      setIsLoading(true)
+      setLoadingForButton({
+        isClicked: true,
+        type: LoadingButtonTypes.WithdrawCancelledTokens,
+        error: '',
+      })
+      const result = await presaleContract.withdrawCancelledTokens()
+      await result.wait()
+      setPresaleInfo((prevState) => (prevState ? { ...prevState, isWithdrawCancelledTokens: true } : prevState))
+      setLoadingForButton({
+        isClicked: false,
+        type: LoadingButtonTypes.NotSelected,
+        error: '',
+      })
+      setIsLoading(true)
+    } catch (err) {
+      setLoadingForButton({
+        isClicked: false,
+        type: LoadingButtonTypes.WithdrawCancelledTokens,
+        error: 'Withdrawal Failed.',
+      })
+      setIsLoading(false)
+      console.log(err)
+    }
+  }
+
+  const onPresaleFinalizeHandler = async () => {
+    if (!presaleContract || presaleInfo?.owner !== account || !canPresaleBeFinalized) {
+      return
+    }
+    try {
+      setIsLoading(true)
+      setLoadingForButton({
+        type: LoadingButtonTypes.Finalize,
+        isClicked: true,
+        error: '',
+      })
+      const result = await presaleContract.finalize()
+      await result.wait()
+
+      setPresaleInfo((prevState) =>
+        prevState
+          ? {
+              ...prevState,
+              isClaimPhase: true,
+            }
+          : prevState
+      )
+      setIsLoading(false)
+      setLoadingForButton({
+        type: LoadingButtonTypes.NotSelected,
+        isClicked: false,
+        error: '',
+      })
+    } catch (err) {
+      setIsLoading(false)
+      setLoadingForButton({
+        type: LoadingButtonTypes.Finalize,
+        isClicked: false,
+        error: 'Finalizing Presale Failed.',
+      })
+      console.log(err)
+    }
+  }
+
   return (
     <Box marginBottom="30px" padding="25px" width="100%" borderRadius="20px" background="#011724">
       <RowBetween>

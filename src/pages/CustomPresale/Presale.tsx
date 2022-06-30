@@ -14,7 +14,6 @@ import TokenDetails from './TokenDetails'
 import PresaleProgress from './PresaleProgress'
 import PresaleDetail from './PresaleDetail'
 import WhitelistModal from './WhitelistModal'
-import { WHITELIST_SALE, PUBLIC_SALE } from '../../constants/presale'
 
 const StyledFlex = styled(Box)`
   display: flex;
@@ -26,7 +25,7 @@ const StyledFlex = styled(Box)`
   max-width: 1200px;
 `
 
-const BoxBuyBNB = styled(Box)`
+const BoxProgressPresale = styled(Box)`
   width: 60%;
   margin: 0 10px;
   max-width: 630px;
@@ -64,9 +63,6 @@ const BoxPresaleDetail = styled(Box)`
 export default function Presale() {
   const { account } = useWeb3React()
   const [whitelistAddresses, setWhitelistAddresses] = useState<string[]>([])
-  const [canPresaleBeFinalized, setCanPresaleBeFinalized] = useState(false)
-  const [isAccountTokensClaimed, setIsAccountTokensClaimed] = useState(false)
-  const [saleType, setSaleType] = useState(WHITELIST_SALE)
   const [isLoading, setIsLoading] = useState(false)
   const [presaleInfo, setPresaleInfo] = useState<PresaleInfo>()
   const [newWhitelistAddresses, setNewWhitelistAddresses] = useState<FieldProps>({ value: '', error: '' })
@@ -108,46 +104,14 @@ export default function Presale() {
   const token = useToken(presaleInfo?.presaleToken)
 
   useEffect(() => {
-    if (presaleInfo && account && !canPresaleBeFinalized) {
-      if (
-        !presaleInfo.isPresaleCancelled &&
-        (presaleInfo.hardcap.eq(presaleInfo.totalBought) ||
-          (presaleInfo.totalBought.gte(presaleInfo.softcap) && presaleInfo.endPresaleTime.mul(1000).lt(Date.now())))
-      ) {
-        setCanPresaleBeFinalized(true)
-      }
-    }
-  }, [presaleInfo, account, canPresaleBeFinalized])
-
-  useEffect(() => {
     async function getWhitelist() {
       setWhitelistAddresses(await presaleContract?.getWhitelist())
     }
     if (presaleInfo && presaleContract) getWhitelist()
   }, [presaleInfo, presaleContract])
 
-  useEffect(() => {
-    async function fetchIsTokenClaimed() {
-      setIsAccountTokensClaimed(await presaleContract?.isTokenClaimed(account))
-    }
-    if (presaleContract && account && presaleContract && !isAccountTokensClaimed) {
-      fetchIsTokenClaimed()
-    }
-  }, [presaleContract, account, isAccountTokensClaimed]) // remove
-
-  useEffect(() => {
-    if (presaleInfo?.isWhitelistEnabled) {
-      setSaleType(WHITELIST_SALE)
-    } else {
-      setSaleType(PUBLIC_SALE)
-    }
-  }, [presaleInfo])
-
   const formatUnits = useCallback((amount: BigNumber | undefined, decimals: number) => {
     return amount ? ethers.utils.formatUnits(amount, decimals) : ''
-  }, [])
-  const parseUnits = useCallback((amount: string | undefined, decimals: number) => {
-    return amount ? ethers.utils.parseUnits(amount, decimals) : ''
   }, [])
 
   useEffect(() => {
@@ -278,149 +242,6 @@ export default function Presale() {
     }
   }
 
-  const onPresaleFinalizeHandler = async () => {
-    if (!presaleContract || presaleInfo?.owner !== account || !canPresaleBeFinalized) {
-      return
-    }
-    try {
-      setIsLoading(true)
-      setLoadingForButton({
-        type: LoadingButtonTypes.Finalize,
-        isClicked: true,
-        error: '',
-      })
-      const result = await presaleContract.finalize()
-      await result.wait()
-
-      setPresaleInfo((prevState) =>
-        prevState
-          ? {
-              ...prevState,
-              isClaimPhase: true,
-            }
-          : prevState
-      )
-      setIsLoading(false)
-      setLoadingForButton({
-        type: LoadingButtonTypes.NotSelected,
-        isClicked: false,
-        error: '',
-      })
-    } catch (err) {
-      setIsLoading(false)
-      setLoadingForButton({
-        type: LoadingButtonTypes.Finalize,
-        isClicked: false,
-        error: 'Finalizing Presale Failed.',
-      })
-      console.log(err)
-    }
-  }
-
-  const onPresaleCancelHandler = async () => {
-    if (!presaleContract || presaleInfo?.owner !== account) {
-      return
-    }
-    try {
-      setIsLoading(true)
-      setLoadingForButton({
-        isClicked: true,
-        type: LoadingButtonTypes.CancelPool,
-        error: '',
-      })
-      const result = await presaleContract.cancelPresale()
-      await result.wait()
-
-      setPresaleInfo((prevState) =>
-        prevState ? { ...prevState, isPresaleCancelled: true, isClaimPhase: false } : prevState
-      )
-      setLoadingForButton({
-        isClicked: false,
-        type: LoadingButtonTypes.NotSelected,
-        error: '',
-      })
-      setIsLoading(false)
-    } catch (err) {
-      setIsLoading(false)
-      setLoadingForButton({
-        isClicked: false,
-        type: LoadingButtonTypes.CancelPool,
-        error: 'Cancelling Failed.',
-      })
-      console.log(err)
-    }
-  }
-
-  const selectSaleTypeHandler = async (option) => {
-    if (presaleInfo?.owner !== account || !presaleContract) {
-      return
-    }
-    const type = option.value
-    try {
-      setIsLoading(true)
-      setLoadingForButton({
-        type: LoadingButtonTypes.ChangeSaleType,
-        isClicked: true,
-        error: '',
-      })
-      const result = await presaleContract.toggleWhitelistPhase()
-      await result.wait()
-      setIsLoading(false)
-      setSaleType({ value: type, label: type })
-      setPresaleInfo((prevState) =>
-        prevState ? { ...prevState, isWhitelistEnabled: type === WHITELIST_SALE.value } : prevState
-      )
-      setLoadingForButton({
-        type: LoadingButtonTypes.NotSelected,
-        isClicked: false,
-        error: '',
-      })
-    } catch (err) {
-      setSaleType((prevState) => ({
-        ...prevState,
-      }))
-
-      setIsLoading(false)
-      setLoadingForButton({
-        type: LoadingButtonTypes.ChangeSaleType,
-        isClicked: false,
-        error: 'Changing Sale Type Failed.',
-      })
-      console.log(err)
-    }
-  }
-
-  const onWithdrawCancelledTokenHandler = async () => {
-    if (presaleInfo?.owner !== account || !presaleContract) {
-      return
-    }
-    try {
-      setIsLoading(true)
-      setLoadingForButton({
-        isClicked: true,
-        type: LoadingButtonTypes.WithdrawCancelledTokens,
-        error: '',
-      })
-      const result = await presaleContract.withdrawCancelledTokens()
-      await result.wait()
-      setPresaleInfo((prevState) => (prevState ? { ...prevState, isWithdrawCancelledTokens: true } : prevState))
-      setLoadingForButton({
-        isClicked: false,
-        type: LoadingButtonTypes.NotSelected,
-        error: '',
-      })
-      setIsLoading(true)
-    } catch (err) {
-      setLoadingForButton({
-        isClicked: false,
-        type: LoadingButtonTypes.WithdrawCancelledTokens,
-        error: 'Withdrawal Failed.',
-      })
-      setIsLoading(false)
-      console.log(err)
-    }
-  } // remove
-
   return (
     <>
       <Modal open={isAddWhitelistModalOpen} onClose={closeAddWhitelistModalHandler}>
@@ -446,7 +267,7 @@ export default function Presale() {
         />
       </Modal>
       <StyledFlex>
-        <BoxBuyBNB>
+        <BoxProgressPresale>
           <PresaleProgress
             token={token}
             isLoading={isLoading}
@@ -461,23 +282,22 @@ export default function Presale() {
           {account === presaleInfo?.owner && (
             <TokenDetails formatUnits={formatUnits} token={token} presaleInfo={presaleInfo} />
           )}
-        </BoxBuyBNB>
+        </BoxProgressPresale>
         <BoxPresaleDetail>
           {presaleInfo && account === presaleInfo.owner && (
             <OwnerZone
               presaleInfo={presaleInfo}
               loadingForButton={loadingForButton}
-              saleType={saleType}
+              account={account}
               isLoading={isLoading}
+              presaleContract={presaleContract}
               newWhitelistAddresses={newWhitelistAddresses}
               removeWhitelistAddresses={removeWhitelistAddresses}
-              canPresaleBeFinalized={canPresaleBeFinalized}
-              selectSaleTypeHandler={selectSaleTypeHandler}
-              onPresaleFinalizeHandler={onPresaleFinalizeHandler}
+              setIsLoading={setIsLoading}
+              setPresaleInfo={setPresaleInfo}
+              setLoadingForButton={setLoadingForButton}
               setIsAddWhitelistModalOpen={setIsAddWhitelistModalOpen}
-              onWithdrawCancelledTokenHandler={onWithdrawCancelledTokenHandler}
               setIsRemoveWhitelistModalOpen={setIsRemoveWhitelistModalOpen}
-              onPresaleCancelHandler={onPresaleCancelHandler}
             />
           )}
           <PresaleDetail
