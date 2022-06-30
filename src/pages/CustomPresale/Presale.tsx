@@ -5,7 +5,6 @@ import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import { Box } from '@koda-finance/summitswap-uikit'
 import Modal from '@mui/material/Modal'
-import checkSalePhase from 'utils/checkSalePhase'
 import fetchPresaleInfo from 'utils/fetchPresaleInfo'
 import { usePresaleContract } from '../../hooks/useContract'
 import { useToken } from '../../hooks/Tokens'
@@ -167,7 +166,7 @@ const Presale = () => {
     } catch (err) {
       setIsLoading(false)
       setNewWhitelistAddresses((prev) => ({ ...prev, error: 'Adding Whitlist Failed' }))
-      console.log(err)
+      console.error(err)
     }
   }
 
@@ -210,7 +209,7 @@ const Presale = () => {
     } catch (err) {
       setIsLoading(false)
       setRemoveWhitelistAddresses((prev) => ({ ...prev, error: 'Removing Whitlist Failed' }))
-      console.log(err)
+      console.error(err)
     }
   }
 

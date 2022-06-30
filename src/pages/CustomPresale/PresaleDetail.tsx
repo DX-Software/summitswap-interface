@@ -173,7 +173,6 @@ const PresaleDetail = ({ presaleInfo, presaleAddress, formatUnits, token }: Prop
       {(checkSalePhase(presaleInfo) === PresalePhases.PresaleNotStarted ||
         checkSalePhase(presaleInfo) === PresalePhases.PresalePhase) && (
         <>
-          {' '}
           <RowFixed marginX="auto">
             <TimeBox>{days}</TimeBox>
             <TextSubHeading marginX="5px">:</TextSubHeading>
@@ -237,7 +236,7 @@ const PresaleDetail = ({ presaleInfo, presaleAddress, formatUnits, token }: Prop
         <PresaleInfoHeadingText>Listing On</PresaleInfoHeadingText>
         <LinkText
           href={
-            presaleInfo?.router !== ROUTER_ADDRESS
+            presaleInfo?.router === ROUTER_ADDRESS
               ? `${SUMMITSWAP_LINK}${token?.address}`
               : `${PANKCAKESWAP_LINK}${token?.address}`
           }

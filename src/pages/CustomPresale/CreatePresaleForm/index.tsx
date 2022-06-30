@@ -265,7 +265,7 @@ const CreatePresaleForm = ({ setPresaleAddress }: Props) => {
         window.location.href = `/#/presale?address=${preSaleAdd}`
       } catch (err) {
         setIsLoading(false)
-        console.log(err)
+        console.error(err)
       }
     },
   })
@@ -300,7 +300,7 @@ const CreatePresaleForm = ({ setPresaleAddress }: Props) => {
       setIsLoading(false)
       setIsFactoryApproved(true)
     } catch (err) {
-      console.log(err)
+      console.error(err)
       setIsLoading(false)
       setIsFactoryApproved(false)
     }

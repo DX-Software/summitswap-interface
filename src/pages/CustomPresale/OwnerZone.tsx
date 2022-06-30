@@ -148,7 +148,7 @@ const OwnerZone = ({
         type: LoadingButtonTypes.CancelPool,
         error: 'Cancelling Failed.',
       })
-      console.log(err)
+      console.error(err)
     }
   }
 
@@ -179,7 +179,7 @@ const OwnerZone = ({
         error: 'Withdrawal Failed.',
       })
       setIsLoading(false)
-      console.log(err)
+      console.error(err)
     }
   }
 
@@ -218,7 +218,7 @@ const OwnerZone = ({
         isClicked: false,
         error: 'Finalizing Presale Failed.',
       })
-      console.log(err)
+      console.error(err)
     }
   }
 
