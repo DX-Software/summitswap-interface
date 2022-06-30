@@ -22,7 +22,7 @@ interface Props {
   setLoadingForButton: React.Dispatch<React.SetStateAction<LoadingForButton>>
 }
 
-export default function PresaleProgress({
+const ClaimWithdrawSection = ({
   token,
   youBought,
   isLoading,
@@ -33,7 +33,7 @@ export default function PresaleProgress({
   setPresaleInfo,
   setYouBought,
   setIsLoading,
-}: Props) {
+}: Props) => {
   const { account } = useWeb3React()
   const [isAccountTokensClaimed, setIsAccountTokensClaimed] = useState(false)
 
@@ -182,3 +182,5 @@ export default function PresaleProgress({
     </Section>
   )
 }
+
+export default ClaimWithdrawSection

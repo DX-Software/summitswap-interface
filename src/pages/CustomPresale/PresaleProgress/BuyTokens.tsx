@@ -37,7 +37,7 @@ const InputBnb = styled(Input)`
   border-radius: 50px;
 `
 
-export default function BuyTokens({
+const BuyTokens = ({
   token,
   youBought,
   isLoading,
@@ -49,7 +49,7 @@ export default function BuyTokens({
   setYouBought,
   setIsLoading,
   formatUnits,
-}: Props) {
+}: Props) => {
   const { account, activate, deactivate } = useWeb3React()
   const [buyBnbAmount, setBuyBnbAmount] = useState<FieldProps>({ value: '', error: '' })
   const [isAccountWhitelisted, setIsAccountWhitelisted] = useState(false)
@@ -173,3 +173,5 @@ export default function BuyTokens({
     </Section>
   )
 }
+
+export default BuyTokens

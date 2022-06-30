@@ -42,7 +42,7 @@ const RemoveAddressButton = styled(Button)`
   }
 `
 
-export default function OwnerZone({
+const OwnerZone = ({
   presaleInfo,
   loadingForButton,
   account,
@@ -55,7 +55,7 @@ export default function OwnerZone({
   setLoadingForButton,
   setIsAddWhitelistModalOpen,
   setIsRemoveWhitelistModalOpen,
-}: Props) {
+}: Props) => {
   const [saleType, setSaleType] = useState(WHITELIST_SALE)
   const [canPresaleBeFinalized, setCanPresaleBeFinalized] = useState(false)
 
@@ -347,3 +347,5 @@ export default function OwnerZone({
     </Box>
   )
 }
+
+export default OwnerZone

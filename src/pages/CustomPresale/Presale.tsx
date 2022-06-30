@@ -6,9 +6,10 @@ import { useWeb3React } from '@web3-react/core'
 import { Box } from '@koda-finance/summitswap-uikit'
 import Modal from '@mui/material/Modal'
 import checkSalePhase from 'utils/checkSalePhase'
+import fetchPresaleInfo from 'utils/fetchPresaleInfo'
 import { usePresaleContract } from '../../hooks/useContract'
 import { useToken } from '../../hooks/Tokens'
-import { PresaleInfo, FieldNames, FieldProps, LoadingButtonTypes, LoadingForButton } from './types'
+import { PresaleInfo, FieldProps, LoadingButtonTypes, LoadingForButton } from './types'
 import OwnerZone from './OwnerZone'
 import TokenDetails from './TokenDetails'
 import PresaleProgress from './PresaleProgress'
@@ -60,7 +61,7 @@ const BoxPresaleDetail = styled(Box)`
   }
 `
 
-export default function Presale() {
+const Presale = () => {
   const { account } = useWeb3React()
   const [whitelistAddresses, setWhitelistAddresses] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -116,36 +117,7 @@ export default function Presale() {
 
   useEffect(() => {
     async function fetchData() {
-      const owner: string = await presaleContract?.owner()
-      const info = await presaleContract?.getInfo()
-      const obKeys = [
-        FieldNames.presaleToken,
-        FieldNames.router,
-        FieldNames.presaleRate,
-        FieldNames.listingRate,
-        FieldNames.liquidyLockTimeInMins,
-        FieldNames.minBuyBnb,
-        FieldNames.maxBuyBnb,
-        FieldNames.softcap,
-        FieldNames.hardcap,
-        FieldNames.liquidity,
-        FieldNames.startPresaleTime,
-        FieldNames.endPresaleTime,
-        FieldNames.totalBought,
-        FieldNames.feeType,
-        FieldNames.refundType,
-        FieldNames.isWhitelistEnabled,
-        FieldNames.isClaimPhase,
-        FieldNames.isPresaleCancelled,
-        FieldNames.isWithdrawCancelledTokens,
-      ]
-      const preInfo: PresaleInfo = info.reduce(
-        (acc: any, cur: string | BigNumber | number | boolean, i: number) => {
-          acc[obKeys[i]] = cur
-          return acc
-        },
-        { owner }
-      )
+      const preInfo = await fetchPresaleInfo(presaleContract)
       setPresaleInfo({ ...preInfo })
     }
     if (presaleContract) {
@@ -301,7 +273,6 @@ export default function Presale() {
             />
           )}
           <PresaleDetail
-            presalePhase={checkSalePhase(presaleInfo)}
             token={token}
             presaleInfo={presaleInfo}
             presaleAddress={presaleAddress}
@@ -316,3 +287,5 @@ export default function Presale() {
     </>
   )
 }
+
+export default Presale
