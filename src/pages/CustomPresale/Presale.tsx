@@ -13,7 +13,7 @@ import TokenDetails from './TokenDetails'
 import BuyTokens from './BuyTokens'
 import PresaleDetail from './PresaleDetail'
 import WhitelistModal from './WhitelistModal'
-import { WHITELIST_SALE, PUBLIC_SALE } from '../../constants/presale'
+import { WHITELIST_SALE, PUBLIC_SALE, WITHDRAW_BNB, EMERGENCY_WITHDRAW_BNB } from '../../constants/presale'
 
 const StyledFlex = styled(Box)`
   display: flex;
@@ -64,7 +64,7 @@ export default function Presale() {
   const { account } = useWeb3React()
   const [whitelistAddresses, setWhitelistAddresses] = useState<string[]>([])
   const [contributors, setContributors] = useState<string[]>([])
-  const [iseAccountWhitelisted, setIsAccountWhitelisted] = useState(false)
+  const [isAccountWhitelisted, setIsAccountWhitelisted] = useState(false)
   const [youBought, setYouBought] = useState<BigNumber>()
   const [canPresaleBeFinalized, setCanPresaleBeFinalized] = useState(false)
   const [isAccountTokensClaimed, setIsAccountTokensClaimed] = useState(false)
@@ -227,12 +227,14 @@ export default function Presale() {
     }
   }, [presaleContract, account])
 
-  const isValidAdd = (add: string) => ethers.utils.isAddress(add.trim())
-
   const addWhitelistAddressesChangeHanlder = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     let error = ''
     if (e.target.value) {
-      if (!e.target.value.split(',').every(isValidAdd)) {
+      if (
+        !e.target.value.split(',').every((val) => {
+          return ethers.utils.isAddress(val.trim())
+        })
+      ) {
         error = 'Not valid addresses'
       }
     }
@@ -274,7 +276,11 @@ export default function Presale() {
   const removeWhitelistAddressesChangeHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     let error = ''
     if (e.target.value) {
-      if (!e.target.value.split(',').every(isValidAdd)) {
+      if (
+        !e.target.value.split(',').every((val) => {
+          return ethers.utils.isAddress(val.trim())
+        })
+      ) {
         error = 'Not valid addresses'
       }
     }
@@ -333,7 +339,7 @@ export default function Presale() {
 
   const onBuyBnbHandler = async () => {
     const bnbVal = parseUnits(buyBnbAmount.value, 18)
-    if (!presaleContract || !account || !(presaleInfo && (!presaleInfo.isWhitelistEnabled || iseAccountWhitelisted))) {
+    if (!presaleContract || !account || !(presaleInfo && (!presaleInfo.isWhitelistEnabled || isAccountWhitelisted))) {
       return
     }
     try {
@@ -371,7 +377,7 @@ export default function Presale() {
         isClicked: true,
         error: '',
       })
-      const result = await presaleContract[presaleInfo?.isPresaleCancelled ? 'widhrawBNB' : 'emergencyWithdrawBNB']()
+      const result = await presaleContract[presaleInfo?.isPresaleCancelled ? WITHDRAW_BNB : EMERGENCY_WITHDRAW_BNB]()
       await result.wait()
       const yourBoughtAmount = youBought
       setYouBought(BigNumber.from(0))
@@ -516,7 +522,7 @@ export default function Presale() {
         isClicked: true,
         error: '',
       })
-      const result = await presaleContract.enablewhitelist(type === WHITELIST_SALE.value)
+      const result = await presaleContract.toggleWhitelistPhase()
       await result.wait()
       setIsLoading(false)
       setSaleType({ value: type, label: type })

@@ -74,7 +74,7 @@ export default function OwnerZone({
           disabled={loadingForButton.isClicked}
           value={saleType}
           options={[WHITELIST_SALE, PUBLIC_SALE]}
-          onChange={selectSaleTypeHandler}
+          onChange={(option: Option) => option.value !== saleType.value && selectSaleTypeHandler(option)}
         />
       </RowBetween>
       <TextSubHeading marginTop="30px">Whitelist actions :</TextSubHeading>

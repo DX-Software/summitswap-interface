@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Token } from '@koda-finance/summitswap-sdk'
 import { BigNumber } from 'ethers'
 import { Box, Flex } from '@koda-finance/summitswap-uikit'
@@ -18,26 +18,31 @@ interface Props {
 const TokenDetails = ({ presaleInfo, formatUnits, token }: Props) => {
   const tokenSupply = useTotalSupply(token as Token | undefined)
 
-  let tokensForPresale
-  let tokensForLiquidity
-  if (presaleInfo) {
-    tokensForPresale = formatUnits(presaleInfo.presaleRate.mul(presaleInfo.hardcap), 36)
-    tokensForLiquidity = (
-      Number(
-        formatUnits(
-          presaleInfo.liquidity
-            .mul(
-              presaleInfo.hardcap.sub(
-                presaleInfo.hardcap.mul(presaleInfo.feeType ? FEE_BNB_N_TOKEN : FEE_BNB_ONLY).div(100)
+  const tokensForPresale: string = useMemo(() => formatUnits(presaleInfo?.presaleRate.mul(presaleInfo?.hardcap), 36), [
+    presaleInfo?.hardcap,
+    presaleInfo?.presaleRate,
+    formatUnits,
+  ])
+  const tokensForLiquidity: string | undefined = useMemo(
+    () =>
+      presaleInfo &&
+      (
+        Number(
+          formatUnits(
+            presaleInfo.liquidity
+              .mul(
+                presaleInfo.hardcap.sub(
+                  presaleInfo.hardcap.mul(presaleInfo.feeType ? FEE_BNB_N_TOKEN : FEE_BNB_ONLY).div(100)
+                )
               )
-            )
-            .mul(presaleInfo.listingRate),
-          36 + FEE_DECIMALS
-        )
-      ) - (presaleInfo.feeType ? Number(tokensForPresale) * (FEE_BNB_N_TOKEN / 100) : 0)
-    ).toFixed(2)
-  }
-
+              .mul(presaleInfo.listingRate),
+            36 + FEE_DECIMALS
+          )
+        ) - (presaleInfo.feeType ? Number(tokensForPresale) * (FEE_BNB_N_TOKEN / 100) : 0)
+      ).toFixed(2),
+    [presaleInfo, tokensForPresale, formatUnits]
+  )
+  
   return (
     <Box marginTop="30px" padding="25px" width="100%" borderRadius="20px" background="#011724">
       <TextHeading marginTop="15px">Token Details :</TextHeading>
@@ -69,7 +74,7 @@ const TokenDetails = ({ presaleInfo, formatUnits, token }: Props) => {
       </RowBetween>
       <RowBetween marginTop="15px">
         <PresaleInfoHeadingText>Tokens for Liquidity</PresaleInfoHeadingText>
-        <PresaleInfoValueText>{tokensForLiquidity}</PresaleInfoValueText>
+        <PresaleInfoValueText>{tokensForLiquidity || ''}</PresaleInfoValueText>
       </RowBetween>
     </Box>
   )

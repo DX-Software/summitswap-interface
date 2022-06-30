@@ -25,14 +25,15 @@ export const FEE_DECIMALS = 9;
 export const PRESALE_CARDS_PER_PAGE = 6
 export const WHITELIST_ADDRESSES_PER_PAGE = 10
 
-
+export const WITHDRAW_BNB = 'withdrawBNB'
+export const EMERGENCY_WITHDRAW_BNB = 'emergencyWithdrawBNB'
 
 export enum RadioFieldValues {
   whitelistEnable = 'enable',
   whitelistDisable = "disable",
-  refundTypeRefund = 'refund',
-  refundTypeBurn = 'burn',
-  feeTypeOnlyBnb = "feeTypeOnlyBnb",
-  feeTypeBnbAndToken = "feeTypeBnbAndToken",
+  refundTypeRefund = 0,
+  refundTypeBurn = 1,
+  feeTypeOnlyBnb = 0,
+  feeTypeBnbAndToken = 1,
 }
 

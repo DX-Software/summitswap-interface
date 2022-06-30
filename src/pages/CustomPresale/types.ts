@@ -68,8 +68,8 @@ export interface Values {
   [FieldNames.endPresaleTime]?: number;
   [FieldNames.liquidyLockTimeInMins]?: number;
   [FieldNames.tokenAmount]?: number;
-  [FieldNames.feeType]: string;
-  [FieldNames.refundType]: string;
+  [FieldNames.feeType]: number;
+  [FieldNames.refundType]: number;
 }
 
 export interface ValueErrors {

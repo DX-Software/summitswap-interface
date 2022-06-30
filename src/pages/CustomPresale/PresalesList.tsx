@@ -1,20 +1,19 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useState, useEffect } from 'react'
 import { Option } from 'react-dropdown'
+import { useWeb3React } from '@web3-react/core'
 import { Pagination } from '@mui/material'
-import { Contract } from 'ethers'
 import styled from 'styled-components'
 import { AddressZero } from '@ethersproject/constants'
 import { Text, Box, SearchIcon, Button, Flex, Input } from '@koda-finance/summitswap-uikit'
+import { useFactoryPresaleContract } from '../../hooks/useContract'
 import { isAddress } from '../../utils'
 import DropdownWrapper from '../../components/DropdownWrapper'
 import CustomLightSpinner from '../../components/CustomLightSpinner'
-import { NO_FILTER, FILTER_OWNER, PRESALE_CARDS_PER_PAGE } from '../../constants/presale'
+import { NO_FILTER, FILTER_OWNER, PRESALE_CARDS_PER_PAGE, PRESALE_FACTORY_ADDRESS } from '../../constants/presale'
 import PresaleCard from './PresaleCard'
 
 interface Props {
-  presaleFactoryContract: Contract | null
-  account: string | null | undefined
   setButtonIndex: React.Dispatch<React.SetStateAction<number>>
 }
 
@@ -49,12 +48,16 @@ const StyledDropdownWrapper = styled(DropdownWrapper)`
   }
 `
 
-const PresalesList = ({ presaleFactoryContract, account, setButtonIndex }: Props) => {
+const PresalesList = ({ setButtonIndex }: Props) => {
+  const { account } = useWeb3React()
+
   const [presaleAddresses, setPresaleAddresses] = useState<string[]>([])
   const [filteredAddresses, setFilteredAddresses] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [selectedOption, setSelectedOption] = useState(NO_FILTER)
   const [page, setPage] = useState(1)
+
+  const presaleFactoryContract = useFactoryPresaleContract(PRESALE_FACTORY_ADDRESS)
 
   useEffect(() => {
     async function fetchPresaleAddresses() {
@@ -81,11 +84,11 @@ const PresalesList = ({ presaleFactoryContract, account, setButtonIndex }: Props
     }
   }, [presaleFactoryContract, account, selectedOption])
 
-  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+  const paginationChangeHandler = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value)
   }
 
-  const inputChnageHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const presaleSearchChangeHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const search = e.target.value
     if (!presaleFactoryContract) return
 
@@ -125,7 +128,7 @@ const PresalesList = ({ presaleFactoryContract, account, setButtonIndex }: Props
             >
               <SearchIcon width="40px" color="#fff" />
               <SearchInput
-                onChange={inputChnageHandler}
+                onChange={presaleSearchChangeHandler}
                 id="search-presale"
                 placeholder="Enter Presale or Token Address"
               />
@@ -159,7 +162,7 @@ const PresalesList = ({ presaleFactoryContract, account, setButtonIndex }: Props
               sx={style}
               count={filteredAddresses.length ? 1 : Math.ceil(presaleAddresses.length / PRESALE_CARDS_PER_PAGE)}
               page={page}
-              onChange={handleChange}
+              onChange={paginationChangeHandler}
             />
           </Box>
         </>

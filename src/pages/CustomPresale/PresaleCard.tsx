@@ -206,7 +206,7 @@ export default function PresaleCard({ presaleAddress }: Props) {
           checkPhase(presaleInfo) === PresalePhases.PresalePhase) && (
           <Box>
             <Text fontWeight={700} fontSize="17px">
-              Sale Ends in:{' '}
+              Sale {checkPhase(presaleInfo) === PresalePhases.PresaleNotStarted ? 'Starts' : 'Ends'} in:{' '}
             </Text>
             <Text fontSize="15px">{formatedDate()}</Text>
           </Box>
