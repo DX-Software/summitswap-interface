@@ -2,10 +2,10 @@ import React, { useMemo } from 'react'
 import { Token } from '@koda-finance/summitswap-sdk'
 import { BigNumber } from 'ethers'
 import { Box, Flex } from '@koda-finance/summitswap-uikit'
-import { useTotalSupply } from '../../data/TotalSupply'
-import { RowBetween } from '../../components/Row'
-import { FEE_DECIMALS, FEE_BNB_N_TOKEN, FEE_BNB_ONLY } from '../../constants/presale'
-import { TextHeading } from './BuyTokens'
+import { useTotalSupply } from 'data/TotalSupply'
+import { RowBetween } from 'components/Row'
+import { FEE_DECIMALS, FEE_BNB_N_TOKEN, FEE_BNB_ONLY } from 'constants/presale'
+import { TextHeading } from './StyledTexts'
 import { PresaleInfoHeadingText, PresaleInfoValueText } from './PresaleDetail'
 import { PresaleInfo } from './types'
 
@@ -42,7 +42,7 @@ const TokenDetails = ({ presaleInfo, formatUnits, token }: Props) => {
       ).toFixed(2),
     [presaleInfo, tokensForPresale, formatUnits]
   )
-  
+
   return (
     <Box marginTop="30px" padding="25px" width="100%" borderRadius="20px" background="#011724">
       <TextHeading marginTop="15px">Token Details :</TextHeading>

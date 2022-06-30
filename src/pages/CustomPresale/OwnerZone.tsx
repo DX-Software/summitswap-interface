@@ -7,7 +7,7 @@ import DropdownWrapper from '../../components/DropdownWrapper'
 import MessageDiv from '../../components/MessageDiv'
 import { MESSAGE_ERROR, MESSAGE_SUCCESS, WHITELIST_SALE, PUBLIC_SALE } from '../../constants/presale'
 import { PresaleInfo, LoadingForButton, LoadingButtonTypes, FieldProps } from './types'
-import { TextHeading, TextSubHeading } from './BuyTokens'
+import { TextHeading, TextSubHeading } from './StyledTexts'
 
 export const StyledDropdownWrapper = styled(DropdownWrapper)`
   width: 120px;

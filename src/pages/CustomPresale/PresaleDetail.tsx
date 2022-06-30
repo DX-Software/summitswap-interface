@@ -8,7 +8,7 @@ import { RowBetween, RowFixed } from '../../components/Row'
 import { SUMMITSWAP_LINK, PANKCAKESWAP_LINK, FEE_DECIMALS } from '../../constants/presale'
 import { ROUTER_ADDRESS } from '../../constants'
 import { PresaleInfo, PresalePhases } from './types'
-import { TextHeading, TextSubHeading } from './BuyTokens'
+import { TextHeading, TextSubHeading } from './StyledTexts'
 
 interface Props {
   presalePhase: PresalePhases | ''

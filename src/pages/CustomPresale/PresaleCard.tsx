@@ -9,7 +9,8 @@ import { RowBetween } from '../../components/Row'
 import { FEE_DECIMALS } from '../../constants/presale'
 import Tag from '../../components/Tag'
 import { PresaleInfo, FieldNames, PresalePhases } from './types'
-import { TextHeading, ProgressBox } from './BuyTokens'
+import { TextHeading } from './StyledTexts'
+import ProgressBox from './PresaleProgress/ProgressBox'
 
 interface Props {
   presaleAddress: string

@@ -5,15 +5,16 @@ import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import { Box } from '@koda-finance/summitswap-uikit'
 import Modal from '@mui/material/Modal'
+import checkSalePhase from 'utils/checkSalePhase'
 import { usePresaleContract } from '../../hooks/useContract'
 import { useToken } from '../../hooks/Tokens'
-import { PresaleInfo, PresalePhases, FieldNames, FieldProps, LoadingButtonTypes, LoadingForButton } from './types'
+import { PresaleInfo, FieldNames, FieldProps, LoadingButtonTypes, LoadingForButton } from './types'
 import OwnerZone from './OwnerZone'
 import TokenDetails from './TokenDetails'
-import BuyTokens from './BuyTokens'
+import PresaleProgress from './PresaleProgress'
 import PresaleDetail from './PresaleDetail'
 import WhitelistModal from './WhitelistModal'
-import { WHITELIST_SALE, PUBLIC_SALE, WITHDRAW_BNB, EMERGENCY_WITHDRAW_BNB } from '../../constants/presale'
+import { WHITELIST_SALE, PUBLIC_SALE } from '../../constants/presale'
 
 const StyledFlex = styled(Box)`
   display: flex;
@@ -63,13 +64,9 @@ const BoxPresaleDetail = styled(Box)`
 export default function Presale() {
   const { account } = useWeb3React()
   const [whitelistAddresses, setWhitelistAddresses] = useState<string[]>([])
-  const [contributors, setContributors] = useState<string[]>([])
-  const [isAccountWhitelisted, setIsAccountWhitelisted] = useState(false)
-  const [youBought, setYouBought] = useState<BigNumber>()
   const [canPresaleBeFinalized, setCanPresaleBeFinalized] = useState(false)
   const [isAccountTokensClaimed, setIsAccountTokensClaimed] = useState(false)
   const [saleType, setSaleType] = useState(WHITELIST_SALE)
-  const [buyBnbAmount, setBuyBnbAmount] = useState<FieldProps>({ value: '', error: '' })
   const [isLoading, setIsLoading] = useState(false)
   const [presaleInfo, setPresaleInfo] = useState<PresaleInfo>()
   const [newWhitelistAddresses, setNewWhitelistAddresses] = useState<FieldProps>({ value: '', error: '' })
@@ -111,31 +108,6 @@ export default function Presale() {
   const token = useToken(presaleInfo?.presaleToken)
 
   useEffect(() => {
-    if (whitelistAddresses && account) {
-      setIsAccountWhitelisted(whitelistAddresses.includes(account))
-    }
-  }, [whitelistAddresses, account])
-
-  const checkPhase = useCallback((presale: PresaleInfo | undefined) => {
-    if (presale) {
-      if (presale.isPresaleCancelled) {
-        return PresalePhases.PresaleCancelled
-      }
-      if (presale.isClaimPhase) {
-        return PresalePhases.ClaimPhase
-      }
-      if (presale.startPresaleTime.mul(1000).lt(BigNumber.from(Date.now()))) {
-        if (presale.endPresaleTime.mul(1000).gt(BigNumber.from(Date.now()))) {
-          return PresalePhases.PresalePhase
-        }
-        return PresalePhases.PresaleEnded
-      }
-      return PresalePhases.PresaleNotStarted
-    }
-    return ''
-  }, [])
-
-  useEffect(() => {
     if (presaleInfo && account && !canPresaleBeFinalized) {
       if (
         !presaleInfo.isPresaleCancelled &&
@@ -148,11 +120,10 @@ export default function Presale() {
   }, [presaleInfo, account, canPresaleBeFinalized])
 
   useEffect(() => {
-    async function getContributorsnWhitelist() {
-      setContributors(await presaleContract?.getContributors())
+    async function getWhitelist() {
       setWhitelistAddresses(await presaleContract?.getWhitelist())
     }
-    if (presaleInfo && presaleContract) getContributorsnWhitelist()
+    if (presaleInfo && presaleContract) getWhitelist()
   }, [presaleInfo, presaleContract])
 
   useEffect(() => {
@@ -162,7 +133,7 @@ export default function Presale() {
     if (presaleContract && account && presaleContract && !isAccountTokensClaimed) {
       fetchIsTokenClaimed()
     }
-  }, [presaleContract, account, isAccountTokensClaimed])
+  }, [presaleContract, account, isAccountTokensClaimed]) // remove
 
   useEffect(() => {
     if (presaleInfo?.isWhitelistEnabled) {
@@ -217,15 +188,6 @@ export default function Presale() {
       fetchData()
     }
   }, [presaleContract])
-
-  useEffect(() => {
-    async function fetchYouBought() {
-      setYouBought(await presaleContract?.bought(account))
-    }
-    if (presaleContract && account) {
-      fetchYouBought()
-    }
-  }, [presaleContract, account])
 
   const addWhitelistAddressesChangeHanlder = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     let error = ''
@@ -312,127 +274,6 @@ export default function Presale() {
     } catch (err) {
       setIsLoading(false)
       setRemoveWhitelistAddresses((prev) => ({ ...prev, error: 'Removing Whitlist Failed' }))
-      console.log(err)
-    }
-  }
-
-  const buyBnbAmountChangeHandler = (e: any) => {
-    let error = ''
-    const bigAmount = BigNumber.from(e.target.value ? parseUnits(e.target.value, 18) : '0')
-    if (!bigAmount.isZero()) {
-      if (checkPhase(presaleInfo) === PresalePhases.PresalePhase) {
-        if (bigAmount.lt(0)) {
-          error = 'Buy Bnb Amount should be a positive number'
-        } else if (presaleInfo && bigAmount.add(presaleInfo.totalBought).gt(presaleInfo.hardcap)) {
-          error = 'Buy Bnb Amount should be less than hardcap'
-        } else if (youBought && presaleInfo && bigAmount.add(youBought).gt(presaleInfo.maxBuyBnb)) {
-          error = 'Buy Bnb amount should be less max bnb amount'
-        } else if (presaleInfo && bigAmount.lt(presaleInfo.minBuyBnb)) {
-          error = 'Buy Bnb amount should be greater min bnb amount'
-        }
-      } else {
-        error = 'Not Presale Phase'
-      }
-    }
-    setBuyBnbAmount({ value: e.target.value, error })
-  }
-
-  const onBuyBnbHandler = async () => {
-    const bnbVal = parseUnits(buyBnbAmount.value, 18)
-    if (!presaleContract || !account || !(presaleInfo && (!presaleInfo.isWhitelistEnabled || isAccountWhitelisted))) {
-      return
-    }
-    try {
-      setIsLoading(true)
-      const result = await presaleContract.buy({
-        value: bnbVal,
-      })
-      await result.wait()
-      setPresaleInfo((prevState) =>
-        prevState
-          ? {
-              ...prevState,
-              totalBought: prevState.totalBought.add(bnbVal),
-            }
-          : prevState
-      )
-      setYouBought((prev) => prev?.add(bnbVal))
-      setBuyBnbAmount({ error: '', value: '' })
-      setIsLoading(false)
-    } catch (err) {
-      setIsLoading(false)
-      setBuyBnbAmount((prevState) => ({ ...prevState, error: 'Buying Failed' }))
-      console.log(err)
-    }
-  }
-
-  const onWithdrawBnbHandler = async () => {
-    if (!presaleContract || !account || youBought?.eq(0) || presaleInfo?.isClaimPhase) {
-      return
-    }
-    try {
-      setIsLoading(true)
-      setLoadingForButton({
-        type: LoadingButtonTypes.Withdraw,
-        isClicked: true,
-        error: '',
-      })
-      const result = await presaleContract[presaleInfo?.isPresaleCancelled ? WITHDRAW_BNB : EMERGENCY_WITHDRAW_BNB]()
-      await result.wait()
-      const yourBoughtAmount = youBought
-      setYouBought(BigNumber.from(0))
-      setPresaleInfo((prevState) =>
-        prevState && yourBoughtAmount
-          ? {
-              ...prevState,
-              totalBought: prevState.totalBought.sub(yourBoughtAmount),
-            }
-          : prevState
-      )
-      setIsLoading(false)
-      setLoadingForButton({
-        type: LoadingButtonTypes.NotSelected,
-        isClicked: false,
-        error: '',
-      })
-    } catch (err) {
-      setIsLoading(false)
-      setLoadingForButton({
-        type: LoadingButtonTypes.Withdraw,
-        isClicked: false,
-        error: 'Withdrawl Failed.',
-      })
-      console.log(err)
-    }
-  }
-
-  const onClaimHandler = async () => {
-    if (!presaleContract || !account) {
-      return
-    }
-    try {
-      setIsLoading(true)
-      setLoadingForButton({
-        type: LoadingButtonTypes.Claim,
-        isClicked: true,
-        error: '',
-      })
-      const result = await presaleContract.claim()
-      await result.wait()
-      setLoadingForButton({
-        type: LoadingButtonTypes.NotSelected,
-        isClicked: false,
-        error: '',
-      })
-      setIsLoading(false)
-      setIsAccountTokensClaimed(true)
-    } catch (err) {
-      setIsLoading(false)
-      setLoadingForButton({
-        type: LoadingButtonTypes.Claim,
-        isClicked: false,
-        error: 'Claim Tokens Failed.',
-      })
       console.log(err)
     }
   }
@@ -573,12 +414,12 @@ export default function Presale() {
       setLoadingForButton({
         isClicked: false,
         type: LoadingButtonTypes.WithdrawCancelledTokens,
-        error: 'Withdrawl Failed.',
+        error: 'Withdrawal Failed.',
       })
       setIsLoading(false)
       console.log(err)
     }
-  }
+  } // remove
 
   return (
     <>
@@ -606,22 +447,16 @@ export default function Presale() {
       </Modal>
       <StyledFlex>
         <BoxBuyBNB>
-          <BuyTokens
+          <PresaleProgress
             token={token}
-            loadingForButton={loadingForButton}
             isLoading={isLoading}
-            presalePhase={checkPhase(presaleInfo)}
-            isAccountTokensClaimed={isAccountTokensClaimed}
-            youBought={youBought}
-            buyBnbAmount={buyBnbAmount}
             presaleInfo={presaleInfo}
-            contributors={contributors}
+            presaleContract={presaleContract}
+            loadingForButton={loadingForButton}
             whitelistAddresses={whitelistAddresses}
-            onBuyBnbHandler={onBuyBnbHandler}
-            onClaimHandler={onClaimHandler}
-            onWithdrawBnbHandler={onWithdrawBnbHandler}
-            buyBnbAmountChangeHandler={buyBnbAmountChangeHandler}
-            formatUnits={formatUnits}
+            setIsLoading={setIsLoading}
+            setPresaleInfo={setPresaleInfo}
+            setLoadingForButton={setLoadingForButton}
           />
           {account === presaleInfo?.owner && (
             <TokenDetails formatUnits={formatUnits} token={token} presaleInfo={presaleInfo} />
@@ -646,7 +481,7 @@ export default function Presale() {
             />
           )}
           <PresaleDetail
-            presalePhase={checkPhase(presaleInfo)}
+            presalePhase={checkSalePhase(presaleInfo)}
             token={token}
             presaleInfo={presaleInfo}
             presaleAddress={presaleAddress}
