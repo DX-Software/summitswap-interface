@@ -423,7 +423,7 @@ const CreatePresaleForm = ({ setPresaleAddress }: Props) => {
                           <StyledRadio
                             name={FieldNames.feeType}
                             value={RadioFieldValues.feeTypeOnlyBnb}
-                            checked={formik.values.feeType === RadioFieldValues.feeTypeOnlyBnb}
+                            checked={Number(formik.values.feeType) === RadioFieldValues.feeTypeOnlyBnb}
                           />
                           5% BNB raised only
                         </label>
@@ -431,7 +431,7 @@ const CreatePresaleForm = ({ setPresaleAddress }: Props) => {
                           <StyledRadio
                             name={FieldNames.feeType}
                             value={RadioFieldValues.feeTypeBnbAndToken}
-                            checked={formik.values.feeType === RadioFieldValues.feeTypeBnbAndToken}
+                            checked={Number(formik.values.feeType) === RadioFieldValues.feeTypeBnbAndToken}
                           />
                           2% BNB Raised + 2% Token Raised
                         </label>
@@ -489,7 +489,7 @@ const CreatePresaleForm = ({ setPresaleAddress }: Props) => {
                           <StyledRadio
                             name={FieldNames.refundType}
                             value={RadioFieldValues.refundTypeRefund}
-                            checked={formik.values.refundType === RadioFieldValues.refundTypeRefund}
+                            checked={Number(formik.values.refundType) === RadioFieldValues.refundTypeRefund}
                           />{' '}
                           Refund
                         </label>
@@ -497,7 +497,7 @@ const CreatePresaleForm = ({ setPresaleAddress }: Props) => {
                           <StyledRadio
                             name={FieldNames.refundType}
                             value={RadioFieldValues.refundTypeBurn}
-                            checked={formik.values.refundType === RadioFieldValues.refundTypeBurn}
+                            checked={Number(formik.values.refundType) === RadioFieldValues.refundTypeBurn}
                           />{' '}
                           Burn
                         </label>
