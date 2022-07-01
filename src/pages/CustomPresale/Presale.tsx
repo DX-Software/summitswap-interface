@@ -124,23 +124,6 @@ const Presale = () => {
     }
   }, [presaleContract])
 
-  const addWhitelistAddressesChangeHanlder = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    let error = ''
-    if (e.target.value) {
-      if (
-        !e.target.value.split(',').every((val) => {
-          return ethers.utils.isAddress(val.trim())
-        })
-      ) {
-        error = 'Not valid addresses'
-      }
-    }
-    setNewWhitelistAddresses({
-      value: e.target.value,
-      error,
-    })
-  }
-
   const closeAddWhitelistModalHandler = (_, reason) => {
     if (reason !== 'backdropClick') {
       setIsAddWhitelistModalOpen(false)
@@ -168,20 +151,6 @@ const Presale = () => {
       setNewWhitelistAddresses((prev) => ({ ...prev, error: 'Adding Whitlist Failed' }))
       console.error(err)
     }
-  }
-
-  const removeWhitelistAddressesChangeHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    let error = ''
-    if (e.target.value) {
-      if (
-        !e.target.value.split(',').every((val) => {
-          return ethers.utils.isAddress(val.trim())
-        })
-      ) {
-        error = 'Not valid addresses'
-      }
-    }
-    setRemoveWhitelistAddresses({ value: e.target.value, error })
   }
 
   const closeRemoveWhitelistModalHandler = (_, reason) => {
@@ -217,24 +186,24 @@ const Presale = () => {
     <>
       <Modal open={isAddWhitelistModalOpen} onClose={closeAddWhitelistModalHandler}>
         <WhitelistModal
+          title="Add Addresses"
+          buttonText="Add Addresses"
           isLoading={isLoading}
           value={newWhitelistAddresses}
           onSubmit={addWhitelistSubmitHandler}
           onDismiss={closeAddWhitelistModalHandler}
-          title="Add Addresses"
-          onChangeHandler={addWhitelistAddressesChangeHanlder}
-          buttonText="Add Addresses"
+          setWhitelistAddresses={setNewWhitelistAddresses}
         />
       </Modal>
       <Modal open={isRemoveWhitelistModalOpen} onClose={closeRemoveWhitelistModalHandler}>
         <WhitelistModal
+          title="Remove Addresses"
+          buttonText="Remove Addresses"
           isLoading={isLoading}
           value={removeWhitelistAddresses}
           onSubmit={removeWhitelistSubmitHandler}
           onDismiss={closeRemoveWhitelistModalHandler}
-          title="Remove Addresses"
-          onChangeHandler={removeWhitelistAddressesChangeHandler}
-          buttonText="Remove Addresses"
+          setWhitelistAddresses={setRemoveWhitelistAddresses}
         />
       </Modal>
       <StyledFlex>

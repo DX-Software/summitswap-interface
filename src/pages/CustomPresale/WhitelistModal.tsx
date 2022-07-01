@@ -1,6 +1,7 @@
 import React from 'react'
 import TextareaAutosize from '@mui/material/TextareaAutosize'
 import { Button, Modal } from '@koda-finance/summitswap-uikit'
+import { ethers } from 'ethers'
 import MaterialBox from '@mui/material/Box'
 import MessageDiv from 'components/MessageDiv'
 import { MESSAGE_ERROR, MESSAGE_SUCCESS } from 'constants/presale'
@@ -11,9 +12,9 @@ export interface ModalProps {
   value: FieldProps
   buttonText: string
   isLoading: boolean
-  onChangeHandler: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
   onDismiss: (_, reason) => void
   onSubmit: () => void
+  setWhitelistAddresses: React.Dispatch<React.SetStateAction<FieldProps>>
 }
 
 const style = {
@@ -27,37 +28,64 @@ const style = {
   p: '4',
 }
 
-const WhitelistModal = ({ title, value, buttonText, isLoading, onChangeHandler, onDismiss, onSubmit }: ModalProps) => (
-  <MaterialBox sx={style}>
-    <Modal title={title} onDismiss={() => onDismiss('', '')}>
-      <TextareaAutosize
-        value={value.value}
-        style={{ borderRadius: '5px', padding: '15px' }}
-        minRows={3}
-        maxRows={15}
-        onChange={onChangeHandler}
-        placeholder="Follow this format to add addresses e.g 0x23233..,0x32323..."
-      />
-      <MessageDiv marginY="10px" type={value.error ? MESSAGE_ERROR : MESSAGE_SUCCESS}>
-        {value.error
-          ? value.error
-          : isLoading
-          ? title.includes('Remove')
-            ? 'Removing Addresses.'
-            : 'Adding Addresses.'
-          : ''}
-      </MessageDiv>
-      <Button
-        onClick={onSubmit}
-        disabled={value.error !== '' || isLoading || value.value === ''}
-        style={{ borderRadius: '11px' }}
-        variant="awesome"
-        scale="xxs"
-      >
-        {buttonText}
-      </Button>
-    </Modal>
-  </MaterialBox>
-)
+const WhitelistModal = ({
+  title,
+  value,
+  buttonText,
+  isLoading,
+  onDismiss,
+  onSubmit,
+  setWhitelistAddresses,
+}: ModalProps) => {
+  const whitelistAddressesChangeHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    let error = ''
+    if (e.target.value) {
+      if (
+        !e.target.value.split(',').every((val) => {
+          return ethers.utils.isAddress(val.trim())
+        })
+      ) {
+        error = 'Not valid addresses'
+      }
+    }
+    setWhitelistAddresses({
+      value: e.target.value,
+      error,
+    })
+  }
+
+  return (
+    <MaterialBox sx={style}>
+      <Modal title={title} onDismiss={() => onDismiss('', '')}>
+        <TextareaAutosize
+          value={value.value}
+          style={{ borderRadius: '5px', padding: '15px' }}
+          minRows={3}
+          maxRows={15}
+          onChange={whitelistAddressesChangeHandler}
+          placeholder="Follow this format to add addresses e.g 0x23233..,0x32323..."
+        />
+        <MessageDiv marginY="10px" type={value.error ? MESSAGE_ERROR : MESSAGE_SUCCESS}>
+          {value.error
+            ? value.error
+            : isLoading
+            ? title.includes('Remove')
+              ? 'Removing Addresses.'
+              : 'Adding Addresses.'
+            : ''}
+        </MessageDiv>
+        <Button
+          onClick={onSubmit}
+          disabled={value.error !== '' || isLoading || value.value === ''}
+          style={{ borderRadius: '11px' }}
+          variant="awesome"
+          scale="xxs"
+        >
+          {buttonText}
+        </Button>
+      </Modal>
+    </MaterialBox>
+  )
+}
 
 export default WhitelistModal
