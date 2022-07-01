@@ -245,12 +245,8 @@ const CreatePresaleForm = ({ setPresaleAddress }: Props) => {
           values.liquidyLockTimeInMins ? values.liquidyLockTimeInMins * 60 : 0,
           values.startPresaleTime ? new Date(values.startPresaleTime).getTime() / 1000 : 0,
           values.endPresaleTime ? new Date(values.endPresaleTime).getTime() / 1000 : 0,
-          values.feeType === RadioFieldValues.feeTypeOnlyBnb
-            ? RadioFieldValues.feeTypeOnlyBnb
-            : RadioFieldValues.feeTypeBnbAndToken,
-          values.refundType === RadioFieldValues.refundTypeRefund
-            ? RadioFieldValues.refundTypeRefund
-            : RadioFieldValues.refundTypeBurn,
+          values.feeType,
+          values.refundType,
           values.isWhitelistEnabled === RadioFieldValues.whitelistEnable,
           {
             value: await factoryContract.preSaleFee(),
