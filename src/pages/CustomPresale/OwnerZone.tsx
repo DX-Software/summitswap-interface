@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Option } from 'react-dropdown'
 import { Contract } from 'ethers'
 import styled from 'styled-components'
+import { useWeb3React } from '@web3-react/core'
 import { Box, AutoRenewIcon, Button } from '@koda-finance/summitswap-uikit'
 import { RowBetween } from '../../components/Row'
 import DropdownWrapper from '../../components/DropdownWrapper'
@@ -20,7 +21,6 @@ interface Props {
   isLoading: boolean
   newWhitelistAddresses: FieldProps
   removeWhitelistAddresses: FieldProps
-  account: string
   presaleContract: Contract | null
   setPresaleInfo: React.Dispatch<React.SetStateAction<PresaleInfo | undefined>>
   setLoadingForButton: React.Dispatch<React.SetStateAction<LoadingForButton>>
@@ -45,7 +45,6 @@ const RemoveAddressButton = styled(Button)`
 const OwnerZone = ({
   presaleInfo,
   loadingForButton,
-  account,
   isLoading,
   newWhitelistAddresses,
   removeWhitelistAddresses,
@@ -56,6 +55,8 @@ const OwnerZone = ({
   setIsAddWhitelistModalOpen,
   setIsRemoveWhitelistModalOpen,
 }: Props) => {
+  const { account } = useWeb3React()
+
   const [saleType, setSaleType] = useState(WHITELIST_SALE)
   const [canPresaleBeFinalized, setCanPresaleBeFinalized] = useState(false)
 

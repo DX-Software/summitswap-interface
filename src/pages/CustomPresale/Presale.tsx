@@ -228,7 +228,6 @@ const Presale = () => {
             <OwnerZone
               presaleInfo={presaleInfo}
               loadingForButton={loadingForButton}
-              account={account}
               isLoading={isLoading}
               presaleContract={presaleContract}
               newWhitelistAddresses={newWhitelistAddresses}
