@@ -172,11 +172,6 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
   // check if user has gone through approval process, used to show two step buttons, reset on token change
   const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false)
 
-  useEffect(() => {
-    handleOutputSelect(KODA)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   // mark when a user has submitted an approval, reset onTokenSelection for input field
   useEffect(() => {
     if (approval === ApprovalState.PENDING) {
@@ -211,7 +206,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
     const buySlippageTolerance = (currencies[Field.OUTPUT] as Token).buySlippageTolerance || DEFAULT_SLIPPAGE_TOLERANCE
     const _allowedSlippage = sellSlippageTolerance > buySlippageTolerance ? sellSlippageTolerance : buySlippageTolerance
     if (_allowedSlippage > 0) {
-      setAllowedSlippage(_allowedSlippage)
+      setAllowedSlippage(_allowedSlippage * 100)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currencies[Field.INPUT], currencies[Field.OUTPUT]])
