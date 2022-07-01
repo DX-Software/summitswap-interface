@@ -3,13 +3,16 @@ import { intervalToDuration, differenceInDays, formatDuration } from 'date-fns'
 import { BigNumber, ethers } from 'ethers'
 import styled from 'styled-components'
 import { Text, Box, Button, Progress } from '@koda-finance/summitswap-uikit'
-import { useToken } from '../../hooks/Tokens'
-import { usePresaleContract } from '../../hooks/useContract'
-import { RowBetween } from '../../components/Row'
-import { FEE_DECIMALS } from '../../constants/presale'
-import Tag from '../../components/Tag'
-import { PresaleInfo, FieldNames, PresalePhases } from './types'
-import { TextHeading, ProgressBox } from './BuyTokens'
+import { useToken } from 'hooks/Tokens'
+import { usePresaleContract } from 'hooks/useContract'
+import { RowBetween } from 'components/Row'
+import { FEE_DECIMALS } from 'constants/presale'
+import Tag from 'components/Tag'
+import fetchPresaleInfo from 'utils/fetchPresaleInfo'
+import checkSalePhase from 'utils/checkSalePhase'
+import { PresaleInfo, PresalePhases } from './types'
+import { TextHeading } from './StyledTexts'
+import ProgressBox from './PresaleProgress/ProgressBox'
 
 interface Props {
   presaleAddress: string
@@ -22,7 +25,7 @@ const StyledTextCard = styled(Text)`
   text-align: right;
 `
 
-export default function PresaleCard({ presaleAddress }: Props) {
+const PresaleCard = ({ presaleAddress }: Props) => {
   const [presaleInfo, setPresaleInfo] = useState<PresaleInfo>()
   const [contributors, setContributors] = useState<string[]>([])
   const [currentTime, setCurrentTime] = useState(new Date())
@@ -36,61 +39,13 @@ export default function PresaleCard({ presaleAddress }: Props) {
 
   useEffect(() => {
     async function fetchData() {
-      const owner: string = await presaleContract?.owner()
-      const info = await presaleContract?.getInfo()
-      const obKeys = [
-        FieldNames.presaleToken,
-        FieldNames.router,
-        FieldNames.presaleRate,
-        FieldNames.listingRate,
-        FieldNames.liquidyLockTimeInMins,
-        FieldNames.minBuyBnb,
-        FieldNames.maxBuyBnb,
-        FieldNames.softcap,
-        FieldNames.hardcap,
-        FieldNames.liquidity,
-        FieldNames.startPresaleTime,
-        FieldNames.endPresaleTime,
-        FieldNames.totalBought,
-        FieldNames.feeType,
-        FieldNames.refundType,
-        FieldNames.isWhitelistEnabled,
-        FieldNames.isClaimPhase,
-        FieldNames.isPresaleCancelled,
-        FieldNames.isWithdrawCancelledTokens,
-      ]
-      const preInfo: PresaleInfo = info.reduce(
-        (acc: any, cur: string | BigNumber | number | boolean, i: number) => {
-          acc[obKeys[i]] = cur
-          return acc
-        },
-        { owner }
-      )
+      const preInfo = await fetchPresaleInfo(presaleContract)
       setPresaleInfo({ ...preInfo })
     }
     if (presaleContract) {
       fetchData()
     }
   }, [presaleContract])
-
-  const checkPhase = useCallback((presale: PresaleInfo | undefined) => {
-    if (presale) {
-      if (presale.isPresaleCancelled) {
-        return PresalePhases.PresaleCancelled
-      }
-      if (presale.isClaimPhase) {
-        return PresalePhases.ClaimPhase
-      }
-      if (presale.startPresaleTime.mul(1000).lt(BigNumber.from(Date.now()))) {
-        if (presale.endPresaleTime.mul(1000).gt(BigNumber.from(Date.now()))) {
-          return PresalePhases.PresalePhase
-        }
-        return PresalePhases.PresaleEnded
-      }
-      return PresalePhases.PresaleNotStarted
-    }
-    return ''
-  }, [])
 
   const formatUnits = useCallback((amount: BigNumber | undefined, decimals: number) => {
     return amount ? ethers.utils.formatUnits(amount, decimals) : ''
@@ -122,7 +77,7 @@ export default function PresaleCard({ presaleAddress }: Props) {
   }
 
   useEffect(() => {
-    const presalePhase = checkPhase(presaleInfo)
+    const presalePhase = checkSalePhase(presaleInfo)
     if (presaleInfo) {
       const timer = setTimeout(() => {
         const startDate = new Date()
@@ -143,7 +98,7 @@ export default function PresaleCard({ presaleAddress }: Props) {
       return () => clearTimeout(timer)
     }
     return undefined
-  }, [presaleInfo, currentTime, checkPhase])
+  }, [presaleInfo, currentTime])
 
   useEffect(() => {
     async function getContributors() {
@@ -167,21 +122,21 @@ export default function PresaleCard({ presaleAddress }: Props) {
         {presaleInfo?.isWhitelistEnabled ? 'WHITELIST' : 'PUBLIC'}
       </Tag>
       <Text marginTop="20px">
-        1 BNB = {formatUnits(presaleInfo?.presaleRate, 18)} {token?.symbol}
+        1 BNB = {Number(formatUnits(presaleInfo?.presaleRate, 18)).toFixed(2)} {token?.symbol}
       </Text>
-      <Text marginTop="20px">Progress ({presaleInfo?.totalBought.mul(100).div(presaleInfo.hardcap).toString()}%)</Text>
+      <Text marginTop="20px">Progress ({presaleInfo?.totalBought.mul(100).div(presaleInfo.hardcap).toNumber().toFixed(2)}%)</Text>
       <ProgressBox paddingY="5px" isProgressBnb>
         <Progress primaryStep={presaleInfo?.totalBought.mul(100).div(presaleInfo.hardcap).toNumber()} />
       </ProgressBox>
       <RowBetween>
-        <Text>{`${formatUnits(presaleInfo?.totalBought, 18)} BNB`}</Text>
-        <Text>{`${formatUnits(presaleInfo?.hardcap, 18)} BNB`}</Text>
+        <Text>{`${Number(formatUnits(presaleInfo?.totalBought, 18)).toFixed(2)} BNB`}</Text>
+        <Text>{`${Number(formatUnits(presaleInfo?.hardcap, 18)).toFixed(2)} BNB`}</Text>
       </RowBetween>
       <RowBetween marginTop="15px">
         <Text fontWeight={700} fontSize="17px">
           Presale Status:
         </Text>
-        <StyledTextCard textTransform="capitalize">{checkPhase(presaleInfo).toLowerCase()}</StyledTextCard>
+        <StyledTextCard textTransform="capitalize">{checkSalePhase(presaleInfo).toLowerCase()}</StyledTextCard>
       </RowBetween>
       <RowBetween marginTop="10px">
         <Text fontWeight={700} fontSize="17px">
@@ -202,11 +157,11 @@ export default function PresaleCard({ presaleAddress }: Props) {
         <StyledTextCard>{contributors.length}</StyledTextCard>
       </RowBetween>
       <RowBetween marginTop="20px">
-        {(checkPhase(presaleInfo) === PresalePhases.PresaleNotStarted ||
-          checkPhase(presaleInfo) === PresalePhases.PresalePhase) && (
+        {(checkSalePhase(presaleInfo) === PresalePhases.PresaleNotStarted ||
+          checkSalePhase(presaleInfo) === PresalePhases.PresalePhase) && (
           <Box>
             <Text fontWeight={700} fontSize="17px">
-              Sale Ends in:{' '}
+              Sale {checkSalePhase(presaleInfo) === PresalePhases.PresaleNotStarted ? 'Starts' : 'Ends'} in:{' '}
             </Text>
             <Text fontSize="15px">{formatedDate()}</Text>
           </Box>
@@ -229,3 +184,5 @@ export default function PresaleCard({ presaleAddress }: Props) {
     </Box>
   )
 }
+
+export default PresaleCard

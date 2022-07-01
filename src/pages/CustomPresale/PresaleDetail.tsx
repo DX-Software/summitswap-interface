@@ -4,14 +4,14 @@ import { Token } from '@koda-finance/summitswap-sdk'
 import { BigNumber } from 'ethers'
 import styled from 'styled-components'
 import { Text, Box, Flex } from '@koda-finance/summitswap-uikit'
-import { RowBetween, RowFixed } from '../../components/Row'
+import { RowBetween, RowFixed } from 'components/Row'
+import checkSalePhase from 'utils/checkSalePhase'
 import { SUMMITSWAP_LINK, PANKCAKESWAP_LINK, FEE_DECIMALS } from '../../constants/presale'
 import { ROUTER_ADDRESS } from '../../constants'
 import { PresaleInfo, PresalePhases } from './types'
-import { TextHeading, TextSubHeading } from './BuyTokens'
+import { TextHeading, TextSubHeading } from './StyledTexts'
 
 interface Props {
-  presalePhase: PresalePhases | ''
   presaleInfo: PresaleInfo | undefined
   presaleAddress: string
   formatUnits: (amount: BigNumber | undefined, decimals: number) => string
@@ -114,8 +114,7 @@ const LinkText = styled.a`
     font-size: 10px;
   }
 `
-
-export default function PresaleDetail({ presaleInfo, presaleAddress, formatUnits, token, presalePhase }: Props) {
+const PresaleDetail = ({ presaleInfo, presaleAddress, formatUnits, token }: Props) => {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [days, setDays] = useState<number>()
   const [hours, setHours] = useState<number>()
@@ -125,12 +124,13 @@ export default function PresaleDetail({ presaleInfo, presaleAddress, formatUnits
   useEffect(() => {
     if (
       presaleInfo &&
-      (presalePhase === PresalePhases.PresaleNotStarted || presalePhase === PresalePhases.PresalePhase)
+      (checkSalePhase(presaleInfo) === PresalePhases.PresaleNotStarted ||
+        checkSalePhase(presaleInfo) === PresalePhases.PresalePhase)
     ) {
       const timer = setTimeout(() => {
         const startDate = new Date()
         const endDate =
-          presalePhase === PresalePhases.PresaleNotStarted
+          checkSalePhase(presaleInfo) === PresalePhases.PresaleNotStarted
             ? new Date(presaleInfo.startPresaleTime.mul(1000).toNumber())
             : new Date(presaleInfo.endPresaleTime.mul(1000).toNumber())
         const interval = intervalToDuration({
@@ -148,10 +148,10 @@ export default function PresaleDetail({ presaleInfo, presaleAddress, formatUnits
       }
     }
     return undefined
-  }, [presalePhase, presaleInfo, currentTime])
+  }, [presaleInfo, currentTime])
 
   const presaleDetailTitle = () => {
-    switch (presalePhase) {
+    switch (checkSalePhase(presaleInfo)) {
       case PresalePhases.PresalePhase:
         return 'This presale ends in :'
       case PresalePhases.PresaleNotStarted:
@@ -170,9 +170,9 @@ export default function PresaleDetail({ presaleInfo, presaleAddress, formatUnits
       <TextHeading marginBottom="20px" textAlign="center">
         {presaleDetailTitle()}
       </TextHeading>
-      {(presalePhase === PresalePhases.PresaleNotStarted || presalePhase === PresalePhases.PresalePhase) && (
+      {(checkSalePhase(presaleInfo) === PresalePhases.PresaleNotStarted ||
+        checkSalePhase(presaleInfo) === PresalePhases.PresalePhase) && (
         <>
-          {' '}
           <RowFixed marginX="auto">
             <TimeBox>{days}</TimeBox>
             <TextSubHeading marginX="5px">:</TextSubHeading>
@@ -236,7 +236,7 @@ export default function PresaleDetail({ presaleInfo, presaleAddress, formatUnits
         <PresaleInfoHeadingText>Listing On</PresaleInfoHeadingText>
         <LinkText
           href={
-            presaleInfo?.router !== ROUTER_ADDRESS
+            presaleInfo?.router === ROUTER_ADDRESS
               ? `${SUMMITSWAP_LINK}${token?.address}`
               : `${PANKCAKESWAP_LINK}${token?.address}`
           }
@@ -267,3 +267,5 @@ export default function PresaleDetail({ presaleInfo, presaleAddress, formatUnits
     </Box>
   )
 }
+
+export default PresaleDetail

@@ -34,15 +34,16 @@ export const FormCard = styled.div`
   margin-top: 20px;
   max-width: 970px;
 `
+interface Props {
+  setPresaleAddress: React.Dispatch<React.SetStateAction<string>>
+}
 
-const CreatePresaleForm = () => {
+const CreatePresaleForm = ({ setPresaleAddress }: Props) => {
   const { account, library, activate, deactivate } = useWeb3React()
-
   const [isFactoryApproved, setIsFactoryApproved] = useState<boolean>()
   const [selectedToken, setSelectedToken] = useState<Token>()
   const [tokensForPresale, setTokensForPresale] = useState<number>()
   const [accountBalance, setAccountBalance] = useState<BigNumber>()
-  const [presaleAddress, setPresaleAddress] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
   const tokenContract = useTokenContract(selectedToken?.address, true)
@@ -66,24 +67,19 @@ const CreatePresaleForm = () => {
   }, [account, selectedToken])
 
   useEffect(() => {
-    if (presaleAddress) {
-      window.location.href = `#/presale?address=${presaleAddress}`
-    }
-  }, [presaleAddress])
-
-  useEffect(() => {
     async function checkPresaleExists() {
       const address = await factoryContract?.tokenPresales(selectedToken?.address)
       if (BigNumber.from(address).isZero()) {
         setPresaleAddress('')
       } else {
         setPresaleAddress(address)
+        window.location.href = `/#/presale?address=${address}`
       }
     }
     if (factoryContract && selectedToken) {
       checkPresaleExists()
     }
-  }, [selectedToken, factoryContract])
+  }, [selectedToken, factoryContract, setPresaleAddress])
 
   useEffect(() => {
     async function checkTokenIsApproved() {
@@ -195,14 +191,13 @@ const CreatePresaleForm = () => {
       ) {
         const presaleTokenAmount = values.presaleRate * values.hardcap
         const tokensForLiquidity = (values.liquidity / 100) * values.hardcap * values.listingRate
-        const feeTokens = values.feeType === 0 ? 0 : presaleTokenAmount * (FEE_BNB_N_TOKEN / 100)
+        const feeTokens =
+          Number(values.feeType) === RadioFieldValues.feeTypeOnlyBnb ? 0 : presaleTokenAmount * (FEE_BNB_N_TOKEN / 100)
         const tokenAmount = presaleTokenAmount + tokensForLiquidity + feeTokens
-        setTokensForPresale(tokenAmount)
         if (tokenAmount > Number(ethers.utils.formatUnits(accountBalance, selectedToken.decimals))) {
           errors.tokenAmount = 'Token Amounts Exceeds Balance'
         }
       }
-
       return errors
     },
     [selectedToken, accountBalance]
@@ -250,8 +245,12 @@ const CreatePresaleForm = () => {
           values.liquidyLockTimeInMins ? values.liquidyLockTimeInMins * 60 : 0,
           values.startPresaleTime ? new Date(values.startPresaleTime).getTime() / 1000 : 0,
           values.endPresaleTime ? new Date(values.endPresaleTime).getTime() / 1000 : 0,
-          values.feeType === RadioFieldValues.feeTypeOnlyBnb ? 0 : 1,
-          values.refundType === RadioFieldValues.refundTypeRefund ? 0 : 1,
+          values.feeType === RadioFieldValues.feeTypeOnlyBnb
+            ? RadioFieldValues.feeTypeOnlyBnb
+            : RadioFieldValues.feeTypeBnbAndToken,
+          values.refundType === RadioFieldValues.refundTypeRefund
+            ? RadioFieldValues.refundTypeRefund
+            : RadioFieldValues.refundTypeBurn,
           values.isWhitelistEnabled === RadioFieldValues.whitelistEnable,
           {
             value: await factoryContract.preSaleFee(),
@@ -263,12 +262,32 @@ const CreatePresaleForm = () => {
         const preSaleAdd = await factoryContract.tokenPresales(selectedToken.address)
         setIsLoading(false)
         setPresaleAddress(preSaleAdd)
+        window.location.href = `/#/presale?address=${preSaleAdd}`
       } catch (err) {
         setIsLoading(false)
-        console.log(err)
+        console.error(err)
       }
     },
   })
+
+  useEffect(() => {
+    if (
+      formik.values.hardcap &&
+      formik.values.presaleRate &&
+      formik.values.listingRate &&
+      formik.values.liquidity &&
+      selectedToken
+    ) {
+      const presaleTokenAmount = formik.values.presaleRate * formik.values.hardcap
+      const tokensForLiquidity = (formik.values.liquidity / 100) * formik.values.hardcap * formik.values.listingRate
+      const feeTokens =
+        Number(formik.values.feeType) === RadioFieldValues.feeTypeOnlyBnb
+          ? 0
+          : presaleTokenAmount * (FEE_BNB_N_TOKEN / 100)
+      const tokenAmount = presaleTokenAmount + tokensForLiquidity + feeTokens
+      setTokensForPresale(tokenAmount)
+    }
+  }, [formik, selectedToken])
 
   const onApproveTokenHandler = useCallback(async () => {
     if (!tokenContract && !library && !account) {
@@ -281,7 +300,7 @@ const CreatePresaleForm = () => {
       setIsLoading(false)
       setIsFactoryApproved(true)
     } catch (err) {
-      console.log(err)
+      console.error(err)
       setIsLoading(false)
       setIsFactoryApproved(false)
     }
@@ -325,21 +344,19 @@ const CreatePresaleForm = () => {
                   {isFactoryApproved === undefined ? (
                     <CustomLightSpinner src="/images/blue-loader.svg" size="50px" />
                   ) : (
-                    !presaleAddress && (
-                      <Button
-                        disabled={isFactoryApproved || !selectedToken || !account || isLoading}
-                        onClick={onApproveTokenHandler}
-                        endIcon={isLoading && !isFactoryApproved && <AutoRenewIcon spin color="currentColor" />}
-                      >
-                        {isFactoryApproved ? 'Token Is Approved' : 'Approve'}
-                      </Button>
-                    )
+                    <Button
+                      disabled={isFactoryApproved || !selectedToken || !account || isLoading}
+                      onClick={onApproveTokenHandler}
+                      endIcon={isLoading && !isFactoryApproved && <AutoRenewIcon spin color="currentColor" />}
+                    >
+                      {isFactoryApproved ? 'Token Is Approved' : 'Approve'}
+                    </Button>
                   )}
                 </RowFlatCenter>
               </>
             )}
           </Box>
-          {selectedToken && !presaleAddress && (
+          {selectedToken && (
             <>
               <Text bold fontSize="23px" mb="5px">
                 Create Token Presale

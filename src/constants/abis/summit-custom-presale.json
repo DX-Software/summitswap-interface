@@ -96,6 +96,32 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "bnbFeeType0",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "bnbFeeType1",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -186,16 +212,16 @@
     "type": "function"
   },
   {
-    "inputs": [
+    "inputs": [],
+    "name": "emergencyWithdrawFee",
+    "outputs": [
       {
-        "internalType": "bool",
-        "name": "value",
-        "type": "bool"
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
-    "name": "enablewhitelist",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -320,7 +346,7 @@
             "type": "bool"
           }
         ],
-        "internalType": "struct Presale.PresaleInfo",
+        "internalType": "struct SummitCustomPresale.PresaleInfo",
         "name": "",
         "type": "tuple"
       }
@@ -355,6 +381,19 @@
         "internalType": "bool",
         "name": "",
         "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "liquidity",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -410,19 +449,6 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_owner",
-        "type": "address"
-      }
-    ],
-    "name": "setOwner",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
         "name": "_feeReciever",
         "type": "address"
       }
@@ -430,6 +456,26 @@
     "name": "setServiceFeeReciver",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "toggleWhitelistPhase",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "tokenFeeType1",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -466,7 +512,7 @@
   },
   {
     "inputs": [],
-    "name": "widhrawBNB",
+    "name": "withdrawBNB",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

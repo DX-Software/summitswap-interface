@@ -2,8 +2,8 @@ import React from 'react'
 import TextareaAutosize from '@mui/material/TextareaAutosize'
 import { Button, Modal } from '@koda-finance/summitswap-uikit'
 import MaterialBox from '@mui/material/Box'
-import MessageDiv from '../../components/MessageDiv'
-import { MESSAGE_ERROR, MESSAGE_SUCCESS } from '../../constants/presale'
+import MessageDiv from 'components/MessageDiv'
+import { MESSAGE_ERROR, MESSAGE_SUCCESS } from 'constants/presale'
 import { FieldProps } from './types'
 
 export interface ModalProps {

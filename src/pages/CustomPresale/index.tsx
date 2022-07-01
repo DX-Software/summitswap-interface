@@ -16,25 +16,27 @@ export default function CustomPresale() {
   const { account, activate, deactivate } = useWeb3React()
 
   const [presaleAddress, setPresaleAddress] = useState('')
+  const [presaleAddresses, setPresaleAddresses] = useState<string[]>([])
   const [buttonIndex, setButtonIndex] = useState(0)
 
   const factoryContract = useFactoryPresaleContract(PRESALE_FACTORY_ADDRESS)
-
   const location = useLocation()
 
   useEffect(() => {
     const presaleAddressUrl = new URLSearchParams(location.search).get('address')
-    if (!presaleAddress && ethers.utils.isAddress(presaleAddressUrl || '')) {
+    if (ethers.utils.isAddress(presaleAddressUrl || '') && presaleAddresses.includes(presaleAddressUrl || '')) {
       setPresaleAddress(presaleAddressUrl || '')
-    }
-  }, [presaleAddress, location])
-
-  useEffect(() => {
-    const presaleAddressUrl = new URLSearchParams(location.search).get('address')
-    if (!presaleAddressUrl || !ethers.utils.isAddress(presaleAddressUrl || '')) {
+    } else {
       setPresaleAddress('')
     }
-  }, [presaleAddress, location])
+  }, [presaleAddress, location, presaleAddresses])
+
+  useEffect(() => {
+    async function fetchPresales() {
+      setPresaleAddresses(await factoryContract?.getPresaleAddresses())
+    }
+    if (factoryContract) fetchPresales()
+  }, [factoryContract, location])
 
   const handleLogin = useCallback(
     (connectorId: string) => {
@@ -42,14 +44,7 @@ export default function CustomPresale() {
     },
     [activate]
   )
-
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
-
-  useEffect(() => {
-    if (presaleAddress) {
-      window.location.href = `/#/presale?address=${presaleAddress}`
-    }
-  }, [presaleAddress])
 
   return presaleAddress ? (
     <>
@@ -63,13 +58,11 @@ export default function CustomPresale() {
           <ButtonMenuItem>List </ButtonMenuItem>
         </ButtonMenu>
       </Box>
-      {buttonIndex === 1 && (
-        <PresalesList setButtonIndex={setButtonIndex} account={account} presaleFactoryContract={factoryContract} />
-      )}
+      {buttonIndex === 1 && <PresalesList setButtonIndex={setButtonIndex} />}
       {buttonIndex === 0 && (
         <>
           {account ? (
-            <CreatePresaleForm />
+            <CreatePresaleForm setPresaleAddress={setPresaleAddress} />
           ) : (
             <Button m={40} style={{ fontFamily: 'Poppins' }} onClick={onPresentConnectModal}>
               {TranslateString(292, 'CONNECT WALLET')}
