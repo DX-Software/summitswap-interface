@@ -3,6 +3,7 @@ import { Button, Text } from '@koda-finance/summitswap-uikit'
 import styled from 'styled-components'
 import copyText from 'utils/copyText'
 import Tooltip from 'components/Tooltip'
+import { BSC_SCAN } from 'constants/createToken'
 import { AutoRow, RowFlatCenter } from '../../components/Row'
 import { CreatedTokenDetails } from './types'
 
@@ -95,11 +96,7 @@ const TokenDetails = ({ tokenDetails, setCreatedTokenDetails }: Props) => {
           <TextTokenValue>{tokenDetails.address}</TextTokenValue>
         </Row>
         <AutoRow justifyContent="space-evenly">
-          <a
-            href={`https://testnet.bscscan.com/tx/${tokenDetails.transactionAddress}`}
-            rel="noreferrer"
-            target="_blank"
-          >
+          <a href={`${BSC_SCAN}/tx/${tokenDetails.transactionAddress}`} rel="noreferrer" target="_blank">
             <Button
               scale="sm"
               mb={20}

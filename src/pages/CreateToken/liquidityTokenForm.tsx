@@ -5,7 +5,15 @@ import { useFormik, FormikProps } from 'formik'
 import { Option } from 'react-dropdown'
 import { Text, Button, Box } from '@koda-finance/summitswap-uikit'
 import { useTokenCreatorContract } from 'hooks/useContract'
-import { ROUTER_ADDRESS, PANCAKESWAP_ROUTER_V2_ADDRESS, TokenType } from '../../constants/index'
+import { NULL_ADDRESS } from '../../constants'
+import {
+  TokenType,
+  SUMMITSWAP_ROUTER_OPTION,
+  PANCAKESWAP_ROUTER_OPTION,
+  MAX_TOKEN_SUPPLY,
+  MIN_TAX_VALUE,
+  MAX_TOTAL_TAX_VALUE,
+} from '../../constants/createToken'
 import {
   InputFormik,
   LiquidityTokenValues,
@@ -48,7 +56,7 @@ const LiquidityTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pr
   const { account } = useWeb3React()
 
   const [selectedPageNumber, setSelectedPageNumber] = useState(0)
-  const [router, setRouter] = useState<Option>({ value: ROUTER_ADDRESS, label: 'Summitswap Router' })
+  const [router, setRouter] = useState<Option>(SUMMITSWAP_ROUTER_OPTION)
   const [isLoading, setIsLoading] = useState(false)
   const [isFailed, setIsFailed] = useState(false)
 
@@ -87,20 +95,20 @@ const LiquidityTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pr
       errors.supply = 'Required*'
     } else if (!Number.isInteger(values.supply)) {
       errors.supply = 'Total supply should be an interger'
-    } else if (BigInt(values.supply) > BigInt('500000000000000000000')) {
+    } else if (BigInt(values.supply) > BigInt(MAX_TOKEN_SUPPLY)) {
       errors.supply = 'Invalid Token Supply'
     }
 
-    if (values.taxFeeBps && values.taxFeeBps < 0.01) {
-      errors.taxFeeBps = 'taxFeeBps must be greater than or equal to 0.01'
-    } else if (values.taxFeeBps > 25) {
-      errors.taxFeeBps = 'taxFeeBps must be less than or equal to 25'
+    if (values.taxFeeBps && values.taxFeeBps < MIN_TAX_VALUE) {
+      errors.taxFeeBps = `taxFeeBps must be greater than or equal to ${MIN_TAX_VALUE}`
+    } else if (values.taxFeeBps > MAX_TOTAL_TAX_VALUE) {
+      errors.taxFeeBps = `taxFeeBps must be less than or equal to ${MAX_TOTAL_TAX_VALUE}`
     }
 
-    if (values.liquidityFeeBps && values.liquidityFeeBps < 0.01) {
-      errors.liquidityFeeBps = 'liquidityFeeBps must be greater than or equal to 0.01'
-    } else if (values.taxFeeBps > 25) {
-      errors.liquidityFeeBps = 'liquidityFeeBps must be less than or equal to 25'
+    if (values.liquidityFeeBps && values.liquidityFeeBps < MIN_TAX_VALUE) {
+      errors.liquidityFeeBps = `liquidityFeeBps must be greater than or equal to ${MIN_TAX_VALUE}`
+    } else if (values.taxFeeBps > MAX_TOTAL_TAX_VALUE) {
+      errors.liquidityFeeBps = `liquidityFeeBps must be less than or equal to ${MAX_TOTAL_TAX_VALUE}`
     }
 
     if (!values.charityAddress && values.charityFeeBps) {
@@ -114,14 +122,17 @@ const LiquidityTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pr
 
     if (!values.charityFeeBps && values.charityFeeBps !== 0 && verifyAddress(values.charityAddress)) {
       errors.charityFeeBps = 'This field is required if you have a Charity Address'
-    } else if (values.charityFeeBps && values.charityFeeBps < 0.01) {
-      errors.charityFeeBps = 'This field must be greater than or equal to 0.01 if you have a Charity Address'
-    } else if (values.taxFeeBps > 25) {
-      errors.charityFeeBps = 'Field must be less than or equal to 25'
+    } else if (values.charityFeeBps && values.charityFeeBps < MIN_TAX_VALUE) {
+      errors.charityFeeBps = `This field must be greater than or equal to ${MIN_TAX_VALUE} if you have a Charity Address`
+    } else if (values.taxFeeBps > MAX_TOTAL_TAX_VALUE) {
+      errors.charityFeeBps = `Field must be less than or equal to ${MAX_TOTAL_TAX_VALUE}`
     }
 
-    if (parseTax(values.taxFeeBps) + parseTax(values.liquidityFeeBps) + parseTax(values.charityFeeBps) > 2500) {
-      errors.taxes = 'Total Fees cannot exceed 25%'
+    if (
+      parseTax(values.taxFeeBps) + parseTax(values.liquidityFeeBps) + parseTax(values.charityFeeBps) >
+      MAX_TOTAL_TAX_VALUE * 100
+    ) {
+      errors.taxes = `Total Fees cannot exceed ${MAX_TOTAL_TAX_VALUE}%`
     }
 
     return errors
@@ -151,11 +162,11 @@ const LiquidityTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pr
           values.symbol,
           ethers.utils.parseUnits(String(values.supply), 9),
           router.value,
-          values.charityAddress !== '' ? values.charityAddress : '0x0000000000000000000000000000000000000000',
+          values.charityAddress !== '' ? values.charityAddress : NULL_ADDRESS,
           parseTax(values.taxFeeBps),
           parseTax(values.liquidityFeeBps),
           parseTax(values.charityFeeBps),
-          { value: ethers.utils.parseUnits('0.01') }
+          { value: ethers.utils.parseUnits('0.01') } // TODO:: update contract to get price from the contract
         )
         await tx.wait()
         const tokenAddress: string = await factory.customLiquidityTokens(
@@ -211,10 +222,7 @@ const LiquidityTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pr
               </Text>
               <StyledDropdownWrapper
                 value="Summitswap Router"
-                options={[
-                  { value: ROUTER_ADDRESS, label: 'Summitswap Router' },
-                  { value: PANCAKESWAP_ROUTER_V2_ADDRESS, label: 'Pancakeswap Router' },
-                ]}
+                options={[SUMMITSWAP_ROUTER_OPTION, PANCAKESWAP_ROUTER_OPTION]}
                 onChange={(option: Option) => {
                   setRouter(option)
                 }}
@@ -224,13 +232,13 @@ const LiquidityTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pr
               formik={formik}
               label="Transaction fee to generate yield (%)"
               message="The % amount of tokens from every transaction that are distributed to all token holders."
-              inputAttributes={{ name: 'taxFeeBps', placeholder: '0 - 25%', type: 'number' }}
+              inputAttributes={{ name: 'taxFeeBps', placeholder: `0 - ${MAX_TOTAL_TAX_VALUE}%`, type: 'number' }}
             />
             <InputFormik
               formik={formik}
               label="Transaction fee to generate liquidity (%)"
               message="The % amount of tokens from every transaction that are distributed to the liquidity pool."
-              inputAttributes={{ name: 'liquidityFeeBps', placeholder: '0 - 25%', type: 'number' }}
+              inputAttributes={{ name: 'liquidityFeeBps', placeholder: `0 - ${MAX_TOTAL_TAX_VALUE}%`, type: 'number' }}
             />
           </>
         )
@@ -247,7 +255,7 @@ const LiquidityTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pr
               formik={formik}
               label="Charity/Marketing percent (%)"
               message="The % amount of tokens from every transaction that is sent to the charity/marketing address"
-              inputAttributes={{ name: 'charityFeeBps', placeholder: '0 - 25%', type: 'number' }}
+              inputAttributes={{ name: 'charityFeeBps', placeholder: `0 - ${MAX_TOTAL_TAX_VALUE}%`, type: 'number' }}
             />
           </>
         )

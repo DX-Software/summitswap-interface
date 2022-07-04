@@ -10,20 +10,6 @@ export const INIT_CODE_HASH = `${process.env.REACT_APP_INIT_CODE_HASH}`
 export const REFERRAL_ADDRESS = `${process.env.REACT_APP_REFERRAL_ADDRESS}`
 export const REFERRAL_DEPLOYMENT_BLOCKNUMBER = +`${process.env.REACT_APP_REFERRAL_DEPLOYMENT_BLOCKNUMBER}`
 
-export enum TokenType {
-  Standard = 'Standard',
-  Liquidity = 'Liquidity',
-  Baby = 'Baby',
-  BuyBack = 'BuyBack'
-}
-
-export const TOKEN_CREATOR_ADDRESS = {
-  [TokenType.Standard]: `${process.env.REACT_APP_STANDARD_TOKEN_CREATOR_ADDRESS}`,
-  [TokenType.Liquidity]: `${process.env.REACT_APP_LIQUIDITY_TOKEN_CREATOR_ADDRESS}`,
-  [TokenType.Baby]: `${process.env.REACT_APP_BABY_TOKEN_CREATOR_ADDRESS}`,
-  [TokenType.BuyBack]: `${process.env.REACT_APP_BUYBACK_TOKEN_CREATOR_ADDRESS}`,
-}
-
 export const ADDITIONAL_ROUTER_ADDRESSES: string[] = process.env.REACT_APP_ADDITIONAL_ROUTER_ADDRESS?.split(",") ?? []
 export const ADDITIONAL_FACTORY_ADDRESSES: string[] = process.env.REACT_APP_ADDITIONAL_FACTORY_ADDRESS?.split(",") ?? []
 export const ADDITIONAL_INIT_CODE_HASHES: string[] = process.env.REACT_APP_ADDITIONAL_INIT_CODE_HASH?.split(",") ?? []

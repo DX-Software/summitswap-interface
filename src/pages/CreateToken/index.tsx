@@ -5,7 +5,7 @@ import { Button, Flex, useWalletModal } from '@koda-finance/summitswap-uikit'
 import styled from 'styled-components'
 import { Option } from 'react-dropdown'
 import { TranslateString } from 'utils/translateTextHelpers'
-import { TokenType } from '../../constants'
+import { TokenType, STANDARD_TOKEN_OPTION, LIQUIDITY_TOKEN_OPTION } from '../../constants/createToken'
 import { StyledDropdownWrapper } from './components'
 import { CreatedTokenDetails } from './types'
 import TokenDetails from './TokenDetails'
@@ -24,10 +24,7 @@ const CreateToken = () => {
   const [showTokenDropdown, setShowTokenDropdown] = useState(true)
   const [createdTokenDetails, setCreatedTokenDetails] = useState<CreatedTokenDetails>()
 
-  const [tokenType, setTokenType] = useState<Option>({
-    value: TokenType.Standard,
-    label: `${TokenType.Standard} Token`,
-  })
+  const [tokenType, setTokenType] = useState<Option>(STANDARD_TOKEN_OPTION)
 
   const handleLogin = useCallback(
     (connectorId: string) => {
@@ -56,16 +53,7 @@ const CreateToken = () => {
             {showTokenDropdown && (
               <StyledDropdownWrapper
                 value={tokenType}
-                options={[
-                  {
-                    value: TokenType.Standard,
-                    label: `${TokenType.Standard} Token`,
-                  },
-                  {
-                    value: TokenType.Liquidity,
-                    label: `${TokenType.Liquidity} Token`,
-                  },
-                ]}
+                options={[STANDARD_TOKEN_OPTION, LIQUIDITY_TOKEN_OPTION]}
                 onChange={(option: Option) => {
                   setTokenType(option)
                 }}

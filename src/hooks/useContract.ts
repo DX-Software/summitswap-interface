@@ -9,16 +9,10 @@ import { ERC20_BYTES32_ABI } from '../constants/abis/erc20'
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall'
 import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
-import { 
-  LOCKER_ADDRESS,
-  REFERRAL_ADDRESS,
-  TokenType,
-  TOKEN_CREATOR_ADDRESS
-} from '../constants'
+import { LOCKER_ADDRESS, REFERRAL_ADDRESS } from '../constants'
+import { TokenType, TOKEN_CREATOR_ADDRESS } from '../constants/createToken'
 import CREATE_STANDARD_TOKEN_ABI from '../constants/abis/createStandardToken.json';
 import CREATE_LIQUIDITY_TOKEN_ABI from '../constants/abis/createLiquidityToken.json';
-import CREATE_BABY_TOKEN_ABI from '../constants/abis/createBabyToken.json';
-import CREATE_BUYBACK_TOKEN_ABI from '../constants/abis/createBuybackToken.json';
 import ERC20_ABI from '../constants/abis/erc20.json'
 import WETH_ABI from '../constants/abis/weth.json'
 import REFERRAL_ABI from '../constants/abis/summitReferral.json'
@@ -108,12 +102,6 @@ export function useTokenCreatorContract(tokenType: TokenType): Contract | null {
       break
     case TokenType.Liquidity:
       createTokenAbi = CREATE_LIQUIDITY_TOKEN_ABI
-      break
-    case TokenType.Baby:
-      createTokenAbi = CREATE_BABY_TOKEN_ABI
-      break
-    case TokenType.BuyBack:
-      createTokenAbi = CREATE_BUYBACK_TOKEN_ABI
       break
   }
   return useContract(TOKEN_CREATOR_ADDRESS[tokenType], createTokenAbi)

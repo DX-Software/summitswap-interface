@@ -3,7 +3,7 @@ import { useFormik, FormikProps } from 'formik'
 import { ethers } from 'ethers'
 import { Button, AutoRenewIcon, Text } from '@koda-finance/summitswap-uikit'
 import { ColumnFlatCenter } from '../../components/Row'
-import { TokenType } from '../../constants/index'
+import { TokenType, MAX_TOKEN_SUPPLY } from '../../constants/createToken'
 import { useTokenCreatorContract } from '../../hooks/useContract'
 import { InputFormik, StandardTokenValues, Form, LoadingTokenCard } from './components'
 import AppBody from '../AppBody'
@@ -21,10 +21,7 @@ interface Props {
   setCreatedTokenDetails: React.Dispatch<React.SetStateAction<CreatedTokenDetails | undefined>>
 }
 
-const StandardTokenForm = ({
-  setShowTokenDropdown,
-  setCreatedTokenDetails,
-}: Props) => {
+const StandardTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Props) => {
   const [isLoading, setIsLoading] = useState(false)
   const [isFailed, setIsFailed] = useState(false)
 
@@ -53,7 +50,7 @@ const StandardTokenForm = ({
       errors.supply = 'Required*'
     } else if (!Number.isInteger(values.supply)) {
       errors.supply = 'Total supply should be an interger'
-    } else if (BigInt(values.supply) > BigInt('500000000000000000000')) {
+    } else if (BigInt(values.supply) > BigInt(MAX_TOKEN_SUPPLY)) {
       errors.supply = 'Invalid Total Supply.'
     }
 
@@ -89,7 +86,7 @@ const StandardTokenForm = ({
           values.symbol,
           values.decimals,
           ethers.utils.parseUnits(String(values.supply), String(values.decimals)),
-          { value: ethers.utils.parseUnits('0.01') }
+          { value: ethers.utils.parseUnits('0.01') } // TODO:: update contract to get price from the contract
         )
         await tx.wait()
         const tokenAddress: string = await factory.customStandardTokens(
