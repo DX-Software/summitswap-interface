@@ -11,13 +11,6 @@ import CreateTokenLoadingCard from './CreateTokenLoadingCard'
 import AppBody from '../AppBody'
 import { CreatedTokenDetails } from './types'
 
-interface ValueErrors {
-  name?: string
-  symbol?: string
-  supply?: string
-  decimals?: string
-}
-
 interface Props {
   setShowTokenDropdown: React.Dispatch<React.SetStateAction<boolean>>
   setCreatedTokenDetails: React.Dispatch<React.SetStateAction<CreatedTokenDetails | undefined>>
@@ -38,7 +31,7 @@ const StandardTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pro
   const factory = useTokenCreatorContract(TokenType.Standard)
 
   const validate = (values) => {
-    const errors: ValueErrors = {}
+    const errors: StandardTokenValues = {}
 
     if (!values.name) {
       errors.name = 'Required*'

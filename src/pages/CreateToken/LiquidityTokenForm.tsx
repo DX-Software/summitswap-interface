@@ -44,18 +44,6 @@ const PaginationButton = styled(Button)<{ isSelected: boolean }>`
   }
 `
 
-interface ValueErrors {
-  name?: string
-  symbol?: string
-  supply?: string
-  charityAddress?: string
-  taxFeeBps?: string
-  liquidityFeeBps?: string
-  charityFeeBps?: string
-  taxes?: string
-  page?: string
-}
-
 interface Props {
   setShowTokenDropdown: React.Dispatch<React.SetStateAction<boolean>>
   setCreatedTokenDetails: React.Dispatch<React.SetStateAction<CreatedTokenDetails | undefined>>
@@ -90,7 +78,7 @@ const LiquidityTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pr
   }
 
   const validate = async (values) => {
-    const errors: ValueErrors = {}
+    const errors: LiquidityTokenValues = {}
 
     if (!values.name) {
       errors.name = 'Required*'
