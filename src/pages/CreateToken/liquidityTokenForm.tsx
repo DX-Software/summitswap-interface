@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
+import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import { useFormik, FormikProps } from 'formik'
 import { Option } from 'react-dropdown'
 import { Text, Button, Box } from '@koda-finance/summitswap-uikit'
 import { useTokenCreatorContract } from 'hooks/useContract'
+import CreateTokenForm from 'components/CreateTokenForm'
+import StyledDropdownWrapper from 'components/DropdownWrapper/StyledDropdownWrapper'
+import InputFormik, { LiquidityTokenValues } from 'components/FormikInput'
 import { NULL_ADDRESS } from '../../constants'
 import {
   TokenType,
@@ -14,14 +18,7 @@ import {
   MIN_TAX_VALUE,
   MAX_TOTAL_TAX_VALUE,
 } from '../../constants/createToken'
-import {
-  InputFormik,
-  LiquidityTokenValues,
-  StyledDropdownWrapper,
-  Form,
-  LoadingTokenCard,
-  PaginationButton,
-} from './components'
+import CreateTokenLoadingCard from './CreateTokenLoadingCard'
 import { RowBetween } from '../../components/Row'
 import AppBody from '../AppBody'
 import { CreatedTokenDetails } from './types'
@@ -34,6 +31,18 @@ export const verifyAddress = (address) => {
     return false
   }
 }
+
+const PaginationButton = styled(Button)<{ isSelected: boolean }>`
+  height: 17px;
+  margin: 3px;
+  background: ${(props) => (props.isSelected ? '' : '#fff')};
+  opacity: ${(props) => (props.isSelected ? '1' : '0.5')};
+  padding: 0;
+  width: ${(props) => (props.isSelected ? '45px' : '17px')};
+  @media (max-width: 480px) {
+    display: none;
+  }
+`
 
 interface ValueErrors {
   name?: string
@@ -149,7 +158,7 @@ const LiquidityTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pr
       liquidityFeeBps: '',
       charityFeeBps: '',
       taxes: '',
-    },
+    } as LiquidityTokenValues,
     validate,
     onSubmit: async (values) => {
       try {
@@ -174,9 +183,9 @@ const LiquidityTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pr
         )
         setCreatedTokenDetails({
           address: tokenAddress,
-          name: values.name,
-          supply: values.supply,
-          symbol: values.symbol,
+          name: values.name || '',
+          supply: values.supply || '',
+          symbol: values.symbol || '',
           transactionAddress: tx.hash,
         })
         setIsLoading(false)
@@ -267,7 +276,7 @@ const LiquidityTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pr
   return (
     <>
       {!isLoading && (
-        <Form onSubmit={formik.handleSubmit}>
+        <CreateTokenForm onSubmit={formik.handleSubmit}>
           <AppBody>
             {showSelectedPage()}
             {formik.errors.taxes && (
@@ -322,9 +331,9 @@ const LiquidityTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pr
               )}
             </RowBetween>
           </AppBody>
-        </Form>
+        </CreateTokenForm>
       )}
-      {isLoading && <LoadingTokenCard />}
+      {isLoading && <CreateTokenLoadingCard />}
     </>
   )
 }

@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { useFormik, FormikProps } from 'formik'
 import { ethers } from 'ethers'
 import { Button, AutoRenewIcon, Text } from '@koda-finance/summitswap-uikit'
+import CreateTokenForm from 'components/CreateTokenForm'
 import { ColumnFlatCenter } from '../../components/Row'
 import { TokenType, MAX_TOKEN_SUPPLY } from '../../constants/createToken'
 import { useTokenCreatorContract } from '../../hooks/useContract'
-import { InputFormik, StandardTokenValues, Form, LoadingTokenCard } from './components'
+import InputFormik, { StandardTokenValues } from '../../components/FormikInput'
+import CreateTokenLoadingCard from './CreateTokenLoadingCard'
 import AppBody from '../AppBody'
 import { CreatedTokenDetails } from './types'
 
@@ -73,7 +75,7 @@ const StandardTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pro
       symbol: '',
       supply: '',
       decimals: '',
-    },
+    } as StandardTokenValues,
     onSubmit: async (values) => {
       try {
         setShowTokenDropdown(false)
@@ -94,9 +96,9 @@ const StandardTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pro
         )
         setCreatedTokenDetails({
           address: tokenAddress,
-          name: values.name,
-          supply: values.supply,
-          symbol: values.symbol,
+          name: values.name || '',
+          supply: values.supply || '',
+          symbol: values.symbol || '',
           transactionAddress: tx.hash,
         })
         setIsLoading(false)
@@ -113,7 +115,7 @@ const StandardTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pro
   return (
     <>
       {!isLoading && (
-        <Form onSubmit={formik.handleSubmit}>
+        <CreateTokenForm onSubmit={formik.handleSubmit}>
           <AppBody>
             <InputFormik
               formik={formik}
@@ -156,9 +158,9 @@ const StandardTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pro
               </Button>
             </ColumnFlatCenter>
           </AppBody>
-        </Form>
+        </CreateTokenForm>
       )}
-      {isLoading && <LoadingTokenCard />}
+      {isLoading && <CreateTokenLoadingCard />}
     </>
   )
 }
