@@ -109,7 +109,6 @@ const LiquidityTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pr
     }
 
     if (!values.charityAddress && values.charityFeeBps) {
-      formik.touched.charityAddress = true
       errors.charityAddress = 'This field is required if you have a Tax Fee'
     } else if (values.charityAddress && !verifyAddress(values.charityAddress)) {
       errors.charityAddress = 'This is not a valid address'
@@ -184,6 +183,12 @@ const LiquidityTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pr
       }
     },
   })
+
+  useEffect(() => {
+    if (!formik.values.charityAddress && formik.values.charityFeeBps) {
+      formik.touched.charityAddress = true
+    }
+  }, [formik.values, formik.touched])
 
   const showSelectedPage = () => {
     switch (selectedPageNumber) {
