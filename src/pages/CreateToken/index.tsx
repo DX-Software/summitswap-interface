@@ -6,11 +6,11 @@ import styled from 'styled-components'
 import { Option } from 'react-dropdown'
 import { TranslateString } from 'utils/translateTextHelpers'
 import { TokenType } from '../../constants'
+import { StyledDropdownWrapper } from './components'
+import { CreatedTokenDetails } from './types'
+import TokenDetails from './TokenDetails'
 import StandardTokenForm from './StandardTokenForm'
 import LiquidityTokenForm from './LiquidityTokenForm'
-import { useToken } from '../../hooks/Tokens'
-import TokenDashboard from './TokenDashboard'
-import { StyledDropdownWrapper } from './components'
 
 const FlexDropdown = styled(Flex)`
   width: 85%;
@@ -22,16 +22,12 @@ const FlexDropdown = styled(Flex)`
 const CreateToken = () => {
   const { account, activate, deactivate } = useWeb3React()
   const [showTokenDropdown, setShowTokenDropdown] = useState(true)
-  const [tokenAddress, setTokenAddress] = useState('') // 0xF87cE0ea6612C6A362f45ccbdaf56C3a8363e5a2
-  const [txAddress, setTxAddress] = useState('')
-  const [totalSupply, setTotalSupply] = useState('')
+  const [createdTokenDetails, setCreatedTokenDetails] = useState<CreatedTokenDetails>()
 
   const [tokenType, setTokenType] = useState<Option>({
     value: TokenType.Standard,
     label: `${TokenType.Standard} Token`,
   })
-
-  const token = useToken(tokenAddress)
 
   const handleLogin = useCallback(
     (connectorId: string) => {
@@ -41,8 +37,8 @@ const CreateToken = () => {
   )
 
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
-  return token ? (
-    <TokenDashboard txAddress={txAddress} tokenSupply={totalSupply} token={token} />
+  return createdTokenDetails ? (
+    <TokenDetails tokenDetails={createdTokenDetails} setCreatedTokenDetails={setCreatedTokenDetails} />
   ) : (
     <>
       {!account && (
@@ -78,19 +74,14 @@ const CreateToken = () => {
           </FlexDropdown>
           {tokenType.value === TokenType.Standard && (
             <StandardTokenForm
+              setCreatedTokenDetails={setCreatedTokenDetails}
               setShowTokenDropdown={setShowTokenDropdown}
-              setTotalSupply={setTotalSupply}
-              setTxAddress={setTxAddress}
-              setTokenAddress={setTokenAddress}
             />
           )}
           {tokenType.value === TokenType.Liquidity && (
             <LiquidityTokenForm
-              setTotalSupply={setTotalSupply}
-              setTxAddress={setTxAddress}
+              setCreatedTokenDetails={setCreatedTokenDetails}
               setShowTokenDropdown={setShowTokenDropdown}
-              setTokenAddress={setTokenAddress}
-              account={account}
             />
           )}
         </>

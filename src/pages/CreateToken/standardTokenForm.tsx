@@ -7,6 +7,7 @@ import { TokenType } from '../../constants/index'
 import { useTokenCreatorContract } from '../../hooks/useContract'
 import { InputFormik, StandardTokenValues, Form, LoadingTokenCard } from './components'
 import AppBody from '../AppBody'
+import { CreatedTokenDetails } from './types'
 
 interface ValueErrors {
   name?: string
@@ -16,15 +17,15 @@ interface ValueErrors {
 }
 
 interface Props {
-  setTokenAddress: React.Dispatch<React.SetStateAction<string>>
-  setTxAddress: React.Dispatch<React.SetStateAction<string>>
-  setTotalSupply: React.Dispatch<React.SetStateAction<string>>
   setShowTokenDropdown: React.Dispatch<React.SetStateAction<boolean>>
+  setCreatedTokenDetails: React.Dispatch<React.SetStateAction<CreatedTokenDetails | undefined>>
 }
 
-const StandardTokenForm = ({ setTokenAddress, setTxAddress, setTotalSupply, setShowTokenDropdown }: Props) => {
+const StandardTokenForm = ({
+  setShowTokenDropdown,
+  setCreatedTokenDetails,
+}: Props) => {
   const [isLoading, setIsLoading] = useState(false)
-  const [isCreated, setIsCreated] = useState(false)
   const [isFailed, setIsFailed] = useState(false)
 
   useEffect(() => {
@@ -91,11 +92,17 @@ const StandardTokenForm = ({ setTokenAddress, setTxAddress, setTotalSupply, setS
           { value: ethers.utils.parseUnits('0.01') }
         )
         await tx.wait()
-        setTokenAddress(await factory.customStandardTokens((await factory.customStandardTokensMade()).sub(1)))
-        setTxAddress(tx.hash)
-        setTotalSupply(values.supply)
+        const tokenAddress: string = await factory.customStandardTokens(
+          (await factory.customStandardTokensMade()).sub(1)
+        )
+        setCreatedTokenDetails({
+          address: tokenAddress,
+          name: values.name,
+          supply: values.supply,
+          symbol: values.symbol,
+          transactionAddress: tx.hash,
+        })
         setIsLoading(false)
-        setIsCreated(true)
       } catch (e) {
         setShowTokenDropdown(true)
         setIsFailed(true)
@@ -108,7 +115,7 @@ const StandardTokenForm = ({ setTokenAddress, setTxAddress, setTotalSupply, setS
 
   return (
     <>
-      {!isCreated && !isLoading && (
+      {!isLoading && (
         <Form onSubmit={formik.handleSubmit}>
           <AppBody>
             <InputFormik
@@ -154,7 +161,7 @@ const StandardTokenForm = ({ setTokenAddress, setTxAddress, setTotalSupply, setS
           </AppBody>
         </Form>
       )}
-      {(isLoading || isCreated) && <LoadingTokenCard />}
+      {isLoading && <LoadingTokenCard />}
     </>
   )
 }

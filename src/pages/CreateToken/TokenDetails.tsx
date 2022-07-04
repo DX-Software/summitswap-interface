@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import { Token } from '@koda-finance/summitswap-sdk'
 import { Button, Text } from '@koda-finance/summitswap-uikit'
 import styled from 'styled-components'
 import copyText from 'utils/copyText'
 import Tooltip from 'components/Tooltip'
 import { AutoRow, RowFlatCenter } from '../../components/Row'
+import { CreatedTokenDetails } from './types'
 
 export const TokenCard = styled.div`
   margin-top: 30px;
@@ -57,12 +57,11 @@ const Row = styled.div`
 `
 
 interface Props {
-  token: Token
-  tokenSupply: string
-  txAddress: string
+  tokenDetails: CreatedTokenDetails
+  setCreatedTokenDetails: React.Dispatch<React.SetStateAction<CreatedTokenDetails | undefined>>
 }
 
-export default function TokenDashboard({ token, tokenSupply, txAddress }: Props) {
+const TokenDetails = ({ tokenDetails, setCreatedTokenDetails }: Props) => {
   const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
 
   const displayTooltip = () => {
@@ -81,22 +80,26 @@ export default function TokenDashboard({ token, tokenSupply, txAddress }: Props)
       <TokenCard>
         <Row>
           <TextTokenHeading>Name:</TextTokenHeading>
-          <TextTokenValue>{token.name}</TextTokenValue>
+          <TextTokenValue>{tokenDetails.name}</TextTokenValue>
         </Row>
         <Row>
           <TextTokenHeading>Symbol:</TextTokenHeading>
-          <TextTokenValue>{token.symbol}</TextTokenValue>
+          <TextTokenValue>{tokenDetails.symbol}</TextTokenValue>
         </Row>
         <Row>
           <TextTokenHeading>Total Supply:</TextTokenHeading>
-          <TextTokenValue>{tokenSupply}</TextTokenValue>
+          <TextTokenValue>{tokenDetails.supply}</TextTokenValue>
         </Row>
         <Row>
           <TextTokenHeading>Token Address:</TextTokenHeading>
-          <TextTokenValue>{token.address}</TextTokenValue>
+          <TextTokenValue>{tokenDetails.address}</TextTokenValue>
         </Row>
         <AutoRow justifyContent="space-evenly">
-          <a href={`https://testnet.bscscan.com/tx/${txAddress}`} rel="noreferrer" target="_blank">
+          <a
+            href={`https://testnet.bscscan.com/tx/${tokenDetails.transactionAddress}`}
+            rel="noreferrer"
+            target="_blank"
+          >
             <Button
               scale="sm"
               mb={20}
@@ -114,7 +117,7 @@ export default function TokenDashboard({ token, tokenSupply, txAddress }: Props)
               scale="sm"
               mb={20}
               style={{ minWidth: '200px', fontFamily: 'Poppins' }}
-              onClick={() => copyText(token.address, displayTooltip)}
+              onClick={() => copyText(tokenDetails.address, displayTooltip)}
             >
               Copy Address
             </Button>
@@ -124,14 +127,14 @@ export default function TokenDashboard({ token, tokenSupply, txAddress }: Props)
             marginX="5px"
             scale="sm"
             style={{ minWidth: '200px', fontFamily: 'Poppins' }}
-            onClick={() => {
-              // TODO:: merge it  with presale and add functionality
-            }}
+            onClick={() => setCreatedTokenDetails(undefined)}
           >
-            Create Presale
+            Home
           </Button>
         </AutoRow>
       </TokenCard>
     </>
   )
 }
+
+export default TokenDetails

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
+import { useWeb3React } from '@web3-react/core'
 import { useFormik, FormikProps } from 'formik'
 import { Option } from 'react-dropdown'
 import { Text, Button, Box } from '@koda-finance/summitswap-uikit'
@@ -15,6 +16,7 @@ import {
 } from './components'
 import { RowBetween } from '../../components/Row'
 import AppBody from '../AppBody'
+import { CreatedTokenDetails } from './types'
 
 export const verifyAddress = (address) => {
   try {
@@ -38,24 +40,16 @@ interface ValueErrors {
 }
 
 interface Props {
-  account: string
-  setTokenAddress: React.Dispatch<React.SetStateAction<string>>
-  setTxAddress: React.Dispatch<React.SetStateAction<string>>
-  setTotalSupply: React.Dispatch<React.SetStateAction<string>>
   setShowTokenDropdown: React.Dispatch<React.SetStateAction<boolean>>
+  setCreatedTokenDetails: React.Dispatch<React.SetStateAction<CreatedTokenDetails | undefined>>
 }
 
-const LiquidityTokenForm = ({
-  account,
-  setTokenAddress,
-  setShowTokenDropdown,
-  setTxAddress,
-  setTotalSupply,
-}: Props) => {
+const LiquidityTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Props) => {
+  const { account } = useWeb3React()
+
   const [selectedPageNumber, setSelectedPageNumber] = useState(0)
   const [router, setRouter] = useState<Option>({ value: ROUTER_ADDRESS, label: 'Summitswap Router' })
   const [isLoading, setIsLoading] = useState(false)
-  const [isCreated, setIsCreated] = useState(false)
   const [isFailed, setIsFailed] = useState(false)
 
   useEffect(() => {
@@ -164,11 +158,17 @@ const LiquidityTokenForm = ({
           { value: ethers.utils.parseUnits('0.01') }
         )
         await tx.wait()
-        setTokenAddress(await factory.customLiquidityTokens((await factory.customLiquidityTokensMade()).sub(1)))
+        const tokenAddress: string = await factory.customLiquidityTokens(
+          (await factory.customLiquidityTokensMade()).sub(1)
+        )
+        setCreatedTokenDetails({
+          address: tokenAddress,
+          name: values.name,
+          supply: values.supply,
+          symbol: values.symbol,
+          transactionAddress: tx.hash,
+        })
         setIsLoading(false)
-        setIsCreated(true)
-        setTxAddress(tx.hash)
-        setTotalSupply(values.supply)
       } catch (e) {
         setIsLoading(false)
         setIsFailed(true)
@@ -258,7 +258,7 @@ const LiquidityTokenForm = ({
 
   return (
     <>
-      {!isLoading && !isCreated && (
+      {!isLoading && (
         <Form onSubmit={formik.handleSubmit}>
           <AppBody>
             {showSelectedPage()}
@@ -316,7 +316,7 @@ const LiquidityTokenForm = ({
           </AppBody>
         </Form>
       )}
-      {(isLoading || isCreated) && <LoadingTokenCard />}
+      {isLoading && <LoadingTokenCard />}
     </>
   )
 }
