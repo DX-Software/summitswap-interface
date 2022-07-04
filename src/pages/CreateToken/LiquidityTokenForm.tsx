@@ -23,9 +23,9 @@ import { RowBetween } from '../../components/Row'
 import AppBody from '../AppBody'
 import { CreatedTokenDetails } from './types'
 
-export const verifyAddress = (address) => {
+export const verifyAddress = (address: undefined | string) => {
   try {
-    ethers.utils.getAddress(address)
+    ethers.utils.getAddress(address || '')
     return true
   } catch {
     return false
@@ -73,11 +73,11 @@ const LiquidityTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pr
     }
   }, [isFailed])
 
-  const parseTax = (tax) => {
+  const parseTax = (tax: number) => {
     return parseInt((tax * 100).toString())
   }
 
-  const validate = async (values) => {
+  const validate = async (values: LiquidityTokenValues) => {
     const errors: LiquidityTokenValues = {}
 
     if (!values.name) {
@@ -92,19 +92,21 @@ const LiquidityTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pr
       errors.supply = 'Required*'
     } else if (!Number.isInteger(values.supply)) {
       errors.supply = 'Total supply should be an interger'
+    } else if (Number(values.supply) < 0) {
+      errors.supply = 'Total supply should greater than 0'
     } else if (BigInt(values.supply) > BigInt(MAX_TOKEN_SUPPLY)) {
       errors.supply = 'Invalid Token Supply'
     }
 
-    if (values.taxFeeBps && values.taxFeeBps < MIN_TAX_VALUE) {
+    if (values.taxFeeBps && Number(values.taxFeeBps) < MIN_TAX_VALUE) {
       errors.taxFeeBps = `taxFeeBps must be greater than or equal to ${MIN_TAX_VALUE}`
-    } else if (values.taxFeeBps > MAX_TOTAL_TAX_VALUE) {
+    } else if (Number(values.taxFeeBps) > MAX_TOTAL_TAX_VALUE) {
       errors.taxFeeBps = `taxFeeBps must be less than or equal to ${MAX_TOTAL_TAX_VALUE}`
     }
 
-    if (values.liquidityFeeBps && values.liquidityFeeBps < MIN_TAX_VALUE) {
+    if (values.liquidityFeeBps && Number(values.liquidityFeeBps) < MIN_TAX_VALUE) {
       errors.liquidityFeeBps = `liquidityFeeBps must be greater than or equal to ${MIN_TAX_VALUE}`
-    } else if (values.taxFeeBps > MAX_TOTAL_TAX_VALUE) {
+    } else if (Number(values.liquidityFeeBps) > MAX_TOTAL_TAX_VALUE) {
       errors.liquidityFeeBps = `liquidityFeeBps must be less than or equal to ${MAX_TOTAL_TAX_VALUE}`
     }
 
@@ -116,16 +118,18 @@ const LiquidityTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pr
       errors.charityAddress = 'This account cannot be the same as the owners account'
     }
 
-    if (!values.charityFeeBps && values.charityFeeBps !== 0 && verifyAddress(values.charityAddress)) {
+    if (!values.charityFeeBps && Number(values.charityFeeBps) !== 0 && verifyAddress(values.charityAddress)) {
       errors.charityFeeBps = 'This field is required if you have a Charity Address'
-    } else if (values.charityFeeBps && values.charityFeeBps < MIN_TAX_VALUE) {
+    } else if (values.charityFeeBps && Number(values.charityFeeBps) < MIN_TAX_VALUE) {
       errors.charityFeeBps = `This field must be greater than or equal to ${MIN_TAX_VALUE} if you have a Charity Address`
-    } else if (values.taxFeeBps > MAX_TOTAL_TAX_VALUE) {
+    } else if (Number(values.charityFeeBps) > MAX_TOTAL_TAX_VALUE) {
       errors.charityFeeBps = `Field must be less than or equal to ${MAX_TOTAL_TAX_VALUE}`
     }
 
     if (
-      parseTax(values.taxFeeBps) + parseTax(values.liquidityFeeBps) + parseTax(values.charityFeeBps) >
+      parseTax(Number(values.taxFeeBps)) +
+        parseTax(Number(values.liquidityFeeBps)) +
+        parseTax(Number(values.charityFeeBps)) >
       MAX_TOTAL_TAX_VALUE * 100
     ) {
       errors.taxes = `Total Fees cannot exceed ${MAX_TOTAL_TAX_VALUE}%`
@@ -159,9 +163,9 @@ const LiquidityTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pr
           ethers.utils.parseUnits(String(values.supply), 9),
           router.value,
           values.charityAddress !== '' ? values.charityAddress : NULL_ADDRESS,
-          parseTax(values.taxFeeBps),
-          parseTax(values.liquidityFeeBps),
-          parseTax(values.charityFeeBps),
+          parseTax(Number(values.taxFeeBps || 0)),
+          parseTax(Number(values.liquidityFeeBps || 0)),
+          parseTax(Number(values.charityFeeBps || 0)),
           { value: ethers.utils.parseUnits('0.01') } // TODO:: update contract to get price from the contract
         )
         await tx.wait()

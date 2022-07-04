@@ -30,7 +30,7 @@ const StandardTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pro
 
   const factory = useTokenCreatorContract(TokenType.Standard)
 
-  const validate = (values) => {
+  const validate = (values: StandardTokenValues) => {
     const errors: StandardTokenValues = {}
 
     if (!values.name) {
@@ -45,6 +45,8 @@ const StandardTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pro
       errors.supply = 'Required*'
     } else if (!Number.isInteger(values.supply)) {
       errors.supply = 'Total supply should be an interger'
+    } else if (Number(values.supply) < 0) {
+      errors.supply = 'Total supply should greater than 0'
     } else if (BigInt(values.supply) > BigInt(MAX_TOKEN_SUPPLY)) {
       errors.supply = 'Invalid Total Supply.'
     }
@@ -53,9 +55,9 @@ const StandardTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pro
       errors.decimals = 'Required*'
     } else if (!Number.isInteger(values.decimals)) {
       errors.decimals = 'Decimals should be an interger.'
-    } else if (values.decimals < 2) {
+    } else if (Number(values.decimals) < 2) {
       errors.decimals = 'Decimals must be greater than or equal to 2.'
-    } else if (values.decimals > 64) {
+    } else if (Number(values.decimals) > 64) {
       errors.decimals = 'Decimals cant be greater than 64.'
     }
 
