@@ -55,17 +55,21 @@ const PresaleCard = ({ presaleAddress }: Props) => {
         minutes,
         seconds,
       },
-      { delimiter: ': ' }
-    ).replace(/ days| day| hours| hour| minutes| minute| seconds| second/gi, (x: string) => {
+      { delimiter: ' : ' }
+    ).replace(/\sday(s?)|\shour(s?)|\sminute(s?)|\ssecond(s?)/gi, (x) => {
       switch (x) {
-        case ' days' || ' day':
-          return 'D '
-        case ' hours' || ' hour':
-          return 'H '
-        case ' minutes' || ' minute':
-          return 'M '
-        case ' seconds' || ' second':
-          return 'S '
+        case ' day':
+        case ' days':
+          return 'D'
+        case ' hour':
+        case ' hours':
+          return 'H'
+        case ' minute':
+        case ' minutes':
+          return 'M'
+        case ' second':
+        case ' seconds':
+          return 'S'
         default:
           return ''
       }
