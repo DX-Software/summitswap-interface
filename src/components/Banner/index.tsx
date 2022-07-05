@@ -48,7 +48,7 @@ export default function Banner() {
   const banners = Object.keys(BANNERS)
   const t = Date.now()
 
-  const [chosenBanner, setChosenBanner] = useState(banners[3])
+  const [chosenBanner, setChosenBanner] = useState(banners[2])
   const [banner, setBanner] = useState(
     <ImgBanner
       large={`${BANNERS[chosenBanner].gifs[0]}?${t}`}
