@@ -1,18 +1,18 @@
-import React, { useState, useCallback, useEffect } from 'react'
-import { intervalToDuration, differenceInDays, formatDuration } from 'date-fns'
-import { BigNumber, ethers } from 'ethers'
-import styled from 'styled-components'
-import { Text, Box, Button, Progress } from '@koda-finance/summitswap-uikit'
+import { Box, Button, Progress, Text } from '@koda-finance/summitswap-uikit'
+import { RowBetween } from 'components/Row'
+import Tag from 'components/Tag'
+import { FEE_DECIMALS } from 'constants/presale'
+import { differenceInDays, formatDuration, intervalToDuration } from 'date-fns'
+import { formatUnits } from 'ethers/lib/utils'
 import { useToken } from 'hooks/Tokens'
 import { usePresaleContract } from 'hooks/useContract'
-import { RowBetween } from 'components/Row'
-import { FEE_DECIMALS } from 'constants/presale'
-import Tag from 'components/Tag'
-import fetchPresaleInfo from 'utils/fetchPresaleInfo'
+import React, { useEffect, useState } from 'react'
+import styled from 'styled-components'
 import checkSalePhase from 'utils/checkSalePhase'
-import { PresaleInfo, PresalePhases } from './types'
-import { TextHeading } from './StyledTexts'
+import fetchPresaleInfo from 'utils/fetchPresaleInfo'
 import ProgressBox from './PresaleProgress/ProgressBox'
+import { TextHeading } from './StyledTexts'
+import { PresaleInfo, PresalePhases } from './types'
 
 interface Props {
   presaleAddress: string
@@ -46,10 +46,6 @@ const PresaleCard = ({ presaleAddress }: Props) => {
       fetchData()
     }
   }, [presaleContract])
-
-  const formatUnits = useCallback((amount: BigNumber | undefined, decimals: number) => {
-    return amount ? ethers.utils.formatUnits(amount, decimals) : ''
-  }, [])
 
   const formatedDate = () => {
     return formatDuration(
@@ -122,15 +118,17 @@ const PresaleCard = ({ presaleAddress }: Props) => {
         {presaleInfo?.isWhitelistEnabled ? 'WHITELIST' : 'PUBLIC'}
       </Tag>
       <Text marginTop="20px">
-        1 BNB = {Number(formatUnits(presaleInfo?.presaleRate, 18)).toFixed(2)} {token?.symbol}
+        1 BNB = {Number(formatUnits(presaleInfo?.presaleRate || 0, 18)).toFixed(2)} {token?.symbol}
       </Text>
-      <Text marginTop="20px">Progress ({presaleInfo?.totalBought.mul(100).div(presaleInfo.hardcap).toNumber().toFixed(2)}%)</Text>
+      <Text marginTop="20px">
+        Progress ({presaleInfo?.totalBought.mul(100).div(presaleInfo.hardcap).toNumber().toFixed(2)}%)
+      </Text>
       <ProgressBox paddingY="5px" isProgressBnb>
         <Progress primaryStep={presaleInfo?.totalBought.mul(100).div(presaleInfo.hardcap).toNumber()} />
       </ProgressBox>
       <RowBetween>
-        <Text>{`${Number(formatUnits(presaleInfo?.totalBought, 18)).toFixed(2)} BNB`}</Text>
-        <Text>{`${Number(formatUnits(presaleInfo?.hardcap, 18)).toFixed(2)} BNB`}</Text>
+        <Text>{`${Number(formatUnits(presaleInfo?.totalBought || 0, 18)).toFixed(2)} BNB`}</Text>
+        <Text>{`${Number(formatUnits(presaleInfo?.hardcap || 0, 18)).toFixed(2)} BNB`}</Text>
       </RowBetween>
       <RowBetween marginTop="15px">
         <Text fontWeight={700} fontSize="17px">
@@ -142,7 +140,9 @@ const PresaleCard = ({ presaleAddress }: Props) => {
         <Text fontWeight={700} fontSize="17px">
           Liquidity%:
         </Text>
-        <StyledTextCard>{Number(formatUnits(presaleInfo?.liquidity, FEE_DECIMALS - 2)).toFixed(0)}%</StyledTextCard>
+        <StyledTextCard>
+          {Number(formatUnits(presaleInfo?.liquidity || 0, FEE_DECIMALS - 2)).toFixed(0)}%
+        </StyledTextCard>
       </RowBetween>
       <RowBetween marginTop="10px">
         <Text fontWeight={700} fontSize="17px">
@@ -170,8 +170,8 @@ const PresaleCard = ({ presaleAddress }: Props) => {
           <Text fontWeight={700} fontSize="17px">
             Soft / Hard :{' '}
           </Text>
-          <Text fontSize="15px">{`${formatUnits(presaleInfo?.softcap, 18)} BNB - ${formatUnits(
-            presaleInfo?.hardcap,
+          <Text fontSize="15px">{`${formatUnits(presaleInfo?.softcap || 0, 18)} BNB - ${formatUnits(
+            presaleInfo?.hardcap || 0,
             18
           )} BNB`}</Text>
         </Box>

@@ -1,28 +1,26 @@
-import React, { useMemo } from 'react'
 import { Token } from '@koda-finance/summitswap-sdk'
-import { BigNumber } from 'ethers'
 import { Box, Flex } from '@koda-finance/summitswap-uikit'
-import { useTotalSupply } from 'data/TotalSupply'
 import { RowBetween } from 'components/Row'
-import { FEE_DECIMALS, FEE_BNB_N_TOKEN, FEE_BNB_ONLY } from 'constants/presale'
-import { TextHeading } from './StyledTexts'
+import { FEE_BNB_N_TOKEN, FEE_BNB_ONLY, FEE_DECIMALS } from 'constants/presale'
+import { useTotalSupply } from 'data/TotalSupply'
+import { formatUnits } from 'ethers/lib/utils'
+import React, { useMemo } from 'react'
 import { PresaleInfoHeadingText, PresaleInfoValueText } from './PresaleDetail'
+import { TextHeading } from './StyledTexts'
 import { PresaleInfo } from './types'
 
 interface Props {
   presaleInfo: PresaleInfo | undefined
-  formatUnits: (amount: BigNumber | undefined, decimals: number) => string
   token: Token | null | undefined
 }
 
-const TokenDetails = ({ presaleInfo, formatUnits, token }: Props) => {
+const TokenDetails = ({ presaleInfo, token }: Props) => {
   const tokenSupply = useTotalSupply(token as Token | undefined)
 
-  const tokensForPresale: string = useMemo(() => formatUnits(presaleInfo?.presaleRate.mul(presaleInfo?.hardcap), 36), [
-    presaleInfo?.hardcap,
-    presaleInfo?.presaleRate,
-    formatUnits,
-  ])
+  const tokensForPresale: string = useMemo(
+    () => formatUnits(presaleInfo?.presaleRate.mul(presaleInfo?.hardcap) || 0, 36),
+    [presaleInfo?.hardcap, presaleInfo?.presaleRate]
+  )
   const tokensForLiquidity: string | undefined = useMemo(
     () =>
       presaleInfo &&
@@ -40,7 +38,7 @@ const TokenDetails = ({ presaleInfo, formatUnits, token }: Props) => {
           )
         ) - (presaleInfo.feeType ? Number(tokensForPresale) * (FEE_BNB_N_TOKEN / 100) : 0)
       ).toFixed(2),
-    [presaleInfo, tokensForPresale, formatUnits]
+    [presaleInfo, tokensForPresale]
   )
 
   return (

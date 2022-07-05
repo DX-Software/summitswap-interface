@@ -1,19 +1,20 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { BigNumber, ethers, Contract } from 'ethers'
-import styled from 'styled-components'
-import { useWeb3React } from '@web3-react/core'
-import { TranslateString } from 'utils/translateTextHelpers'
-import { Text, AutoRenewIcon, useWalletModal, Input, Progress, Button } from '@koda-finance/summitswap-uikit'
 import { Token } from '@koda-finance/summitswap-sdk'
-import login from 'utils/login'
+import { AutoRenewIcon, Button, Input, Progress, Text, useWalletModal } from '@koda-finance/summitswap-uikit'
+import { useWeb3React } from '@web3-react/core'
+import { BigNumber, Contract, ethers } from 'ethers'
+import { formatUnits } from 'ethers/lib/utils'
+import React, { useCallback, useEffect, useState } from 'react'
+import styled from 'styled-components'
 import checkSalePhase from 'utils/checkSalePhase'
-import { RowBetween } from '../../../components/Row'
+import login from 'utils/login'
+import { TranslateString } from 'utils/translateTextHelpers'
 import MessageDiv from '../../../components/MessageDiv'
-import { PresaleInfo, FieldProps, PresalePhases, LoadingForButton } from '../types'
+import { RowBetween } from '../../../components/Row'
 import { MESSAGE_ERROR, MESSAGE_SUCCESS } from '../../../constants/presale'
+import { TextSubHeading } from '../StyledTexts'
+import { FieldProps, LoadingForButton, PresaleInfo, PresalePhases } from '../types'
 import ProgressBox from './ProgressBox'
 import Section from './Section'
-import { TextSubHeading } from '../StyledTexts'
 
 interface Props {
   token: Token | null | undefined
@@ -26,7 +27,6 @@ interface Props {
   setYouBought: React.Dispatch<React.SetStateAction<BigNumber | undefined>>
   setPresaleInfo: React.Dispatch<React.SetStateAction<PresaleInfo | undefined>>
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
-  formatUnits: (amount: BigNumber | undefined, decimals: number) => string
 }
 
 const InputBnb = styled(Input)`
@@ -48,7 +48,6 @@ const BuyTokens = ({
   setPresaleInfo,
   setYouBought,
   setIsLoading,
-  formatUnits,
 }: Props) => {
   const { account, activate, deactivate } = useWeb3React()
   const [buyBnbAmount, setBuyBnbAmount] = useState<FieldProps>({ value: '', error: '' })
@@ -142,13 +141,13 @@ const BuyTokens = ({
           {youBought && presaleInfo ? youBought.mul(100).div(presaleInfo.maxBuyBnb).toNumber() : 0}%
         </TextSubHeading>
         <TextSubHeading>
-          {`${youBought ? formatUnits(youBought, 18) : '0.0'}/${formatUnits(presaleInfo?.maxBuyBnb, 18)} BNB`}
+          {`${youBought ? formatUnits(youBought, 18) : '0.0'}/${formatUnits(presaleInfo?.maxBuyBnb || 0, 18)} BNB`}
         </TextSubHeading>
       </RowBetween>
       <Text marginBottom="15px" style={{ height: '17px' }} fontSize="17px">
         {presaleInfo && buyBnbAmount.value && !buyBnbAmount.error
           ? ` Estimated ${token?.symbol}: ${
-              Number(formatUnits(presaleInfo.presaleRate, 18)) * Number(buyBnbAmount.value)
+              Number(formatUnits(presaleInfo.presaleRate || 0, 18)) * Number(buyBnbAmount.value)
             }`
           : ''}
       </Text>

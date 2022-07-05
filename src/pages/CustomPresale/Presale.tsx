@@ -110,10 +110,6 @@ const Presale = () => {
     if (presaleInfo && presaleContract) getWhitelist()
   }, [presaleInfo, presaleContract])
 
-  const formatUnits = useCallback((amount: BigNumber | undefined, decimals: number) => {
-    return amount ? ethers.utils.formatUnits(amount, decimals) : ''
-  }, [])
-
   useEffect(() => {
     async function fetchData() {
       const preInfo = await fetchPresaleInfo(presaleContract)
@@ -219,9 +215,7 @@ const Presale = () => {
             setPresaleInfo={setPresaleInfo}
             setLoadingForButton={setLoadingForButton}
           />
-          {account === presaleInfo?.owner && (
-            <TokenDetails formatUnits={formatUnits} token={token} presaleInfo={presaleInfo} />
-          )}
+          {account === presaleInfo?.owner && <TokenDetails token={token} presaleInfo={presaleInfo} />}
         </BoxProgressPresale>
         <BoxPresaleDetail>
           {presaleInfo && account === presaleInfo.owner && (
@@ -239,16 +233,9 @@ const Presale = () => {
               setIsRemoveWhitelistModalOpen={setIsRemoveWhitelistModalOpen}
             />
           )}
-          <PresaleDetail
-            token={token}
-            presaleInfo={presaleInfo}
-            presaleAddress={presaleAddress}
-            formatUnits={formatUnits}
-          />
+          <PresaleDetail token={token} presaleInfo={presaleInfo} presaleAddress={presaleAddress} />
 
-          {account !== presaleInfo?.owner && (
-            <TokenDetails formatUnits={formatUnits} token={token} presaleInfo={presaleInfo} />
-          )}
+          {account !== presaleInfo?.owner && <TokenDetails token={token} presaleInfo={presaleInfo} />}
         </BoxPresaleDetail>
       </StyledFlex>
     </>

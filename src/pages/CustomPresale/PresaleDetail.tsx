@@ -1,20 +1,19 @@
-import React, { useState, useEffect } from 'react'
-import { intervalToDuration, differenceInDays } from 'date-fns'
 import { Token } from '@koda-finance/summitswap-sdk'
-import { BigNumber } from 'ethers'
-import styled from 'styled-components'
-import { Text, Box, Flex } from '@koda-finance/summitswap-uikit'
+import { Box, Flex, Text } from '@koda-finance/summitswap-uikit'
 import { RowBetween, RowFixed } from 'components/Row'
+import { differenceInDays, intervalToDuration } from 'date-fns'
+import { formatUnits } from 'ethers/lib/utils'
+import React, { useEffect, useState } from 'react'
+import styled from 'styled-components'
 import checkSalePhase from 'utils/checkSalePhase'
-import { SUMMITSWAP_LINK, PANKCAKESWAP_LINK, FEE_DECIMALS } from '../../constants/presale'
 import { ROUTER_ADDRESS } from '../../constants'
-import { PresaleInfo, PresalePhases } from './types'
+import { FEE_DECIMALS, PANKCAKESWAP_LINK, SUMMITSWAP_LINK } from '../../constants/presale'
 import { TextHeading, TextSubHeading } from './StyledTexts'
+import { PresaleInfo, PresalePhases } from './types'
 
 interface Props {
   presaleInfo: PresaleInfo | undefined
   presaleAddress: string
-  formatUnits: (amount: BigNumber | undefined, decimals: number) => string
   token: Token | null | undefined
 }
 
@@ -114,7 +113,7 @@ const LinkText = styled.a`
     font-size: 10px;
   }
 `
-const PresaleDetail = ({ presaleInfo, presaleAddress, formatUnits, token }: Props) => {
+const PresaleDetail = ({ presaleInfo, presaleAddress, token }: Props) => {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [days, setDays] = useState<number>()
   const [hours, setHours] = useState<number>()
@@ -201,35 +200,35 @@ const PresaleDetail = ({ presaleInfo, presaleAddress, formatUnits, token }: Prop
       <Flex marginTop="15px" alignItems="baseline" justifyContent="space-between">
         <PresaleInfoHeadingText>Presale Rate</PresaleInfoHeadingText>
         <PresaleInfoValueText>
-          1 BNB = {formatUnits(presaleInfo?.presaleRate, 18)} {token?.symbol}
+          1 BNB = {formatUnits(presaleInfo?.presaleRate || 0, 18)} {token?.symbol}
         </PresaleInfoValueText>
       </Flex>
       <Flex marginTop="15px" alignItems="baseline" justifyContent="space-between">
         <PresaleInfoHeadingText>Listing Rate</PresaleInfoHeadingText>
         <PresaleInfoValueText>
-          1 BNB = {formatUnits(presaleInfo?.listingRate, 18)} {token?.symbol}
+          1 BNB = {formatUnits(presaleInfo?.listingRate || 0, 18)} {token?.symbol}
         </PresaleInfoValueText>
       </Flex>
       <RowBetween marginTop="15px">
         <PresaleInfoHeadingText>Softcap</PresaleInfoHeadingText>
-        <PresaleInfoValueText>{formatUnits(presaleInfo?.softcap, 18)} BNB</PresaleInfoValueText>
+        <PresaleInfoValueText>{formatUnits(presaleInfo?.softcap || 0, 18)} BNB</PresaleInfoValueText>
       </RowBetween>
       <RowBetween marginTop="15px">
         <PresaleInfoHeadingText>Hardcap</PresaleInfoHeadingText>
-        <PresaleInfoValueText>{formatUnits(presaleInfo?.hardcap, 18)} BNB</PresaleInfoValueText>
+        <PresaleInfoValueText>{formatUnits(presaleInfo?.hardcap || 0, 18)} BNB</PresaleInfoValueText>
       </RowBetween>
       <RowBetween marginTop="15px">
         <PresaleInfoHeadingText>Min Buy</PresaleInfoHeadingText>
-        <PresaleInfoValueText>{formatUnits(presaleInfo?.minBuyBnb, 18)} BNB</PresaleInfoValueText>
+        <PresaleInfoValueText>{formatUnits(presaleInfo?.minBuyBnb || 0, 18)} BNB</PresaleInfoValueText>
       </RowBetween>
       <RowBetween marginTop="15px">
         <PresaleInfoHeadingText>Max Buy</PresaleInfoHeadingText>
-        <PresaleInfoValueText>{formatUnits(presaleInfo?.maxBuyBnb, 18)} BNB</PresaleInfoValueText>
+        <PresaleInfoValueText>{formatUnits(presaleInfo?.maxBuyBnb || 0, 18)} BNB</PresaleInfoValueText>
       </RowBetween>
       <RowBetween marginTop="15px">
         <PresaleInfoHeadingText>Liquidity Percent</PresaleInfoHeadingText>
         <PresaleInfoValueText>
-          {Number(formatUnits(presaleInfo?.liquidity, FEE_DECIMALS - 2)).toFixed(0)}%
+          {Number(formatUnits(presaleInfo?.liquidity || 0, FEE_DECIMALS - 2)).toFixed(0)}%
         </PresaleInfoValueText>
       </RowBetween>
       <RowBetween marginTop="15px">

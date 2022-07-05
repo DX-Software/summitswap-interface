@@ -1,18 +1,19 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { BigNumber, ethers, Contract } from 'ethers'
-import styled from 'styled-components'
-import { useWeb3React } from '@web3-react/core'
-import { Progress, Box } from '@koda-finance/summitswap-uikit'
 import { Token } from '@koda-finance/summitswap-sdk'
-import checkSalePhase from 'utils/checkSalePhase'
+import { Box, Progress } from '@koda-finance/summitswap-uikit'
+import { useWeb3React } from '@web3-react/core'
 import { RowBetween } from 'components/Row'
 import Tag from 'components/Tag'
-import { PresaleInfo, LoadingForButton } from '../types'
-import { TextSubHeading, TextHeading, TextContributor } from '../StyledTexts'
+import { BigNumber, Contract } from 'ethers'
+import { formatUnits } from 'ethers/lib/utils'
+import React, { useEffect, useState } from 'react'
+import styled from 'styled-components'
+import checkSalePhase from 'utils/checkSalePhase'
+import { TextContributor, TextHeading, TextSubHeading } from '../StyledTexts'
+import { LoadingForButton, PresaleInfo } from '../types'
 import BuyTokens from './BuyTokens'
 import ClaimWithdrawSection from './ClaimWithdrawSection'
-import WhitelistSection from './WhitelistSection'
 import ProgressBox from './ProgressBox'
+import WhitelistSection from './WhitelistSection'
 
 interface Props {
   token: Token | null | undefined
@@ -56,7 +57,6 @@ const PresaleProgress = ({
     if (presaleInfo && presaleContract) getContributors()
   }, [presaleInfo, presaleContract])
 
-
   useEffect(() => {
     async function fetchYouBought() {
       setYouBought(await presaleContract?.bought(account))
@@ -69,10 +69,6 @@ const PresaleProgress = ({
   useEffect(() => {
     setPresalePhase(checkSalePhase(presaleInfo))
   }, [presaleInfo])
-
-  const formatUnits = useCallback((amount: BigNumber | undefined, decimals: number) => {
-    return amount ? ethers.utils.formatUnits(amount, decimals) : ''
-  }, [])
 
   return (
     <Card>
@@ -90,7 +86,7 @@ const PresaleProgress = ({
         <RowBetween>
           <TextSubHeading>{presaleInfo?.totalBought.mul(100).div(presaleInfo.hardcap).toString()}%</TextSubHeading>
           <TextSubHeading>
-            {`${formatUnits(presaleInfo?.totalBought, 18)}/${formatUnits(presaleInfo?.hardcap, 18)} BNB`}
+            {`${formatUnits(presaleInfo?.totalBought || 0, 18)}/${formatUnits(presaleInfo?.hardcap || 0, 18)} BNB`}
           </TextSubHeading>
         </RowBetween>
       </Box>
@@ -105,7 +101,6 @@ const PresaleProgress = ({
         setIsLoading={setIsLoading}
         setPresaleInfo={setPresaleInfo}
         setYouBought={setYouBought}
-        formatUnits={formatUnits}
       />
       <ClaimWithdrawSection
         token={token}
