@@ -144,7 +144,7 @@ const Presale = () => {
       closeAddWhitelistModalHandler('', 'Close Modal')
     } catch (err) {
       setIsLoading(false)
-      setNewWhitelistAddresses((prev) => ({ ...prev, error: 'Adding Whitlist Failed' }))
+      setNewWhitelistAddresses((prev) => ({ ...prev, error: 'Adding Whitelist Failed' }))
       console.error(err)
     }
   }
@@ -173,7 +173,7 @@ const Presale = () => {
       setIsLoading(false)
     } catch (err) {
       setIsLoading(false)
-      setRemoveWhitelistAddresses((prev) => ({ ...prev, error: 'Removing Whitlist Failed' }))
+      setRemoveWhitelistAddresses((prev) => ({ ...prev, error: 'Removing Whitelist Failed' }))
       console.error(err)
     }
   }
