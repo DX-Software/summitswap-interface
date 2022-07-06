@@ -20,6 +20,8 @@ import FACTORY_ABI from '../constants/abis/summitswapFactory.json'
 import LOCKER_ABI from '../constants/abis/summitswaLocker.json'
 import STAKING_ABI from '../constants/abis/kodaStaking.json'
 import ROUTER_ABI from '../constants/abis/summitswap-router.json'
+import PRESALE_FACOTRY_ABI from '../constants/abis/summit-factory-presale.json'
+import PRESALE_ABI from '../constants/abis/summit-custom-presale.json'
 
 // returns null on errors
 function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {
@@ -105,4 +107,12 @@ export function useTokenCreatorContract(tokenType: TokenType): Contract | null {
       break
   }
   return useContract(TOKEN_CREATOR_ADDRESS[tokenType], createTokenAbi)
+}
+
+export function useFactoryPresaleContract(factoryAddress: string): Contract | null {
+  return useContract(factoryAddress,PRESALE_FACOTRY_ABI)
+}
+
+export function usePresaleContract(presaleAddress: string): Contract | null {
+  return useContract(presaleAddress, PRESALE_ABI)
 }

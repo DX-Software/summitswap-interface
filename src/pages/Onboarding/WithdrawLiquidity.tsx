@@ -101,7 +101,7 @@ export default function WithdrawLiquidity({ token, isLoading, setIsLoading, pair
     return { monthWithYears, days, hours, minutes }
   }, [])
 
-  return account && token ? (
+  return account && token && pairAddress ? (
     locks && pair ? (
       locks.map((lk) => {
         const { lock, lockId } = lk

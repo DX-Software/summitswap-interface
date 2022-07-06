@@ -52,6 +52,7 @@ export default function AppHeader() {
         {location.pathname === '/onboarding' && 'Onboarding'}
         {location.pathname.search('/staking') !== -1 && 'Staking'}
         {location.pathname === '/create-token' && 'Create Token'}
+        {location.pathname === '/presale' && 'Create Presale'}
       </Box>
       <TopLogo src={TopLogoIcon} alt="" />
     </StyledContainer>
