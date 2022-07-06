@@ -1,7 +1,7 @@
-import { Contract, BigNumber } from 'ethers'
-import { FieldNames, PresaleInfo } from '../pages/CustomPresale/types'
+import { BigNumber, Contract } from 'ethers'
+import { FieldNames, PresaleInfo, PresalePhases } from '../pages/CustomPresale/types'
 
-export default async function fetchPresaleInfo(presaleContract: Contract | null) {
+export async function fetchPresaleInfo(presaleContract: Contract | null) {
   const owner: string = await presaleContract?.owner()
   const info = await presaleContract?.getInfo()
   const obKeys = [
@@ -33,4 +33,23 @@ export default async function fetchPresaleInfo(presaleContract: Contract | null)
     { owner }
   )
   return preInfo
+}
+
+export const checkSalePhase = (presale: PresaleInfo | undefined) => {
+  if (presale) {
+    if (presale.isPresaleCancelled) {
+      return PresalePhases.PresaleCancelled
+    }
+    if (presale.isClaimPhase) {
+      return PresalePhases.ClaimPhase
+    }
+    if (presale.startPresaleTime.mul(1000).lt(BigNumber.from(Date.now()))) {
+      if (presale.endPresaleTime.mul(1000).gt(BigNumber.from(Date.now()))) {
+        return PresalePhases.PresalePhase
+      }
+      return PresalePhases.PresaleEnded
+    }
+    return PresalePhases.PresaleNotStarted
+  }
+  return ''
 }
