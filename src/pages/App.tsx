@@ -20,6 +20,7 @@ import CrossChainSwap from './CrossChainSwap'
 import Referral from './Referral'
 import Onboarding from './Onboarding'
 import SummitCheck from './SummitCheck'
+import CustomPresale from './CustomPresale'
 import { EN, allLanguages } from '../constants/localisation/languageCodes'
 import { LanguageContext } from '../hooks/LanguageContext'
 import { TranslationsContext } from '../hooks/TranslationsContext'
@@ -30,7 +31,6 @@ import SupportChatWidget from '../components/SupportChatWidget'
 import DepositPage from './Staking/DepositPage'
 import WithdrawPage from './Staking/WithdrawPage'
 import ClaimPage from './Staking/ClaimPage'
-
 
 const AppWrapper = styled.div`
   display: flex;
@@ -147,11 +147,11 @@ export default function App() {
         >
           <TranslationsContext.Provider value={{ translations, setTranslations }}>
             <InvalidReferralLinkModal isOpen={isInvalidRefLink} />
-            <SupportChatWidget/>
+            <SupportChatWidget />
             <Popups />
             <Web3ReactManager>
               <Switch>
-                <Route exact strict path={["/", "/send"]}>
+                <Route exact strict path={['/', '/send']}>
                   <Redirect to={`/swap${location.search}`} />
                 </Route>
                 <Menu>
@@ -170,7 +170,7 @@ export default function App() {
                     <Route exact path="/staking/claim" component={ClaimPage} />
                     <Route exact path="/staking/withdraw" component={WithdrawPage} />
                     <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
-
+                    <Route exact path="/presale" component={CustomPresale} />
 
                     {/* Redirection: These old routes are still used in the code base */}
                     <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
