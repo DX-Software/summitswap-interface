@@ -97,17 +97,11 @@ const TokenDetails = ({ tokenDetails, setCreatedTokenDetails }: Props) => {
         </Row>
         <AutoRow justifyContent="space-evenly">
           <a href={`${BSC_SCAN}/tx/${tokenDetails.transactionAddress}`} rel="noreferrer" target="_blank">
-            <Button
-              scale="sm"
-              mb={20}
-              marginX="5px"
-              style={{ minWidth: '200px', fontFamily: 'Poppins' }}
-              onClick={displayTooltip}
-            >
+            <Button scale="sm" mb={20} marginX="5px" style={{ minWidth: '200px', fontFamily: 'Poppins' }}>
               View Transaction
             </Button>
           </a>
-          <Tooltip text="Address Copied" show={isTooltipDisplayed}>
+          <Tooltip placement="top" text="Address Copied" show={isTooltipDisplayed}>
             <Button
               disabled={isTooltipDisplayed}
               marginX="5px"
