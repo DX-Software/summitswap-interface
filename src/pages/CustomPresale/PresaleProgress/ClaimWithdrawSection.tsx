@@ -127,7 +127,7 @@ const ClaimWithdrawSection = ({
       </TextSubHeading>
       {isAccountTokensClaimed ? (
         <MessageDiv marginBottom="15px" type={MESSAGE_SUCCESS}>
-          Tokens Alredy Claimed.
+          Tokens Already Claimed.
         </MessageDiv>
       ) : (
         <MessageDiv marginBottom="15px" type={loadingForButton.error !== '' ? MESSAGE_ERROR : MESSAGE_SUCCESS}>
