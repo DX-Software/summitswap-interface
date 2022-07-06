@@ -166,7 +166,7 @@ const LiquidityTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pr
           parseTax(Number(values.taxFeeBps || 0)),
           parseTax(Number(values.liquidityFeeBps || 0)),
           parseTax(Number(values.charityFeeBps || 0)),
-          { value: ethers.utils.parseUnits('0.01') } // TODO:: update contract to get price from the contract
+          { value: await factory.createTokenFee() }
         )
         await tx.wait()
         const tokenAddress: string = await factory.customLiquidityTokens(

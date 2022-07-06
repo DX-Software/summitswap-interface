@@ -83,7 +83,7 @@ const StandardTokenForm = ({ setShowTokenDropdown, setCreatedTokenDetails }: Pro
           values.symbol,
           values.decimals,
           ethers.utils.parseUnits(String(values.supply), String(values.decimals)),
-          { value: ethers.utils.parseUnits('0.01') } // TODO:: update contract to get price from the contract
+          { value: await factory.createTokenFee() }
         )
         await tx.wait()
         const tokenAddress: string = await factory.customStandardTokens(
