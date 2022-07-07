@@ -33,6 +33,16 @@ const config: MenuEntry[] = [
     href: "/info",
   },
   // {
+  //  label: 'Create Token',
+  //   icon: 'SunIcon',
+  //   href: '/create-token',
+  // },
+  // {
+  //   label: 'Pre-sale',
+  //   icon: 'RubicIcon', // TODO:: will be changed after Ui-kit is updated
+  //   href: '/presale',
+  // },
+  // {
   //   label: "Onboarding",
   //   icon: "OnboardingIcon",
   //   href: "/onboarding",
