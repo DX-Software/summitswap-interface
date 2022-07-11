@@ -1,0 +1,6 @@
+export enum ChainId {
+  BSC = 56,
+  BSC_TESTNET = 97,
+  AVALANCHE = 43114,
+  AVALANCHE_TESTNET = 43113,
+}
