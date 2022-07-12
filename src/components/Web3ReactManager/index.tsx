@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
-
-import { network } from '../../connectors'
+import { getNetworkConnector } from 'connectors'
 import { useEagerConnect, useInactiveListener } from '../../hooks'
 import { NetworkContextName } from '../../constants'
 import Loader from '../Loader'
+
+const network = getNetworkConnector()
 
 const MessageWrapper = styled.div`
   display: flex;

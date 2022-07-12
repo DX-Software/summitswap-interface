@@ -3,6 +3,8 @@ import { InjectedConnector } from '@web3-react/injected-connector'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 import { ChainId, Token } from '@koda-finance/summitswap-sdk'
+import { RPC } from 'constants/rpc'
+import getLibrary from 'utils/getLibrary'
 import { NetworkConnector } from './NetworkConnector'
 import { BscConnector } from './bsc/bscConnector'
 import { CHAIN_ID, NETWORK_URL } from '../constants'
@@ -52,14 +54,30 @@ if (typeof NETWORK_URL === 'undefined') {
   throw new Error(`REACT_APP_NETWORK_URL must be a defined environment variable`)
 }
 
-export const network = new NetworkConnector({
-  urls: { [CHAIN_ID]: NETWORK_URL },
-})
+let network: NetworkConnector | undefined
+
+export const getNetworkConnector = (): NetworkConnector => {
+  if (network) {
+    return network
+  }
+
+  const defaultChainId = localStorage.get('chain-id')
+
+  // eslint-disable-next-line no-return-assign
+  return (network = new NetworkConnector({
+    defaultChainId: defaultChainId ? Number(defaultChainId) : 1,
+    urls: RPC,
+  }))
+}
+
+// export const network = new NetworkConnector({
+//   urls: { [CHAIN_ID]: NETWORK_URL },
+// })
 
 let networkLibrary: Web3Provider | undefined
 export function getNetworkLibrary(): Web3Provider {
   // eslint-disable-next-line no-return-assign
-  return (networkLibrary = networkLibrary ?? new Web3Provider(network.provider as any))
+  return (networkLibrary = networkLibrary ?? getLibrary(getNetworkConnector().provider))
 }
 
 export const injected = new InjectedConnector({
