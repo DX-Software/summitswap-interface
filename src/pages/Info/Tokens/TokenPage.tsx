@@ -16,13 +16,13 @@ import {
   Spinner,
   Image,
   useMatchBreakpoints,
+  Percent,
 } from '@koda-finance/summitswap-uikit'
 import { getBscScanLink } from 'utils'
 import truncateHash from 'utils/truncateHash'
 import useCMCLink from 'hooks/useCMCLink'
 import { CurrencyLogo } from 'components/CurrencyLogoByAddress'
 import { formatAmount } from 'utils/formatInfoNumbers'
-import Percent from 'components/Percent'
 import {
   usePoolDatas,
   useTokenData,

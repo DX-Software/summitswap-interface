@@ -12,6 +12,7 @@ import {
   LinkExternal,
   Spinner,
   Text,
+  Percent,
   useMatchBreakpoints,
 } from '@koda-finance/summitswap-uikit'
 import { Link } from 'react-router-dom'
@@ -23,7 +24,6 @@ import { getBscScanLink } from 'utils'
 import { CurrencyLogo, DoubleCurrencyLogo } from 'components/CurrencyLogoByAddress'
 import ChartCard from 'components/InfoCharts/ChartCard'
 import TransactionTable from 'components/InfoTables/TransactionsTable'
-import Percent from 'components/Percent'
 import { formatAmount } from 'utils/formatInfoNumbers'
 import { useActiveWeb3React } from 'hooks'
 import InfoPageLayout from '../index'

@@ -1,11 +1,10 @@
 import React, { useMemo, useRef, useEffect } from 'react'
 import styled from 'styled-components'
-import { Text, Flex, Box, Card } from "@koda-finance/summitswap-uikit"
+import { Text, Percent, Flex, Box, Card } from "@koda-finance/summitswap-uikit"
 import { useAllTokenData } from 'state/info/hooks'
 import { TokenData } from 'state/info/types'
 import { CurrencyLogo } from 'components/CurrencyLogoByAddress'
 import { formatAmount } from 'utils/formatInfoNumbers'
-import Percent from 'components/Percent'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 

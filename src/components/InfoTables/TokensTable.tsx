@@ -1,11 +1,10 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import styled from 'styled-components'
-import { Text, Flex, Box, Skeleton, useMatchBreakpoints, ArrowBackIcon, ArrowForwardIcon } from "@koda-finance/summitswap-uikit"
+import { Text, Percent, Flex, Box, Skeleton, useMatchBreakpoints, ArrowBackIcon, ArrowForwardIcon } from "@koda-finance/summitswap-uikit"
 import { TokenData } from 'state/info/types'
 import { Link } from 'react-router-dom'
 import { CurrencyLogo } from 'components/CurrencyLogoByAddress'
 import { formatAmount } from 'utils/formatInfoNumbers'
-import Percent from 'components/Percent'
 import { useTranslation } from 'react-i18next'
 import { ClickableColumnHeader, TableWrapper, PageButtons, Arrow, Break } from './shared'
 
