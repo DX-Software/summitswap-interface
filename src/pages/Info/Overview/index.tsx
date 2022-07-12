@@ -1,13 +1,11 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import styled from 'styled-components'
-import { Flex, Box, Text, Heading, Card, Skeleton } from '@koda-finance/summitswap-uikit'
+import { Flex, Box, Text, Heading, Card, Skeleton, LineChart, BarChart } from '@koda-finance/summitswap-uikit'
 import { fromUnixTime } from 'date-fns'
 import { useTranslation } from 'react-i18next'
-import LineChart from 'components/InfoCharts/LineChart'
 import TokenTable from 'components/InfoTables/TokensTable'
 import PoolTable from 'components/InfoTables/PoolsTable'
 import { formatAmount } from 'utils/formatInfoNumbers'
-import BarChart from 'components/InfoCharts/BarChart'
 import {
   useAllPoolData,
   useAllTokenData,

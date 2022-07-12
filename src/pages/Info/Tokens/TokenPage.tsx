@@ -17,6 +17,7 @@ import {
   Image,
   useMatchBreakpoints,
   Percent,
+  ChartCard,
 } from '@koda-finance/summitswap-uikit'
 import { getBscScanLink } from 'utils'
 import truncateHash from 'utils/truncateHash'
@@ -35,7 +36,6 @@ import PoolTable from 'components/InfoTables/PoolsTable'
 import TransactionTable from 'components/InfoTables/TransactionsTable'
 import { ONE_HOUR_SECONDS } from 'constants/info'
 import { useTranslation } from 'react-i18next'
-import ChartCard from 'components/InfoCharts/ChartCard'
 import { useActiveWeb3React } from 'hooks'
 import InfoPageLayout from '../index'
 

@@ -14,6 +14,7 @@ import {
   Text,
   Percent,
   useMatchBreakpoints,
+  ChartCard,
 } from '@koda-finance/summitswap-uikit'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -22,7 +23,6 @@ import { usePoolChartData, usePoolDatas, usePoolTransactions } from 'state/info/
 import styled from 'styled-components'
 import { getBscScanLink } from 'utils'
 import { CurrencyLogo, DoubleCurrencyLogo } from 'components/CurrencyLogoByAddress'
-import ChartCard from 'components/InfoCharts/ChartCard'
 import TransactionTable from 'components/InfoTables/TransactionsTable'
 import { formatAmount } from 'utils/formatInfoNumbers'
 import { useActiveWeb3React } from 'hooks'
