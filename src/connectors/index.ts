@@ -61,7 +61,7 @@ export const getNetworkConnector = (): NetworkConnector => {
     return network
   }
 
-  const defaultChainId = localStorage.get('chain-id')
+  const defaultChainId = localStorage.getItem('chain-id')
 
   // eslint-disable-next-line no-return-assign
   return (network = new NetworkConnector({
