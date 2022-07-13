@@ -6,11 +6,12 @@ import useGetPriceData from 'hooks/useGetPriceData'
 import useKodaPrice from 'hooks/useKodaPrice'
 import useKapexPrice from 'hooks/useKapexPrice'
 import { useLocation } from 'react-router-dom'
+import { NETWORK_LOGOS } from 'constants/currenyLogos'
 import config from './config'
 import login from '../../utils/login'
 
 const Menu: React.FC = (props) => {
-  const { account, activate, deactivate } = useWeb3React()
+  const { account, activate, deactivate, library } = useWeb3React()
   const { toggleTheme } = useTheme()
 
   const location = useLocation()
@@ -37,6 +38,7 @@ const Menu: React.FC = (props) => {
   return (
     <UikitMenu
       showConnectButton={showConnectButton}
+      networkLogo={NETWORK_LOGOS[library?.network.chainId]}
       links={config}
       account={account as string}
       login={(connectorId: string) => login(connectorId, activate)}
