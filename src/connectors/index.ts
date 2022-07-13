@@ -65,7 +65,7 @@ export const getNetworkConnector = (): NetworkConnector => {
 
   // eslint-disable-next-line no-return-assign
   return (network = new NetworkConnector({
-    defaultChainId: defaultChainId ? Number(defaultChainId) : 1,
+    defaultChainId: defaultChainId ? Number(defaultChainId) : CHAIN_ID,
     urls: RPC,
   }))
 }
