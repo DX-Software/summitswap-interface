@@ -70,10 +70,6 @@ export const getNetworkConnector = (): NetworkConnector => {
   }))
 }
 
-// export const network = new NetworkConnector({
-//   urls: { [CHAIN_ID]: NETWORK_URL },
-// })
-
 let networkLibrary: Web3Provider | undefined
 export function getNetworkLibrary(): Web3Provider {
   // eslint-disable-next-line no-return-assign
