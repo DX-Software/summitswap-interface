@@ -1,7 +1,8 @@
-import { ChainId, Token } from '@koda-finance/summitswap-sdk'
+import { ChainId, Token, WETH } from '@koda-finance/summitswap-sdk'
 import { Tags, TokenInfo, TokenList } from '@uniswap/token-lists'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
+import { objectMap } from 'utils/objectMap'
 import { AppState } from '../index'
 
 type TagDetails = Tags[keyof Tags]
@@ -34,10 +35,7 @@ export type TokenAddressMap = Readonly<{ [chainId in ChainId]: Readonly<{ [token
 /**
  * An empty result, useful as a default.
  */
-const EMPTY_LIST: TokenAddressMap = {
-  [ChainId.MAINNET]: {},
-  [ChainId.BSCTESTNET]: {}
-}
+const EMPTY_LIST = objectMap(ChainId, () => ({})) as TokenAddressMap
 
 const listCache: WeakMap<TokenList, TokenAddressMap> | null =
   typeof WeakMap !== 'undefined' ? new WeakMap<TokenList, TokenAddressMap>() : null
