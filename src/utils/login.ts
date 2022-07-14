@@ -16,10 +16,10 @@ export default async function login(
   } else {
     await activate(injected, async (error: Error) => {
       if (error instanceof UnsupportedChainIdError) {
-        const hasSetup = await setupNetwork()
-        if (hasSetup) {
-          activate(injected)
-        }
+        // const hasSetup = await setupNetwork()
+        // if (hasSetup) {
+        //   activate(injected)
+        // }
       } else {
         window.localStorage.removeItem(connectorLocalStorageKey)
         if (error instanceof NoEthereumProviderError || error instanceof NoBscProviderError) {
