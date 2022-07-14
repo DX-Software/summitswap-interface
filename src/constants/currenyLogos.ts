@@ -1,4 +1,4 @@
-import { ChainId } from "./chainId"
+import { ChainId } from "@koda-finance/summitswap-sdk"
 
 const AvalancheLogo = 'https://raw.githubusercontent.com/sushiswap/logos/main/token/avax.jpg'
 const BinanceCoinLogo = 'https://raw.githubusercontent.com/sushiswap/logos/main/token/bnb.jpg'

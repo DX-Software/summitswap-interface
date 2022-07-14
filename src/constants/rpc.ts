@@ -1,4 +1,4 @@
-import { ChainId } from './chainId'
+import { ChainId } from '@koda-finance/summitswap-sdk'
 
 export const RPC = {
   [ChainId.ETHEREUM]: 'https://eth-mainnet.alchemyapi.io/v2/HNQXSfiUcPjfpDBQaWYXjqlhTr1cEY9c',
