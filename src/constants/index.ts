@@ -1,11 +1,5 @@
 import { ChainId, JSBI, Percent, Token, WETH } from '@koda-finance/summitswap-sdk'
-
-export function objectMap(object, mapFn: (obj) => any) {
-  return Object.keys(object).reduce((result, key) => {
-    result[key] = mapFn(object[key])
-    return result
-  }, {})
-}
+import { objectMap } from 'utils/objectMap'
 
 export const MAX_QUERYING_BLOCK_AMOUNT = 5000
 export const NETWORK_URL = `${process.env.REACT_APP_NETWORK_URL}`
