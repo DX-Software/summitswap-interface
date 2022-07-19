@@ -1,3 +1,6 @@
+import { getTokenLogoURL } from 'components/CurrencyLogo'
+import { getTokenImageByAddress } from 'connectors'
+import { useCurrency, useToken } from 'hooks/Tokens'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { isAddress } from 'utils'
@@ -17,13 +20,11 @@ export const CurrencyLogo: React.FC<{
   address?: string
   size?: string
 }> = ({ address, size = '24px', ...rest }) => {
+  const token = useToken(address)
   const src = useMemo(() => {
-    const checksummedAddress = isAddress(address)
-    if (checksummedAddress) {
-      return `https://assets.trustwalletapp.com/blockchains/smartchain/assets/${checksummedAddress}/logo.png`
-    }
-    return null
-  }, [address])
+    if (!address) return ""
+    return token ? getTokenImageByAddress(token) : getTokenLogoURL(address)
+  }, [address, token])
 
   return <StyledLogo size={size} src={src} alt="token logo" {...rest} />
 }
