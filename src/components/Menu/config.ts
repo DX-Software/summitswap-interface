@@ -27,6 +27,11 @@ const config: MenuEntry[] = [
     href: '/cross-chain-swap',
     showConnectButton: false,
   },
+  {
+    label: 'Kick Starter',
+    icon: 'RubicIcon',
+    href: '/kickstarter',
+  }
   // {
   //  label: 'Create Token',
   //   icon: 'SunIcon',

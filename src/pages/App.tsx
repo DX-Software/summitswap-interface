@@ -21,6 +21,7 @@ import Referral from './Referral'
 import Onboarding from './Onboarding'
 import SummitCheck from './SummitCheck'
 import CustomPresale from './CustomPresale'
+import KickStarter from './KickStarter'
 import { EN, allLanguages } from '../constants/localisation/languageCodes'
 import { LanguageContext } from '../hooks/LanguageContext'
 import { TranslationsContext } from '../hooks/TranslationsContext'
@@ -173,6 +174,7 @@ export default function App() {
                     <Route exact path="/staking/withdraw" component={WithdrawPage} />
                     <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
                     <Route exact path="/presale" component={CustomPresale} />
+                    <Route exact path="/kickstarter" component={KickStarter} />
 
                     {/* Redirection: These old routes are still used in the code base */}
                     <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
