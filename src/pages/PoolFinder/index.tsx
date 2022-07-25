@@ -98,7 +98,7 @@ export default function PoolFinder() {
             </Button>
 
             <ColumnCenter>
-              <AddIcon color="textSubtle" />
+              <AddIcon color="primary" />
             </ColumnCenter>
 
             <Button
