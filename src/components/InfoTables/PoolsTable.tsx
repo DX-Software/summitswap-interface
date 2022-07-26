@@ -1,13 +1,13 @@
-import React, { useCallback, useState, useMemo, useEffect } from 'react'
-import styled from 'styled-components'
-import { Link } from 'react-router-dom'
-import { Text, Flex, Box, Skeleton, ArrowBackIcon, ArrowForwardIcon } from '@koda-finance/summitswap-uikit'
-import { formatAmount } from 'utils/formatInfoNumbers'
-import { PoolData } from 'state/info/types'
-import { ITEMS_PER_INFO_TABLE_PAGE } from 'constants/info'
+import { ArrowBackIcon, ArrowForwardIcon, Box, Flex, Skeleton, Text } from '@koda-finance/summitswap-uikit'
 import { DoubleCurrencyLogo } from 'components/CurrencyLogoByAddress'
+import { ITEMS_PER_INFO_TABLE_PAGE } from 'constants/info'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ClickableColumnHeader, TableWrapper, PageButtons, Arrow, Break } from './shared'
+import { Link } from 'react-router-dom'
+import { PoolData } from 'state/info/types'
+import styled from 'styled-components'
+import { formatAmount } from 'utils/formatInfoNumbers'
+import { Arrow, Break, ClickableColumnHeader, PageButtons, TableWrapper } from './shared'
 
 /**
  *  Columns on different layouts

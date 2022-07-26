@@ -1,14 +1,13 @@
-import React, { useRef, useState, useEffect, useMemo } from 'react'
-import styled from 'styled-components'
-import { Text, Input, Flex, Skeleton, useMatchBreakpoints } from '@koda-finance/summitswap-uikit'
-import useFetchSearchResults from 'state/info/queries/search'
+import { Flex, Input, Skeleton, Text, useMatchBreakpoints } from '@koda-finance/summitswap-uikit'
 import { CurrencyLogo, DoubleCurrencyLogo } from 'components/CurrencyLogoByAddress'
-import { formatAmount } from 'utils/formatInfoNumbers'
-import { useTranslation } from 'react-i18next'
-import useDebounce from 'hooks/useDebounce'
 import { MINIMUM_SEARCH_CHARACTERS } from 'constants/info'
-import { PoolData } from 'state/info/types'
+import useDebounce from 'hooks/useDebounce'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
+import useFetchSearchResults from 'state/info/queries/search'
+import styled from 'styled-components'
+import { formatAmount } from 'utils/formatInfoNumbers'
 
 const Container = styled.div`
   position: relative;
@@ -97,24 +96,6 @@ const HoverRowLink = styled.div`
   }
 `
 
-const OptionButton = styled.div<{ enabled: boolean }>`
-  width: fit-content;
-  padding: 4px 8px;
-  border-radius: 8px;
-  display: flex;
-  font-size: 12px;
-  font-weight: 600;
-  margin-right: 10px;
-  justify-content: center;
-  align-items: center;
-  background-color: ${({ theme, enabled }) => (enabled ? theme.colors.primary : 'transparent')};
-  color: ${({ theme, enabled }) => (enabled ? theme.card.background : theme.colors.secondary)};
-  :hover {
-    opacity: 0.6;
-    cursor: pointer;
-  }
-`
-
 const Search = () => {
   const history = useHistory()
   const { isXs, isSm } = useMatchBreakpoints()
@@ -188,9 +169,7 @@ const Search = () => {
       <>
         {isLoading && <Skeleton />}
         {noTokensFound && <Text>{t('No results')}</Text>}
-        {debouncedSearchTerm.length < MINIMUM_SEARCH_CHARACTERS && (
-          <Text>{t('Search pools or tokens')}</Text>
-        )}
+        {debouncedSearchTerm.length < MINIMUM_SEARCH_CHARACTERS && <Text>{t('Search pools or tokens')}</Text>}
       </>
     )
   }
@@ -203,9 +182,7 @@ const Search = () => {
       <>
         {isLoading && <Skeleton />}
         {noPoolsFound && <Text>{t('No results')}</Text>}
-        {debouncedSearchTerm.length < MINIMUM_SEARCH_CHARACTERS && (
-          <Text>{t('Search pools or tokens')}</Text>
-        )}
+        {debouncedSearchTerm.length < MINIMUM_SEARCH_CHARACTERS && <Text>{t('Search pools or tokens')}</Text>}
       </>
     )
   }

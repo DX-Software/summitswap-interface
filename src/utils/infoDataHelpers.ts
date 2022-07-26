@@ -1,4 +1,4 @@
-import { TOTAL_FEE, LP_HOLDERS_FEE, WEEKS_IN_YEAR } from 'constants/info'
+import { LP_HOLDERS_FEE, TOTAL_FEE, WEEKS_IN_YEAR } from 'constants/info'
 
 /**
  * Get increase/decrease of value compared to the previous value (e.g. 24h volume compared to 24h volume the day before )
@@ -38,7 +38,7 @@ export const getPercentChange = (valueNow?: number, valueBefore?: number): numbe
 export const getChangeForPeriod = (
   valueNow?: number,
   valueOnePeriodAgo?: number,
-  valueTwoPeriodsAgo?: number,
+  valueTwoPeriodsAgo?: number
 ): [number, number] => {
   const currentPeriodAmount = getAmountChange(valueNow, valueOnePeriodAgo)
   const previousPeriodAmount = getAmountChange(valueOnePeriodAgo, valueTwoPeriodsAgo)

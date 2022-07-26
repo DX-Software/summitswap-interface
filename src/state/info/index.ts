@@ -1,21 +1,21 @@
 /* eslint-disable no-param-reassign */
 import { createReducer } from '@reduxjs/toolkit'
-import { InfoState } from './types'
 import {
-  updateProtocolData,
-  updateProtocolChartData,
-  updateProtocolTransactions,
-  updatePoolData,
   addPoolKeys,
-  updatePoolChartData,
-  updatePoolTransactions,
-  updateTokenData,
   addTokenKeys,
   addTokenPoolAddresses,
+  updatePoolChartData,
+  updatePoolData,
+  updatePoolTransactions,
+  updateProtocolChartData,
+  updateProtocolData,
+  updateProtocolTransactions,
   updateTokenChartData,
+  updateTokenData,
   updateTokenPriceData,
   updateTokenTransactions,
 } from './actions'
+import { InfoState } from './types'
 
 const initialState: InfoState = {
   protocol: {},

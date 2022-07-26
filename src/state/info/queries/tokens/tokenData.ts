@@ -1,10 +1,10 @@
 /* eslint-disable no-param-reassign */
 import { gql } from 'graphql-request'
+import { useBlocksFromTimestamps } from 'hooks/useBlocksFromTimestamps'
+import { useBnbPrices } from 'hooks/useBnbPrices'
 import { useEffect, useState } from 'react'
 import { TokenData } from 'state/info/types'
 import { infoClient } from 'utils/graphql'
-import { useBlocksFromTimestamps } from 'hooks/useBlocksFromTimestamps'
-import { useBnbPrices } from 'hooks/useBnbPrices'
 import { getAmountChange, getChangeForPeriod, getPercentChange } from 'utils/infoDataHelpers'
 import { getDeltaTimestamps } from 'utils/infoQueryHelpers'
 
@@ -65,7 +65,7 @@ const fetchTokenData = async (
   block48h: number,
   block7d: number,
   block14d: number,
-  tokenAddresses: string[],
+  tokenAddresses: string[]
 ) => {
   try {
     const query = gql`
@@ -128,7 +128,7 @@ const useFetchedTokenDatas = (tokenAddresses: string[]): TokenDatas => {
         block48h.number,
         block7d.number,
         block14d.number,
-        tokenAddresses,
+        tokenAddresses
       )
       if (error) {
         setFetchState({ error: true })
@@ -150,12 +150,12 @@ const useFetchedTokenDatas = (tokenAddresses: string[]): TokenDatas => {
           const [volumeUSD, volumeUSDChange] = getChangeForPeriod(
             current?.tradeVolumeUSD,
             oneDay?.tradeVolumeUSD,
-            twoDays?.tradeVolumeUSD,
+            twoDays?.tradeVolumeUSD
           )
           const [volumeUSDWeek] = getChangeForPeriod(
             current?.tradeVolumeUSD,
             week?.tradeVolumeUSD,
-            twoWeeks?.tradeVolumeUSD,
+            twoWeeks?.tradeVolumeUSD
           )
           const liquidityUSD = current ? current.totalLiquidity * current.derivedUSD : 0
           const liquidityUSDOneDayAgo = oneDay ? oneDay.totalLiquidity * oneDay.derivedUSD : 0
@@ -165,7 +165,7 @@ const useFetchedTokenDatas = (tokenAddresses: string[]): TokenDatas => {
           const currentBnbPrice = bnbPrices?.current ?? 0
           const oneDayBnbPrices = bnbPrices?.oneDay ?? 0
           const weekBnbPrice = bnbPrices?.week ?? 0
-          
+
           const priceUSD = current ? current.derivedBNB * currentBnbPrice : 0
           const priceUSDOneDay = oneDay ? oneDay.derivedBNB * oneDayBnbPrices : 0
           const priceUSDWeek = week ? week.derivedBNB * weekBnbPrice : 0

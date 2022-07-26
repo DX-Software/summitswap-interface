@@ -1,9 +1,8 @@
 import { getTokenLogoURL } from 'components/CurrencyLogo'
 import { getTokenImageByAddress } from 'connectors'
-import { useCurrency, useToken } from 'hooks/Tokens'
+import { useToken } from 'hooks/Tokens'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
-import { isAddress } from 'utils'
 import LogoLoader from './LogoLoader'
 
 const StyledLogo = styled(LogoLoader)<{ size: string }>`
@@ -22,7 +21,7 @@ export const CurrencyLogo: React.FC<{
 }> = ({ address, size = '24px', ...rest }) => {
   const token = useToken(address)
   const src = useMemo(() => {
-    if (!address) return ""
+    if (!address) return ''
     return token ? getTokenImageByAddress(token) : getTokenLogoURL(address)
   }, [address, token])
 

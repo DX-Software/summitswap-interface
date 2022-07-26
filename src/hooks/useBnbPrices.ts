@@ -46,7 +46,7 @@ interface PricesResponse {
 const fetchBnbPrices = async (
   block24: number,
   block48: number,
-  blockWeek: number,
+  blockWeek: number
 ): Promise<{ bnbPrices: BnbPrices | undefined; error: boolean }> => {
   try {
     const data = await infoClient.request<PricesResponse>(BNB_PRICES, {

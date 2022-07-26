@@ -1,8 +1,8 @@
 import React, { Box, ButtonMenu, ButtonMenuItem, Flex } from '@koda-finance/summitswap-uikit'
-import { Link, useLocation } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 import Search from 'components/InfoSearch'
+import { useTranslation } from 'react-i18next'
+import { Link, useLocation } from 'react-router-dom'
+import styled from 'styled-components'
 
 const NavWrapper = styled(Flex)`
   justify-content: space-between;

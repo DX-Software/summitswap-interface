@@ -1,42 +1,42 @@
 /* eslint-disable no-nested-ternary */
-import React, { useMemo } from 'react'
-import { Link } from 'react-router-dom'
-import { Duration } from 'date-fns'
-import styled from 'styled-components'
 import {
-  Text,
   Box,
-  Heading,
+  Breadcrumbs,
   Button,
   Card,
+  ChartCard,
   Flex,
-  Breadcrumbs,
+  Heading,
+  Image,
   Link as UIKitLink,
   LinkExternal,
-  Spinner,
-  Image,
-  useMatchBreakpoints,
   Percent,
-  ChartCard,
+  Spinner,
+  Text,
+  useMatchBreakpoints,
 } from '@koda-finance/summitswap-uikit'
-import { getBscScanLink } from 'utils'
-import truncateHash from 'utils/truncateHash'
-import useCMCLink from 'hooks/useCMCLink'
 import { CurrencyLogo } from 'components/CurrencyLogoByAddress'
-import { formatAmount } from 'utils/formatInfoNumbers'
-import {
-  usePoolDatas,
-  useTokenData,
-  usePoolsForToken,
-  useTokenChartData,
-  useTokenPriceData,
-  useTokenTransactions,
-} from 'state/info/hooks'
 import PoolTable from 'components/InfoTables/PoolsTable'
 import TransactionTable from 'components/InfoTables/TransactionsTable'
 import { ONE_HOUR_SECONDS } from 'constants/info'
-import { useTranslation } from 'react-i18next'
+import { Duration } from 'date-fns'
 import { useActiveWeb3React } from 'hooks'
+import useCMCLink from 'hooks/useCMCLink'
+import React, { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
+import {
+  usePoolDatas,
+  usePoolsForToken,
+  useTokenChartData,
+  useTokenData,
+  useTokenPriceData,
+  useTokenTransactions,
+} from 'state/info/hooks'
+import styled from 'styled-components'
+import { getBscScanLink } from 'utils'
+import { formatAmount } from 'utils/formatInfoNumbers'
+import truncateHash from 'utils/truncateHash'
 import InfoPageLayout from '../index'
 
 const ContentLayout = styled.div`

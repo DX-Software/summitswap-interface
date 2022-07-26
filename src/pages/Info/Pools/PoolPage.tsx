@@ -6,26 +6,26 @@ import {
   ButtonMenu,
   ButtonMenuItem,
   Card,
+  ChartCard,
   Flex,
   Heading,
   HelpIcon,
   LinkExternal,
+  Percent,
   Spinner,
   Text,
-  Percent,
   useMatchBreakpoints,
-  ChartCard,
 } from '@koda-finance/summitswap-uikit'
-import { Link } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
+import { CurrencyLogo, DoubleCurrencyLogo } from 'components/CurrencyLogoByAddress'
+import TransactionTable from 'components/InfoTables/TransactionsTable'
+import { useActiveWeb3React } from 'hooks'
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import { usePoolChartData, usePoolDatas, usePoolTransactions } from 'state/info/hooks'
 import styled from 'styled-components'
 import { getBscScanLink } from 'utils'
-import { CurrencyLogo, DoubleCurrencyLogo } from 'components/CurrencyLogoByAddress'
-import TransactionTable from 'components/InfoTables/TransactionsTable'
 import { formatAmount } from 'utils/formatInfoNumbers'
-import { useActiveWeb3React } from 'hooks'
 import InfoPageLayout from '../index'
 
 const ContentLayout = styled.div`
@@ -216,9 +216,7 @@ export default function PoolPage({
                     <ButtonMenuItem width="100%" color="primary">
                       {t('24H')}
                     </ButtonMenuItem>
-                    <ButtonMenuItem width="100%">
-                      {t('7D')}
-                    </ButtonMenuItem>
+                    <ButtonMenuItem width="100%">{t('7D')}</ButtonMenuItem>
                   </ButtonMenu>
                   <Flex mt="24px">
                     <Flex flex="1" flexDirection="column">
@@ -241,8 +239,8 @@ export default function PoolPage({
                         {/* eslint-disable-next-line */}
                         {t('out of ${{ totalFees }} total fees', {
                           totalFees: showWeeklyData
-                          ? formatAmount(poolData.totalFees7d)
-                          : formatAmount(poolData.totalFees24h),
+                            ? formatAmount(poolData.totalFees7d)
+                            : formatAmount(poolData.totalFees24h),
                         })}
                       </Text>
                     </Flex>

@@ -1,12 +1,12 @@
-import React, { useMemo, useRef, useEffect } from 'react'
-import styled from 'styled-components'
-import { Text, Percent, Flex, Box, Card } from "@koda-finance/summitswap-uikit"
-import { useAllTokenData } from 'state/info/hooks'
-import { TokenData } from 'state/info/types'
+import { Box, Card, Flex, Percent, Text } from '@koda-finance/summitswap-uikit'
 import { CurrencyLogo } from 'components/CurrencyLogoByAddress'
-import { formatAmount } from 'utils/formatInfoNumbers'
+import React, { useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
+import { useAllTokenData } from 'state/info/hooks'
+import { TokenData } from 'state/info/types'
+import styled from 'styled-components'
+import { formatAmount } from 'utils/formatInfoNumbers'
 
 const CardWrapper = styled(Link)`
   display: inline-block;
@@ -84,7 +84,7 @@ const TopTokenMovers: React.FC = () => {
         }
         increaseRef.current.scrollTo(
           moveLeftRef.current ? increaseRef.current.scrollLeft + 1 : increaseRef.current.scrollLeft - 1,
-          0,
+          0
         )
       }
     }, 30)
@@ -105,7 +105,7 @@ const TopTokenMovers: React.FC = () => {
       </Text>
       <ScrollableRow ref={increaseRef}>
         {topPriceIncrease.map((entry) =>
-          entry.data ? <DataCard key={`top-card-token-${entry.data?.address}`} tokenData={entry.data} /> : null,
+          entry.data ? <DataCard key={`top-card-token-${entry.data?.address}`} tokenData={entry.data} /> : null
         )}
       </ScrollableRow>
     </Card>

@@ -1,12 +1,21 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react'
-import styled from 'styled-components'
-import { Text, Percent, Flex, Box, Skeleton, useMatchBreakpoints, ArrowBackIcon, ArrowForwardIcon } from "@koda-finance/summitswap-uikit"
-import { TokenData } from 'state/info/types'
-import { Link } from 'react-router-dom'
+import {
+  ArrowBackIcon,
+  ArrowForwardIcon,
+  Box,
+  Flex,
+  Percent,
+  Skeleton,
+  Text,
+  useMatchBreakpoints,
+} from '@koda-finance/summitswap-uikit'
 import { CurrencyLogo } from 'components/CurrencyLogoByAddress'
-import { formatAmount } from 'utils/formatInfoNumbers'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ClickableColumnHeader, TableWrapper, PageButtons, Arrow, Break } from './shared'
+import { Link } from 'react-router-dom'
+import { TokenData } from 'state/info/types'
+import styled from 'styled-components'
+import { formatAmount } from 'utils/formatInfoNumbers'
+import { Arrow, Break, ClickableColumnHeader, PageButtons, TableWrapper } from './shared'
 
 /**
  *  Columns on different layouts
@@ -166,7 +175,7 @@ const TokenTable: React.FC<{
       setSortField(newField)
       setSortDirection(sortField !== newField ? true : !sortDirection)
     },
-    [sortDirection, sortField],
+    [sortDirection, sortField]
   )
 
   const arrow = useCallback(
@@ -174,7 +183,7 @@ const TokenTable: React.FC<{
       const directionArrow = !sortDirection ? '↑' : '↓'
       return sortField === field ? directionArrow : ''
     },
-    [sortDirection, sortField],
+    [sortDirection, sortField]
   )
 
   if (!tokenDatas) {

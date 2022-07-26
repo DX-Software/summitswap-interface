@@ -1,5 +1,5 @@
-import { GraphQLClient } from 'graphql-request'
 import { BIT_QUERY_ENDPOINT, INFO_CLIENT } from 'constants/graphs'
+import { GraphQLClient } from 'graphql-request'
 
 // Extra headers
 // Mostly for dev environment

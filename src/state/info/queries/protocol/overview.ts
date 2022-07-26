@@ -1,8 +1,8 @@
 import { gql } from 'graphql-request'
+import { useBlocksFromTimestamps } from 'hooks/useBlocksFromTimestamps'
 import { useEffect, useState } from 'react'
 import { ProtocolData } from 'state/info/types'
 import { infoClient } from 'utils/graphql'
-import { useBlocksFromTimestamps } from 'hooks/useBlocksFromTimestamps'
 import { getChangeForPeriod, getPercentChange } from 'utils/infoDataHelpers'
 import { getDeltaTimestamps } from 'utils/infoQueryHelpers'
 
@@ -38,11 +38,15 @@ const getOverviewData = async (block?: number): Promise<{ data?: OverviewRespons
   }
 }
 
-const formatSummitFactoryResponse = (rawSummitFactory?: SummitFactory): {
-  totalTransactions: number,
-  totalVolumeUSD: number,
-  totalLiquidityUSD: number,
-} | undefined => {
+const formatSummitFactoryResponse = (
+  rawSummitFactory?: SummitFactory
+):
+  | {
+      totalTransactions: number
+      totalVolumeUSD: number
+      totalLiquidityUSD: number
+    }
+  | undefined => {
   if (rawSummitFactory) {
     return {
       totalTransactions: parseFloat(rawSummitFactory.totalTransactions),
@@ -84,14 +88,14 @@ const useFetchProtocolData = (): ProtocolFetchState => {
         const [volumeUSD, volumeUSDChange] = getChangeForPeriod(
           overviewData!.totalVolumeUSD,
           overviewData24!.totalVolumeUSD,
-          overviewData48!.totalVolumeUSD,
+          overviewData48!.totalVolumeUSD
         )
         const liquidityUSDChange = getPercentChange(overviewData!.totalLiquidityUSD, overviewData24!.totalLiquidityUSD)
         // 24H transactions
         const [txCount, txCountChange] = getChangeForPeriod(
           overviewData!.totalTransactions,
           overviewData24!.totalTransactions,
-          overviewData48!.totalTransactions,
+          overviewData48!.totalTransactions
         )
         const protocolData: ProtocolData = {
           volumeUSD,

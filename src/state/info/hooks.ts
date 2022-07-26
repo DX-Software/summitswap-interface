@@ -1,31 +1,31 @@
-import { useCallback, useEffect, useState, useMemo } from 'react'
+import { Duration, getUnixTime, startOfHour, sub } from 'date-fns'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getUnixTime, startOfHour, Duration, sub } from 'date-fns'
-import { AppState, AppDispatch } from 'state'
-import { isAddress } from 'utils'
-import { Transaction } from 'state/info/types'
+import { AppDispatch, AppState } from 'state'
 import fetchPoolChartData from 'state/info/queries/pools/chartData'
 import fetchPoolTransactions from 'state/info/queries/pools/transactions'
 import fetchTokenChartData from 'state/info/queries/tokens/chartData'
-import fetchTokenTransactions from 'state/info/queries/tokens/transactions'
-import fetchTokenPriceData from 'state/info/queries/tokens/priceData'
 import fetchPoolsForToken from 'state/info/queries/tokens/poolsForToken'
+import fetchTokenPriceData from 'state/info/queries/tokens/priceData'
+import fetchTokenTransactions from 'state/info/queries/tokens/transactions'
+import { Transaction } from 'state/info/types'
+import { isAddress } from 'utils'
 import {
-  updateProtocolData,
-  updateProtocolChartData,
-  updateProtocolTransactions,
-  updatePoolData,
   addPoolKeys,
-  updatePoolChartData,
-  updatePoolTransactions,
-  updateTokenData,
   addTokenKeys,
   addTokenPoolAddresses,
+  updatePoolChartData,
+  updatePoolData,
+  updatePoolTransactions,
+  updateProtocolChartData,
+  updateProtocolData,
+  updateProtocolTransactions,
   updateTokenChartData,
+  updateTokenData,
   updateTokenPriceData,
   updateTokenTransactions,
 } from './actions'
-import { ProtocolData, PoolData, TokenData, ChartEntry, PriceChartEntry } from './types'
+import { ChartEntry, PoolData, PriceChartEntry, ProtocolData, TokenData } from './types'
 
 // Protocol hooks
 
@@ -35,7 +35,7 @@ export const useProtocolData = (): [ProtocolData | undefined, (protocolData: Pro
   const dispatch = useDispatch<AppDispatch>()
   const setProtocolData: (protocolData: ProtocolData) => void = useCallback(
     (data: ProtocolData) => dispatch(updateProtocolData({ protocolData: data })),
-    [dispatch],
+    [dispatch]
   )
 
   return [protocolData, setProtocolData]
@@ -46,7 +46,7 @@ export const useProtocolChartData = (): [ChartEntry[] | undefined, (chartData: C
   const dispatch = useDispatch<AppDispatch>()
   const setChartData: (chartData: ChartEntry[]) => void = useCallback(
     (data: ChartEntry[]) => dispatch(updateProtocolChartData({ chartData: data })),
-    [dispatch],
+    [dispatch]
   )
   return [chartData, setChartData]
 }
@@ -56,7 +56,7 @@ export const useProtocolTransactions = (): [Transaction[] | undefined, (transact
   const dispatch = useDispatch<AppDispatch>()
   const setTransactions: (transactions: Transaction[]) => void = useCallback(
     (transactionsData: Transaction[]) => dispatch(updateProtocolTransactions({ transactions: transactionsData })),
-    [dispatch],
+    [dispatch]
   )
   return [transactions, setTransactions]
 }
@@ -166,7 +166,7 @@ export const useUpdateTokenData = (): ((tokens: TokenData[]) => void) => {
     (tokens: TokenData[]) => {
       dispatch(updateTokenData({ tokens }))
     },
-    [dispatch],
+    [dispatch]
   )
 }
 
@@ -267,7 +267,7 @@ export const useTokenChartData = (address: string): ChartEntry[] | undefined => 
 export const useTokenPriceData = (
   address: string,
   interval: number,
-  timeWindow: Duration,
+  timeWindow: Duration
 ): PriceChartEntry[] | undefined => {
   const dispatch = useDispatch<AppDispatch>()
   const token = useSelector((state: AppState) => state.info.tokens.byAddress[address])
@@ -289,7 +289,7 @@ export const useTokenPriceData = (
             secondsInterval: interval,
             priceData: data,
             oldestFetchedTimestamp: startTimestamp,
-          }),
+          })
         )
       }
       if (fetchingError) {

@@ -1,31 +1,30 @@
 import { Currency, ETHER, Token } from '@koda-finance/summitswap-sdk'
+import { CloseIcon, Text } from '@koda-finance/summitswap-uikit'
+import CustomLightSpinner from 'components/CustomLightSpinner'
 import React, { KeyboardEvent, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { Text, CloseIcon } from '@koda-finance/summitswap-uikit'
-import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
+import { useSelector } from 'react-redux'
+import AutoSizer from 'react-virtualized-auto-sizer'
 import { VariableSizeList } from 'react-window'
 import styled, { ThemeContext } from 'styled-components'
-import AutoSizer from 'react-virtualized-auto-sizer'
-import CustomLightSpinner from 'components/CustomLightSpinner'
 import { useActiveWeb3React } from '../../hooks'
-import { AppState } from '../../state'
 import { useAllTokens, useToken } from '../../hooks/Tokens'
+import { AppState } from '../../state'
 import { useSelectedListInfo } from '../../state/lists/hooks'
-import { LinkStyledButton } from '../Shared'
 import { isAddress } from '../../utils'
+import { TranslateString } from '../../utils/translateTextHelpers'
 import Card from '../Card'
 import Column from '../Column'
 import ListLogo from '../ListLogo'
 import QuestionHelper from '../QuestionHelper'
 import Row, { RowBetween } from '../Row'
+import { LinkStyledButton } from '../Shared'
+import TranslatedText from '../TranslatedText'
 import CommonBases from './CommonBases'
 import CurrencyList from './CurrencyList'
 import { filterTokens } from './filtering'
 import { useTokenComparator } from './sorting'
 import { PaddedColumn, SearchInput, Separator } from './styleds'
-import TranslatedText from '../TranslatedText'
-import { TranslateString } from '../../utils/translateTextHelpers'
-
 
 interface CurrencySearchProps {
   isOpen: boolean
@@ -43,7 +42,7 @@ interface CurrencySearchProps {
 }
 
 const TokenAutoSizer = styled(AutoSizer)`
-  >div {
+  > div {
     &::-webkit-scrollbar {
       width: 8px;
     }
@@ -70,7 +69,7 @@ export function CurrencySearch({
   isOpen,
   onChangeList,
   showUnknownTokens,
-  showOnlyUnknownTokens
+  showOnlyUnknownTokens,
 }: CurrencySearchProps) {
   const { t } = useTranslation()
   const { chainId } = useActiveWeb3React()
@@ -116,9 +115,7 @@ export function CurrencySearch({
       // sort any exact symbol matches first
       ...sorted.filter((token) => token.symbol?.toLowerCase() === symbolMatch[0]),
       ...sorted.filter((token) => token.symbol?.toLowerCase() !== symbolMatch[0]),
-    ].sort((a, b) =>
-      b.priority - a.priority
-    )
+    ].sort((a, b) => b.priority - a.priority)
   }, [filteredTokens, searchQuery, searchToken, tokenComparator])
 
   const handleCurrencySelect = useCallback(
@@ -182,7 +179,7 @@ export function CurrencySearch({
     <Column style={{ width: '100%', flex: '1 1' }}>
       <PaddedColumn gap="14px">
         <RowBetween style={{ borderBottom: '1px solid #0d1b24', paddingBottom: 10 }}>
-          <Text fontWeight='800' fontSize='26px' color='sidebarColor'>
+          <Text fontWeight="800" fontSize="26px" color="sidebarColor">
             <TranslatedText translationId={82}>Select a token</TranslatedText>
             <QuestionHelper
               text={TranslateString(
@@ -191,7 +188,7 @@ export function CurrencySearch({
               )}
             />
           </Text>
-          <CloseIcon color='sidebarColor' width='24px' height='24px' onClick={onDismiss} cursor='pointer' />
+          <CloseIcon color="sidebarColor" width="24px" height="24px" onClick={onDismiss} cursor="pointer" />
         </RowBetween>
         <SearchInput
           type="text"
@@ -206,7 +203,7 @@ export function CurrencySearch({
           <CommonBases chainId={chainId} onSelect={handleCurrencySelect} selectedCurrency={selectedCurrency} />
         )}
         <RowBetween>
-          <Text color='sidebarColor' fontWeight='600' fontSize="16px">
+          <Text color="sidebarColor" fontWeight="600" fontSize="16px">
             <TranslatedText translationId={126}>Token name</TranslatedText>
           </Text>
           {/* <SortButton ascending={invertSearchOrder} toggleSortOrder={() => setInvertSearchOrder((iso) => !iso)} /> */}
@@ -214,7 +211,7 @@ export function CurrencySearch({
       </PaddedColumn>
       {isLoading ? (
         <CustomLightSpinner src="/images/blue-loader.svg" alt="loader" size="90px" />
-      ): (
+      ) : (
         <div style={{ flex: '1', padding: '0px 40px 40px 40px' }}>
           <TokenAutoSizer disableWidth>
             {({ height }) => (

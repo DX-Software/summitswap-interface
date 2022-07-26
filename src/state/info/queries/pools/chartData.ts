@@ -1,9 +1,9 @@
-import { gql } from 'graphql-request'
-import { infoClient } from 'utils/graphql'
-import { ChartEntry } from 'state/info/types'
 import { PCS_V2_START } from 'constants/info'
+import { gql } from 'graphql-request'
+import { ChartEntry } from 'state/info/types'
+import { infoClient } from 'utils/graphql'
+import { fetchChartData, mapPairDayData } from '../helpers'
 import { PairDayDatasResponse } from '../types'
-import { mapPairDayData, fetchChartData } from '../helpers'
 
 const getPoolChartData = async (skip: number, address: string): Promise<{ data?: ChartEntry[]; error: boolean }> => {
   try {

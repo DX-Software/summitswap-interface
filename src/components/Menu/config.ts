@@ -28,9 +28,9 @@ const config: MenuEntry[] = [
     showConnectButton: false,
   },
   {
-    label: "Info",
-    icon: "InfoIcon",
-    href: "/info",
+    label: 'Info',
+    icon: 'InfoIcon',
+    href: '/info',
   },
   // {
   //  label: 'Create Token',

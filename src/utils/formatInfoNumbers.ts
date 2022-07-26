@@ -26,7 +26,7 @@ export const formatAmount = (
     displayThreshold?: number
     tokenPrecision?: boolean
     isInteger?: boolean
-  },
+  }
 ) => {
   const { notation = 'compact', displayThreshold, tokenPrecision, isInteger } = options || { notation: 'compact' }
   if (amount === 0) {

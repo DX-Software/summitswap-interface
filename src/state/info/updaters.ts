@@ -1,21 +1,21 @@
 import React, { useEffect, useMemo } from 'react'
-import useFetchProtocolData from 'state/info/queries/protocol/overview'
-import useFetchGlobalChartData from 'state/info/queries/protocol/chart'
-import fetchTopTransactions from 'state/info/queries/protocol/transactions'
-import useTopPoolAddresses from 'state/info/queries/pools/topPools'
 import usePoolDatas from 'state/info/queries/pools/poolData'
+import useTopPoolAddresses from 'state/info/queries/pools/topPools'
+import useFetchGlobalChartData from 'state/info/queries/protocol/chart'
+import useFetchProtocolData from 'state/info/queries/protocol/overview'
+import fetchTopTransactions from 'state/info/queries/protocol/transactions'
 import useFetchedTokenDatas from 'state/info/queries/tokens/tokenData'
 import useTopTokenAddresses from 'state/info/queries/tokens/topTokens'
 import {
-  useProtocolData,
+  useAddPoolKeys,
+  useAddTokenKeys,
+  useAllPoolData,
+  useAllTokenData,
   useProtocolChartData,
+  useProtocolData,
   useProtocolTransactions,
   useUpdatePoolData,
-  useAllPoolData,
-  useAddPoolKeys,
-  useAllTokenData,
   useUpdateTokenData,
-  useAddTokenKeys,
 } from './hooks'
 
 export const ProtocolUpdater: React.FC = () => {

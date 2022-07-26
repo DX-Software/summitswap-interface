@@ -33,7 +33,7 @@ import expandMore from 'img/expandMore.svg'
 import useGetTokenData from 'hooks/useGetTokenData'
 import useGetEthPrice from 'hooks/useGetEthPrice'
 import AppBody from '../AppBody'
-import { DEFAULT_SLIPPAGE_TOLERANCE, KODA } from '../../constants'
+import { DEFAULT_SLIPPAGE_TOLERANCE } from '../../constants'
 
 interface IProps {
   isLanding?: boolean

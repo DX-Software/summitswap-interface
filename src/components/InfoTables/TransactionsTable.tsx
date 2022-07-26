@@ -1,17 +1,26 @@
 // TODO PCS refactor ternaries
 /* eslint-disable no-nested-ternary */
-import React, { useCallback, useState, useMemo, useEffect } from 'react'
-import styled from 'styled-components'
-import { formatDistanceToNowStrict } from 'date-fns'
-import { Text, Flex, Box, Radio, Skeleton, LinkExternal, ArrowForwardIcon, ArrowBackIcon } from "@koda-finance/summitswap-uikit"
-import { formatAmount } from 'utils/formatInfoNumbers'
-import { getBscScanLink } from 'utils'
-import truncateHash from 'utils/truncateHash'
-import { Transaction, TransactionType } from 'state/info/types'
+import {
+  ArrowBackIcon,
+  ArrowForwardIcon,
+  Box,
+  Flex,
+  LinkExternal,
+  Radio,
+  Skeleton,
+  Text,
+} from '@koda-finance/summitswap-uikit'
 import { ITEMS_PER_INFO_TABLE_PAGE } from 'constants/info'
-import { useTranslation } from 'react-i18next'
+import { formatDistanceToNowStrict } from 'date-fns'
 import { useActiveWeb3React } from 'hooks'
-import { ClickableColumnHeader, TableWrapper, PageButtons, Arrow, Break } from './shared'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Transaction, TransactionType } from 'state/info/types'
+import styled from 'styled-components'
+import { getBscScanLink } from 'utils'
+import { formatAmount } from 'utils/formatInfoNumbers'
+import truncateHash from 'utils/truncateHash'
+import { Arrow, Break, ClickableColumnHeader, PageButtons, TableWrapper } from './shared'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -107,10 +116,16 @@ const DataRow: React.FC<{ transaction: Transaction }> = ({ transaction }) => {
         <LinkExternal href={getBscScanLink(chainId, transaction.hash, 'transaction')}>
           <Text>
             {transaction.type === TransactionType.MINT
-              ? t('Add {{ token0 }} and {{ token1 }}', { token0: transaction.token0Symbol, token1: transaction.token1Symbol })
+              ? t('Add {{ token0 }} and {{ token1 }}', {
+                  token0: transaction.token0Symbol,
+                  token1: transaction.token1Symbol,
+                })
               : transaction.type === TransactionType.SWAP
               ? t('Swap {{ token0 }} for {{ token1 }}', { token0: inputTokenSymbol, token1: outputTokenSymbol })
-              : t('Remove {{ token0 }} and {{ token1 }}', { token0: transaction.token0Symbol, token1: transaction.token1Symbol })}
+              : t('Remove {{ token0 }} and {{ token1 }}', {
+                  token0: transaction.token0Symbol,
+                  token1: transaction.token1Symbol,
+                })}
           </Text>
         </LinkExternal>
       )}
@@ -188,7 +203,7 @@ const TransactionTable: React.FC<{
         setPage(1)
       }
     },
-    [txFilter],
+    [txFilter]
   )
 
   const handleSort = useCallback(
@@ -196,7 +211,7 @@ const TransactionTable: React.FC<{
       setSortField(newField)
       setSortDirection(sortField !== newField ? true : !sortDirection)
     },
-    [sortDirection, sortField],
+    [sortDirection, sortField]
   )
 
   const arrow = useCallback(
@@ -204,7 +219,7 @@ const TransactionTable: React.FC<{
       const directionArrow = !sortDirection ? '↑' : '↓'
       return sortField === field ? directionArrow : ''
     },
-    [sortDirection, sortField],
+    [sortDirection, sortField]
   )
 
   return (

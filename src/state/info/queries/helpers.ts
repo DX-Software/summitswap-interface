@@ -2,7 +2,7 @@ import { ONE_DAY_UNIX, PCS_V2_START } from 'constants/info'
 import { getUnixTime } from 'date-fns'
 import { TransactionType } from 'state/info/types'
 import { ChartEntry } from '../types'
-import { MintResponse, SwapResponse, BurnResponse, TokenDayData, PairDayData, SummitDayData } from './types'
+import { BurnResponse, MintResponse, PairDayData, SummitDayData, SwapResponse, TokenDayData } from './types'
 
 export const mapMints = (mint: MintResponse) => {
   return {
