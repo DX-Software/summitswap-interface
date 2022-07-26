@@ -42,39 +42,6 @@ export const GLOBAL_DATA = (block) => {
   return gql(queryString)
 }
 
-
-const PairFields = `
-  fragment PairFields on Pair {
-    id
-    txCount
-    token0 {
-      id
-      symbol
-      name
-      totalLiquidity
-      derivedBNB
-    }
-    token1 {
-      id
-      symbol
-      name
-      totalLiquidity
-      derivedBNB
-    }
-    reserve0
-    reserve1
-    reserveUSD
-    totalSupply
-    trackedReserveETH
-    reserveETH
-    volumeUSD
-    untrackedVolumeUSD
-    token0Price
-    token1Price
-    createdAtTimestamp
-  }
-`
-
 const TokenFields = `
   fragment TokenFields on Token {
     id
