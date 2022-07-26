@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, JSBI, Token, Trade } from '@koda-finance/summitswap-sdk'
+import { Currency, CurrencyAmount, JSBI, Token, Trade, WETH } from '@koda-finance/summitswap-sdk'
 import { Button, CardBody, IconButton, Text } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
 import AddressInputPanel from 'components/AddressInputPanel'
@@ -19,8 +19,6 @@ import SyrupWarningModal from 'components/SyrupWarningModal'
 import TokenWarningModal from 'components/TokenWarningModal'
 import { useAllTokens, useCurrency } from 'hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from 'hooks/useApproveCallback'
-import { useBnbPrices } from 'hooks/useBnbPrices'
-import useGetTokenData from 'hooks/useGetTokenData'
 import { useSwapCallback } from 'hooks/useSwapCallback'
 import useWrapCallback, { WrapType } from 'hooks/useWrapCallback'
 import expandMore from 'img/expandMore.svg'
@@ -32,7 +30,7 @@ import { useExpertModeManager, useUserDeadline, useUserSlippageTolerance } from 
 import { ThemeContext } from 'styled-components'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from 'utils/prices'
-import { DEFAULT_SLIPPAGE_TOLERANCE } from '../../constants'
+import { CHAIN_ID, DEFAULT_SLIPPAGE_TOLERANCE } from '../../constants'
 import AppBody from '../AppBody'
 
 interface IProps {
@@ -92,34 +90,12 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
     ? {
         [Field.INPUT]: parsedAmount,
         [Field.OUTPUT]: parsedAmount,
+
       }
     : {
         [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
         [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
       }
-  const bnbPrices = useBnbPrices()
-  const output = useGetTokenData()
-
-  const priceOut = useMemo(() => {
-    const res: any = output.find((el: any) => {
-      const tmp: any = currencies[Field.OUTPUT]
-      return el.id === tmp?.address?.toLowerCase()
-    })
-    if (res) {
-      return `= ~${(res.derivedETH * Number(bnbPrices?.current || 0)).toFixed(2)}`
-    }
-    return ''
-  }, [output, currencies, bnbPrices])
-  const priceIn = useMemo(() => {
-    const res: any = output.find((el: any) => {
-      const tmp: any = currencies[Field.INPUT]
-      return el.id === tmp?.address?.toLowerCase()
-    })
-    if (res) {
-      return `= ~${(res.derivedETH * Number(bnbPrices?.current || 0)).toFixed(2)}`
-    }
-    return ''
-  }, [output, currencies, bnbPrices])
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
   const isValid = !swapInputError
@@ -377,7 +353,6 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
                 otherCurrency={currencies[Field.OUTPUT]}
                 id="swap-currency-input"
                 isSwap
-                price={priceIn}
               />
               <AutoColumn justify="space-between">
                 <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
@@ -411,7 +386,6 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
                 otherCurrency={currencies[Field.INPUT]}
                 id="swap-currency-output"
                 isSwap
-                price={priceOut}
               />
 
               {recipient !== null && !showWrap ? (
