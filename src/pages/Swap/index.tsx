@@ -1,39 +1,39 @@
 import { Currency, CurrencyAmount, JSBI, Token, Trade } from '@koda-finance/summitswap-sdk'
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { ArrowDown } from 'react-feather'
-import { CardBody, Button, IconButton, Text } from '@koda-finance/summitswap-uikit'
-import { ThemeContext } from 'styled-components'
+import { Button, CardBody, IconButton, Text } from '@koda-finance/summitswap-uikit'
+import { useWeb3React } from '@web3-react/core'
 import AddressInputPanel from 'components/AddressInputPanel'
 import { GreyCard } from 'components/Card'
-import { AutoColumn } from 'components/Column'
-import ConfirmSwapModal from 'components/swap/ConfirmSwapModal'
-import CurrencyInputPanel from 'components/CurrencyInputPanel'
 import CardNav from 'components/CardNav'
+import { AutoColumn } from 'components/Column'
+import ConnectWalletButtonSwap from 'components/ConnectWalletButtonSwap'
+import CurrencyInputPanel from 'components/CurrencyInputPanel'
+import PageHeader from 'components/PageHeader'
+import ProgressSteps from 'components/ProgressSteps'
 import { AutoRow, RowBetween } from 'components/Row'
+import { LinkStyledButton } from 'components/Shared'
 import AdvancedSwapDetailsDropdown from 'components/swap/AdvancedSwapDetailsDropdown'
 import confirmPriceImpactWithoutFee from 'components/swap/confirmPriceImpactWithoutFee'
-import { ArrowWrapper, BottomGrouping, SwapCallbackError, Wrapper, Dots } from 'components/swap/styleds'
-import TokenWarningModal from 'components/TokenWarningModal'
+import ConfirmSwapModal from 'components/swap/ConfirmSwapModal'
+import { ArrowWrapper, BottomGrouping, Dots, SwapCallbackError, Wrapper } from 'components/swap/styleds'
 import SyrupWarningModal from 'components/SyrupWarningModal'
-import ProgressSteps from 'components/ProgressSteps'
-import { useWeb3React } from '@web3-react/core'
+import TokenWarningModal from 'components/TokenWarningModal'
 import { useAllTokens, useCurrency } from 'hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from 'hooks/useApproveCallback'
+import { useBnbPrices } from 'hooks/useBnbPrices'
+import useGetTokenData from 'hooks/useGetTokenData'
 import { useSwapCallback } from 'hooks/useSwapCallback'
 import useWrapCallback, { WrapType } from 'hooks/useWrapCallback'
+import expandMore from 'img/expandMore.svg'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { ArrowDown } from 'react-feather'
 import { Field } from 'state/swap/actions'
 import { useDefaultsFromURLSearch, useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from 'state/swap/hooks'
 import { useExpertModeManager, useUserDeadline, useUserSlippageTolerance } from 'state/user/hooks'
-import { LinkStyledButton } from 'components/Shared'
+import { ThemeContext } from 'styled-components'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from 'utils/prices'
-import PageHeader from 'components/PageHeader'
-import ConnectWalletButtonSwap from 'components/ConnectWalletButtonSwap'
-import expandMore from 'img/expandMore.svg'
-import useGetTokenData from 'hooks/useGetTokenData'
-import useGetEthPrice from 'hooks/useGetEthPrice'
-import AppBody from '../AppBody'
 import { DEFAULT_SLIPPAGE_TOLERANCE } from '../../constants'
+import AppBody from '../AppBody'
 
 interface IProps {
   isLanding?: boolean
@@ -97,7 +97,7 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
         [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
         [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
       }
-  const ethPrice = useGetEthPrice()
+  const bnbPrices = useBnbPrices()
   const output = useGetTokenData()
 
   const priceOut = useMemo(() => {
@@ -106,20 +106,20 @@ const Swap: React.FC<IProps> = ({ isLanding }) => {
       return el.id === tmp?.address?.toLowerCase()
     })
     if (res) {
-      return `= ~${(res.derivedETH * Number(ethPrice)).toFixed(2)}`
+      return `= ~${(res.derivedETH * Number(bnbPrices?.current || 0)).toFixed(2)}`
     }
     return ''
-  }, [output, currencies, ethPrice])
+  }, [output, currencies, bnbPrices])
   const priceIn = useMemo(() => {
     const res: any = output.find((el: any) => {
       const tmp: any = currencies[Field.INPUT]
       return el.id === tmp?.address?.toLowerCase()
     })
     if (res) {
-      return `= ~${(res.derivedETH * Number(ethPrice)).toFixed(2)}`
+      return `= ~${(res.derivedETH * Number(bnbPrices?.current || 0)).toFixed(2)}`
     }
     return ''
-  }, [output, currencies, ethPrice])
+  }, [output, currencies, bnbPrices])
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
   const isValid = !swapInputError
