@@ -4,25 +4,6 @@ import gql from 'graphql-tag'
 export const FACTORY_ADDRESS = process.env.REACT_APP_FACTORY_ADDRESS
 export const BUNDLE_ID = '1'
 
-const subgraphName = process.env.REACT_APP_SUBGRAPH_NAME
-
-export const SUBGRAPH_HEALTH = gql`
-  query health {
-    indexingStatusForCurrentVersion(subgraphName: "${subgraphName}") {
-      synced
-      health
-      chains {
-        chainHeadBlock {
-          number
-        }
-        latestBlock {
-          number
-        }
-      }
-    }
-  }
-`
-
 export const V1_DATA_QUERY = gql`
   query uniswap($date: Int!, $date2: Int!) {
     current: uniswap(id: "1") {
