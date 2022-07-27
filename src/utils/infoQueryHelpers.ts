@@ -1,6 +1,5 @@
 import { getUnixTime, startOfMinute, subDays, subWeeks } from 'date-fns'
 import { GraphQLClient } from 'graphql-request'
-import { getGQLHeaders } from 'utils/graphql'
 import requestWithTimeout from 'utils/requestWithTimeout'
 
 /**
@@ -20,7 +19,7 @@ export const multiQuery = async (
   let fetchedData = {}
   let allFound = false
   let skip = 0
-  const client = new GraphQLClient(endpoint, { headers: getGQLHeaders(endpoint) })
+  const client = new GraphQLClient(endpoint)
   try {
     while (!allFound) {
       let end = subqueries.length
