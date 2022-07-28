@@ -19,7 +19,7 @@ const CardWrapper = styled(Link)`
 `
 
 const TopMoverCard = styled(Box)`
-  border: 1px solid ${({ theme }) => theme.colors.primary};
+  border: 1px solid rgba(13, 39, 43, 1);
   border-radius: ${({ theme }) => theme.radii.card};
   padding: 16px;
 `
