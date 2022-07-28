@@ -12,7 +12,6 @@ export const TableWrapper = styled(Flex)`
   gap: 16px;
   background-color: ${({ theme }) => theme.card.background};
   border-radius: ${({ theme }) => theme.radii.card};
-  border: 1px solid ${({ theme }) => theme.colors.primary};
 `
 
 export const PageButtons = styled.div`
@@ -33,7 +32,7 @@ export const Arrow = styled.div`
 `
 
 export const Break = styled.div`
-  height: 1px;
-  background-color: ${({ theme }) => theme.colors.primary};
+  height: 2px;
+  background-color: rgba(13,39,43,.5);
   width: 100%;
 `
