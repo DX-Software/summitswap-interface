@@ -1,4 +1,3 @@
-import { getTokenLogoURL } from 'components/CurrencyLogo'
 import { getTokenImageByAddress } from 'connectors'
 import { useToken } from 'hooks/Tokens'
 import React, { useMemo } from 'react'
