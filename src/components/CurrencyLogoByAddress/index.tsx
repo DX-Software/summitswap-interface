@@ -21,8 +21,8 @@ export const CurrencyLogo: React.FC<{
 }> = ({ address, size = '24px', ...rest }) => {
   const token = useToken(address)
   const src = useMemo(() => {
-    if (!address) return ''
-    return token ? getTokenImageByAddress(token) : getTokenLogoURL(address)
+    if (!address || !token) return ''
+    return getTokenImageByAddress(token)
   }, [address, token])
 
   return <StyledLogo size={size} src={src} alt="token logo" {...rest} />
