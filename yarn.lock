@@ -2654,14 +2654,15 @@
     tiny-warning "^1.0.3"
     toformat "^2.0.0"
 
-"@koda-finance/summitswap-uikit@^1.5.2":
-  version "1.5.2"
-  resolved "https://registry.npmjs.org/@koda-finance/summitswap-uikit/-/summitswap-uikit-1.5.2.tgz"
-  integrity sha512-0phuS5n5ZiRp1txzVq8ssSZeDAtedMQ42I4VxudZOw8HLl0JtkDRos+RPfRiJ1Xf+Zq0ktE2kHkvNBqzWS17OQ==
+"@koda-finance/summitswap-uikit@^1.5.3":
+  version "1.5.3"
+  resolved "https://registry.yarnpkg.com/@koda-finance/summitswap-uikit/-/summitswap-uikit-1.5.3.tgz#d96e7349d1e8cd1a19b740cfcd9fbd97e0d06c73"
+  integrity sha512-vBUQkRFsYgTO8rYO2+EasQnvIqgakJgn91T9uX6s7d5A/yycDTQ5kwwsXcOoH58J2xmOcDtFsaldmLqYLWQYJg==
   dependencies:
     "@types/lodash" "^4.14.162"
     "@types/styled-system" "^5.1.10"
     lodash "^4.17.20"
+    react-device-detect "^2.2.2"
     react-transition-group "^4.4.1"
     styled-system "^5.1.5"
 
@@ -16889,6 +16890,13 @@ react-device-detect@^1.6.2:
   dependencies:
     ua-parser-js "^0.7.24"
 
+react-device-detect@^2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/react-device-detect/-/react-device-detect-2.2.2.tgz#dbabbce798ec359c83f574c3edb24cf1cca641a5"
+  integrity sha512-zSN1gIAztUekp5qUT/ybHwQ9fmOqVT1psxpSlTn1pe0CO+fnJHKRLOWWac5nKxOxvOpD/w84hk1I+EydrJp7SA==
+  dependencies:
+    ua-parser-js "^1.0.2"
+
 react-dom@^17.0.1:
   version "17.0.1"
   resolved "https://registry.npmjs.org/react-dom/-/react-dom-17.0.1.tgz"
@@ -19873,6 +19881,11 @@ ua-parser-js@^0.7.18, ua-parser-js@^0.7.24:
   version "0.7.24"
   resolved "https://registry.npmjs.org/ua-parser-js/-/ua-parser-js-0.7.24.tgz"
   integrity sha512-yo+miGzQx5gakzVK3QFfN0/L9uVhosXBBO7qmnk7c2iw1IhL212wfA3zbnI54B0obGwC/5NWub/iT9sReMx+Fw==
+
+ua-parser-js@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-1.0.2.tgz#e2976c34dbfb30b15d2c300b2a53eac87c57a775"
+  integrity sha512-00y/AXhx0/SsnI51fTc0rLRmafiGOM4/O+ny10Ps7f+j/b8p/ZY11ytMgznXkOVo4GQ+KwQG5UQLkLGirsACRg==
 
 uint8arrays@1.1.0:
   version "1.1.0"
