@@ -1,2 +1,2 @@
-export const INFO_CLIENT = process.env.REACT_APP_LINK_GRAPH_NODE_EXCHANGE ?? ''
-export const BLOCKS_CLIENT = process.env.REACT_APP_LINK_GRAPH_NODE_BLOCK ?? ''
+export const INFO_CLIENT = "https://api.thegraph.com/subgraphs/name/koda-finance/summitswap-exchange"
+export const BLOCKS_CLIENT = "https://api.thegraph.com/subgraphs/name/pancakeswap/blocks"
