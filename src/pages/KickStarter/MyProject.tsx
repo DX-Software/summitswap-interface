@@ -1,10 +1,16 @@
-import { Button, Flex, useWalletModal } from '@koda-finance/summitswap-uikit'
+import { AddIcon, Button, Flex, Heading, useWalletModal, WalletIcon } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import login from 'utils/login'
 import { TranslateString } from 'utils/translateTextHelpers'
+import CreateProject from './CreateProject'
 
-function MyProject() {
+type Props = {
+  isCreate: boolean
+  toggleCreate: () => void
+}
+
+function MyProject({isCreate, toggleCreate}: Props) {
   const { account, activate, deactivate } = useWeb3React()
   const handleLogin = useCallback(
     (connectorId: string) => {
@@ -14,15 +20,31 @@ function MyProject() {
   )
 
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
+
+  if (!account) {
+    return (
+      <Flex mb={3} flexDirection="column" alignItems="center" justifyContent="center" height={300}>
+        <Heading size='lg' color="primaryDark" style={{ fontWeight: 400 }} marginBottom={38} textAlign="center">
+          Please connect your wallet to view your projects
+        </Heading>
+        <Button variant='tertiary' startIcon={<WalletIcon />} style={{ fontFamily: 'Poppins' }} onClick={onPresentConnectModal}>
+          {TranslateString(292, 'CONNECT WALLET')}
+        </Button>
+      </Flex>
+    )
+  }
   return (
     <>
-      {!account && (
-          <Flex mb={3} justifyContent="center">
-            <Button style={{ fontFamily: 'Poppins' }} onClick={onPresentConnectModal}>
-              {TranslateString(292, 'CONNECT WALLET')}
-            </Button>
-          </Flex>
-        )}
+      {isCreate ? <CreateProject /> : (
+        <Flex mb={3} flexDirection="column" alignItems="center" justifyContent="center" height={300}>
+          <Heading size='lg' color="primaryDark" style={{ fontWeight: 400 }} marginBottom={38} textAlign="center">
+            You don’t have any ongoing project
+          </Heading>
+          <Button startIcon={<AddIcon color='text' />} style={{ fontFamily: 'Poppins' }} onClick={toggleCreate}>
+            Create New Project
+          </Button>
+        </Flex>
+      )}
     </>
   )
 }

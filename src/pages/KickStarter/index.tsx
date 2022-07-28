@@ -13,11 +13,18 @@ type navItem = {
 }
 
 function KickStarter() {
+  const [buttonIndex, setButtonIndex] = useState(0)
+  const [isCreate, setIsCreate] = useState(false)
+
+  const toggleCreate = useCallback(() => {
+    setIsCreate((prevValue) => !prevValue)
+  }, [setIsCreate])
+
   const navItems: navItem[] = [
     {
       label: 'My Project',
       code: 'my_project',
-      component: <MyProject />,
+      component: <MyProject isCreate={isCreate} toggleCreate={toggleCreate} />,
     },
     {
       label: 'Browse Project',
@@ -30,7 +37,6 @@ function KickStarter() {
       component: <BackedProject />,
     },
   ]
-  const [buttonIndex, setButtonIndex] = useState(0)
 
   return (
     <>
