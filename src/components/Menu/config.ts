@@ -28,6 +28,11 @@ const config: MenuEntry[] = [
     showConnectButton: false,
   },
   {
+    label: 'Info',
+    icon: 'InfoIcon',
+    href: '/info',
+  },
+  {
     label: 'Kick Starter',
     icon: 'RubicIcon',
     href: '/kickstarter',
@@ -85,11 +90,6 @@ const config: MenuEntry[] = [
   // {
   //   label: "Team & Profile",
   //   icon: "TeamProfileIcon",
-  //   href: "/nft",
-  // },
-  // {
-  //   label: "Info",
-  //   icon: "InfoIcon",
   //   href: "/nft",
   // },
   // {

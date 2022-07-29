@@ -1,16 +1,17 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
-import { save, load } from 'redux-localstorage-simple'
+import { load, save } from 'redux-localstorage-simple'
 
-import application from './application/reducer'
-import { updateVersion } from './global/actions'
-import user from './user/reducer'
-import transactions from './transactions/reducer'
-import swap from './swap/reducer'
-import mint from './mint/reducer'
-import lists from './lists/reducer'
-import burn from './burn/reducer'
-import multicall from './multicall/reducer'
 import { getThemeCache } from '../utils/theme'
+import application from './application/reducer'
+import burn from './burn/reducer'
+import { updateVersion } from './global/actions'
+import info from './info'
+import lists from './lists/reducer'
+import mint from './mint/reducer'
+import multicall from './multicall/reducer'
+import swap from './swap/reducer'
+import transactions from './transactions/reducer'
+import user from './user/reducer'
 
 type MergedState = {
   user: {
@@ -36,6 +37,7 @@ const store = configureStore({
     burn,
     multicall,
     lists,
+    info,
   },
   middleware: [...getDefaultMiddleware({ thunk: false }), save({ states: PERSISTED_KEYS })],
   preloadedState: loadedState,
