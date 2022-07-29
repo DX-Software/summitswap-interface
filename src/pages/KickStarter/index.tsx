@@ -1,10 +1,9 @@
-import { Box, ButtonMenu, ButtonMenuItem, useWalletModal } from '@koda-finance/summitswap-uikit'
-import { useWeb3React } from '@web3-react/core'
+import { Box, ButtonMenu, ButtonMenuItem } from '@koda-finance/summitswap-uikit'
 import React, { useCallback, useState } from 'react'
-import login from 'utils/login'
 import BackedProject from './BackedProject'
 import BrowseProject from './BrowseProject'
 import MyProject from './MyProject'
+import { ProjectCreation } from './types'
 
 type navItem = {
   label: string
@@ -15,16 +14,37 @@ type navItem = {
 function KickStarter() {
   const [buttonIndex, setButtonIndex] = useState(0)
   const [isCreate, setIsCreate] = useState(false)
+  const [currentCreationStep, setCurrentCreationStep] = useState(1)
+  const [projectCreation, setProjectCreation] = useState<ProjectCreation>({
+    title: '',
+    creator: '',
+    description: '',
+    goals: 0,
+    minimumBacking: 0,
+  });
 
-  const toggleCreate = useCallback(() => {
+  const handleOnProjectCreationChanged = useCallback((newUpdate: { [key: string]: number }) => {
+    setProjectCreation({ ...projectCreation, ...newUpdate })
+  }, [projectCreation]);
+
+  const toggleCreate = () => {
+    setCurrentCreationStep(1)
     setIsCreate((prevValue) => !prevValue)
-  }, [setIsCreate])
+  }
 
   const navItems: navItem[] = [
     {
       label: 'My Project',
       code: 'my_project',
-      component: <MyProject isCreate={isCreate} toggleCreate={toggleCreate} />,
+      component:
+        <MyProject
+          isCreate={isCreate}
+          toggleCreate={toggleCreate}
+          currentCreationStep={currentCreationStep}
+          setCurrentCreationStep={setCurrentCreationStep}
+          projectCreation={projectCreation}
+          handleOnProjectCreationChanged={handleOnProjectCreationChanged}
+        />,
     },
     {
       label: 'Browse Project',
