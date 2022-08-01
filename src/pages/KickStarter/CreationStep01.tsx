@@ -2,7 +2,7 @@ import { ArrowForwardIcon, Button, Flex, ImageAddIcon, Input, Text, TextArea } f
 import React from 'react'
 import styled from 'styled-components'
 import FundingInput from './FundingInput'
-import { ProjectCreation } from './types'
+import { Project } from './types'
 
 const ImageWrapper = styled(Flex)`
   width: 270px;
@@ -22,7 +22,7 @@ const FundingWrapper = styled(Flex)`
 
 type Props = {
   setCurrentCreationStep: (step: number) => void
-  projectCreation: ProjectCreation
+  projectCreation: Project
   handleOnProjectCreationChanged: (newUpdate: { [key: string]: number }) => void
 }
 
