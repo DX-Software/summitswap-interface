@@ -1,8 +1,10 @@
-import { AddIcon, Button, Flex, Heading, useWalletModal, WalletIcon } from '@koda-finance/summitswap-uikit'
+import { AddIcon, Button, Flex, Heading, Text, useWalletModal, WalletIcon } from '@koda-finance/summitswap-uikit'
+import { Grid } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import React, { useCallback } from 'react'
 import login from 'utils/login'
 import CreateProject from './CreateProject'
+import ProjectCard from './ProjectCard'
 import { Project } from './types'
 
 type Props = {
@@ -23,6 +25,15 @@ function MyProject({
   handleOnProjectCreationChanged,
 }: Props) {
   const { account, activate, deactivate } = useWeb3React()
+  const [projects, setProjects] = React.useState<Project[]>([
+    {
+      title: "Lorem Ipsum",
+      creator: "Lorem Ipsum",
+      description: "Lorem Ipsum",
+      goals: 0,
+      minimumBacking: 0,
+    }
+  ])
   const handleLogin = useCallback(
     (connectorId: string) => {
       login(connectorId, activate)
@@ -61,8 +72,9 @@ function MyProject({
       />
     )
   }
-  return (
-    <>
+
+  if (projects.length === 0) {
+    return (
       <Flex mb={3} flexDirection="column" alignItems="center" justifyContent="center" height={300}>
         <Heading size="lg" color="primaryDark" style={{ fontWeight: 400 }} marginBottom={38} textAlign="center">
           You don’t have any ongoing project
@@ -71,7 +83,32 @@ function MyProject({
           Create New Project
         </Button>
       </Flex>
-    </>
+    )
+  }
+
+  return (
+    <Flex flexDirection="column">
+      <Flex justifyContent="space-between" marginBottom="24px">
+        <Heading size="xl">My Projects</Heading>
+        <Button scale="sm" startIcon={<AddIcon width="12px" color="text" />} style={{ fontFamily: 'Poppins' }} onClick={toggleCreate}>
+          Create New Project
+        </Button>
+      </Flex>
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6} lg={4}>
+          <ProjectCard />
+        </Grid>
+        <Grid item xs={12} sm={6} lg={4}>
+          <ProjectCard />
+        </Grid>
+        <Grid item xs={12} sm={6} lg={4}>
+          <ProjectCard />
+        </Grid>
+        <Grid item xs={12} sm={6} lg={4}>
+          <ProjectCard />
+        </Grid>
+      </Grid>
+    </Flex>
   )
 }
 
