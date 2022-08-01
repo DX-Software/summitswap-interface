@@ -1,4 +1,4 @@
-import { Button, Flex, Heading, ImageAddIcon, Text } from '@koda-finance/summitswap-uikit'
+import { BinanceIcon, Button, Flex, Heading, ImageAddIcon, Text } from '@koda-finance/summitswap-uikit'
 import CopyButton from 'components/CopyButton'
 import React from 'react'
 import styled from 'styled-components'
@@ -72,13 +72,19 @@ function CreationStep03({
               <Text color="textSubtle" marginBottom="4px">
                 Project Goals
               </Text>
-              <Text>{projectCreation.goals}</Text>
+              <Flex style={{ columnGap: "8px" }}>
+                <BinanceIcon width="20px" />
+                <Text>{projectCreation.goals}</Text>
+              </Flex>
             </Flex>
             <Flex flexDirection="column" marginRight="auto">
               <Text color="textSubtle" marginBottom="4px">
                 Minimum Backing
               </Text>
-              <Text>{projectCreation.minimumBacking}</Text>
+              <Flex style={{ columnGap: "8px" }}>
+                <BinanceIcon width="20px" />
+                <Text>{projectCreation.minimumBacking}</Text>
+              </Flex>
             </Flex>
           </Flex>
         </Flex>
