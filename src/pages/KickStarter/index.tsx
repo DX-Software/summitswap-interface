@@ -3,7 +3,7 @@ import React, { useCallback, useState } from 'react'
 import BackedProject from './BackedProject'
 import BrowseProject from './BrowseProject'
 import MyProject from './MyProject'
-import { ProjectCreation } from './types'
+import { Project } from './types'
 
 type navItem = {
   label: string
@@ -15,7 +15,7 @@ function KickStarter() {
   const [buttonIndex, setButtonIndex] = useState(0)
   const [isCreate, setIsCreate] = useState(false)
   const [currentCreationStep, setCurrentCreationStep] = useState(1)
-  const [projectCreation, setProjectCreation] = useState<ProjectCreation>({
+  const [projectCreation, setProjectCreation] = useState<Project>({
     title: '',
     creator: '',
     description: '',

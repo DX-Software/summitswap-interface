@@ -10,13 +10,13 @@ import styled from 'styled-components'
 import CreationStep01 from './CreationStep01'
 import CreationStep02 from './CreationStep02'
 import CreationStep03 from './CreationStep03'
-import { ProjectCreation } from './types'
+import { Project } from './types'
 
 type Props = {
   toggleCreate: () => void
   currentCreationStep: number
   setCurrentCreationStep: (step: number) => void
-  projectCreation: ProjectCreation
+  projectCreation: Project
   handleOnProjectCreationChanged: (newUpdate: { [key: string]: number }) => void
 }
 

@@ -1,17 +1,16 @@
 import { AddIcon, Button, Flex, Heading, useWalletModal, WalletIcon } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback } from 'react'
 import login from 'utils/login'
-import { TranslateString } from 'utils/translateTextHelpers'
 import CreateProject from './CreateProject'
-import { ProjectCreation } from './types'
+import { Project } from './types'
 
 type Props = {
   isCreate: boolean
   toggleCreate: () => void
   currentCreationStep: number
   setCurrentCreationStep: (step: number) => void
-  projectCreation: ProjectCreation
+  projectCreation: Project
   handleOnProjectCreationChanged: (newUpdate: { [key: string]: number }) => void
 }
 

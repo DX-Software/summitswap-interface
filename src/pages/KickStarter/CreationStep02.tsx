@@ -3,11 +3,11 @@ import CopyButton from "components/CopyButton"
 import React, { useCallback } from "react"
 import styled from "styled-components"
 import FundingInput from "./FundingInput"
-import { ProjectCreation } from "./types"
+import { Project } from "./types"
 
 type Props = {
   setCurrentCreationStep: (step: number) => void
-  projectCreation: ProjectCreation
+  projectCreation: Project
   handleOnProjectCreationChanged: (newUpdate: { [key: string]: number }) => void
 }
 

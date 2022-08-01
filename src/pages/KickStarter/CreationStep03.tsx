@@ -1,9 +1,8 @@
-import { ArrowForwardIcon, Button, Flex, Heading, ImageAddIcon, Input, Text, TextArea } from '@koda-finance/summitswap-uikit'
+import { Button, Flex, Heading, ImageAddIcon, Text } from '@koda-finance/summitswap-uikit'
 import CopyButton from 'components/CopyButton'
 import React from 'react'
 import styled from 'styled-components'
-import FundingInput from './FundingInput'
-import { ProjectCreation } from './types'
+import { Project } from './types'
 
 const ImageWrapper = styled(Flex)`
   width: 270px;
@@ -30,7 +29,7 @@ const AccountWrapper = styled(Flex)`
 
 type Props = {
   setCurrentCreationStep: (step: number) => void
-  projectCreation: ProjectCreation
+  projectCreation: Project
 }
 
 function CreationStep03({
