@@ -5,9 +5,10 @@ import styled from 'styled-components';
 
 type Props = {
   label: string;
+  type?: string;
   value: number;
   description?: string;
-  onChange: (value: number) => void;
+  onChange: (value: string) => void;
 }
 
 const InputWrapper = styled(Flex)`
@@ -29,10 +30,10 @@ const InputCurrency = styled(Flex)`
   column-gap: 8px;
 `
 
-function FundingInput({ label, value, description, onChange }: Props) {
+function FundingInput({ label, type, value, description, onChange }: Props) {
 
   const handleOnChange = (e) => {
-    onChange(Number(e.target.value))
+    onChange(e.target.value)
   }
 
   return (
@@ -43,7 +44,7 @@ function FundingInput({ label, value, description, onChange }: Props) {
           <BinanceIcon />
           <Text fontWeight="bold">BNB</Text>
         </InputCurrency>
-        <StyledInput value={value} onChange={handleOnChange} />
+        <StyledInput type={type} value={value} onChange={handleOnChange} />
       </InputWrapper>
       {description && <Text color="textDisabled" fontSize="12px" marginTop="8px">{description}</Text>}
     </Flex>
@@ -53,5 +54,6 @@ function FundingInput({ label, value, description, onChange }: Props) {
 export default FundingInput;
 
 FundingInput.defaultProps = {
+  type: "text",
   description: undefined,
 }

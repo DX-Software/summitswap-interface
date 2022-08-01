@@ -31,12 +31,12 @@ function CreationStep01({
   projectCreation,
   handleOnProjectCreationChanged,
 }: Props) {
-  const handleProjectGoalsChanged = (goals: number) => {
-    handleOnProjectCreationChanged({ goals })
+  const handleProjectGoalsChanged = (goals: string) => {
+    handleOnProjectCreationChanged({ goals: Number(goals) })
   }
 
-  const handleMinimumBackingChanged = (minimumBacking) => {
-    handleOnProjectCreationChanged({ minimumBacking })
+  const handleMinimumBackingChanged = (minimumBacking: string) => {
+    handleOnProjectCreationChanged({ minimumBacking: Number(minimumBacking) })
   }
 
   return (
