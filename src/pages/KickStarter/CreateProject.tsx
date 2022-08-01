@@ -9,7 +9,7 @@ import React from 'react'
 import styled from 'styled-components'
 import CreationStep01 from './CreationStep01'
 import CreationStep02 from './CreationStep02'
-import FundingInput from './FundingInput'
+import CreationStep03 from './CreationStep03'
 import { ProjectCreation } from './types'
 
 type Props = {
@@ -68,6 +68,12 @@ function CreateProject({
           setCurrentCreationStep={setCurrentCreationStep}
           projectCreation={projectCreation}
           handleOnProjectCreationChanged={handleOnProjectCreationChanged}
+        />
+      )}
+      {currentCreationStep === 3 && (
+        <CreationStep03
+          setCurrentCreationStep={setCurrentCreationStep}
+          projectCreation={projectCreation}
         />
       )}
     </Flex>
