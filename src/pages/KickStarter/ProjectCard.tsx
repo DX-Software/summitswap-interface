@@ -3,6 +3,10 @@ import React from "react"
 import styled from "styled-components";
 import ProgressBox from "./ProgressBox";
 
+type Props = {
+  onClick: () => void
+}
+
 const Card = styled(Flex)`
   background-color: ${({theme}) => theme.colors.inputColor};
   border-radius: 8px;
@@ -25,9 +29,9 @@ const Label = styled(Text)`
   text-transform: uppercase;
 `;
 
-function ProjectCard() {
+function ProjectCard({ onClick }: Props) {
   return (
-    <Card flexDirection="column">
+    <Card flexDirection="column" onClick={onClick}>
       <Banner flexDirection="column">
         <Label fontSize="12px" fontWeight="bold">7 days left</Label>
       </Banner>
@@ -52,4 +56,4 @@ function ProjectCard() {
   )
 }
 
-export default ProjectCard;
+export default ProjectCard

@@ -1,10 +1,11 @@
 import { AddIcon, Button, Flex, Heading, Text, useWalletModal, WalletIcon } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import login from 'utils/login'
 import CreateProject from './CreateProject'
 import ProjectCard from './ProjectCard'
+import ProjectDetails from './ProjectDetails'
 import { Project } from './types'
 
 type Props = {
@@ -25,7 +26,7 @@ function MyProject({
   handleOnProjectCreationChanged,
 }: Props) {
   const { account, activate, deactivate } = useWeb3React()
-  const [projects, setProjects] = React.useState<Project[]>([
+  const [projects, setProjects] = useState<Project[]>([
     {
       title: "Lorem Ipsum",
       creator: "Lorem Ipsum",
@@ -34,6 +35,7 @@ function MyProject({
       minimumBacking: 0,
     }
   ])
+  const [selectedProject, setSelectedProject] = useState("")
   const handleLogin = useCallback(
     (connectorId: string) => {
       login(connectorId, activate)
@@ -42,6 +44,10 @@ function MyProject({
   )
 
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
+
+  const toggleSelectedProject = () => {
+    setSelectedProject("")
+  }
 
   if (!account) {
     return (
@@ -86,6 +92,10 @@ function MyProject({
     )
   }
 
+  if (selectedProject !== "") {
+    return <ProjectDetails toggleSelectedProject={toggleSelectedProject} />
+  }
+
   return (
     <Flex flexDirection="column">
       <Flex justifyContent="space-between" marginBottom="24px">
@@ -96,16 +106,16 @@ function MyProject({
       </Flex>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6} lg={4}>
-          <ProjectCard />
+          <ProjectCard onClick={() => setSelectedProject("ID")} />
         </Grid>
         <Grid item xs={12} sm={6} lg={4}>
-          <ProjectCard />
+          <ProjectCard onClick={() => setSelectedProject("ID")} />
         </Grid>
         <Grid item xs={12} sm={6} lg={4}>
-          <ProjectCard />
+          <ProjectCard onClick={() => setSelectedProject("ID")} />
         </Grid>
         <Grid item xs={12} sm={6} lg={4}>
-          <ProjectCard />
+          <ProjectCard onClick={() => setSelectedProject("ID")} />
         </Grid>
       </Grid>
     </Flex>
