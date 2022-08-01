@@ -28,9 +28,6 @@ const LinkBox = styled(Box)`
     position: relative;
   }
 `
-interface YourProps {
-  isDisabled: boolean
-}
 
 interface CurrencySearchModalProps {
   selectedCurrency?: Token | null

@@ -1,35 +1,25 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import TokenDropdown from 'components/TokenDropdown'
-import { Token, WETH } from '@koda-finance/summitswap-sdk'
-import { Link, useHistory, useLocation } from 'react-router-dom'
-import { Button, Checkbox, Flex, Input, Text, useModal, useWalletModal } from '@koda-finance/summitswap-uikit'
-import { useFactoryContract, useLockerContract, useTokenContract } from 'hooks/useContract'
+import { Token } from '@koda-finance/summitswap-sdk'
+import { Button, Flex, useWalletModal } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
-import { BigNumber, ethers } from 'ethers'
-import axios from 'axios'
-import { TranslateString } from 'utils/translateTextHelpers'
-import login from 'utils/login'
-import DatePicker from '@mui/lab/DatePicker'
-import { addYears, subDays } from 'date-fns/esm'
+import TokenDropdown from 'components/TokenDropdown'
+import { BigNumber } from 'ethers'
 import { useToken } from 'hooks/Tokens'
+import { useFactoryContract, useLockerContract, useTokenContract } from 'hooks/useContract'
+import React, { useCallback, useEffect, useState } from 'react'
+import { useHistory, useLocation } from 'react-router-dom'
+import login from 'utils/login'
+import { TranslateString } from 'utils/translateTextHelpers'
 import {
-  CHAIN_ID,
-  KODA,
-  LOCKER_ADDRESS,
-  MAX_UINT256,
-  NULL_ADDRESS,
-  ONBOARDING_API,
-  REFERRAL_ADDRESS,
+  KODA, NULL_ADDRESS, REFERRAL_ADDRESS
 } from '../../constants'
-import SuccessModal from './SuccessModal'
-import './styles.css'
 import AddLiquidity from './AddLiquidity'
-import SwapToKoda from './SwapToKoda'
 import LockLiquidity from './LockLiquidity'
+import RemoveFees from './RemoveFees'
 import SendReferralRewards from './SendReferralRewards'
 import SetFeeInfo from './SetFeeInfo'
-import RemoveFees from './RemoveFees'
+import './styles.css'
 import Submit from './Submit'
+import SwapToKoda from './SwapToKoda'
 import WithdrawLiquidity from './WithdrawLiquidity'
 
 interface LpLock {
@@ -38,7 +28,7 @@ interface LpLock {
 }
 
 export default function Onboarding() {
-  const { account, activate, deactivate, library } = useWeb3React()
+  const { account, activate, deactivate } = useWeb3React()
   const [selectedToken, setSelectedToken] = useState<Token>()
   const [pairAddress, setPairAddress] = useState<string>()
 
