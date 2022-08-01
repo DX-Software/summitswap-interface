@@ -45,7 +45,7 @@ function MyProject({
           style={{ fontFamily: 'Poppins' }}
           onClick={onPresentConnectModal}
         >
-          {TranslateString(292, 'CONNECT WALLET')}
+          Connect Your Wallet
         </Button>
       </Flex>
     )
