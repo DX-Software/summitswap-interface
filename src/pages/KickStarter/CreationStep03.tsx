@@ -1,14 +1,14 @@
-import { BinanceIcon, Button, Flex, Heading, ImageAddIcon, Text } from '@koda-finance/summitswap-uikit'
+import { BinanceIcon, Button, Flex, Heading, Text } from '@koda-finance/summitswap-uikit'
 import CopyButton from 'components/CopyButton'
 import React from 'react'
 import styled from 'styled-components'
 import { Project } from './types'
 
-const ImageWrapper = styled(Flex)`
+const Banner = styled(Flex)`
   width: 270px;
   height: 230px;
-  border: 3px dashed ${({ theme }) => theme.colors.menuItemActiveBackground};
   border-radius: 8px;
+  background-color: gray;
 `
 
 const ImgAccount = styled.div`
@@ -41,12 +41,7 @@ function CreationStep03({
     <Flex flexDirection="column">
       <Heading size="lg" color="menuItemActiveBackground" marginBottom="24px">Project Details</Heading>
       <Flex style={{ columnGap: '32px' }} marginBottom="16px">
-        <ImageWrapper flexDirection="column" alignItems="center" justifyContent="center">
-          <ImageAddIcon width={60} marginBottom="8px" color="menuItemActiveBackground" />
-          <Text color="menuItemActiveBackground" style={{ maxWidth: '150px' }} textAlign="center">
-            Upload Your Project Picture
-          </Text>
-        </ImageWrapper>
+        <Banner />
         <Flex flexDirection="column" flex={1}>
           <Text color="textSubtle" marginBottom="4px">
             Project Title
