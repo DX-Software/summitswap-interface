@@ -1,7 +1,7 @@
 import { Flex, Heading, Input, Select, SortIcon } from '@koda-finance/summitswap-uikit';
 import { Grid } from '@mui/material';
 import React, { useState } from 'react'
-import BrowseProjectDetails from './BrowseProjectDetails';
+import ProjectDetails from './ProjectDetails';
 import ProjectCard from './ProjectCard';
 
 function BrowseProject() {
@@ -22,7 +22,7 @@ function BrowseProject() {
   }
 
   if (selectedProject !== "") {
-    return <BrowseProjectDetails toggleSelectedProject={toggleSelectedProject} />
+    return <ProjectDetails toggleSelectedProject={toggleSelectedProject} />
   }
 
   return (

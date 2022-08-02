@@ -41,6 +41,7 @@ const Dot = styled.div`
 `;
 
 const SocialMedia = styled(Flex)`
+  height: fit-content;
   padding: 12px 18px;
   background-color: white;
   border-radius: 20px;
@@ -70,7 +71,7 @@ const TabContent = styled(Flex)`
   padding-right: 16px;
 `;
 
-function MyProjectDetails({ toggleSelectedProject }: Props) {
+function ProjectDetails({ toggleSelectedProject }: Props) {
   const tabs: Tab[] = [
     {
       code: "project_details",
@@ -145,7 +146,8 @@ function MyProjectDetails({ toggleSelectedProject }: Props) {
             <Dot />
             <Text>0 backers</Text>
           </Flex>
-          <Flex style={{ columnGap: "8px" }}>
+          <Flex style={{ columnGap: "8px" }} alignItems="center">
+            <Button>Back this project</Button>
             <SocialMedia>
               <ShareIcon width="14px" />
             </SocialMedia>
@@ -244,4 +246,4 @@ function MyProjectDetails({ toggleSelectedProject }: Props) {
   )
 }
 
-export default MyProjectDetails
+export default ProjectDetails
