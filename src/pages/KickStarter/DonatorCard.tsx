@@ -13,7 +13,7 @@ function DonatorCard({ donator, isFirstItem, isLastItem }: Props) {
     <Flex
       justifyContent="space-between"
       paddingTop={isFirstItem ? 0 : "16px"}
-      paddingBottom="12px"
+      paddingBottom={isLastItem ? 0 : "12px"}
       borderBottom={`${isLastItem ? 0 : 1}px solid`}
       borderBottomColor="inputColor">
       <Flex flexDirection="column">

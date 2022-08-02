@@ -1,7 +1,8 @@
-import { BinanceIcon, Breadcrumbs, Button, FacebookIcon, FileIcon, Flex, Progress, ShareIcon, Text, TwitterIcon } from "@koda-finance/summitswap-uikit"
+import { BinanceIcon, Breadcrumbs, Button, FacebookIcon, FileIcon, Flex, Progress, ShareIcon, Tag, Text, TwitterIcon } from "@koda-finance/summitswap-uikit"
 import { Grid } from "@mui/material"
 import React, { useState } from "react"
 import styled from "styled-components"
+import ImgCornerIllustration from "img/corner-illustration.svg"
 import DonatorCard from "./DonatorCard"
 import ProgressBox from "./ProgressBox"
 import { Donator } from "./types"
@@ -22,16 +23,14 @@ const Banner = styled(Flex)`
   background-color: gray;
 `
 
-const Label = styled(Text)`
-  padding: 4px 12px;
-  margin-bottom: 12px;
-  color: white;
+const Label = styled(Tag)`
   text-transform: uppercase;
-  background-color: ${({ theme }) => theme.colors.failure};
-  border-radius: 30px;
-  font-size: 12px;
-  font-weight: bold;
-`;
+`
+
+const Link = styled.a`
+  color: ${({ theme }) => theme.colors.linkColor};
+  text-decoration: underline;
+`
 
 const Dot = styled.div`
   width: 4px;
@@ -69,7 +68,24 @@ const TabContent = styled(Flex)`
   height: 350px;
   overflow-y: scroll;
   padding-right: 16px;
-`;
+`
+
+const BackedAmountWrapper = styled(Flex)`
+  position: relative;
+  padding: 12px 0;
+  padding-left: 54px;
+  padding-right: 16px;
+  background-color: ${({ theme }) => theme.colors.info};
+  border-radius: 8px;
+  overflow: hidden;
+`
+
+const StyledCornerIllustration = styled.img`
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+`
 
 function ProjectDetails({ toggleSelectedProject }: Props) {
   const tabs: Tab[] = [
@@ -113,6 +129,8 @@ function ProjectDetails({ toggleSelectedProject }: Props) {
       amount: 0.21,
     },
   ])
+  const [hasBackedProject, setHasBackedProject] = useState(true)
+  const [backedAmount, setBackedAmount] = useState(1000)
 
   return (
     <Flex flexDirection="column">
@@ -131,7 +149,12 @@ function ProjectDetails({ toggleSelectedProject }: Props) {
       <Flex style={{ columnGap: '32px' }} marginBottom="32px">
         <Banner />
         <Flex flexDirection="column">
-          <Label marginBottom="8px" marginRight="auto">7 days left</Label>
+          <Flex style={{ columnGap: "8px" }} marginBottom="8px">
+            {hasBackedProject && (
+              <Label variant="default"><b>backed</b></Label>
+            )}
+            <Label variant="failure"><b>7 days left</b></Label>
+          </Flex>
           <Text fontSize="40px" marginBottom="24px">SummitSwap#1 Fundraising Project</Text>
           <Flex style={{ columnGap: "8px" }}>
             <BinanceIcon width="20px" />
@@ -146,6 +169,13 @@ function ProjectDetails({ toggleSelectedProject }: Props) {
             <Dot />
             <Text>0 backers</Text>
           </Flex>
+          {hasBackedProject && (
+            <BackedAmountWrapper flexDirection="column" marginBottom="16px">
+              <StyledCornerIllustration src={ImgCornerIllustration} />
+              <Text fontWeight="bold" marginBottom="4px">You have backed this project</Text>
+              <Text>Backed amount&nbsp;&nbsp;&nbsp;&nbsp;{backedAmount} BNB</Text>
+            </BackedAmountWrapper>
+          )}
           <Flex style={{ columnGap: "8px" }} alignItems="center">
             <Button>Back this project</Button>
             <SocialMedia>
@@ -167,7 +197,7 @@ function ProjectDetails({ toggleSelectedProject }: Props) {
           </TabTitle>
         ))}
       </Flex>
-      <TabContent borderBottom="1px solid" borderBottomColor="inputColor" paddingTop="24px" paddingBottom="10px" marginBottom="24px">
+      <TabContent borderBottom="1px solid" borderBottomColor="inputColor" paddingY="24px" marginBottom="24px">
         {selectedTab === "project_details" && (
           <>
             <Text color="textSubtle" marginBottom="4px">Project Description</Text>
@@ -223,6 +253,19 @@ function ProjectDetails({ toggleSelectedProject }: Props) {
             <br />
             <Text color="textSubtle" marginBottom="4px">Reward Distribution</Text>
             <Text>September 20th, 2022</Text>
+            {hasBackedProject && (
+              <>
+                <br />
+                <Text color="textSubtle" marginBottom="4px">Reward Status</Text>
+                <Text>Not Distributed</Text>
+                <br />
+                <Text color="warning" fontWeight="bold" marginBottom="4px">Have you received the reward for this project?</Text>
+                <Text fontSize="12px">
+                  If you haven&apos;t received any reward after the due date,
+                  you may <Link href="/">contact our support</Link>
+                </Text>
+              </>
+            )}
           </>
         )}
         {selectedTab === "donators" && (
