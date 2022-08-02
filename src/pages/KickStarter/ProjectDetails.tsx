@@ -1,8 +1,10 @@
-import { BinanceIcon, Breadcrumbs, FacebookIcon, Flex, Progress, ShareIcon, Text, TwitterIcon } from "@koda-finance/summitswap-uikit"
+import { BinanceIcon, Breadcrumbs, Button, FacebookIcon, FileIcon, Flex, Progress, ShareIcon, Text, TwitterIcon } from "@koda-finance/summitswap-uikit"
 import { Grid } from "@mui/material"
 import React, { useState } from "react"
 import styled from "styled-components"
+import DonatorCard from "./DonatorCard"
 import ProgressBox from "./ProgressBox"
+import { Donator } from "./types"
 
 type Props = {
   toggleSelectedProject: () => void
@@ -63,7 +65,9 @@ const TabTitle = styled(Text)<{ selected: boolean }>`
 
 const TabContent = styled(Flex)`
   flex-direction: column;
-  height: 400px;
+  height: 350px;
+  overflow-y: scroll;
+  padding-right: 16px;
 `;
 
 function ProjectDetails({ toggleSelectedProject }: Props) {
@@ -82,7 +86,32 @@ function ProjectDetails({ toggleSelectedProject }: Props) {
     },
   ]
   const [selectedTab, setSelectedTab] = useState(tabs[0].code)
-  const [donators, setDonators] = useState([]);
+  const [donators, setDonators] = useState<Donator[]>([
+    {
+      name: "John Doe",
+      email: "johndoe@email.com",
+      walletAddress: "0x1234567890123456789012345678901234567890",
+      amount: 100,
+    },
+    {
+      name: "Samuel Doe",
+      email: "samueldoe@email.com",
+      walletAddress: "0x1234567890123456789012345678901234567890",
+      amount: 0.01,
+    },
+    {
+      name: "Ann Doe",
+      email: "anndoe@email.com",
+      walletAddress: "0x1234567890123456789012345678901234567890",
+      amount: 0.21,
+    },
+    {
+      name: "Jimmy Doe",
+      email: "jimmydoe@email.com",
+      walletAddress: "0x1234567890123456789012345678901234567890",
+      amount: 0.21,
+    },
+  ])
 
   return (
     <Flex flexDirection="column">
@@ -129,14 +158,14 @@ function ProjectDetails({ toggleSelectedProject }: Props) {
           </Flex>
         </Flex>
       </Flex>
-      <Flex style={{ columnGap: "32px" }} flex={1} borderBottom="1px solid" borderBottomColor="inputColor" paddingBottom="10px" marginBottom="24px">
+      <Flex style={{ columnGap: "32px" }} flex={1} borderBottom="1px solid" borderBottomColor="inputColor" paddingBottom="10px">
         {tabs.map((tab) => (
           <TabTitle key={tab.code} onClick={() => setSelectedTab(tab.code)} selected={tab.code === selectedTab}>
             {tab.label}
           </TabTitle>
         ))}
       </Flex>
-      <TabContent>
+      <TabContent borderBottom="1px solid" borderBottomColor="inputColor" paddingTop="24px" paddingBottom="10px" marginBottom="24px">
         {selectedTab === "project_details" && (
           <>
             <Text color="textSubtle" marginBottom="4px">Project Description</Text>
@@ -197,11 +226,20 @@ function ProjectDetails({ toggleSelectedProject }: Props) {
         {selectedTab === "donators" && (
           <>
             {donators.length === 0 && (
-              <Text color="textDisabled">There are no backer for this project. Share your project to everyone now.</Text>
+              <Text color="textDisabled" marginTop="16px">There are no backer for this project. Share your project to everyone now.</Text>
             )}
+            {donators.map((donator, index) => (
+              <DonatorCard
+                key={donator.walletAddress}
+                donator={donator}
+                isFirstItem={index === 0}
+                isLastItem={index === donators.length - 1}
+              />
+            ))}
           </>
         )}
       </TabContent>
+      <Button variant="primary" marginRight="auto" startIcon={<FileIcon color="text" />}>Download Donator List</Button>
     </Flex>
   )
 }

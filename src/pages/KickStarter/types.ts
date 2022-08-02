@@ -5,3 +5,10 @@ export type Project = {
   goals: number;
   minimumBacking: number;
 }
+
+export type Donator = {
+  name: string;
+  email: string;
+  walletAddress: string;
+  amount: number;
+}
