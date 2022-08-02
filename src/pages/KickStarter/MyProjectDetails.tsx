@@ -70,7 +70,7 @@ const TabContent = styled(Flex)`
   padding-right: 16px;
 `;
 
-function ProjectDetails({ toggleSelectedProject }: Props) {
+function MyProjectDetails({ toggleSelectedProject }: Props) {
   const tabs: Tab[] = [
     {
       code: "project_details",
@@ -244,4 +244,4 @@ function ProjectDetails({ toggleSelectedProject }: Props) {
   )
 }
 
-export default ProjectDetails
+export default MyProjectDetails

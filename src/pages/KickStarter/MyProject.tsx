@@ -5,7 +5,7 @@ import React, { useCallback, useState } from 'react'
 import login from 'utils/login'
 import CreateProject from './CreateProject'
 import ProjectCard from './ProjectCard'
-import ProjectDetails from './ProjectDetails'
+import MyProjectDetails from './MyProjectDetails'
 import { Project } from './types'
 
 type Props = {
@@ -93,7 +93,7 @@ function MyProject({
   }
 
   if (selectedProject !== "") {
-    return <ProjectDetails toggleSelectedProject={toggleSelectedProject} />
+    return <MyProjectDetails toggleSelectedProject={toggleSelectedProject} />
   }
 
   return (
