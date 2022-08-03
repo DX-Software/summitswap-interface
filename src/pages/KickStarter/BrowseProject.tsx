@@ -7,11 +7,11 @@ import ProjectCard from './ProjectCard';
 function BrowseProject() {
   const sortOptions = [
     {
-      label: 'Sort by Default',
+      label: 'Default',
       value: 'default',
     },
     {
-      label: 'Sort by Name',
+      label: 'Name',
       value: 'name',
     },
   ]
@@ -49,7 +49,7 @@ function BrowseProject() {
         <Select
           startIcon={<SortIcon color="text" />}
           options={sortOptions}
-          minWidth="230px"
+          minWidth="150px"
         />
       </Flex>
       <Grid container spacing={2}>
