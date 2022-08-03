@@ -31,7 +31,7 @@ function BackedProject() {
           Please connect your wallet to view your projects
         </Heading>
         <Button variant='tertiary' startIcon={<WalletIcon />} style={{ fontFamily: 'Poppins' }} onClick={onPresentConnectModal}>
-          {TranslateString(292, 'CONNECT WALLET')}
+          Connect Your Wallet
         </Button>
       </Flex>
     )

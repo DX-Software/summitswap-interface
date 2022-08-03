@@ -47,7 +47,7 @@ function CreateProject({
       </Flex>
       <Flex style={{ columnGap: '8px', cursor: 'pointer' }} marginBottom="32px" onClick={toggleCreate}>
         <ArrowBackIcon color="linkColor" />
-        <Text color="linkColor">back to My Projects</Text>
+        <Text color="linkColor" style={{ textDecoration: "underline" }}>back to My Projects</Text>
       </Flex>
       <Text color="textSubtle" marginBottom="4px">
         Step 0{currentCreationStep} of 03 - Project Details

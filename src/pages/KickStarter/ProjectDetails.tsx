@@ -1,4 +1,4 @@
-import { BinanceIcon, Breadcrumbs, Button, FacebookIcon, FileIcon, Flex, Progress, ShareIcon, Tag, Text, TwitterIcon } from "@koda-finance/summitswap-uikit"
+import { ArrowBackIcon, BinanceIcon, Breadcrumbs, Button, FacebookIcon, FileIcon, Flex, Progress, ShareIcon, Tag, Text, TwitterIcon } from "@koda-finance/summitswap-uikit"
 import { Grid } from "@mui/material"
 import React, { useState } from "react"
 import styled from "styled-components"
@@ -6,6 +6,7 @@ import ImgCornerIllustration from "img/corner-illustration.svg"
 import DonatorCard from "./DonatorCard"
 import ProgressBox from "./ProgressBox"
 import { Donator } from "./types"
+import ProjectPayment from "./ProjectPayment"
 
 type Props = {
   toggleSelectedProject: () => void
@@ -37,14 +38,14 @@ const Dot = styled.div`
   height: 4px;
   border-radius: 50%;
   background-color: white;
-`;
+`
 
 const SocialMedia = styled(Flex)`
   height: fit-content;
   padding: 12px 18px;
   background-color: white;
   border-radius: 20px;
-`;
+`
 
 const TabTitle = styled(Text)<{ selected: boolean }>`
   position: relative;
@@ -131,6 +132,15 @@ function ProjectDetails({ toggleSelectedProject }: Props) {
   ])
   const [hasBackedProject, setHasBackedProject] = useState(true)
   const [backedAmount, setBackedAmount] = useState(1000)
+  const [isPayment, setIsPayment] = useState(false)
+
+  const togglePayment = () => {
+    setIsPayment((prevValue) => !prevValue)
+  }
+
+  if (isPayment) {
+    return <ProjectPayment toggleSelectedProject={toggleSelectedProject} togglePayment={togglePayment}  />
+  }
 
   return (
     <Flex flexDirection="column">
@@ -145,6 +155,10 @@ function ProjectDetails({ toggleSelectedProject }: Props) {
             </Text>
           </Breadcrumbs>
         </Flex>
+      </Flex>
+      <Flex style={{ columnGap: '8px', cursor: 'pointer' }} marginBottom="32px" onClick={toggleSelectedProject}>
+        <ArrowBackIcon color="linkColor" />
+        <Text color="linkColor" style={{ textDecoration: "underline" }}>back to Browse Projects</Text>
       </Flex>
       <Flex style={{ columnGap: '32px' }} marginBottom="32px">
         <Banner />
@@ -177,7 +191,7 @@ function ProjectDetails({ toggleSelectedProject }: Props) {
             </BackedAmountWrapper>
           )}
           <Flex style={{ columnGap: "8px" }} alignItems="center">
-            <Button>Back this project</Button>
+            <Button onClick={togglePayment}>Back this project</Button>
             <SocialMedia>
               <ShareIcon width="14px" />
             </SocialMedia>
