@@ -4,11 +4,24 @@ import styled from 'styled-components'
 import FundingInput from './FundingInput'
 import { Project } from './types'
 
+const ImageAndDescriptionWrapper = styled(Flex)`
+  column-gap: 32px;
+  row-gap: 16px;
+
+  @media (max-width: 576px) {
+    flex-direction: column;
+  }
+`
+
 const ImageWrapper = styled(Flex)`
   width: 270px;
   height: 230px;
   border: 3px dashed ${({ theme }) => theme.colors.menuItemActiveBackground};
   border-radius: 8px;
+
+  @media (max-width: 576px) {
+    width: 100%;
+  }
 `
 
 const InputWrapper = styled(Flex)`
@@ -18,6 +31,18 @@ const InputWrapper = styled(Flex)`
 const FundingWrapper = styled(Flex)`
   flex: 1;
   column-gap: 32px;
+  row-gap: 16px;
+
+  @media (max-width: 576px) {
+    flex-direction: column;
+  }
+`
+
+const ButtonNext = styled(Button)`
+  margin-top: 32px;
+  @media (min-width: 576px) {
+    margin-left: auto;
+  }
 `
 
 type Props = {
@@ -41,7 +66,7 @@ function CreationStep01({
 
   return (
     <Flex flexDirection="column">
-      <Flex style={{ columnGap: '32px' }} marginBottom="16px">
+      <ImageAndDescriptionWrapper marginBottom="16px">
         <ImageWrapper flexDirection="column" alignItems="center" justifyContent="center">
           <ImageAddIcon width={60} marginBottom="8px" color="menuItemActiveBackground" />
           <Text color="menuItemActiveBackground" style={{ maxWidth: '150px' }} textAlign="center">
@@ -64,7 +89,7 @@ function CreationStep01({
           </Text>
           <TextArea placeholder="Write something about your project" />
         </InputWrapper>
-      </Flex>
+      </ImageAndDescriptionWrapper>
       <FundingWrapper>
         <FundingInput label="Project Goals" value={projectCreation.goals} onChange={handleProjectGoalsChanged} />
         <FundingInput
@@ -74,15 +99,13 @@ function CreationStep01({
           onChange={handleMinimumBackingChanged}
         />
       </FundingWrapper>
-      <Button
+      <ButtonNext
         variant="tertiary"
         endIcon={<ArrowForwardIcon />}
-        marginTop="32px"
-        marginLeft="auto"
         onClick={() => setCurrentCreationStep(2)}
       >
         Next Step
-      </Button>
+      </ButtonNext>
     </Flex>
   )
 }
