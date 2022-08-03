@@ -1,5 +1,6 @@
 import { BinanceIcon, Flex, Text } from "@koda-finance/summitswap-uikit"
 import React from "react"
+import styled from "styled-components"
 import { Donator } from "./types"
 
 type Props = {
@@ -8,9 +9,16 @@ type Props = {
   isLastItem: boolean
 }
 
+const Wrapper = styled(Flex)`
+  row-gap: 4px;
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+
 function DonatorCard({ donator, isFirstItem, isLastItem }: Props) {
   return (
-    <Flex
+    <Wrapper
       justifyContent="space-between"
       paddingTop={isFirstItem ? 0 : "16px"}
       paddingBottom={isLastItem ? 0 : "12px"}
@@ -25,7 +33,7 @@ function DonatorCard({ donator, isFirstItem, isLastItem }: Props) {
         <BinanceIcon />
         <Text fontSize="24px" fontWeight="bold">{donator.amount}</Text>
       </Flex>
-    </Flex>
+    </Wrapper>
   )
 }
 

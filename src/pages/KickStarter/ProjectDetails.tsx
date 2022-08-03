@@ -17,11 +17,38 @@ type Tab = {
   code: "project_details" | "rewards" | "donators"
 }
 
-const Banner = styled(Flex)`
-  width: 270px;
+const ImageAndDescriptionWrapper = styled(Flex)`
+  column-gap: 32px;
+  row-gap: 24px;
+  margin-bottom: 32px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`
+
+const DesktopBanner = styled(Flex)`
+  width: 240px;
   height: 230px;
   border-radius: 8px;
   background-color: gray;
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+`
+
+const MobileBanner = styled(Flex)`
+  width: 100%;
+  height: 230px;
+  border-radius: 8px;
+  background-color: gray;
+  flex-shrink: 0;
+  display: none;
+  @media (max-width: 768px) {
+    display: block;
+  }
 `
 
 const Label = styled(Tag)`
@@ -66,8 +93,6 @@ const TabTitle = styled(Text)<{ selected: boolean }>`
 
 const TabContent = styled(Flex)`
   flex-direction: column;
-  height: 350px;
-  overflow-y: scroll;
   padding-right: 16px;
 `
 
@@ -160,8 +185,8 @@ function ProjectDetails({ toggleSelectedProject }: Props) {
         <ArrowBackIcon color="linkColor" />
         <Text color="linkColor" style={{ textDecoration: "underline" }}>back to Browse Projects</Text>
       </Flex>
-      <Flex style={{ columnGap: '32px' }} marginBottom="32px">
-        <Banner />
+      <ImageAndDescriptionWrapper>
+        <DesktopBanner />
         <Flex flexDirection="column">
           <Flex style={{ columnGap: "8px" }} marginBottom="8px">
             {hasBackedProject && (
@@ -170,6 +195,7 @@ function ProjectDetails({ toggleSelectedProject }: Props) {
             <Label variant="failure"><b>7 days left</b></Label>
           </Flex>
           <Text fontSize="40px" marginBottom="24px">SummitSwap#1 Fundraising Project</Text>
+          <MobileBanner marginBottom="24px" />
           <Flex style={{ columnGap: "8px" }}>
             <BinanceIcon width="20px" />
             <Text fontWeight="bold" fontSize="24px">0.0000123</Text>
@@ -203,7 +229,7 @@ function ProjectDetails({ toggleSelectedProject }: Props) {
             </SocialMedia>
           </Flex>
         </Flex>
-      </Flex>
+      </ImageAndDescriptionWrapper>
       <Flex style={{ columnGap: "32px" }} flex={1} borderBottom="1px solid" borderBottomColor="inputColor" paddingBottom="10px">
         {tabs.map((tab) => (
           <TabTitle key={tab.code} onClick={() => setSelectedTab(tab.code)} selected={tab.code === selectedTab}>
@@ -211,7 +237,12 @@ function ProjectDetails({ toggleSelectedProject }: Props) {
           </TabTitle>
         ))}
       </Flex>
-      <TabContent borderBottom="1px solid" borderBottomColor="inputColor" paddingY="24px" marginBottom="24px">
+      <TabContent
+        style={{ height: selectedTab === "donators" ? "350px": "auto", overflowY: selectedTab === "donators" ? "scroll": "auto" }}
+        borderBottom="1px solid"
+        borderBottomColor="inputColor"
+        paddingY="24px"
+        marginBottom="24px">
         {selectedTab === "project_details" && (
           <>
             <Text color="textSubtle" marginBottom="4px">Project Description</Text>
