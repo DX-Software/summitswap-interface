@@ -25,12 +25,30 @@ const AccountWrapper = styled(Flex)`
   column-gap: 16px;
   margin-right: auto;
   width: 320px;
+
+  @media (max-width: 576px) {
+    width: 100%;
+  }
 `
 
 const EstimationWrapper = styled(Flex)`
   flex: 1;
   column-gap: 32px;
+  row-gap: 16px;
   margin-top: 24px;
+  margin-bottom: 32px;
+
+  @media (max-width: 576px) {
+    flex-direction: column;
+  }
+`
+
+const ButtonWrapper = styled(Flex)`
+  justify-content: space-between;
+  row-gap: 16px;
+  @media (max-width: 576px) {
+    flex-direction: column-reverse;
+  }
 `
 
 function CreationStep02({setCurrentCreationStep, projectCreation, handleOnProjectCreationChanged}: Props) {
@@ -82,22 +100,20 @@ function CreationStep02({setCurrentCreationStep, projectCreation, handleOnProjec
           onChange={handleMinimumBackingChanged}
         />
       </EstimationWrapper>
-      <Flex justifyContent="space-between">
+      <ButtonWrapper>
         <Button
           variant="secondary"
-          marginTop="32px"
           onClick={() => setCurrentCreationStep(1)}
         >
           Previous Step
         </Button>
         <Button
           variant="primary"
-          marginTop="32px"
           onClick={() => setCurrentCreationStep(3)}
         >
           Create New Project
         </Button>
-      </Flex>
+      </ButtonWrapper>
     </Flex>
   )
 }
