@@ -4,11 +4,23 @@ import React from 'react'
 import styled from 'styled-components'
 import { Project } from './types'
 
+const ImageAndDescriptionWrapper = styled(Flex)`
+  column-gap: 32px;
+  row-gap: 24px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`
+
 const Banner = styled(Flex)`
   width: 270px;
   height: 230px;
   border-radius: 8px;
   background-color: gray;
+  @media (max-width: 576px) {
+    width: 100%;
+  }
 `
 
 const ImgAccount = styled.div`
@@ -25,6 +37,36 @@ const AccountWrapper = styled(Flex)`
   column-gap: 16px;
   margin-right: auto;
   width: 320px;
+
+  @media (max-width: 576px) {
+    width: 100%;
+  }
+`
+
+const CriteriaWrapper = styled(Flex)`
+  row-gap: 16px;
+  @media (max-width: 576px) {
+    flex-direction: column;
+  }
+`
+
+const EstimationWrapper = styled(Flex)`
+  flex: 1;
+  column-gap: 32px;
+  row-gap: 16px;
+  margin-bottom: 32px;
+
+  @media (max-width: 576px) {
+    flex-direction: column;
+  }
+`
+
+const ButtonWrapper = styled(Flex)`
+  justify-content: space-between;
+  row-gap: 16px;
+  @media (max-width: 576px) {
+    flex-direction: column-reverse;
+  }
 `
 
 type Props = {
@@ -40,7 +82,7 @@ function CreationStep03({
   return (
     <Flex flexDirection="column">
       <Heading size="lg" color="menuItemActiveBackground" marginBottom="24px">Project Details</Heading>
-      <Flex style={{ columnGap: '32px' }} marginBottom="16px">
+      <ImageAndDescriptionWrapper marginBottom="16px">
         <Banner />
         <Flex flexDirection="column" flex={1}>
           <Text color="textSubtle" marginBottom="4px">
@@ -62,7 +104,7 @@ function CreationStep03({
             Etiam odio aliquam quis lacus, justo, aliquam molestie suspendisse tempus.
           </Text>
           <br />
-          <Flex>
+          <CriteriaWrapper>
             <Flex flexDirection="column" marginRight="auto">
               <Text color="textSubtle" marginBottom="4px">
                 Project Goals
@@ -81,10 +123,10 @@ function CreationStep03({
                 <Text>{projectCreation.minimumBacking}</Text>
               </Flex>
             </Flex>
-          </Flex>
+          </CriteriaWrapper>
         </Flex>
-      </Flex>
-      <Heading size="lg" color="menuItemActiveBackground">Fund &amp; Reward System</Heading>
+      </ImageAndDescriptionWrapper>
+      <Heading size="lg" color="menuItemActiveBackground" marginY="16px">Fund &amp; Reward System</Heading>
       <Flex flexDirection="column">
         <Text marginBottom="8px">Funding Account</Text>
         <AccountWrapper marginBottom="24px">
@@ -110,7 +152,7 @@ function CreationStep03({
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non nibh a, commodo aliquam nullam pharetra viverra.
           Etiam odio aliquam quis lacus, justo, aliquam molestie suspendisse tempus.
         </Text>
-        <Flex>
+        <EstimationWrapper>
           <Flex flexDirection="column" marginRight="auto">
             <Text color="textSubtle" marginBottom="4px">
               Project Due Date
@@ -123,22 +165,15 @@ function CreationStep03({
             </Text>
             <Text>Tuesday, July 26th 2022</Text>
           </Flex>
-        </Flex>
-        <Flex justifyContent="space-between">
-          <Button
-            variant="secondary"
-            marginTop="32px"
-            onClick={() => setCurrentCreationStep(1)}
-          >
+        </EstimationWrapper>
+        <ButtonWrapper>
+          <Button variant="secondary" onClick={() => setCurrentCreationStep(1)}>
             Re-edit Project
           </Button>
-          <Button
-            variant="primary"
-            marginTop="32px"
-          >
+          <Button variant="primary">
             Create New Project
           </Button>
-        </Flex>
+        </ButtonWrapper>
       </Flex>
     </Flex>
   )
