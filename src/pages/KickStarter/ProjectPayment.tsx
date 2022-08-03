@@ -1,10 +1,11 @@
 import { ArrowBackIcon, ArrowForwardIcon, BinanceIcon, Box, Breadcrumbs, Button, Flex, Heading, Modal, Text, useModal, useWalletModal, WalletIcon } from "@koda-finance/summitswap-uikit"
 import { Grid } from "@mui/material"
 import { useWeb3React } from "@web3-react/core"
-import React, { useCallback } from "react"
+import React, { useCallback, useState } from "react"
 import styled from "styled-components"
 import login from "utils/login"
 import FundingInput from "./FundingInput"
+import MobilePayment from "./MobilePayment"
 import PaymentModal from "./PaymentModal"
 
 type Props = {
@@ -12,11 +13,27 @@ type Props = {
   togglePayment: () => void
 }
 
-const Banner = styled.div`
+const MobileBanner = styled(Flex)`
+  background: gray;
+  width: 100%;
+  height: 120px;
+  border-radius: 8px;
+  display: none;
+
+  @media (max-width: 900px) {
+    display: block;
+  }
+`
+
+const DesktopBanner = styled.div`
   background: gray;
   width: 120px;
   height: 120px;
   border-radius: 8px;
+
+  @media (max-width: 900px) {
+    display: none;
+  }
 `
 
 const Name = styled(Text)`
@@ -36,6 +53,18 @@ const Divider = styled.div`
   width: 100%;
   background: ${({ theme }) => theme.colors.inputColor};
   margin: 24px 0px;
+`
+
+const SideItems = styled(Grid)`
+  @media (max-width: 900px) {
+    display: none;
+  }
+`
+
+const DesktopPaymentWrapper = styled(Grid)<{ isVisibleOnMobile: boolean }>`
+  @media (max-width: 900px) {
+    display: ${({ isVisibleOnMobile }) => (isVisibleOnMobile ? "block!important" : "none!important")};
+  }
 `
 
 const SideWrapper = styled(Flex)`
@@ -62,6 +91,13 @@ const ImgAccount = styled.div`
   border-radius: 50%;
 `
 
+const ButtonContinue = styled(Button)`
+  display: none;
+  @media (max-width: 900px) {
+    display: flex;
+  }
+`
+
 function ProjectPayment({ toggleSelectedProject, togglePayment }: Props) {
   const { account, activate, deactivate } = useWeb3React()
   const handleLogin = useCallback(
@@ -73,6 +109,7 @@ function ProjectPayment({ toggleSelectedProject, togglePayment }: Props) {
 
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
   const [showPayment] = useModal(<PaymentModal title="Payment Process" />)
+  const [isMobilePaymentPage, setIsMobilePaymentPage] = useState(false)
 
   return (
     <Flex flexDirection="column">
@@ -89,17 +126,18 @@ function ProjectPayment({ toggleSelectedProject, togglePayment }: Props) {
           </Text>
         </Breadcrumbs>
       </Flex>
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={7}>
-          <Flex style={{ columnGap: '8px', cursor: 'pointer' }} marginBottom="32px" onClick={toggleSelectedProject}>
-            <ArrowBackIcon color="linkColor" />
-            <Text color="linkColor" style={{ textDecoration: "underline" }}>back to Project Details</Text>
-          </Flex>
+      <Flex style={{ columnGap: '8px', cursor: 'pointer' }} marginBottom="32px" onClick={toggleSelectedProject}>
+        <ArrowBackIcon color="linkColor" />
+        <Text color="linkColor" style={{ textDecoration: "underline" }}>back to Project Details</Text>
+      </Flex>
+      <DesktopPaymentWrapper container spacing={2} isVisibleOnMobile={!isMobilePaymentPage}>
+        <Grid item xs={12} md={7}>
           <Heading size="lg" marginBottom="8px">
             Back Project
           </Heading>
+          <MobileBanner marginBottom="16px" />
           <Flex style={{ columnGap: "16px" }}>
-            <Banner />
+            <DesktopBanner />
             <Flex flexDirection="column">
               <Name>ROGER KENTER</Name>
               <Title>Roger Kenter#1 Project</Title>
@@ -117,7 +155,7 @@ function ProjectPayment({ toggleSelectedProject, togglePayment }: Props) {
           <Text color="textSubtle" marginBottom="4px">Reward Distribution</Text>
           <Text>September 09th, 2022</Text>
         </Grid>
-        <Grid item xs={12} sm={5}>
+        <SideItems item xs={12} md={5}>
           <SideWrapper marginBottom="16px">
             <Heading size="md" marginBottom="8px">Backing Project</Heading>
             <Text color="textSubtle" marginBottom="16px">
@@ -162,8 +200,17 @@ function ProjectPayment({ toggleSelectedProject, togglePayment }: Props) {
               </Flex>
             )}
           </SideWrapper>
-        </Grid>
-      </Grid>
+        </SideItems>
+      </DesktopPaymentWrapper>
+      {isMobilePaymentPage && <MobilePayment showPayment={showPayment} />}
+      {!isMobilePaymentPage && (
+        <ButtonContinue
+          endIcon={<ArrowForwardIcon color="text" />}
+          style={{ fontFamily: 'Poppins', marginTop: "32px" }}
+          onClick={() => setIsMobilePaymentPage(true)}>
+          Continue
+        </ButtonContinue>
+      )}
     </Flex>
   )
 }
