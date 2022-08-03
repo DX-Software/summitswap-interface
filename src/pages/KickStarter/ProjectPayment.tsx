@@ -1,10 +1,11 @@
-import { ArrowBackIcon, ArrowForwardIcon, BinanceIcon, Box, Breadcrumbs, Button, Flex, Heading, Text, useWalletModal, WalletIcon } from "@koda-finance/summitswap-uikit"
+import { ArrowBackIcon, ArrowForwardIcon, BinanceIcon, Box, Breadcrumbs, Button, Flex, Heading, Modal, Text, useModal, useWalletModal, WalletIcon } from "@koda-finance/summitswap-uikit"
 import { Grid } from "@mui/material"
 import { useWeb3React } from "@web3-react/core"
 import React, { useCallback } from "react"
 import styled from "styled-components"
 import login from "utils/login"
 import FundingInput from "./FundingInput"
+import PaymentModal from "./PaymentModal"
 
 type Props = {
   toggleSelectedProject: () => void
@@ -59,7 +60,7 @@ const ImgAccount = styled.div`
   height: 40px;
   background: gray;
   border-radius: 50%;
-`;
+`
 
 function ProjectPayment({ toggleSelectedProject, togglePayment }: Props) {
   const { account, activate, deactivate } = useWeb3React()
@@ -71,6 +72,7 @@ function ProjectPayment({ toggleSelectedProject, togglePayment }: Props) {
   )
 
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
+  const [showPayment] = useModal(<PaymentModal title="Payment Process" />)
 
   return (
     <Flex flexDirection="column">
@@ -136,7 +138,7 @@ function ProjectPayment({ toggleSelectedProject, togglePayment }: Props) {
                 variant='awesome'
                 endIcon={<ArrowForwardIcon color="text" />}
                 style={{ fontFamily: 'Poppins', marginTop: "32px" }}
-                onClick={onPresentConnectModal}>
+                onClick={showPayment}>
                 Proceed
               </Button>
             )}
