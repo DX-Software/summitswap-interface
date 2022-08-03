@@ -3,9 +3,14 @@ import React from "react"
 import styled from "styled-components"
 import ProgressBox from "./ProgressBox"
 
+type Props = {
+  onClick: () => void
+}
+
 const Wrapper = styled(Flex)`
   padding-bottom: 16px;
   column-gap: 12px;
+  cursor: pointer;
 `
 
 const Banner = styled(Flex)`
@@ -40,9 +45,9 @@ const Title = styled(Text)`
   margin-bottom: 8px;
 `
 
-function ProjectCardMobile() {
+function ProjectCardMobile({ onClick }: Props) {
   return (
-    <Wrapper>
+    <Wrapper onClick={onClick}>
       <Banner>
         <Label style={{ background: "#ED4B9E" }}>End Soon</Label>
       </Banner>

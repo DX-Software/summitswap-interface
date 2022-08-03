@@ -1,7 +1,7 @@
 import { Flex, Heading, Input, Select, SortIcon } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import React, { useState } from 'react'
-import { isMobile } from 'react-device-detect'
+import { isDesktop } from 'react-device-detect'
 import ProjectDetails from './ProjectDetails'
 import ProjectCard from './ProjectCard'
 import ProjectCardMobile from './ProjectCardMobile'
@@ -33,13 +33,13 @@ function BrowseProject() {
       <Heading size='lg' marginBottom="24px">End Soon Project</Heading>
       <Grid container spacing={2} marginBottom="60px">
         <Grid item xs={12} sm={6} lg={4}>
-          {isMobile ? <ProjectCard onClick={() => setSelectedProject("ID")} /> : <ProjectCardMobile />}
+          {isDesktop ? <ProjectCard onClick={() => setSelectedProject("ID")} /> : <ProjectCardMobile onClick={() => setSelectedProject("ID")} />}
         </Grid>
         <Grid item xs={12} sm={6} lg={4}>
-          {isMobile ? <ProjectCard onClick={() => setSelectedProject("ID")} /> : <ProjectCardMobile />}
+          {isDesktop ? <ProjectCard onClick={() => setSelectedProject("ID")} /> : <ProjectCardMobile onClick={() => setSelectedProject("ID")} />}
         </Grid>
         <Grid item xs={12} sm={6} lg={4}>
-          {isMobile ? <ProjectCard onClick={() => setSelectedProject("ID")} /> : <ProjectCardMobile />}
+          {isDesktop ? <ProjectCard onClick={() => setSelectedProject("ID")} /> : <ProjectCardMobile onClick={() => setSelectedProject("ID")} />}
         </Grid>
       </Grid>
       <Heading size='lg' marginBottom="24px">Browse All Projects</Heading>
@@ -56,22 +56,22 @@ function BrowseProject() {
       </Flex>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6} lg={4}>
-          {isMobile ? <ProjectCard onClick={() => setSelectedProject("ID")} /> : <ProjectCardMobile />}
+          {isDesktop ? <ProjectCard onClick={() => setSelectedProject("ID")} /> : <ProjectCardMobile onClick={() => setSelectedProject("ID")} />}
         </Grid>
         <Grid item xs={12} sm={6} lg={4}>
-          {isMobile ? <ProjectCard onClick={() => setSelectedProject("ID")} /> : <ProjectCardMobile />}
+          {isDesktop ? <ProjectCard onClick={() => setSelectedProject("ID")} /> : <ProjectCardMobile onClick={() => setSelectedProject("ID")} />}
         </Grid>
         <Grid item xs={12} sm={6} lg={4}>
-          {isMobile ? <ProjectCard onClick={() => setSelectedProject("ID")} /> : <ProjectCardMobile />}
+          {isDesktop ? <ProjectCard onClick={() => setSelectedProject("ID")} /> : <ProjectCardMobile onClick={() => setSelectedProject("ID")} />}
         </Grid>
         <Grid item xs={12} sm={6} lg={4}>
-          {isMobile ? <ProjectCard onClick={() => setSelectedProject("ID")} /> : <ProjectCardMobile />}
+          {isDesktop ? <ProjectCard onClick={() => setSelectedProject("ID")} /> : <ProjectCardMobile onClick={() => setSelectedProject("ID")} />}
         </Grid>
         <Grid item xs={12} sm={6} lg={4}>
-          {isMobile ? <ProjectCard onClick={() => setSelectedProject("ID")} /> : <ProjectCardMobile />}
+          {isDesktop ? <ProjectCard onClick={() => setSelectedProject("ID")} /> : <ProjectCardMobile onClick={() => setSelectedProject("ID")} />}
         </Grid>
         <Grid item xs={12} sm={6} lg={4}>
-          {isMobile ? <ProjectCard onClick={() => setSelectedProject("ID")} /> : <ProjectCardMobile />}
+          {isDesktop ? <ProjectCard onClick={() => setSelectedProject("ID")} /> : <ProjectCardMobile onClick={() => setSelectedProject("ID")} />}
         </Grid>
       </Grid>
     </Flex>
