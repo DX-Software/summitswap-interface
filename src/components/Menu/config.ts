@@ -32,6 +32,11 @@ const config: MenuEntry[] = [
     icon: 'InfoIcon',
     href: '/info',
   },
+  {
+    label: 'Presale-App',
+    icon: 'InfoIcon',
+    href: '/presaleApplication',
+  },
   // {
   //  label: 'Create Token',
   //   icon: 'SunIcon',
