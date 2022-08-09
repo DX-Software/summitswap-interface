@@ -71,7 +71,7 @@ export default function ChooseToken({
   return (
     <>
       <div style={{ cursor: disabled ? 'not-allowed' : 'auto' }}>
-        <LinkBox mb={4}>
+        <LinkBox>
           {selectedCurrency ? (
             <>
               <Box>
