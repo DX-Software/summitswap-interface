@@ -1,1 +1,0 @@
-export const KICKSTARTER_SUBGRAPH = `${process.env.REACT_APP_KICKSTARTER_SUBGRAPH}`
