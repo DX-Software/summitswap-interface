@@ -1,5 +1,5 @@
 import { Option } from 'react-dropdown'
-
+import { BUSD, KODA, USDC, USDT, NULL_ADDRESS } from '.'
 
 export const PRESALE_FACTORY_ADDRESS = `${process.env.REACT_APP_PRESALE_FACTORY_ADDRESS}`
 // used as a max token amount to approve factory 
@@ -37,3 +37,10 @@ export enum RadioFieldValues {
   feeTypeBnbAndToken = 1,
 }
 
+export const TOKEN_CHOICES = {
+  KODA: KODA.address,
+  BNB: NULL_ADDRESS,
+  BUSD: BUSD.address,
+  USDC: USDC.address,
+  USDT: USDT.address,
+}

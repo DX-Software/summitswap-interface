@@ -34,7 +34,6 @@ export const KODA = {
   [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0xa3A654C2369277237372cCce51Ca8403acB4FAe4', 9, 'KODA', 'KODA Token', 100, true, 11.25, 11.23)
 }[CHAIN_ID] as Token
 export const DAI = new Token(ChainId.MAINNET, '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3', 18, 'DAI', 'Dai Stablecoin')
-export const USDT = new Token(ChainId.MAINNET, '0x55d398326f99059fF775485246999027B3197955', 18, 'USDT', 'Tether USD')
 
 export const UST = new Token(
   ChainId.MAINNET,
@@ -48,6 +47,17 @@ export const BUSD = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56', 18, 'BUSD', 'Binance USD'),
   [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7', 18, 'BUSD', 'Binance USD'),
 }[CHAIN_ID] as Token;
+
+export const USDC = {
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d', 18, 'USDC', 'USD Coin'),
+  [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0x64544969ed7EBf5f083679233325356EbE738930', 18, 'USDC', 'USD Coin'),
+}[CHAIN_ID] as Token;
+
+export const USDT = {
+  [ChainId.MAINNET]:  new Token(ChainId.MAINNET, '0x55d398326f99059fF775485246999027B3197955', 18, 'USDT', 'Tether USD'),
+  [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0x337610d27c682E347C9cD60BD4b3b107C9d34dDd', 18, 'USDT', 'Tether USD'),
+}[CHAIN_ID] as Token;
+
 
 export const KAPEX = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0x11441AFb1D10E3Ce4E39666FC4F4A2A5d6d8C0Da', 18, 'KAPEX', 'KAPEX Token'),
