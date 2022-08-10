@@ -3,12 +3,8 @@ import BigNumber from "bignumber.js";
 import React, { useMemo } from "react"
 import styled from "styled-components";
 import ProgressBox from "./ProgressBox";
-
-enum STATUSES {
-  ONGOING = "ongoing",
-  END_SOON = "end soon",
-  COMPLETED = "completed",
-}
+import { STATUSES } from "./types";
+import { getDayRemaining, getKickstarterStatus } from "./utility";
 
 type Props = {
   title: string
@@ -47,19 +43,8 @@ const Label = styled(Text)<{ status: STATUSES }>`
 `;
 
 function ProjectCard({ title, creator, projectGoals, totalContribution, endTimestamp, onClick }: Props) {
-  const oneDayTimestamp = 60 * 60 * 24;
-  const currentTimestamp = Math.floor(Date.now() / 1000)
 
-  const dayRemaining = useMemo(() => {
-    const timeRemaining = endTimestamp > currentTimestamp ? endTimestamp - currentTimestamp : 0
-    return Math.ceil(timeRemaining / oneDayTimestamp)
-  }, [currentTimestamp, endTimestamp, oneDayTimestamp]);
-
-  const status = useMemo(() => {
-    if (currentTimestamp > endTimestamp) return STATUSES.COMPLETED
-    if (currentTimestamp + 7 * oneDayTimestamp > endTimestamp) return STATUSES.END_SOON
-    return STATUSES.ONGOING
-  }, [currentTimestamp, oneDayTimestamp, endTimestamp])
+  const status = useMemo(() => getKickstarterStatus(endTimestamp), [endTimestamp])
 
   const fundedPercentage = useMemo(() => {
     if (totalContribution.toString() === "0") {
@@ -73,7 +58,7 @@ function ProjectCard({ title, creator, projectGoals, totalContribution, endTimes
         <Label status={status} fontSize="12px" fontWeight="bold">
           {status !== STATUSES.END_SOON
             ? status
-            : `${dayRemaining} day(s) left`
+            : `${getDayRemaining(endTimestamp)} day(s) left`
           }
         </Label>
       </Banner>

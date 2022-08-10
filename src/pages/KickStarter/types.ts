@@ -1,3 +1,9 @@
+export enum STATUSES {
+  ONGOING = "ongoing",
+  END_SOON = "end_soon",
+  COMPLETED = "completed",
+}
+
 export type Project = {
   title: string;
   creator: string;
