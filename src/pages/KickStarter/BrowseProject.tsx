@@ -40,6 +40,7 @@ function BrowseProject() {
               creator=""
               projectGoals={new BigNumber(0)}
               totalContribution={new BigNumber(0)}
+              endTimestamp={0}
               onClick={() => setSelectedProject("ID")}
             />
           : <ProjectCardMobile onClick={() => setSelectedProject("ID")} />}
@@ -65,6 +66,7 @@ function BrowseProject() {
               creator=""
               totalContribution={new BigNumber(0)}
               projectGoals={new BigNumber(0)}
+              endTimestamp={0}
               onClick={() => setSelectedProject("ID")}
             />
           : <ProjectCardMobile onClick={() => setSelectedProject("ID")} />}

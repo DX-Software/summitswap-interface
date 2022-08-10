@@ -39,6 +39,7 @@ function BackedProject() {
               creator={backedProject.kickstarter.creator}
               projectGoals={backedProject.kickstarter.projectGoals}
               totalContribution={backedProject.kickstarter.totalContribution}
+              endTimestamp={backedProject.kickstarter.endTimestamp}
               onClick={() => handleBackedProjectChanged(backedProject.kickstarter.id)}
             />
           </Grid>

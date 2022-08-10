@@ -103,6 +103,7 @@ function MyProject({
             creator=""
             projectGoals={new BigNumber(0)}
             totalContribution={new BigNumber(0)}
+            endTimestamp={0}
             onClick={() => setSelectedProject("ID")}
           />
         </Grid>
