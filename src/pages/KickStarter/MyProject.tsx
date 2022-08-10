@@ -1,8 +1,7 @@
 import { AddIcon, Button, Flex, Heading, Text, useWalletModal, WalletIcon } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
-import React, { useCallback, useState } from 'react'
-import login from 'utils/login'
+import { useKickstarterContext } from 'contexts/kickstarter'
+import React, { useState } from 'react'
 import CreateProject from './CreateProject'
 import ProjectCard from './ProjectCard'
 import ProjectDetails from './ProjectDetails'
@@ -25,7 +24,7 @@ function MyProject({
   projectCreation,
   handleOnProjectCreationChanged,
 }: Props) {
-  const { account, activate, deactivate } = useWeb3React()
+  const { account, onPresentConnectModal } = useKickstarterContext()
   const [projects, setProjects] = useState<Project[]>([
     {
       title: "Lorem Ipsum",
@@ -36,14 +35,6 @@ function MyProject({
     }
   ])
   const [selectedProject, setSelectedProject] = useState("")
-  const handleLogin = useCallback(
-    (connectorId: string) => {
-      login(connectorId, activate)
-    },
-    [activate]
-  )
-
-  const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
 
   const toggleSelectedProject = () => {
     setSelectedProject("")
