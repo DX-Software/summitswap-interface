@@ -1,8 +1,7 @@
-import { ArrowForwardIcon, BinanceIcon, Box, Button, Flex, Heading, Text, useWalletModal, WalletIcon } from "@koda-finance/summitswap-uikit"
-import { useWeb3React } from "@web3-react/core"
-import React, { useCallback } from "react"
+import { ArrowForwardIcon, BinanceIcon, Box, Button, Flex, Heading, Text, WalletIcon } from "@koda-finance/summitswap-uikit"
+import { useKickstarterContext } from "contexts/kickstarter"
+import React from "react"
 import styled from "styled-components"
-import login from "utils/login"
 import FundingInput from "./FundingInput"
 
 type Props = {
@@ -61,15 +60,7 @@ const OnlineDot = styled(Box)<{ isOnline: boolean }>`
 `
 
 function MobilePayment({ showPayment }: Props) {
-  const { account, activate, deactivate } = useWeb3React()
-  const handleLogin = useCallback(
-    (connectorId: string) => {
-      login(connectorId, activate)
-    },
-    [activate]
-  )
-
-  const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
+  const { account, onPresentConnectModal } = useKickstarterContext()
 
   return (
     <Flex flexDirection="column">

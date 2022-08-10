@@ -1,9 +1,8 @@
-import { ArrowBackIcon, ArrowForwardIcon, BinanceIcon, Box, Breadcrumbs, Button, Flex, Heading, Modal, Text, useModal, useWalletModal, WalletIcon } from "@koda-finance/summitswap-uikit"
+import { ArrowBackIcon, ArrowForwardIcon, BinanceIcon, Box, Breadcrumbs, Button, Flex, Heading, Text, useModal, WalletIcon } from "@koda-finance/summitswap-uikit"
 import { Grid } from "@mui/material"
-import { useWeb3React } from "@web3-react/core"
-import React, { useCallback, useState } from "react"
+import { useKickstarterContext } from "contexts/kickstarter"
+import React, { useState } from "react"
 import styled from "styled-components"
-import login from "utils/login"
 import FundingInput from "./FundingInput"
 import MobilePayment from "./MobilePayment"
 import PaymentModal from "./PaymentModal"
@@ -99,15 +98,8 @@ const ButtonContinue = styled(Button)`
 `
 
 function ProjectPayment({ toggleSelectedProject, togglePayment }: Props) {
-  const { account, activate, deactivate } = useWeb3React()
-  const handleLogin = useCallback(
-    (connectorId: string) => {
-      login(connectorId, activate)
-    },
-    [activate]
-  )
+  const { account, onPresentConnectModal } = useKickstarterContext()
 
-  const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
   const [showPayment] = useModal(<PaymentModal title="Payment Process" />)
   const [isMobilePaymentPage, setIsMobilePaymentPage] = useState(false)
 
