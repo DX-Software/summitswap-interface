@@ -1,6 +1,6 @@
 import { useWalletModal } from "@koda-finance/summitswap-uikit";
 import { useWeb3React } from "@web3-react/core";
-import { createContext, useCallback, useContext, useState } from "react"
+import React, { createContext, useCallback, useContext, useState } from "react"
 import login from "utils/login";
 
 type KickstarterContextProps = {
@@ -11,7 +11,7 @@ type KickstarterContextProps = {
 
 const KickstarterContext = createContext<KickstarterContextProps>({
   account: null,
-  onPresentConnectModal: () => {},
+  onPresentConnectModal: () => null,
 });
 
 export function KickstarterProvider({ children }: { children: React.ReactNode }) {
@@ -31,7 +31,7 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
       // eslint-disable-next-line react/jsx-no-constructed-context-values
       value={{
         account,
-        onPresentConnectModal: onPresentConnectModal
+        onPresentConnectModal
       }}
     >
       {children}
