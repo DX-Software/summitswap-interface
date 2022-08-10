@@ -1,4 +1,5 @@
 import { Box, ButtonMenu, ButtonMenuItem } from '@koda-finance/summitswap-uikit'
+import { KickstarterProvider } from 'contexts/kickstarter'
 import React, { useCallback, useState } from 'react'
 import BackedProject from './BackedProject'
 import BrowseProject from './BrowseProject'
@@ -59,7 +60,7 @@ function KickStarter() {
   ]
 
   return (
-    <>
+    <KickstarterProvider>
       <Box marginTop="30px">
         <ButtonMenu activeIndex={buttonIndex} onItemClick={(index) => setButtonIndex(index)}>
           {navItems.map((item) => (
@@ -70,7 +71,7 @@ function KickStarter() {
       <div className="main-content">
         {navItems[buttonIndex]?.component}
       </div>
-    </>
+    </KickstarterProvider>
   )
 }
 

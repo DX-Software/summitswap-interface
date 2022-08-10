@@ -1,6 +1,7 @@
 import { Button, Flex, Heading, useWalletModal, WalletIcon } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
+import { useKickstarterContext } from 'contexts/kickstarter'
 import React, { useState, useCallback } from 'react'
 import login from 'utils/login'
 import { TranslateString } from 'utils/translateTextHelpers'
@@ -8,15 +9,7 @@ import ProjectCard from './ProjectCard'
 import ProjectDetails from './ProjectDetails'
 
 function BackedProject() {
-  const { account, activate, deactivate } = useWeb3React()
-  const handleLogin = useCallback(
-    (connectorId: string) => {
-      login(connectorId, activate)
-    },
-    [activate]
-  )
-
-  const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
+  const { account, onPresentConnectModal } = useKickstarterContext()
 
   const [selectedProject, setSelectedProject] = useState("")
 
