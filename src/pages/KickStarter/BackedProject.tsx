@@ -1,21 +1,15 @@
-import { Button, Flex, Heading, useWalletModal, WalletIcon } from '@koda-finance/summitswap-uikit'
+import { Button, Flex, Heading, WalletIcon } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
-import { useWeb3React } from '@web3-react/core'
 import { useKickstarterContext } from 'contexts/kickstarter'
-import React, { useState, useCallback } from 'react'
-import login from 'utils/login'
+import React from 'react'
 import { TranslateString } from 'utils/translateTextHelpers'
 import ProjectCard from './ProjectCard'
 import ProjectDetails from './ProjectDetails'
 
 function BackedProject() {
-  const { account, onPresentConnectModal } = useKickstarterContext()
+  const { account, onPresentConnectModal, backedProjects, backedProjectAddress, handleBackedProjectChanged } = useKickstarterContext()
 
-  const [selectedProject, setSelectedProject] = useState("")
-
-  const toggleSelectedProject = () => {
-    setSelectedProject("")
-  }
+  console.log("backedProjects", backedProjects)
 
   if (!account) {
     return (
@@ -30,32 +24,25 @@ function BackedProject() {
     )
   }
 
-  if (selectedProject !== "") {
-    return <ProjectDetails toggleSelectedProject={toggleSelectedProject} />
+  if (backedProjectAddress) {
+    return <ProjectDetails onBack={() => handleBackedProjectChanged(undefined)} />
   }
 
   return (
     <Flex flexDirection="column">
       <Heading size="xl" marginBottom="24px">Backed Projects</Heading>
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={6} lg={4}>
-          <ProjectCard onClick={() => setSelectedProject("ID")} />
-        </Grid>
-        <Grid item xs={12} sm={6} lg={4}>
-          <ProjectCard onClick={() => setSelectedProject("ID")} />
-        </Grid>
-        <Grid item xs={12} sm={6} lg={4}>
-          <ProjectCard onClick={() => setSelectedProject("ID")} />
-        </Grid>
-        <Grid item xs={12} sm={6} lg={4}>
-          <ProjectCard onClick={() => setSelectedProject("ID")} />
-        </Grid>
-        <Grid item xs={12} sm={6} lg={4}>
-          <ProjectCard onClick={() => setSelectedProject("ID")} />
-        </Grid>
-        <Grid item xs={12} sm={6} lg={4}>
-          <ProjectCard onClick={() => setSelectedProject("ID")} />
-        </Grid>
+        {backedProjects.map((backedProject) => (
+          <Grid item xs={12} sm={6} lg={4} key={backedProject.id}>
+            <ProjectCard
+              title={backedProject.kickstarter.title}
+              creator={backedProject.kickstarter.creator}
+              projectGoals={backedProject.kickstarter.projectGoals}
+              totalContribution={backedProject.kickstarter.totalContribution}
+              onClick={() => handleBackedProjectChanged(backedProject.kickstarter.id)}
+            />
+          </Grid>
+        ))}
       </Grid>
     </Flex>
   )

@@ -8,7 +8,7 @@ import MobilePayment from "./MobilePayment"
 import PaymentModal from "./PaymentModal"
 
 type Props = {
-  toggleSelectedProject: () => void
+  onBack: () => void
   togglePayment: () => void
 }
 
@@ -97,7 +97,7 @@ const ButtonContinue = styled(Button)`
   }
 `
 
-function ProjectPayment({ toggleSelectedProject, togglePayment }: Props) {
+function ProjectPayment({ onBack, togglePayment }: Props) {
   const { account, onPresentConnectModal } = useKickstarterContext()
 
   const [showPayment] = useModal(<PaymentModal title="Payment Process" />)
@@ -107,7 +107,7 @@ function ProjectPayment({ toggleSelectedProject, togglePayment }: Props) {
     <Flex flexDirection="column">
       <Flex flex={1} borderBottom="1px solid" borderBottomColor="inputColor" paddingBottom="12px" marginBottom="32px">
         <Breadcrumbs>
-          <Text color="primaryDark" style={{ cursor: 'pointer' }} onClick={toggleSelectedProject}>
+          <Text color="primaryDark" style={{ cursor: 'pointer' }} onClick={onBack}>
             My Project
           </Text>
           <Text color="primaryDark" style={{ cursor: 'pointer' }} onClick={togglePayment}>
@@ -118,7 +118,7 @@ function ProjectPayment({ toggleSelectedProject, togglePayment }: Props) {
           </Text>
         </Breadcrumbs>
       </Flex>
-      <Flex style={{ columnGap: '8px', cursor: 'pointer' }} marginBottom="32px" onClick={toggleSelectedProject}>
+      <Flex style={{ columnGap: '8px', cursor: 'pointer' }} marginBottom="32px" onClick={onBack}>
         <ArrowBackIcon color="linkColor" />
         <Text color="linkColor" style={{ textDecoration: "underline" }}>back to Project Details</Text>
       </Flex>

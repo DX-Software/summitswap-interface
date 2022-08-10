@@ -1,5 +1,6 @@
 import { AddIcon, Button, Flex, Heading, Text, useWalletModal, WalletIcon } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
+import BigNumber from 'bignumber.js'
 import { useKickstarterContext } from 'contexts/kickstarter'
 import React, { useState } from 'react'
 import CreateProject from './CreateProject'
@@ -84,7 +85,7 @@ function MyProject({
   }
 
   if (selectedProject !== "") {
-    return <ProjectDetails toggleSelectedProject={toggleSelectedProject} />
+    return <ProjectDetails onBack={toggleSelectedProject} />
   }
 
   return (
@@ -97,16 +98,13 @@ function MyProject({
       </Flex>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6} lg={4}>
-          <ProjectCard onClick={() => setSelectedProject("ID")} />
-        </Grid>
-        <Grid item xs={12} sm={6} lg={4}>
-          <ProjectCard onClick={() => setSelectedProject("ID")} />
-        </Grid>
-        <Grid item xs={12} sm={6} lg={4}>
-          <ProjectCard onClick={() => setSelectedProject("ID")} />
-        </Grid>
-        <Grid item xs={12} sm={6} lg={4}>
-          <ProjectCard onClick={() => setSelectedProject("ID")} />
+          <ProjectCard
+            title=""
+            creator=""
+            projectGoals={new BigNumber(0)}
+            totalContribution={new BigNumber(0)}
+            onClick={() => setSelectedProject("ID")}
+          />
         </Grid>
       </Grid>
     </Flex>

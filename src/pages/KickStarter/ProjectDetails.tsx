@@ -9,7 +9,7 @@ import { Donator } from "./types"
 import ProjectPayment from "./ProjectPayment"
 
 type Props = {
-  toggleSelectedProject: () => void
+  onBack: () => void
 }
 
 type Tab = {
@@ -113,7 +113,7 @@ const StyledCornerIllustration = styled.img`
   height: 100%;
 `
 
-function ProjectDetails({ toggleSelectedProject }: Props) {
+function ProjectDetails({ onBack }: Props) {
   const tabs: Tab[] = [
     {
       code: "project_details",
@@ -164,7 +164,7 @@ function ProjectDetails({ toggleSelectedProject }: Props) {
   }
 
   if (isPayment) {
-    return <ProjectPayment toggleSelectedProject={toggleSelectedProject} togglePayment={togglePayment}  />
+    return <ProjectPayment onBack={onBack} togglePayment={togglePayment}  />
   }
 
   return (
@@ -172,7 +172,7 @@ function ProjectDetails({ toggleSelectedProject }: Props) {
       <Flex flex={1}>
         <Flex flex={1} borderBottom="1px solid" borderBottomColor="inputColor" paddingBottom="12px" marginBottom="32px">
           <Breadcrumbs>
-            <Text color="primaryDark" style={{ cursor: 'pointer' }} onClick={toggleSelectedProject}>
+            <Text color="primaryDark" style={{ cursor: 'pointer' }} onClick={onBack}>
               My Project
             </Text>
             <Text color="borderColor" style={{ fontWeight: 700 }}>
@@ -181,7 +181,7 @@ function ProjectDetails({ toggleSelectedProject }: Props) {
           </Breadcrumbs>
         </Flex>
       </Flex>
-      <Flex style={{ columnGap: '8px', cursor: 'pointer' }} marginBottom="32px" onClick={toggleSelectedProject}>
+      <Flex style={{ columnGap: '8px', cursor: 'pointer' }} marginBottom="32px" onClick={onBack}>
         <ArrowBackIcon color="linkColor" />
         <Text color="linkColor" style={{ textDecoration: "underline" }}>back to Browse Projects</Text>
       </Flex>
