@@ -38,10 +38,39 @@ const BACKED_KICKSTARTERS = gql`
 const fetchBackedKickstarters = async (address?: string | null): Promise<{ data?: Contribution[]; error: boolean }> => {
   try {
     if (!address) return { data: [], error: false }
-    const data = await kickstarterClient.request<{contributions: Contribution[]}>(BACKED_KICKSTARTERS, {
+    const data = await kickstarterClient.request<{
+      contributions: {
+        id: string
+        amount: string
+        kickstarter: {
+          id: string
+          title: string
+          creator: string
+          totalContribution: string
+          projectGoals: string
+          startTimestamp: string
+          endTimestamp: string
+        }
+      }[]
+    }>(BACKED_KICKSTARTERS, {
       address: address.toLowerCase(),
     })
-    return { data: data.contributions, error: false }
+    const contributions: Contribution[] = data.contributions.map((contribution) => {
+      return {
+        id: contribution.id,
+        amount: new BigNumber(contribution.amount),
+        kickstarter: {
+          id: contribution.kickstarter.id,
+          title: contribution.kickstarter.title,
+          creator: contribution.kickstarter.creator,
+          totalContribution: new BigNumber(contribution.kickstarter.totalContribution),
+          projectGoals: new BigNumber(contribution.kickstarter.projectGoals),
+          startTimestamp: Number(contribution.kickstarter.startTimestamp),
+          endTimestamp: Number(contribution.kickstarter.endTimestamp),
+        }
+      }
+    })
+    return { data: contributions, error: false }
   } catch (error) {
     console.error(`Failed to fetch transactions for pool ${address}`, error)
     return {
