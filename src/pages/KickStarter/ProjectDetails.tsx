@@ -1,14 +1,17 @@
-import { ArrowBackIcon, BinanceIcon, Breadcrumbs, Button, FacebookIcon, FileIcon, Flex, Progress, ShareIcon, Tag, Text, TwitterIcon } from "@koda-finance/summitswap-uikit"
+import { ArrowBackIcon, BinanceIcon, Breadcrumbs, Button, FacebookIcon, FileIcon, Flex, Progress, ShareIcon, Skeleton, Tag, Text, TwitterIcon } from "@koda-finance/summitswap-uikit"
 import { Grid } from "@mui/material"
+import { format } from "date-fns"
+import useKickstarter from "hooks/useKickstarter"
+import ImgCornerIllustration from "img/corner-illustration.svg"
 import React, { useState } from "react"
 import styled from "styled-components"
-import ImgCornerIllustration from "img/corner-illustration.svg"
 import DonatorCard from "./DonatorCard"
 import ProgressBox from "./ProgressBox"
-import { Donator } from "./types"
 import ProjectPayment from "./ProjectPayment"
+import { Donator } from "./types"
 
 type Props = {
+  projectAddress: string
   onBack: () => void
 }
 
@@ -113,7 +116,8 @@ const StyledCornerIllustration = styled.img`
   height: 100%;
 `
 
-function ProjectDetails({ onBack }: Props) {
+function ProjectDetails({ projectAddress, onBack }: Props) {
+  const kickstarter = useKickstarter(projectAddress)
   const tabs: Tab[] = [
     {
       code: "project_details",
@@ -167,6 +171,8 @@ function ProjectDetails({ onBack }: Props) {
     return <ProjectPayment onBack={onBack} togglePayment={togglePayment}  />
   }
 
+  console.log("kickstarter.minContribution", kickstarter?.minContribution)
+
   return (
     <Flex flexDirection="column">
       <Flex flex={1}>
@@ -194,11 +200,23 @@ function ProjectDetails({ onBack }: Props) {
             )}
             <Label variant="failure"><b>7 days left</b></Label>
           </Flex>
-          <Text fontSize="40px" marginBottom="24px">SummitSwap#1 Fundraising Project</Text>
+          {!kickstarter ? (
+            <Skeleton height={36} marginBottom="24px" />
+          ) : (
+            <Text fontSize="40px" marginBottom="24px">
+              {kickstarter.title}
+            </Text>
+          )}
           <MobileBanner marginBottom="24px" />
           <Flex style={{ columnGap: "8px" }}>
             <BinanceIcon width="20px" />
-            <Text fontWeight="bold" fontSize="24px">0.0000123</Text>
+            {!kickstarter ? (
+              <Skeleton height={28} width={30} marginBottom="24px" />
+            ) : (
+              <Text fontWeight="bold" fontSize="24px">
+                {kickstarter.totalContribution.toString()}
+              </Text>
+            )}
           </Flex>
           <Text color="textSubtle" marginBottom="16px">backed of 10 BNB goal</Text>
           <ProgressBox maxWidth="400px" marginBottom="8px">
@@ -246,25 +264,35 @@ function ProjectDetails({ onBack }: Props) {
         {selectedTab === "project_details" && (
           <>
             <Text color="textSubtle" marginBottom="4px">Project Description</Text>
-            <Text>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Ultricies consequat tincidunt nulla neque laoreet elit.
-              Ipsum malesuada quam vel gravida at convallis magnis eget pellentesque.
-              Viverra dignissim velit consectetur dictum aliquet mattis in commodo aliquam.
-              Et etiam eu maecenas tempus aliquet semper tortor. Tortor, auctor lectus nam
-            </Text>
+            {!kickstarter ? (
+              <>
+                <Skeleton marginBottom={2} />
+                <Skeleton marginBottom={2} />
+                <Skeleton />
+              </>
+            ) : (
+              <Text>{kickstarter.projectDescription}</Text>
+            )}
             <br />
             <Grid container spacing="16px">
               <Grid item xs={12} sm={6}>
                 <Flex flexDirection="column" marginRight="auto">
                   <Text color="textSubtle" marginBottom="4px">Project Created</Text>
-                  <Text>June 20th, 2022</Text>
+                  {!kickstarter ? (
+                    <Skeleton width={150} />
+                  ) : (
+                    <Text>{format(new Date(kickstarter.createdAt * 1000), 'LLLL do, yyyy')}</Text>
+                  )}
                 </Flex>
               </Grid>
               <Grid item xs={12} sm={6}>
               <Flex flexDirection="column" marginRight="auto">
                 <Text color="textSubtle" marginBottom="4px">Project Due Date</Text>
-                <Text>July 20th, 2022</Text>
+                {!kickstarter ? (
+                  <Skeleton width={150} />
+                ) : (
+                  <Text>{format(new Date(kickstarter.endTimestamp * 1000), 'LLLL do, yyyy')}</Text>
+                )}
               </Flex>
               </Grid>
             </Grid>
@@ -273,13 +301,28 @@ function ProjectDetails({ onBack }: Props) {
               <Grid item xs={12} sm={6}>
                 <Flex flexDirection="column" marginRight="auto">
                   <Text color="textSubtle" marginBottom="4px">Minimum Balance Participation</Text>
-                  <Text>July 20th, 2022</Text>
+                  {!kickstarter ? (
+                    <Skeleton width={150} />
+                  ) : (
+                    <Flex style={{ columnGap: "8px" }}>
+                      <BinanceIcon width="20px" />
+                      {!kickstarter ? (
+                        <Skeleton height={28} width={30} marginBottom="24px" />
+                      ) : (
+                        <Text>{kickstarter.minContribution.toString()}</Text>
+                      )}
+                    </Flex>
+                  )}
                 </Flex>
               </Grid>
               <Grid item xs={12} sm={6}>
               <Flex flexDirection="column" marginRight="auto">
                 <Text color="textSubtle" marginBottom="4px">Project Creator</Text>
-                <Text>SUMMITSWAP</Text>
+                {!kickstarter ? (
+                  <Skeleton width={150} />
+                ) : (
+                  <Text>{kickstarter.creator}</Text>
+                )}
               </Flex>
               </Grid>
             </Grid>
@@ -288,22 +331,32 @@ function ProjectDetails({ onBack }: Props) {
         {selectedTab === "rewards" && (
           <>
             <Text color="textSubtle" marginBottom="4px">Reward Description</Text>
-            <Text>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Ultricies consequat tincidunt nulla neque laoreet elit.
-              Ipsum malesuada quam vel gravida at convallis magnis eget pellentesque.
-              Viverra dignissim velit consectetur dictum aliquet mattis in commodo aliquam.
-              Et etiam eu maecenas tempus aliquet semper tortor. Tortor, auctor lectus nam
-            </Text>
+            {!kickstarter ? (
+              <>
+                <Skeleton marginBottom={2} />
+                <Skeleton marginBottom={2} />
+                <Skeleton />
+              </>
+            ) : (
+              <Text>{kickstarter.rewardDescription}</Text>
+            )}
             <br />
             <Text color="textSubtle" marginBottom="4px">Reward Distribution</Text>
-            <Text>September 20th, 2022</Text>
+            {!kickstarter ? (
+              <Skeleton width={150} />
+            ) : (
+              <Text>
+                {format(new Date(kickstarter.rewardDistributionTimestamp * 1000), 'LLLL do, yyyy')}
+              </Text>
+            )}
+            <br />
+            <Text color="textSubtle" marginBottom="4px">Reward Status</Text>
+            <Text>
+              {!kickstarter?.hasDistributedRewards && "Not"} Distributed
+            </Text>
+            <br />
             {hasBackedProject && (
               <>
-                <br />
-                <Text color="textSubtle" marginBottom="4px">Reward Status</Text>
-                <Text>Not Distributed</Text>
-                <br />
                 <Text color="warning" fontWeight="bold" marginBottom="4px">Have you received the reward for this project?</Text>
                 <Text fontSize="12px">
                   If you haven&apos;t received any reward after the due date,

@@ -85,7 +85,12 @@ function MyProject({
   }
 
   if (selectedProject !== "") {
-    return <ProjectDetails onBack={toggleSelectedProject} />
+    return (
+      <ProjectDetails
+        projectAddress='0x3b8113CC62B490e4a7f35Aec9135d4581a8f7564'
+        onBack={toggleSelectedProject}
+      />
+    )
   }
 
   return (

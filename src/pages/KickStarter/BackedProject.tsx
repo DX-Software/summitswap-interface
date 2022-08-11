@@ -9,8 +9,6 @@ import ProjectDetails from './ProjectDetails'
 function BackedProject() {
   const { account, onPresentConnectModal, backedProjects, backedProjectAddress, handleBackedProjectChanged } = useKickstarterContext()
 
-  console.log("backedProjects", backedProjects)
-
   if (!account) {
     return (
       <Flex mb={3} flexDirection="column" alignItems="center" justifyContent="center" height={300}>
@@ -25,7 +23,12 @@ function BackedProject() {
   }
 
   if (backedProjectAddress) {
-    return <ProjectDetails onBack={() => handleBackedProjectChanged(undefined)} />
+    return (
+      <ProjectDetails
+        projectAddress={backedProjectAddress}
+        onBack={() => handleBackedProjectChanged(undefined)}
+      />
+    )
   }
 
   return (
