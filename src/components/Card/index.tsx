@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { Box } from '@koda-finance/summitswap-uikit'
 
 const Card = styled.div<any>`
   width: 100%;
@@ -21,7 +22,7 @@ export const GreyCard = styled(Card)`
   background-color: ${({ theme }) => theme.colors.menuItemBackground};
 `
 
-export const IconCard = styled.div`
+export const IconCard = styled(Box)`
   width: 109px;
   height: 139px;
   background: ${({ theme }) => theme.colors.inputColor};

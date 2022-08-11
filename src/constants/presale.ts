@@ -38,8 +38,8 @@ export enum RadioFieldValues {
 }
 
 export const TOKEN_CHOICES = {
-  KODA: KODA.address,
   BNB: NULL_ADDRESS,
+  KODA: KODA.address,
   BUSD: BUSD.address,
   USDC: USDC.address,
   USDT: USDT.address,

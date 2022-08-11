@@ -44,9 +44,7 @@ const CreationStep02 = ({ changeStepNumber, currency }: Props) => {
           </Box>
         </IconCard>
         <Box marginLeft="26px">
-          <Heading fontWeight={700} color="primary">
-            Presale Rate
-          </Heading>
+          <Heading color="primary">Presale Rate</Heading>
           <Text small marginTop="4px">
             Set your token price in {currency}
           </Text>
@@ -64,9 +62,7 @@ const CreationStep02 = ({ changeStepNumber, currency }: Props) => {
           </Box>
         </IconCard>
         <Box marginLeft="26px" marginTop="8px">
-          <Heading fontWeight={700} color="primary">
-            Whitelist System
-          </Heading>
+          <Heading color="primary">Whitelist System</Heading>
           <Text small marginTop="4px">
             Whitelist system is where you only permit certain users to participate in your presale{' '}
           </Text>
@@ -93,9 +89,7 @@ const CreationStep02 = ({ changeStepNumber, currency }: Props) => {
           </Box>
         </IconCard>
         <Box marginLeft="26px">
-          <Heading fontWeight={700} color="primary">
-            Goal System
-          </Heading>
+          <Heading color="primary">Goal System</Heading>
           <Text small marginTop="4px">
             Set your softcap and hardcap for this presale
           </Text>
@@ -123,9 +117,7 @@ const CreationStep02 = ({ changeStepNumber, currency }: Props) => {
           </Box>
         </IconCard>
         <Box marginLeft="26px">
-          <Heading fontWeight={700} color="primary">
-            Purchasing System
-          </Heading>
+          <Heading color="primary">Purchasing System</Heading>
           <Text small marginTop="4px">
             Each user will only be able to buy the coin with minimum and maximum price as specified
           </Text>
