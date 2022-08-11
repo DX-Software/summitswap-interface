@@ -3,10 +3,24 @@ import styled from 'styled-components'
 import { Flex, Box, Radio, Text } from '@koda-finance/summitswap-uikit'
 import steps from './steps-data'
 import CreationStep01 from './CreationStep01'
+import CreationStep02 from './CreationStep02'
 
 const StepsWrapper = styled(Box)`
   width: 522px;
   text-align: center;
+`
+const ContentWrapper = styled(Box)`
+  width: 90%;
+  max-width: 950px;
+`
+
+const Divider = styled.div`
+  width: 90%;
+  max-width: 950px;
+  height: 0px;
+  border-radius: 2px;
+  border: 1px solid ${({ theme }) => theme.colors.backgroundDisabled};
+  margin-bottom: 25px;
 `
 
 const StepLine = styled.div`
@@ -37,7 +51,8 @@ const StyledRadio = styled(Radio)<{ completed: boolean }>`
   }
 `
 const CreatePresale = () => {
-  const [stepNumber, setStepNumber] = useState(0)
+  const [stepNumber, setStepNumber] = useState(1)
+  const [currency, setCurrency] = useState('BNB')
 
   const changeStepNumber = useCallback((num: number) => setStepNumber(num), [])
 
@@ -45,6 +60,8 @@ const CreatePresale = () => {
     switch (stepNumber) {
       case 0:
         return <CreationStep01 changeStepNumber={changeStepNumber} />
+      case 1:
+        return <CreationStep02 currency={currency} changeStepNumber={changeStepNumber} />
       default:
         return <></>
     }
@@ -65,16 +82,17 @@ const CreatePresale = () => {
         <Box marginY="35px">
           <StepLine />
           <Flex justifyContent="space-between">
-            <StyledRadio completed={stepNumber > 0} checked={stepNumber === 0} />
-            <StyledRadio completed={stepNumber > 1} checked={stepNumber === 1} />
-            <StyledRadio completed={stepNumber > 2} checked={stepNumber === 2} />
-            <StyledRadio completed={stepNumber > 3} checked={stepNumber === 3} />
-            <StyledRadio completed={stepNumber > 4} checked={stepNumber === 4} />
-            <StyledRadio completed={stepNumber > 5} checked={stepNumber === 5} />
+            <StyledRadio completed={stepNumber > 0} checked={stepNumber === 0} onClick={() => setStepNumber(0)}/>
+            <StyledRadio completed={stepNumber > 1} checked={stepNumber === 1} onClick={() => setStepNumber(1)}/>
+            <StyledRadio completed={stepNumber > 2} checked={stepNumber === 2} onClick={() => setStepNumber(2)}/>
+            <StyledRadio completed={stepNumber > 3} checked={stepNumber === 3} onClick={() => setStepNumber(3)}/>
+            <StyledRadio completed={stepNumber > 4} checked={stepNumber === 4} onClick={() => setStepNumber(4)}/>
+            <StyledRadio completed={stepNumber > 5} checked={stepNumber === 5} onClick={() => setStepNumber(5)}/>
           </Flex>
         </Box>
       </StepsWrapper>
-      {showStep()}
+      <Divider />
+      <ContentWrapper>{showStep()}</ContentWrapper>
     </>
   )
 }

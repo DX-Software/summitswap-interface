@@ -29,4 +29,5 @@ export const IconCard = styled.div`
   display: flex;
   justify-content: center;
   align-content: center;
+  align-items: center;
 `
