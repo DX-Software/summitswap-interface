@@ -5,7 +5,9 @@ import { kickstarterClient } from 'utils/graphql'
 
 export type Kickstarter = {
   id: string
-  owner: string
+  owner: {
+    id: string
+  }
   title: string
   creator: string
   projectDescription: string
@@ -24,7 +26,9 @@ const KICKSTARTER = gql`
   query kickstarter($address: Bytes!) {
     kickstarter(id: $address) {
       id
-      owner
+      owner {
+        id
+      }
       title
       creator
       projectDescription
@@ -47,7 +51,9 @@ const fetchKickstarter = async (address?: string | null): Promise<{ data?: Kicks
     const data = await kickstarterClient.request<{
       kickstarter: {
         id: string,
-        owner: string,
+        owner: {
+          id: string
+        },
         title: string,
         creator: string,
         projectDescription: string,
