@@ -12,6 +12,7 @@ import DonatorCard from "./DonatorCard"
 import ProgressBox from "./ProgressBox"
 import ProjectPayment from "./ProjectPayment"
 import { Donator } from "./types"
+import { getDayRemaining } from "./utility"
 
 enum TabCode {
   PROJECT_DETAILS = "PROJECT_DETAILS",
@@ -253,7 +254,11 @@ function ProjectDetails({ projectAddress, onBack }: Props) {
             <Progress primaryStep={30} />
           </ProgressBox>
           <Flex style={{ columnGap: "8px" }} alignItems="center" marginBottom="16px">
-            <Text fontWeight="bold">30 days left</Text>
+            {!kickstarter ? (
+              <Skeleton width={45} />
+            ) : (
+              <Text fontWeight="bold">{getDayRemaining(kickstarter.endTimestamp)} days left</Text>
+            )}
             <Dot />
             <Text>0 backers</Text>
           </Flex>
@@ -266,7 +271,9 @@ function ProjectDetails({ projectAddress, onBack }: Props) {
           )}
           <Flex style={{ columnGap: "8px" }} alignItems="center">
             <Button onClick={togglePayment}>Back this project</Button>
-            {kickstarter && (
+            {!kickstarter ? (
+              <Skeleton width={50} height={38} />
+            ) : (
               <Tooltip placement="top" text="Copied" show={isTooltipDisplayed}>
                 <SocialMedia
                   type="button"
@@ -276,7 +283,9 @@ function ProjectDetails({ projectAddress, onBack }: Props) {
                 </SocialMedia>
               </Tooltip>
             )}
-            {kickstarter && (
+            {!kickstarter ? (
+              <Skeleton width={50} height={38} />
+            ) : (
               <SocialMedia
                 style={{ cursor: "pointer" }}
                 href={`https://twitter.com/intent/tweet?text=Let's ontribute to "${kickstarter?.title}" Kickstarter ${currentPageLink}`}
@@ -284,12 +293,16 @@ function ProjectDetails({ projectAddress, onBack }: Props) {
                 <TwitterIcon width="14px" />
               </SocialMedia>
             )}
-            <SocialMedia
-              style={{ cursor: "pointer" }}
-              href={`https://www.facebook.com/sharer/sharer.php?u=${currentPageLink}`}
-              target="_blank">
-              <FacebookIcon width="14px" />
-            </SocialMedia>
+            {!kickstarter ? (
+              <Skeleton width={50} height={38} />
+            ) : (
+              <SocialMedia
+                style={{ cursor: "pointer" }}
+                href={`https://www.facebook.com/sharer/sharer.php?u=${currentPageLink}`}
+                target="_blank">
+                <FacebookIcon width="14px" />
+              </SocialMedia>
+            )}
           </Flex>
         </Flex>
       </ImageAndDescriptionWrapper>
