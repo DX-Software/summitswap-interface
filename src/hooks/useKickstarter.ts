@@ -1,6 +1,6 @@
-import BigNumber from 'bignumber.js';
+import BigNumber from 'bignumber.js'
 import { gql } from 'graphql-request'
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
 import { kickstarterClient } from 'utils/graphql'
 
 export type Kickstarter = {
@@ -65,7 +65,6 @@ const fetchKickstarter = async (address?: string | null): Promise<{ data?: Kicks
       address: address.toLowerCase(),
     })
 
-    console.log("Data", data)
     const kickstarter: Kickstarter = {
       id: data.kickstarter.id,
       owner: data.kickstarter.owner,
