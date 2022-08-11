@@ -1,14 +1,23 @@
 import { ArrowBackIcon, BinanceIcon, Breadcrumbs, Button, FacebookIcon, FileIcon, Flex, Progress, ShareIcon, Skeleton, Tag, Text, TwitterIcon } from "@koda-finance/summitswap-uikit"
-import { Grid } from "@mui/material"
+import { Grid, TabScrollButton } from "@mui/material"
+import Tooltip from "components/Tooltip"
+import { useKickstarterContext } from "contexts/kickstarter"
 import { format } from "date-fns"
 import useKickstarter from "hooks/useKickstarter"
 import ImgCornerIllustration from "img/corner-illustration.svg"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import styled from "styled-components"
+import copyText from "utils/copyText"
 import DonatorCard from "./DonatorCard"
 import ProgressBox from "./ProgressBox"
 import ProjectPayment from "./ProjectPayment"
 import { Donator } from "./types"
+
+enum TabCode {
+  PROJECT_DETAILS = "PROJECT_DETAILS",
+  REWARDS = "REWARDS",
+  DONATORS = "DONATORS",
+}
 
 type Props = {
   projectAddress: string
@@ -17,7 +26,7 @@ type Props = {
 
 type Tab = {
   label: string
-  code: "project_details" | "rewards" | "donators"
+  code: TabCode
 }
 
 const ImageAndDescriptionWrapper = styled(Flex)`
@@ -70,7 +79,8 @@ const Dot = styled.div`
   background-color: white;
 `
 
-const SocialMedia = styled(Flex)`
+const SocialMedia = styled.a`
+  display: flex;
   height: fit-content;
   padding: 12px 18px;
   background-color: white;
@@ -117,21 +127,27 @@ const StyledCornerIllustration = styled.img`
 `
 
 function ProjectDetails({ projectAddress, onBack }: Props) {
+  const { account } = useKickstarterContext()
   const kickstarter = useKickstarter(projectAddress)
-  const tabs: Tab[] = [
+  const generalTabs: Tab[] = [
     {
-      code: "project_details",
+      code: TabCode.PROJECT_DETAILS,
       label: "Project Details",
     },
     {
-      code: "rewards",
+      code: TabCode.REWARDS,
       label: "Rewards",
     },
+  ]
+
+  const tabs: Tab[] = account?.toLowerCase() === kickstarter?.owner.id ? [
+    ...generalTabs,
     {
-      code: "donators",
+      code: TabCode.DONATORS,
       label: "Donators",
     },
-  ]
+  ] : generalTabs
+
   const [selectedTab, setSelectedTab] = useState(tabs[0].code)
   const [donators, setDonators] = useState<Donator[]>([
     {
@@ -162,16 +178,30 @@ function ProjectDetails({ projectAddress, onBack }: Props) {
   const [hasBackedProject, setHasBackedProject] = useState(true)
   const [backedAmount, setBackedAmount] = useState(1000)
   const [isPayment, setIsPayment] = useState(false)
+  const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
+
+  const displayTooltip = () => {
+    setIsTooltipDisplayed(true)
+    setTimeout(() => {
+      setIsTooltipDisplayed(false)
+    }, 1000)
+  }
 
   const togglePayment = () => {
     setIsPayment((prevValue) => !prevValue)
   }
 
+  useEffect(() => {
+    if (account?.toLowerCase() === kickstarter?.owner.id) return
+    if (selectedTab !== TabCode.DONATORS) return
+    setSelectedTab(TabCode.PROJECT_DETAILS)
+  }, [selectedTab, account, kickstarter])
+
   if (isPayment) {
     return <ProjectPayment onBack={onBack} togglePayment={togglePayment}  />
   }
 
-  console.log("kickstarter.minContribution", kickstarter?.minContribution)
+  const currentPageLink = encodeURIComponent(`${window.location.href}?kickstarter=${kickstarter?.id}`)
 
   return (
     <Flex flexDirection="column">
@@ -236,13 +266,28 @@ function ProjectDetails({ projectAddress, onBack }: Props) {
           )}
           <Flex style={{ columnGap: "8px" }} alignItems="center">
             <Button onClick={togglePayment}>Back this project</Button>
-            <SocialMedia>
-              <ShareIcon width="14px" />
-            </SocialMedia>
-            <SocialMedia>
-              <TwitterIcon width="14px" />
-            </SocialMedia>
-            <SocialMedia>
+            {kickstarter && (
+              <Tooltip placement="top" text="Copied" show={isTooltipDisplayed}>
+                <SocialMedia
+                  type="button"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => copyText(currentPageLink, displayTooltip)}>
+                  <ShareIcon width="14px" />
+                </SocialMedia>
+              </Tooltip>
+            )}
+            {kickstarter && (
+              <SocialMedia
+                style={{ cursor: "pointer" }}
+                href={`https://twitter.com/intent/tweet?text=Let's ontribute to "${kickstarter?.title}" Kickstarter ${currentPageLink}`}
+                target="_blank">
+                <TwitterIcon width="14px" />
+              </SocialMedia>
+            )}
+            <SocialMedia
+              style={{ cursor: "pointer" }}
+              href={`https://www.facebook.com/sharer/sharer.php?u=${currentPageLink}`}
+              target="_blank">
               <FacebookIcon width="14px" />
             </SocialMedia>
           </Flex>
@@ -256,12 +301,12 @@ function ProjectDetails({ projectAddress, onBack }: Props) {
         ))}
       </Flex>
       <TabContent
-        style={{ height: selectedTab === "donators" ? "350px": "auto", overflowY: selectedTab === "donators" ? "scroll": "auto" }}
+        style={{ height: selectedTab === TabCode.DONATORS ? "350px": "auto", overflowY: selectedTab === TabCode.DONATORS ? "scroll": "auto" }}
         borderBottom="1px solid"
         borderBottomColor="inputColor"
         paddingY="24px"
         marginBottom="24px">
-        {selectedTab === "project_details" && (
+        {selectedTab === TabCode.PROJECT_DETAILS && (
           <>
             <Text color="textSubtle" marginBottom="4px">Project Description</Text>
             {!kickstarter ? (
@@ -328,7 +373,7 @@ function ProjectDetails({ projectAddress, onBack }: Props) {
             </Grid>
           </>
         )}
-        {selectedTab === "rewards" && (
+        {selectedTab === TabCode.REWARDS && (
           <>
             <Text color="textSubtle" marginBottom="4px">Reward Description</Text>
             {!kickstarter ? (
@@ -366,7 +411,7 @@ function ProjectDetails({ projectAddress, onBack }: Props) {
             )}
           </>
         )}
-        {selectedTab === "donators" && (
+        {selectedTab === TabCode.DONATORS && (
           <>
             {donators.length === 0 && (
               <Text color="textDisabled" marginTop="16px">There are no backer for this project. Share your project to everyone now.</Text>
@@ -382,7 +427,11 @@ function ProjectDetails({ projectAddress, onBack }: Props) {
           </>
         )}
       </TabContent>
-      <Button variant="primary" marginRight="auto" startIcon={<FileIcon color="text" />}>Download Donator List</Button>
+      {account?.toLowerCase() === kickstarter?.owner.id && (
+        <Button variant="primary" marginRight="auto" startIcon={<FileIcon color="text" />}>
+          Download Donator List
+        </Button>
+      )}
     </Flex>
   )
 }
