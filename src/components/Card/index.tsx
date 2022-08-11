@@ -20,3 +20,13 @@ export const GreyCard = styled(Card)`
   border: 1px solid ${({ theme }) => theme.colors.menuItemBackground};
   background-color: ${({ theme }) => theme.colors.menuItemBackground};
 `
+
+export const IconCard = styled.div`
+  width: 109px;
+  height: 139px;
+  background: ${({ theme }) => theme.colors.inputColor};
+  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+`
