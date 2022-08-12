@@ -1,12 +1,13 @@
-import { useWalletModal } from "@koda-finance/summitswap-uikit";
-import { useWeb3React } from "@web3-react/core";
-import useBackedKickstarter, { Contribution } from "hooks/useBackedKickstarter";
+import { useWalletModal } from "@koda-finance/summitswap-uikit"
+import { useWeb3React } from "@web3-react/core"
+import useBackedKickstarter, { Contribution } from "hooks/useBackedKickstarter"
 import React, { createContext, useCallback, useContext, useState } from "react"
-import login from "utils/login";
+import login from "utils/login"
 
 type KickstarterContextProps = {
   account: string | null | undefined
   onPresentConnectModal: () => void
+
   backedProjects?: Contribution[]
   backedProjectAddress?: string,
   handleBackedProjectChanged: (address?: string) => void
@@ -16,8 +17,10 @@ type KickstarterContextProps = {
 const KickstarterContext = createContext<KickstarterContextProps>({
   account: null,
   onPresentConnectModal: () => null,
+
   backedProjects: undefined,
   backedProjectAddress: undefined,
+
   handleBackedProjectChanged: (newAddress?: string) => null
 });
 
@@ -58,5 +61,5 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
 }
 
 export function useKickstarterContext() {
-  return useContext(KickstarterContext);
+  return useContext(KickstarterContext)
 }

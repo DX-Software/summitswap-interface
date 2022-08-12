@@ -4,13 +4,7 @@ import React, { useCallback, useState } from 'react'
 import BackedProject from './BackedProject'
 import BrowseProject from './BrowseProject'
 import MyProject from './MyProject'
-import { Project } from './types'
-
-type navItem = {
-  label: string
-  code: 'my_project' | 'browse_project' | 'backed_project'
-  component: React.ReactNode
-}
+import { NavItem, Project, TABS } from './types'
 
 function KickStarter() {
   const [buttonIndex, setButtonIndex] = useState(0)
@@ -33,10 +27,10 @@ function KickStarter() {
     setIsCreate((prevValue) => !prevValue)
   }
 
-  const navItems: navItem[] = [
+  const navItems: NavItem[] = [
     {
       label: 'My Project',
-      code: 'my_project',
+      code: TABS.MY_PROJECT,
       component:
         <MyProject
           isCreate={isCreate}
@@ -49,13 +43,13 @@ function KickStarter() {
     },
     {
       label: 'Browse Project',
-      code: 'browse_project',
+      code: TABS.BROWSE_PROJECT,
       component: <BrowseProject />,
     },
     {
       label: 'Backed Project',
-      code: 'backed_project',
-      component: <BackedProject />,
+      code: TABS.BACKED_PROJECT,
+      component: <BackedProject goToBrowseTab={() => setButtonIndex(1)} />,
     },
   ]
 

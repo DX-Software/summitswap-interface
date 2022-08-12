@@ -7,7 +7,11 @@ import ProjectDetails from './ProjectDetails'
 import ConnectWalletSection from './shared/ConnectWalletSection'
 import EmptyKickstarterSection from './shared/EmptyKickstarterSection'
 
-function BackedProject() {
+type Props = {
+  goToBrowseTab: () => void
+}
+
+function BackedProject({ goToBrowseTab }: Props) {
   const { account, backedProjects, backedProjectAddress, handleBackedProjectChanged } = useKickstarterContext()
 
   if (!account) {
@@ -41,7 +45,7 @@ function BackedProject() {
           </>
         )}
         {backedProjects && backedProjects.length === 0 && (
-          <EmptyKickstarterSection />
+          <EmptyKickstarterSection goToBrowseTab={goToBrowseTab} />
         )}
         {backedProjects && backedProjects.map((backedProject) => (
           <Grid item xs={12} sm={6} lg={4} key={backedProject.id}>
