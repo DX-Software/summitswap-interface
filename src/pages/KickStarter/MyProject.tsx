@@ -6,6 +6,7 @@ import React, { useState } from 'react'
 import CreateProject from './CreateProject'
 import ProjectCard from './ProjectCard'
 import ProjectDetails from './ProjectDetails'
+import ConnectWalletSection from './shared/ConnectWalletSection'
 import { Project } from './types'
 
 type Props = {
@@ -42,21 +43,7 @@ function MyProject({
   }
 
   if (!account) {
-    return (
-      <Flex mb={3} flexDirection="column" alignItems="center" justifyContent="center" height={300}>
-        <Heading size="lg" color="primaryDark" style={{ fontWeight: 400 }} marginBottom={38} textAlign="center">
-          Please connect your wallet to view your projects
-        </Heading>
-        <Button
-          variant="tertiary"
-          startIcon={<WalletIcon />}
-          style={{ fontFamily: 'Poppins' }}
-          onClick={onPresentConnectModal}
-        >
-          Connect Your Wallet
-        </Button>
-      </Flex>
-    )
+    return <ConnectWalletSection />
   }
 
   if (isCreate) {
