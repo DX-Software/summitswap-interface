@@ -73,7 +73,7 @@ const CreationStep03 = ({ changeStepNumber }: Props) => {
             </Box>
           </Box>
         </Flex>
-        <Flex marginTop="40px">
+        <Flex>
           <IconCard>
             <Box width="56px">
               <RouterIcon width="100%" />
