@@ -1,4 +1,4 @@
-import { Button, Flex, Heading, WalletIcon } from '@koda-finance/summitswap-uikit'
+import { Button, Flex, Heading, Skeleton, WalletIcon } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import { useKickstarterContext } from 'contexts/kickstarter'
 import React from 'react'
@@ -35,7 +35,20 @@ function BackedProject() {
     <Flex flexDirection="column">
       <Heading size="xl" marginBottom="24px">Backed Projects</Heading>
       <Grid container spacing={2}>
-        {backedProjects.map((backedProject) => (
+        {backedProjects === undefined && (
+          <>
+            <Grid item xs={12} sm={6} lg={4}>
+              <Skeleton height={310} />
+            </Grid>
+            <Grid item xs={12} sm={6} lg={4}>
+              <Skeleton height={310} />
+            </Grid>
+            <Grid item xs={12} sm={6} lg={4}>
+              <Skeleton height={310} />
+            </Grid>
+          </>
+        )}
+        {backedProjects !== undefined && backedProjects.map((backedProject) => (
           <Grid item xs={12} sm={6} lg={4} key={backedProject.id}>
             <ProjectCard
               title={backedProject.kickstarter.title}

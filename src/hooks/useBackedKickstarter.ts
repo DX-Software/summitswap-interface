@@ -79,8 +79,8 @@ const fetchBackedKickstarters = async (address?: string | null): Promise<{ data?
   }
 }
 
-const useBackedKickstarter = (address?: string | null): Contribution[] => {
-  const [backedProjects, setBackedProjects] = useState<Contribution[]>([])
+const useBackedKickstarter = (address?: string | null): Contribution[] | undefined => {
+  const [backedProjects, setBackedProjects] = useState<Contribution[] | undefined>(undefined)
   const [isError, setIsError] = useState(false)
 
   useEffect(() => {
@@ -90,7 +90,6 @@ const useBackedKickstarter = (address?: string | null): Contribution[] => {
         setIsError(true)
       } else if (data) {
         setBackedProjects(data)
-        console.log("data", data)
       }
     }
     if (!isError) {

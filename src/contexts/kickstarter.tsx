@@ -7,7 +7,7 @@ import login from "utils/login";
 type KickstarterContextProps = {
   account: string | null | undefined
   onPresentConnectModal: () => void
-  backedProjects: Contribution[]
+  backedProjects?: Contribution[]
   backedProjectAddress?: string,
   handleBackedProjectChanged: (address?: string) => void
 };
@@ -16,7 +16,7 @@ type KickstarterContextProps = {
 const KickstarterContext = createContext<KickstarterContextProps>({
   account: null,
   onPresentConnectModal: () => null,
-  backedProjects: [],
+  backedProjects: undefined,
   backedProjectAddress: undefined,
   handleBackedProjectChanged: (newAddress?: string) => null
 });
