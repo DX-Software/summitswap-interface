@@ -19,7 +19,7 @@ export type Contribution = {
 
 const BACKED_KICKSTARTERS = gql`
   query backedKickstarters($address: Bytes!) {
-    contributions(first: 100, orderBy: createdAt, orderDirection: desc, where: { contributor: $address }) {
+    backedKickstarters(first: 100, orderBy: lastUpdated, orderDirection: desc, where: { contributor: $address }) {
       id
       amount
       kickstarter {
@@ -39,7 +39,7 @@ const fetchBackedKickstarters = async (address?: string | null): Promise<{ data?
   try {
     if (!address) return { data: [], error: false }
     const data = await kickstarterClient.request<{
-      contributions: {
+      backedKickstarters: {
         id: string
         amount: string
         kickstarter: {
@@ -55,7 +55,7 @@ const fetchBackedKickstarters = async (address?: string | null): Promise<{ data?
     }>(BACKED_KICKSTARTERS, {
       address: address.toLowerCase(),
     })
-    const contributions: Contribution[] = data.contributions.map((contribution) => {
+    const contributions: Contribution[] = data.backedKickstarters.map((contribution) => {
       return {
         id: contribution.id,
         amount: new BigNumber(contribution.amount),
@@ -90,6 +90,7 @@ const useBackedKickstarter = (address?: string | null): Contribution[] => {
         setIsError(true)
       } else if (data) {
         setBackedProjects(data)
+        console.log("data", data)
       }
     }
     if (!isError) {
