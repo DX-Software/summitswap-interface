@@ -5,6 +5,7 @@ import React from 'react'
 import ProjectCard from './ProjectCard'
 import ProjectDetails from './ProjectDetails'
 import ConnectWalletSection from './shared/ConnectWalletSection'
+import EmptyKickstarterSection from './shared/EmptyKickstarterSection'
 
 function BackedProject() {
   const { account, backedProjects, backedProjectAddress, handleBackedProjectChanged } = useKickstarterContext()
@@ -38,6 +39,9 @@ function BackedProject() {
               <Skeleton height={310} />
             </Grid>
           </>
+        )}
+        {backedProjects && backedProjects.length === 0 && (
+          <EmptyKickstarterSection />
         )}
         {backedProjects && backedProjects.map((backedProject) => (
           <Grid item xs={12} sm={6} lg={4} key={backedProject.id}>
