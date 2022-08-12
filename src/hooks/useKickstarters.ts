@@ -23,7 +23,7 @@ export type Kickstarter = {
 }
 
 const KICKSTARTERS = gql`
-  query kickstarters($first: Int!, $startTimestamp: Int!, $endTimestamp: Int!) {
+  query kickstarters($first: Int!, $startTimestamp: BigInt!, $endTimestamp: BigInt!) {
     kickstarters(
       first: $first,
       where: { endTimestamp_gte: $startTimestamp, endTimestamp_lte: $endTimestamp }
@@ -104,7 +104,7 @@ const fetchKickstarters = async (startTimestamp: number, endTimestamp: number, p
   }
 }
 
-const useKickstarters = (startTimestamp = 0, endTimestamp = 9999999999, perPage = 6): Kickstarter[] | undefined => {
+const useKickstarters = (startTimestamp = 0, endTimestamp = 2070517065, perPage = 6): Kickstarter[] | undefined => {
   const [kickstarters, setKickstarters] = useState<Kickstarter[]>()
   const [isError, setIsError] = useState(false)
 
