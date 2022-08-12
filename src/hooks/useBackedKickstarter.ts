@@ -72,7 +72,7 @@ const fetchBackedKickstarters = async (address?: string | null): Promise<{ data?
     })
     return { data: contributions, error: false }
   } catch (error) {
-    console.error(`Failed to fetch transactions for pool ${address}`, error)
+    console.error(`Failed to fetch backed kickstarters for address ${address}`, error)
     return {
       error: true,
     }

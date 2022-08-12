@@ -89,7 +89,7 @@ const fetchKickstarter = async (address?: string | null): Promise<{ data?: Kicks
     }
     return { data: kickstarter, error: false }
   } catch (error) {
-    console.error(`Failed to fetch transactions for pool ${address}`, error)
+    console.error(`Failed to fetch kickstarter for address ${address}`, error)
     return {
       error: true,
     }
@@ -97,7 +97,7 @@ const fetchKickstarter = async (address?: string | null): Promise<{ data?: Kicks
 }
 
 const useKickstarter = (address?: string | null): Kickstarter | undefined => {
-  const [kickstarter, setBackedProjects] = useState<Kickstarter>()
+  const [kickstarter, setKickstarter] = useState<Kickstarter>()
   const [isError, setIsError] = useState(false)
 
   useEffect(() => {
@@ -106,7 +106,7 @@ const useKickstarter = (address?: string | null): Kickstarter | undefined => {
       if (fetchError) {
         setIsError(true)
       } else if (data) {
-        setBackedProjects(data)
+        setKickstarter(data)
       }
     }
     if (!isError) {
