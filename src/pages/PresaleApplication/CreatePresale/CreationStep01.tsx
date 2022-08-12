@@ -22,6 +22,7 @@ import { TOKEN_CHOICES, PRESALE_FACTORY_ADDRESS, MAX_APPROVE_VALUE } from 'const
 export const Caption = styled(Text)`
   font-size: 12px;
   line-height: 18px;
+  display: inline-block;
 `
 export const XSmallText = styled(Text)`
   font-size: 10px;
@@ -152,14 +153,12 @@ const CreationStep01 = ({ changeStepNumber }: Props) => {
         </Flex>
       </Box>
       <Caption small color="textSubtle" marginBottom="20px">
-        <RowFixed>
-          Participant will pay with&nbsp;
-          <Caption small color="primary" fontWeight={700}>
-            BNB&nbsp;
-            {/* TODO:: change this BNB when change currency */}
-          </Caption>
-          for your token
-        </RowFixed>
+        Participant will pay with&nbsp;
+        <Caption small color="primary" fontWeight={700}>
+          BNB&nbsp;
+          {/* TODO:: change this BNB when change currency */}
+        </Caption>
+        for your token
       </Caption>
       <Flex flexDirection="column" alignItems="center" justifyContent="center">
         {isFactoryApproved ? (

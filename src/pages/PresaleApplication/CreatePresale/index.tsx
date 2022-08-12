@@ -5,6 +5,7 @@ import steps from './steps-data'
 import CreationStep01 from './CreationStep01'
 import CreationStep02 from './CreationStep02'
 import CreationStep03 from './CreationStep03'
+import CreationStep04 from './CreationStep04'
 
 const StepsWrapper = styled(Box)`
   width: 522px;
@@ -19,8 +20,7 @@ const Divider = styled.div`
   width: 90%;
   max-width: 950px;
   height: 0px;
-  border-radius: 2px;
-  border: 1px solid ${({ theme }) => theme.colors.backgroundDisabled};
+  border-bottom: 2px solid ${({ theme }) => theme.colors.backgroundDisabled};
   margin-bottom: 25px;
 `
 
@@ -52,7 +52,7 @@ const StyledRadio = styled(Radio)<{ completed: boolean }>`
   }
 `
 const CreatePresale = () => {
-  const [stepNumber, setStepNumber] = useState(2)
+  const [stepNumber, setStepNumber] = useState(3)
   const [currency, setCurrency] = useState('BNB')
 
   const changeStepNumber = useCallback((num: number) => setStepNumber(num), [])
@@ -65,6 +65,8 @@ const CreatePresale = () => {
         return <CreationStep02 currency={currency} changeStepNumber={changeStepNumber} />
       case 2:
         return <CreationStep03 changeStepNumber={changeStepNumber} />
+      case 3:
+        return <CreationStep04 changeStepNumber={changeStepNumber} />
       default:
         return <></>
     }

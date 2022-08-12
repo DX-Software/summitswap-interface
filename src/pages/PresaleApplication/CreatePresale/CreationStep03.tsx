@@ -38,7 +38,7 @@ const CreationStep03 = ({ changeStepNumber }: Props) => {
   return (
     <>
       <RowBetween>
-        <Flex marginTop="40px">
+        <Flex>
           <IconCard>
             <Box width="56px">
               <RefundIcon width="100%" />
@@ -173,16 +173,14 @@ const CreationStep03 = ({ changeStepNumber }: Props) => {
               ))}
           </Flex>
           <Caption color="textDisabled">
-            <RowFixed>
-              You will have the pair of&nbsp;
-              <Caption bold color="primary">
-                STN-BNB&nbsp;
-              </Caption>{' '}
-              in
-              <Caption bold color="primary">
-                &nbsp;SummitSwap
-              </Caption>
-            </RowFixed>
+            You will have the pair of&nbsp;
+            <Caption bold color="primary">
+              STN-BNB&nbsp;
+            </Caption>
+            in
+            <Caption bold color="primary">
+              &nbsp;SummitSwap
+            </Caption>
           </Caption>
         </Box>
       </Flex>
