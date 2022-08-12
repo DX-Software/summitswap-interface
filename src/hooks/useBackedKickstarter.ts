@@ -3,7 +3,7 @@ import { gql } from 'graphql-request'
 import { useEffect, useState } from 'react';
 import { kickstarterClient } from 'utils/graphql'
 
-export type Contribution = {
+export type BackedKickstarter = {
   id: string
   amount: BigNumber
   kickstarter: {
@@ -35,7 +35,7 @@ const BACKED_KICKSTARTERS = gql`
   }
 `
 
-const fetchBackedKickstarters = async (address?: string | null): Promise<{ data?: Contribution[]; error: boolean }> => {
+const fetchBackedKickstarters = async (address?: string | null): Promise<{ data?: BackedKickstarter[]; error: boolean }> => {
   try {
     if (!address) return { data: [], error: false }
     const data = await kickstarterClient.request<{
@@ -55,7 +55,7 @@ const fetchBackedKickstarters = async (address?: string | null): Promise<{ data?
     }>(BACKED_KICKSTARTERS, {
       address: address.toLowerCase(),
     })
-    const contributions: Contribution[] = data.backedKickstarters.map((contribution) => {
+    const contributions: BackedKickstarter[] = data.backedKickstarters.map((contribution) => {
       return {
         id: contribution.id,
         amount: new BigNumber(contribution.amount),
@@ -79,8 +79,8 @@ const fetchBackedKickstarters = async (address?: string | null): Promise<{ data?
   }
 }
 
-const useBackedKickstarter = (address?: string | null): Contribution[] | undefined => {
-  const [backedProjects, setBackedProjects] = useState<Contribution[] | undefined>(undefined)
+const useBackedKickstarter = (address?: string | null): BackedKickstarter[] | undefined => {
+  const [backedProjects, setBackedProjects] = useState<BackedKickstarter[] | undefined>(undefined)
   const [isError, setIsError] = useState(false)
 
   useEffect(() => {

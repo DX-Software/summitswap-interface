@@ -1,6 +1,6 @@
 import { useWalletModal } from "@koda-finance/summitswap-uikit"
 import { useWeb3React } from "@web3-react/core"
-import useBackedKickstarter, { Contribution } from "hooks/useBackedKickstarter"
+import useBackedKickstarter, { BackedKickstarter } from "hooks/useBackedKickstarter"
 import useKickstarters, { Kickstarter } from "hooks/useKickstarters"
 import React, { createContext, useCallback, useContext, useState } from "react"
 import login from "utils/login"
@@ -9,9 +9,10 @@ type KickstarterContextProps = {
   account: string | null | undefined
   onPresentConnectModal: () => void
 
+  kickstarters?: Kickstarter[]
   almostEndedKickstarters?: Kickstarter[]
 
-  backedProjects?: Contribution[]
+  backedProjects?: BackedKickstarter[]
   backedProjectAddress?: string,
   handleBackedProjectChanged: (address?: string) => void
 
@@ -34,6 +35,7 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
 
   const { account, activate, deactivate } = useWeb3React()
   const almostEndedKickstarters = useKickstarters(currentTimestamp, currentTimestamp + ONE_WEEK_IN_SECONDS, 3)
+  const kickstarters = useKickstarters()
   const backedProjects = useBackedKickstarter(account)
   const [backedProjectAddress, setBackedProjectAddress] = useState<string | undefined>()
   const [browseProjectAddress, setBrowseProjectAddress] = useState<string | undefined>()
@@ -62,6 +64,7 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
         account,
         onPresentConnectModal,
 
+        kickstarters,
         almostEndedKickstarters,
 
         backedProjects,
