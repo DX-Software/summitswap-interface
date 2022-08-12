@@ -171,10 +171,10 @@ const CreationStep05 = ({ changeStepNumber }: Props) => {
       </Flex>
 
       <RowBetween marginTop="50px" marginBottom="15px">
-        <Button variant="secondary" onClick={() => changeStepNumber(5)}>
+        <Button variant="secondary" onClick={() => changeStepNumber(3)}>
           Previous Step
         </Button>
-        <Button onClick={() => changeStepNumber(3)}>Continue</Button>
+        <Button onClick={() => changeStepNumber(5)}>Continue</Button>
       </RowBetween>
     </>
   )
