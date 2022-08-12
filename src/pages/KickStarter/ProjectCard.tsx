@@ -1,10 +1,11 @@
-import { BinanceIcon, Flex, Progress, Text } from "@koda-finance/summitswap-uikit";
-import BigNumber from "bignumber.js";
+import { BinanceIcon, Flex, Progress, Text } from "@koda-finance/summitswap-uikit"
+import BigNumber from "bignumber.js"
 import React, { useMemo } from "react"
-import styled from "styled-components";
-import ProgressBox from "./ProgressBox";
-import { STATUSES } from "./types";
-import { getDayRemaining, getKickstarterStatus } from "./utility";
+import styled from "styled-components"
+import ProgressBox from "./ProgressBox"
+import StatusLabel from "./shared/StatusLabel"
+import { STATUSES } from "./types"
+import { getDayRemaining, getKickstarterStatus } from "./utility"
 
 type Props = {
   title: string
@@ -14,6 +15,15 @@ type Props = {
   endTimestamp: number
   onClick: () => void
 }
+
+const Title = styled(Text)`
+  font-size: 20px;
+  font-weight: bold;
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`
 
 const Card = styled(Flex)`
   background-color: ${({theme}) => theme.colors.inputColor};
@@ -27,20 +37,7 @@ const Banner = styled(Flex)`
   height: 115px;
   background: gray;
   padding: 12px;
-`;
-
-const Label = styled(Text)<{ status: STATUSES }>`
-  padding: 4px 12px;
-  border-radius: 20px;
-  background: ${({ status, theme }) => {
-    if (status === STATUSES.COMPLETED) return theme.colors.dropdownBackground
-    if (status === STATUSES.ONGOING) return theme.colors.primary
-    return theme.colors.failure
-
-  }};
-  margin-left: auto;
-  text-transform: uppercase;
-`;
+`
 
 function ProjectCard({ title, creator, projectGoals, totalContribution, endTimestamp, onClick }: Props) {
 
@@ -55,18 +52,16 @@ function ProjectCard({ title, creator, projectGoals, totalContribution, endTimes
   return (
     <Card flexDirection="column" onClick={onClick}>
       <Banner flexDirection="column">
-        <Label status={status} fontSize="12px" fontWeight="bold">
+        <StatusLabel status={status} style={{ marginLeft: "auto" }}>
           {status !== STATUSES.END_SOON
             ? status
             : `${getDayRemaining(endTimestamp)} day(s) left`
           }
-        </Label>
+        </StatusLabel>
       </Banner>
       <Flex flexDirection="column" paddingTop="16px" paddingBottom="24px" paddingX="20px">
         <Text fontSize="12px" marginBottom="4px" color="textSubtle">{creator}</Text>
-        <Text fontSize="20px" marginBottom="16px" fontWeight="bold">
-          {title}
-        </Text>
+        <Title marginBottom={16}>{title}</Title>
         <Flex justifyContent="space-between" alignItems="center" marginBottom="24px">
           <Text fontSize="14px">Project Goal</Text>
           <Flex alignItems="center" style={{ columnGap: "8px" }}>

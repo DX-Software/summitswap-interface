@@ -1,8 +1,7 @@
 import { Flex, Heading, Input, Select, SortIcon } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
-import BigNumber from 'bignumber.js'
 import { useKickstarterContext } from 'contexts/kickstarter'
-import React, { useState } from 'react'
+import React from 'react'
 import { isDesktop } from 'react-device-detect'
 import ProjectCard from './ProjectCard'
 import ProjectCardMobile from './ProjectCardMobile'
@@ -10,7 +9,7 @@ import ProjectDetails from './ProjectDetails'
 import ProductLoadingSection from './shared/ProductLoadingSection'
 
 function BrowseProject() {
-  const { almostEndedKickstarters, browseProjectAddress, handleBrowseProjectChanged } = useKickstarterContext()
+  const { almostEndedKickstarters, kickstarters, browseProjectAddress, handleBrowseProjectChanged } = useKickstarterContext()
   const sortOptions = [
     {
       label: 'Default',
@@ -21,11 +20,6 @@ function BrowseProject() {
       value: 'name',
     },
   ]
-  const [selectedProject, setSelectedProject] = useState("")
-
-  const toggleSelectedProject = () => {
-    setSelectedProject("")
-  }
 
   if (browseProjectAddress) {
     return (
@@ -46,11 +40,9 @@ function BrowseProject() {
             {!almostEndedKickstarters && (
               <ProductLoadingSection />
             )}
-
-            <Grid item xs={12} sm={6} lg={4}>
-              {almostEndedKickstarters && almostEndedKickstarters.map((kickstarter) => {
-                if (isDesktop) {
-                  return (
+              {almostEndedKickstarters && almostEndedKickstarters.map((kickstarter) => (
+                <Grid item xs={12} sm={6} lg={4}>
+                  {isDesktop ? (
                     <ProjectCard
                       title={kickstarter.title}
                       creator={kickstarter.creator}
@@ -59,13 +51,19 @@ function BrowseProject() {
                       endTimestamp={kickstarter.endTimestamp}
                       onClick={() => handleBrowseProjectChanged(kickstarter.id)}
                     />
-                  )
-                }
-                return (
-                  <ProjectCardMobile onClick={() => setSelectedProject("ID")} />
-                )
-              })}
-            </Grid>
+                  ) : (
+                    <ProjectCardMobile
+                      title={kickstarter.title}
+                      creator={kickstarter.creator}
+                      projectGoals={kickstarter.projectGoals}
+                      totalContribution={kickstarter.totalContribution}
+                      endTimestamp={kickstarter.endTimestamp}
+                      showStatus
+                      onClick={() => handleBrowseProjectChanged(kickstarter.id)}
+                    />
+                  )}
+                </Grid>
+              ))}
           </Grid>
         </>
       )}
@@ -82,18 +80,32 @@ function BrowseProject() {
         />
       </Flex>
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={6} lg={4}>
-          {isDesktop ?
-            <ProjectCard
-              title=""
-              creator=""
-              totalContribution={new BigNumber(0)}
-              projectGoals={new BigNumber(0)}
-              endTimestamp={0}
-              onClick={() => setSelectedProject("ID")}
-            />
-          : <ProjectCardMobile onClick={() => setSelectedProject("ID")} />}
-        </Grid>
+        {!kickstarters && (
+          <ProductLoadingSection />
+        )}
+        {kickstarters && kickstarters.map((kickstarter) => (
+          <Grid item xs={12} sm={6} lg={4}>
+            {isDesktop ? (
+              <ProjectCard
+                title={kickstarter.title}
+                creator={kickstarter.creator}
+                projectGoals={kickstarter.projectGoals}
+                totalContribution={kickstarter.totalContribution}
+                endTimestamp={kickstarter.endTimestamp}
+                onClick={() => handleBrowseProjectChanged(kickstarter.id)}
+              />
+            ) : (
+              <ProjectCardMobile
+                title={kickstarter.title}
+                creator={kickstarter.creator}
+                projectGoals={kickstarter.projectGoals}
+                totalContribution={kickstarter.totalContribution}
+                endTimestamp={kickstarter.endTimestamp}
+                onClick={() => handleBrowseProjectChanged(kickstarter.id)}
+              />
+            )}
+          </Grid>
+        ))}
       </Grid>
     </Flex>
   )

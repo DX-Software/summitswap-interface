@@ -1,9 +1,18 @@
 import { BinanceIcon, Flex, Progress, Text } from "@koda-finance/summitswap-uikit"
-import React from "react"
+import BigNumber from "bignumber.js"
+import React, { useMemo } from "react"
 import styled from "styled-components"
 import ProgressBox from "./ProgressBox"
+import StatusLabel from "./shared/StatusLabel"
+import { getDayRemaining, getKickstarterStatus } from "./utility"
 
 type Props = {
+  title: string
+  creator: string
+  projectGoals: BigNumber
+  totalContribution: BigNumber
+  endTimestamp: number
+  showStatus?: boolean
   onClick: () => void
 }
 
@@ -20,17 +29,7 @@ const Banner = styled(Flex)`
   background: gray;
   border-radius: 8px;
   flex-shrink: 0;
-`
-
-const Label = styled(Text)`
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  font-size: 10px;
-  font-weight: bold;
-  text-transform: uppercase;
-  padding: 2px 8px;
-  border-radius: 12px;
+  padding: 4px;
 `
 
 const Name = styled(Text)`
@@ -43,26 +42,46 @@ const Title = styled(Text)`
   font-weight: bold;
   font-size: 14px;
   margin-bottom: 8px;
+  width: 100%;
+  overflow: hidden;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  white-space: pre-wrap;
 `
 
-function ProjectCardMobile({ onClick }: Props) {
+function ProjectCardMobile({ title, creator, projectGoals, totalContribution, endTimestamp, showStatus, onClick }: Props) {
+  const status = useMemo(() => getKickstarterStatus(endTimestamp), [endTimestamp])
+
+  const fundedPercentage = useMemo(() => {
+    if (totalContribution.toString() === "0") {
+      return "0"
+    }
+    return totalContribution.div(projectGoals).times(100).toString()
+  }, [projectGoals, totalContribution])
+
   return (
     <Wrapper onClick={onClick}>
       <Banner>
-        <Label style={{ background: "#ED4B9E" }}>End Soon</Label>
+      {showStatus && (
+        <StatusLabel status={status} style={{ fontSize: "10px", marginLeft: "auto" }}>
+          {status.replace(/_/g, ' ')}
+        </StatusLabel>
+      )}
       </Banner>
-      <Flex flexDirection="column">
-        <Name>SUMMITSWAP</Name>
-        <Title>SummitSwap#1 Fundraising Project</Title>
+      <Flex flexDirection="column" flex={1}>
+        <Name>{creator}</Name>
+        <Title>{title}</Title>
         <Flex justifyContent="space-between" marginBottom="8px">
           <Text fontSize="12px">Project Goal</Text>
           <Flex style={{ columnGap: "4px" }}>
             <BinanceIcon />
-            <Text fontSize="12px">0,000001</Text>
+            <Text fontSize="12px">{projectGoals.toString()}</Text>
           </Flex>
         </Flex>
         <ProgressBox>
-          <Progress primaryStep={30} />
+          <Progress primaryStep={Number(fundedPercentage)} />
         </ProgressBox>
       </Flex>
     </Wrapper>
@@ -70,3 +89,7 @@ function ProjectCardMobile({ onClick }: Props) {
 }
 
 export default ProjectCardMobile
+
+ProjectCardMobile.defaultProps = {
+  showStatus: false,
+}
