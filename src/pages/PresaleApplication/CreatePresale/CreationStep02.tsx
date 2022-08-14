@@ -85,19 +85,19 @@ const CreationStep02 = ({ changeStepNumber, currency }: Props) => {
         </GridItem1>
         <GridItem2>
           <Flex flexWrap="wrap">
-            <Box marginRight="16px">
+            <StyledInputWrapper marginRight="16px">
               <Text small marginTop="8px">
                 Softcap ({currency})
               </Text>
               <StyledInput placeholder="Ex: 7.5" />
               <Caption color="textDisabled">Softcap must be less or equal to 50% of Hardcap!</Caption>
-            </Box>
-            <Box>
+            </StyledInputWrapper>
+            <StyledInputWrapper>
               <Text small marginTop="8px">
                 Hardcap ({currency})
               </Text>
               <StyledInput placeholder="Ex: 10" />
-            </Box>
+            </StyledInputWrapper>
           </Flex>
         </GridItem2>
       </GridContainer>
