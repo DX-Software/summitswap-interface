@@ -14,6 +14,13 @@ const GridContainer = styled(Grid)`
   grid-template-columns: 160px auto;
 `
 
+const StyledImage = styled.img`
+  height: 150px;
+  width: 150px;
+  border-radius: 8px;
+  grid-area: icon;
+`
+
 export const Divider = styled.div`
   width: 90%;
   max-width: 950px;
@@ -29,14 +36,8 @@ const CreationStep06 = ({ currency, changeStepNumber }: Props) => {
         Token Information
       </Heading>
       <GridContainer marginTop="16px" marginBottom="45px">
-        <img
-          style={{ borderRadius: '8px', gridArea: 'icon' }}
-          src="https://via.placeholder.com/150x150"
-          width={150}
-          height={150}
-          alt="presale-icon"
-        />
-        <GridItem1>
+        <StyledImage src="https://via.placeholder.com/150x150" alt="presale-icon" />
+        <GridItem1 style={{ alignSelf: 'end' }}>
           <GridContainer>
             <Text>Token Address</Text>
             <Text color="sidebarActiveColor">0xa2f96ef6ed3d67a0352e659b1e980f13e098619f</Text>
@@ -61,8 +62,8 @@ const CreationStep06 = ({ currency, changeStepNumber }: Props) => {
             <Text>1,000,000</Text>
           </GridContainer>
           <GridContainer>
-            <Text bold> Presale Currency </Text>
-            <Text bold> {currency}</Text>
+            <Text bold>Presale Currency</Text>
+            <Text bold>{currency}</Text>
           </GridContainer>
         </GridItem2>
       </GridContainer>
@@ -187,7 +188,7 @@ const CreationStep06 = ({ currency, changeStepNumber }: Props) => {
       <Box>
         <Box marginTop="16px">
           <Text bold color="primaryDark">
-            Contact Information{' '}
+            Contact Information
           </Text>
           <GridContainer style={{ gridTemplateColumns: '225px auto' }} marginTop="4px">
             <Text>Project Name</Text>
@@ -208,7 +209,7 @@ const CreationStep06 = ({ currency, changeStepNumber }: Props) => {
         </Box>
         <Box marginTop="16px">
           <Text bold color="primaryDark">
-            Project Presale Details{' '}
+            Project Presale Details
           </Text>
           <GridContainer style={{ gridTemplateColumns: '225px auto' }} marginTop="4px">
             <Text>Telegram ID</Text>
