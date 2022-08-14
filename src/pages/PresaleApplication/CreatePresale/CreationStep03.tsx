@@ -5,9 +5,7 @@ import {
   Box,
   Button,
   Flex,
-  Heading,
   Text,
-  Input,
   Radio,
   PairCoinsIcon,
   ShopIcon,
@@ -16,67 +14,80 @@ import {
 } from '@koda-finance/summitswap-uikit'
 import { TOKEN_CHOICES } from 'constants/presale'
 import { RowBetween, RowFixed } from 'components/Row'
-import { ItemIconCard } from './GridComponents'
-import StyledInput from './StyledInput'
-import { Caption } from '../Texts'
+import { ItemIconCard, IconBox, GridContainer, GridItem1, GridItem2 } from './GridComponents'
+import StyledInput, { StyledInputWrapper } from './StyledInput'
+import { Caption, Heading } from '../Texts'
 
 interface Props {
   changeStepNumber: (num: number) => void
 }
 
+const BoxPairIcon = styled(Box)`
+  width: 36px;
+  @media (max-width: 480px) {
+    width: 19px;
+  }
+`
+
 const CreationStep03 = ({ changeStepNumber }: Props) => {
   return (
     <>
-      <RowBetween>
-        <Flex>
+      <Flex flexWrap="wrap" justifyContent="space-between">
+        <GridContainer marginBottom="40px">
           <ItemIconCard>
-            <Box width="56px">
+            <IconBox width="56px">
               <RefundIcon width="100%" />
-            </Box>
+            </IconBox>
           </ItemIconCard>
-          <Box marginLeft="26px" marginTop="8px">
+          <Box marginTop="8px">
             <Heading color="primary">Refund System</Heading>
             <Text small marginTop="4px">
               What is and about refund
             </Text>
             <Box marginTop="16px">
               <RowFixed marginBottom="8px">
-                <Radio defaultChecked id="refund" scale="sm" />
+                <Box>
+                  <Radio defaultChecked id="refund" scale="sm" />
+                </Box>
                 <label htmlFor="refund">
                   <Text color="linkColor" marginLeft="8px">
                     Refund
                   </Text>
-                  <Caption marginLeft="8px" color="textDisabled">
+                  <Caption marginX="8px" color="textDisabled">
                     Refund remaining presale Token after finalizing
                   </Caption>
                 </label>
               </RowFixed>
               <RowFixed>
-                <Radio id="burn" scale="sm" />
+                <Box>
+                  <Radio id="burn" scale="sm" />
+                </Box>
                 <label htmlFor="burn">
                   <Text marginLeft="8px">Burn</Text>
-                  <Caption marginLeft="8px" color="textDisabled">
+                  <Caption marginX="8px" color="textDisabled">
                     Burn remaining presale Token after finalizing
                   </Caption>
                 </label>
               </RowFixed>
             </Box>
           </Box>
-        </Flex>
-        <Flex>
+        </GridContainer>
+        <GridContainer marginBottom="40px">
           <ItemIconCard>
-            <Box width="56px">
+            <IconBox width="56px">
               <RouterIcon width="100%" />
-            </Box>
+            </IconBox>
           </ItemIconCard>
-          <Box marginLeft="26px" marginTop="8px">
+          <Box marginTop="8px">
             <Heading color="primary">Choose Router</Heading>
             <Text small marginTop="4px">
               To determine Liquidity & Listing Rate
             </Text>
             <Box marginTop="16px">
               <RowFixed marginBottom="8px">
-                <Radio defaultChecked id="summitswap" scale="sm" />
+                <Box>
+                  <Radio defaultChecked id="summitswap" scale="sm" />
+                </Box>
                 <label htmlFor="summitswap">
                   <Text color="linkColor" marginLeft="8px">
                     SummitSwap (SS)
@@ -84,13 +95,17 @@ const CreationStep03 = ({ changeStepNumber }: Props) => {
                 </label>
               </RowFixed>
               <RowFixed>
-                <Radio id="pancakeswap" scale="sm" />
+                <Box>
+                  <Radio id="pancakeswap" scale="sm" />
+                </Box>
                 <label htmlFor="pancakeswap">
                   <Text marginLeft="8px">PancakeSwap (PS)</Text>
                 </label>
               </RowFixed>
               <RowFixed>
-                <Radio id="both" scale="sm" />
+                <Box>
+                  <Radio id="both" scale="sm" />
+                </Box>
                 <label htmlFor="both">
                   <Text marginLeft="8px">Both</Text>
                   <Caption marginLeft="8px" color="textDisabled">
@@ -100,60 +115,64 @@ const CreationStep03 = ({ changeStepNumber }: Props) => {
               </RowFixed>
             </Box>
           </Box>
-        </Flex>
-      </RowBetween>
+        </GridContainer>
+      </Flex>
 
-      <Flex marginTop="40px">
+      <GridContainer>
         <ItemIconCard>
-          <Box width="56px">
+          <IconBox>
             <ShopIcon width="100%" />
-          </Box>
+          </IconBox>
         </ItemIconCard>
-        <Box width="88%" marginLeft="26px">
+        <GridItem1>
           <Heading color="primary">Liquidity & Listing Rate</Heading>
           <Text small marginTop="4px">
             What is Liquidity & Listing Rate
           </Text>
-          <Flex width="100%" justifyContent="space-between">
-            <Box width="380px">
+        </GridItem1>
+        <GridItem2>
+          <Flex flexWrap="wrap">
+            <StyledInputWrapper marginRight="16px">
               <Text small marginTop="8px">
                 Router Liquidity
               </Text>
-              <StyledInput placeholder="Ex: 0%" />
+              <StyledInput placeholder="Ex: 50%" />
               <Caption color="textDisabled">
-                Enter the percentage of raised funds that should be allocated to Liquidity on Summitswap (Min 25%, Max
+                Enter the percentage of raised funds that should be allocated to Liquidity on Pancakeswap (Min 51%, Max
                 100%)
               </Caption>
-            </Box>
-            <Box width="380px">
+            </StyledInputWrapper>
+            <StyledInputWrapper>
               <Text small marginTop="8px">
                 Router Listing Rate
               </Text>
-              <StyledInput placeholder="Ex: 110" />
+              <StyledInput placeholder="Ex: 1100" />
               <Caption color="textDisabled">
-                If I spend 1 BNB on Summitswap how many tokens will I receive? (1 BNB = 0 CTK)
+                If I spend 1 BNB on Pancakeswap how many tokens will I receive? (1 BNB = 0 CTK)
               </Caption>
-            </Box>
+            </StyledInputWrapper>
           </Flex>
-        </Box>
-      </Flex>
-      <Flex marginTop="40px">
+        </GridItem2>
+      </GridContainer>
+      <GridContainer marginTop="40px">
         <ItemIconCard>
-          <Box width="35px">
+          <BoxPairIcon width="35px">
             <PairCoinsIcon width="100%" />
-          </Box>
+          </BoxPairIcon>
         </ItemIconCard>
-        <Box marginLeft="26px">
+        <Box>
           <Heading color="primary">Router Token Pairing</Heading>
           <Text small marginTop="4px">
             Choose Router Token Pairing
           </Text>
-          <Flex marginTop="12px" width="180px" flexWrap="wrap" justifyContent="space-between">
+          <Flex marginTop="12px" maxWidth="180px" flexWrap="wrap" justifyContent="space-between">
             {Object.keys(TOKEN_CHOICES)
               .filter((key) => key !== 'USDT')
               .map((key) => (
-                <RowFixed marginBottom="4px" key={key}>
-                  <Radio id={key} scale="sm" />
+                <RowFixed marginBottom="4px" marginRight="4px" key={key}>
+                  <Box>
+                    <Radio id={key} scale="sm" />
+                  </Box>
                   <label htmlFor={key}>
                     <Text color="linkColor" marginLeft="8px">
                       {key}
@@ -173,7 +192,7 @@ const CreationStep03 = ({ changeStepNumber }: Props) => {
             </Caption>
           </Caption>
         </Box>
-      </Flex>
+      </GridContainer>
 
       <RowBetween marginTop="50px" marginBottom="15px">
         <Button variant="secondary" onClick={() => changeStepNumber(1)}>

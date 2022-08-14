@@ -12,6 +12,7 @@ export const Caption = styled(Text)`
   font-size: 12px;
   line-height: 18px;
   display: inline-block;
+  max-width: 400px;
 `
 export const XSmallText = styled(Text)`
   font-size: 10px;
