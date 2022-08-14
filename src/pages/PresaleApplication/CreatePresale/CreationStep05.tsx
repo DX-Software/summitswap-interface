@@ -14,24 +14,14 @@ import {
   Select,
   darkColors,
 } from '@koda-finance/summitswap-uikit'
-import { IconCard } from 'components/Card'
 import { RowBetween } from 'components/Row'
+import { ItemIconCard } from './GridComponents'
+import StyledInput from './StyledInput'
 import { Caption } from '../Texts'
 
 interface Props {
   changeStepNumber: (num: number) => void
 }
-
-const StyledInput = styled(Input)`
-  padding: 10px 16px;
-  gap: 10px;
-  width: 380px;
-  height: 44px;
-  background: ${({ theme }) => theme.colors.sidebarBackground};
-  border-radius: 16px;
-  font-size: 16px;
-  margin: 4px 0;
-`
 
 const StyledSelect = styled(Select)`
   & :first-child {
@@ -50,11 +40,11 @@ const CreationStep05 = ({ changeStepNumber }: Props) => {
   return (
     <>
       <Flex>
-        <IconCard>
+        <ItemIconCard>
           <Box width="56px">
             <ImageIcon width="100%" />
           </Box>
-        </IconCard>
+        </ItemIconCard>
         <Box marginLeft="26px">
           <Heading color="primary">Presale Logo</Heading>
           <Text small marginTop="4px">
@@ -72,11 +62,11 @@ const CreationStep05 = ({ changeStepNumber }: Props) => {
       </Flex>
 
       <Flex marginTop="40px">
-        <IconCard>
+        <ItemIconCard>
           <Box width="56px">
             <DetailIcon width="100%" />
           </Box>
-        </IconCard>
+        </ItemIconCard>
         <Box marginLeft="26px">
           <Heading color="primary">Project Presale Details</Heading>
           <Text small marginTop="4px">
@@ -120,11 +110,11 @@ const CreationStep05 = ({ changeStepNumber }: Props) => {
         </Box>
       </Flex>
       <Flex marginTop="40px">
-        <IconCard>
+        <ItemIconCard>
           <Box width="56px">
             <SocialGroupIcon width="100%" />
           </Box>
-        </IconCard>
+        </ItemIconCard>
         <Box marginLeft="26px">
           <Heading color="primary">Contact Information</Heading>
           <Text small marginTop="4px">

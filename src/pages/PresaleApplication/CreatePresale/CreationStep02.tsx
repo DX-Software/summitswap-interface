@@ -1,70 +1,59 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React from 'react'
-import styled from 'styled-components'
 import {
   Box,
   Button,
   Flex,
-  Heading,
   Text,
-  Input,
   Radio,
   Coin2Icon,
   PeopleIcon,
   ChecklistIcon,
   HandCoinIcon,
 } from '@koda-finance/summitswap-uikit'
-import { IconCard } from 'components/Card'
 import { RowBetween, RowFixed } from 'components/Row'
-import { Caption } from '../Texts'
+import { ItemIconCard, IconBox, GridContainer, GridItem1, GridItem2 } from './GridComponents'
+import StyledInput, { StyledInputWrapper } from './StyledInput'
+import { Caption, Heading } from '../Texts'
 
 interface Props {
   changeStepNumber: (num: number) => void
   currency: string
 }
 
-const StyledInput = styled(Input)`
-  padding: 10px 16px;
-  gap: 10px;
-  width: 380px;
-  height: 44px;
-  background: ${({ theme }) => theme.colors.sidebarBackground};
-  border-radius: 16px;
-  font-size: 16px;
-  margin: 4px 0;
-`
-
 const CreationStep02 = ({ changeStepNumber, currency }: Props) => {
   return (
     <>
-      <Flex>
-        <IconCard>
-          <Box width="56px">
+      <GridContainer>
+        <ItemIconCard>
+          <IconBox>
             <Coin2Icon width="100%" />
-          </Box>
-        </IconCard>
-        <Box marginLeft="26px">
+          </IconBox>
+        </ItemIconCard>
+        <GridItem1>
           <Heading color="primary">Presale Rate</Heading>
           <Text small marginTop="4px">
             Set your token price in {currency}
           </Text>
+        </GridItem1>
+        <GridItem2>
           <Text small marginTop="8px">
             Presale Rate
           </Text>
           <StyledInput placeholder="Ex: 100" />
           <Caption color="textDisabled">If I spend 1 BNB, how many CTK tokens will I receive?</Caption>
-        </Box>
-      </Flex>
-      <Flex marginTop="40px">
-        <IconCard>
-          <Box width="56px">
+        </GridItem2>
+      </GridContainer>
+      <GridContainer marginTop="40px">
+        <ItemIconCard>
+          <IconBox>
             <PeopleIcon width="100%" />
-          </Box>
-        </IconCard>
-        <Box marginLeft="26px" marginTop="8px">
+          </IconBox>
+        </ItemIconCard>
+        <Box marginTop="8px" style={{ gridArea: 'title' }}>
           <Heading color="primary">Whitelist System</Heading>
           <Text small marginTop="4px">
-            Whitelist system is where you only permit certain users to participate in your presale{' '}
+            Whitelist system is where you only permit certain users to participate in your presale
           </Text>
           <Box marginTop="16px">
             <RowFixed marginBottom="8px">
@@ -81,24 +70,27 @@ const CreationStep02 = ({ changeStepNumber, currency }: Props) => {
             </RowFixed>
           </Box>
         </Box>
-      </Flex>
-      <Flex marginTop="40px">
-        <IconCard>
-          <Box width="56px">
+      </GridContainer>
+      <GridContainer marginTop="40px">
+        <ItemIconCard>
+          <IconBox>
             <ChecklistIcon width="100%" />
-          </Box>
-        </IconCard>
-        <Box marginLeft="26px">
+          </IconBox>
+        </ItemIconCard>
+        <GridItem1>
           <Heading color="primary">Goal System</Heading>
           <Text small marginTop="4px">
             Set your softcap and hardcap for this presale
           </Text>
-          <Flex>
+        </GridItem1>
+        <GridItem2>
+          <Flex flexWrap="wrap">
             <Box marginRight="16px">
               <Text small marginTop="8px">
                 Softcap ({currency})
               </Text>
               <StyledInput placeholder="Ex: 7.5" />
+              <Caption color="textDisabled">Softcap must be less or equal to 50% of Hardcap!</Caption>
             </Box>
             <Box>
               <Text small marginTop="8px">
@@ -107,37 +99,38 @@ const CreationStep02 = ({ changeStepNumber, currency }: Props) => {
               <StyledInput placeholder="Ex: 10" />
             </Box>
           </Flex>
-          <Caption color="textDisabled">Softcap must be less or equal to 50% of Hardcap!</Caption>
-        </Box>
-      </Flex>
-      <Flex marginTop="40px">
-        <IconCard>
-          <Box width="56px">
+        </GridItem2>
+      </GridContainer>
+      <GridContainer marginTop="40px">
+        <ItemIconCard>
+          <IconBox>
             <HandCoinIcon strokeWidth={0} width="100%" />
-          </Box>
-        </IconCard>
-        <Box marginLeft="26px">
+          </IconBox>
+        </ItemIconCard>
+        <GridItem1>
           <Heading color="primary">Purchasing System</Heading>
           <Text small marginTop="4px">
             Each user will only be able to buy the coin with minimum and maximum price as specified
           </Text>
-          <Flex>
-            <Box marginRight="16px">
+        </GridItem1>
+        <GridItem2>
+          <Flex flexWrap="wrap">
+            <StyledInputWrapper marginRight="16px">
               <Text small marginTop="8px">
                 Minimum Buy ({currency})
               </Text>
               <StyledInput placeholder="Ex: 0.5" />
-            </Box>
-            <Box>
+              <Caption color="textDisabled">Maximum Buy must be less or equal to Hardcap!</Caption>
+            </StyledInputWrapper>
+            <StyledInputWrapper>
               <Text small marginTop="8px">
                 Maximum Buy ({currency})
               </Text>
               <StyledInput placeholder="Ex: 6" />
-            </Box>
+            </StyledInputWrapper>
           </Flex>
-          <Caption color="textDisabled">Maximum Buy must be less or equal to Hardcap!</Caption>
-        </Box>
-      </Flex>
+        </GridItem2>
+      </GridContainer>
       <RowBetween marginTop="50px" marginBottom="15px">
         <Button variant="secondary" onClick={() => changeStepNumber(0)}>
           Previous Step

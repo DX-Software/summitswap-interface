@@ -15,35 +15,25 @@ import {
   RouterIcon,
 } from '@koda-finance/summitswap-uikit'
 import { TOKEN_CHOICES } from 'constants/presale'
-import { IconCard } from 'components/Card'
 import { RowBetween, RowFixed } from 'components/Row'
+import { ItemIconCard } from './GridComponents'
+import StyledInput from './StyledInput'
 import { Caption } from '../Texts'
 
 interface Props {
   changeStepNumber: (num: number) => void
 }
 
-const StyledInput = styled(Input)`
-  padding: 10px 16px;
-  gap: 10px;
-  width: 400px;
-  height: 44px;
-  background: ${({ theme }) => theme.colors.sidebarBackground};
-  border-radius: 16px;
-  font-size: 16px;
-  margin: 4px 0;
-`
-
 const CreationStep03 = ({ changeStepNumber }: Props) => {
   return (
     <>
       <RowBetween>
         <Flex>
-          <IconCard>
+          <ItemIconCard>
             <Box width="56px">
               <RefundIcon width="100%" />
             </Box>
-          </IconCard>
+          </ItemIconCard>
           <Box marginLeft="26px" marginTop="8px">
             <Heading color="primary">Refund System</Heading>
             <Text small marginTop="4px">
@@ -74,11 +64,11 @@ const CreationStep03 = ({ changeStepNumber }: Props) => {
           </Box>
         </Flex>
         <Flex>
-          <IconCard>
+          <ItemIconCard>
             <Box width="56px">
               <RouterIcon width="100%" />
             </Box>
-          </IconCard>
+          </ItemIconCard>
           <Box marginLeft="26px" marginTop="8px">
             <Heading color="primary">Choose Router</Heading>
             <Text small marginTop="4px">
@@ -114,11 +104,11 @@ const CreationStep03 = ({ changeStepNumber }: Props) => {
       </RowBetween>
 
       <Flex marginTop="40px">
-        <IconCard>
+        <ItemIconCard>
           <Box width="56px">
             <ShopIcon width="100%" />
           </Box>
-        </IconCard>
+        </ItemIconCard>
         <Box width="88%" marginLeft="26px">
           <Heading color="primary">Liquidity & Listing Rate</Heading>
           <Text small marginTop="4px">
@@ -148,11 +138,11 @@ const CreationStep03 = ({ changeStepNumber }: Props) => {
         </Box>
       </Flex>
       <Flex marginTop="40px">
-        <IconCard>
+        <ItemIconCard>
           <Box width="35px">
             <PairCoinsIcon width="100%" />
           </Box>
-        </IconCard>
+        </ItemIconCard>
         <Box marginLeft="26px">
           <Heading color="primary">Router Token Pairing</Heading>
           <Text small marginTop="4px">

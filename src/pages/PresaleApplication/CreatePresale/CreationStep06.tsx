@@ -3,27 +3,17 @@ import React from 'react'
 import styled from 'styled-components'
 import { Box, Button, Flex, Heading, Text } from '@koda-finance/summitswap-uikit'
 import { RowBetween } from 'components/Row'
+import { GridContainer as Grid, GridItem1, GridItem2 } from './GridComponents'
 
 interface Props {
   currency: string
   changeStepNumber: (num: number) => void
 }
 
-const GridContainer = styled(Box)`
-  display: grid;
+const GridContainer = styled(Grid)`
   grid-template-columns: 160px auto;
-  grid-template-rows: 0 auto;
-  grid-gap: 24px;
 `
 
-const GridItem1 = styled(Box)`
-  grid-column: 2/-1;
-`
-
-const GridItem2 = styled(Box)`
-  // margin-top: 150px;
-  grid-column: 2/-1;
-`
 export const Divider = styled.div`
   width: 90%;
   max-width: 950px;
@@ -38,10 +28,9 @@ const CreationStep06 = ({ currency, changeStepNumber }: Props) => {
       <Heading size="lg" color="success">
         Token Information
       </Heading>
-
       <GridContainer marginTop="16px" marginBottom="45px">
         <img
-          style={{ borderRadius: '8px' }}
+          style={{ borderRadius: '8px', gridArea: 'icon' }}
           src="https://via.placeholder.com/150x150"
           width={150}
           height={150}
@@ -77,9 +66,7 @@ const CreationStep06 = ({ currency, changeStepNumber }: Props) => {
           </GridContainer>
         </GridItem2>
       </GridContainer>
-
       <Divider style={{ width: '100%' }} />
-
       <Heading marginTop="24px" size="lg" color="success">
         Presale System
       </Heading>
@@ -176,7 +163,6 @@ const CreationStep06 = ({ currency, changeStepNumber }: Props) => {
           </Box>
         </Box>
       </Flex>
-
       <Box marginTop="16px" marginBottom="25px">
         <Text bold color="primaryDark">
           Presale Start & End
@@ -194,9 +180,7 @@ const CreationStep06 = ({ currency, changeStepNumber }: Props) => {
           <Text>3,600 minutes</Text>
         </GridContainer>
       </Box>
-
       <Divider style={{ width: '100%' }} />
-
       <Heading marginTop="24px" size="lg" color="success">
         Additional Information
       </Heading>
@@ -244,7 +228,6 @@ const CreationStep06 = ({ currency, changeStepNumber }: Props) => {
           </GridContainer>
         </Box>
       </Box>
-
       <RowBetween marginTop="50px" marginBottom="15px">
         <Button variant="secondary" onClick={() => changeStepNumber(4)}>
           Previous Step

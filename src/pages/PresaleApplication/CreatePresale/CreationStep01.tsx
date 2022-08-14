@@ -171,12 +171,7 @@ const CreationStep01 = ({ changeStepNumber, currency, setCurrency }: Props) => {
         <Text marginBottom="8px" fontWeight={700}>
           Choose Currency
         </Text>
-        <Flex
-          width="180px"
-          flexWrap="wrap"
-          justifyContent="space-between"
-          onChange={handleCurrencyChange}
-        >
+        <Flex width="180px" flexWrap="wrap" justifyContent="space-between" onChange={handleCurrencyChange}>
           {Object.keys(TOKEN_CHOICES)
             .filter((key) => key !== 'KODA')
             .map((key) => (

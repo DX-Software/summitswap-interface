@@ -1,5 +1,12 @@
 import styled from 'styled-components'
-import { Text } from '@koda-finance/summitswap-uikit'
+import { Text, Heading as BasicHeading } from '@koda-finance/summitswap-uikit'
+
+export const Heading = styled(BasicHeading)`
+  font-size: 20px;
+  @media (max-width: 480px) {
+    font-size: 18px;
+  }
+`
 
 export const Caption = styled(Text)`
   font-size: 12px;

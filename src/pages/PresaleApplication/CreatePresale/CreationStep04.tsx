@@ -13,46 +13,31 @@ import {
   VestingIcon,
   Radio,
 } from '@koda-finance/summitswap-uikit'
-import { IconCard } from 'components/Card'
 import { RowBetween, RowFixed } from 'components/Row'
+import { ItemIconCard } from './GridComponents'
+import StyledInput from './StyledInput'
 import { Caption } from '../Texts'
 
 interface Props {
   changeStepNumber: (num: number) => void
 }
 
-const StyledInput = styled(Input)<{ forTime?: boolean }>`
-  padding: 10px 16px;
-  gap: 10px;
-  width: ${({ forTime }) => (forTime ? '150px' : '400px')};
-  height: 44px;
-  background: ${({ theme }) => theme.colors.sidebarBackground};
-  border-radius: 16px;
-  font-size: 16px;
-  margin: 4px 0;
-  ::-webkit-calendar-picker-indicator {
-    filter: invert(52%) sepia(100%) saturate(1272%) hue-rotate(125deg) brightness(100%) contrast(104%);
-    &:hover {
-      cursor: pointer;
-    }
-  }
-`
-
 const PlaceholderDiv = styled.div`
   width: 8px;
   height: 114px;
   background: ${({ theme }) => theme.colors.primary};
+  flex-shrink: 0;
 `
 
 const CreationStep04 = ({ changeStepNumber }: Props) => {
   return (
     <>
       <Flex>
-        <IconCard>
+        <ItemIconCard>
           <Box width="56px">
             <CalendarIcon width="100%" />
           </Box>
-        </IconCard>
+        </ItemIconCard>
         <Box marginLeft="26px">
           <Heading color="primary">Start & End Time</Heading>
           <Text small marginTop="4px">
@@ -89,11 +74,11 @@ const CreationStep04 = ({ changeStepNumber }: Props) => {
         </Box>
       </Flex>
       <Flex marginTop="50px">
-        <IconCard>
+        <ItemIconCard>
           <Box width="56px">
             <ClockIcon width="100%" />
           </Box>
-        </IconCard>
+        </ItemIconCard>
         <Box marginLeft="26px">
           <Heading color="primary">Liquidity Lockup Time</Heading>
           <Text small marginTop="4px">
@@ -107,11 +92,11 @@ const CreationStep04 = ({ changeStepNumber }: Props) => {
       </Flex>
 
       <Flex marginTop="40px">
-        <IconCard>
+        <ItemIconCard>
           <Box width="56px">
             <VestingIcon width="100%" />
           </Box>
-        </IconCard>
+        </ItemIconCard>
         <Box width="88%" marginLeft="26px">
           <Heading color="primary">What is and about vesting</Heading>
 
