@@ -1,22 +1,11 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React from 'react'
 import styled from 'styled-components'
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-  Text,
-  Input,
-  ClockIcon,
-  CalendarIcon,
-  VestingIcon,
-  Radio,
-} from '@koda-finance/summitswap-uikit'
+import { Box, Button, Flex, Text, ClockIcon, CalendarIcon, VestingIcon, Radio } from '@koda-finance/summitswap-uikit'
 import { RowBetween, RowFixed } from 'components/Row'
-import { ItemIconCard } from './GridComponents'
-import StyledInput from './StyledInput'
-import { Caption } from '../Texts'
+import { ItemIconCard, IconBox, GridContainer, GridItem1, GridItem2 } from './GridComponents'
+import StyledInput, { StyledInputWrapper } from './StyledInput'
+import { Caption, Heading } from '../Texts'
 
 interface Props {
   changeStepNumber: (num: number) => void
@@ -24,124 +13,142 @@ interface Props {
 
 const PlaceholderDiv = styled.div`
   width: 8px;
-  height: 114px;
   background: ${({ theme }) => theme.colors.primary};
   flex-shrink: 0;
+  height: 114px;
+  @media (max-width: 1263px) {
+    height: 190px;
+  }
+  @media (max-width: 550px) {
+    height: 280px;
+  }
 `
 
 const CreationStep04 = ({ changeStepNumber }: Props) => {
   return (
     <>
-      <Flex>
+      <GridContainer>
         <ItemIconCard>
-          <Box width="56px">
+          <IconBox width="56px">
             <CalendarIcon width="100%" />
-          </Box>
+          </IconBox>
         </ItemIconCard>
-        <Box marginLeft="26px">
+        <GridItem1>
           <Heading color="primary">Start & End Time</Heading>
           <Text small marginTop="4px">
             Define start and end time for your presale
           </Text>
-          <RowFixed>
-            <Box>
+        </GridItem1>
+        <GridItem2>
+          <Flex flexWrap="wrap">
+            <StyledInputWrapper forDate marginRight="16px">
               <Text small marginTop="8px">
                 Start Date
               </Text>
-              <StyledInput type="date" />
-            </Box>
-            <Box marginLeft="16px">
+              <StyledInput forDate type="date" />
+            </StyledInputWrapper>
+            <StyledInputWrapper forDate>
               <Text small marginTop="8px">
                 Start Time (UTC)
               </Text>
               <StyledInput forTime type="time" />
-            </Box>
-          </RowFixed>
-          <RowFixed>
-            <Box>
+            </StyledInputWrapper>
+          </Flex>
+          <Flex flexWrap="wrap">
+            <StyledInputWrapper forDate marginRight="16px">
               <Text small marginTop="8px">
                 End Date
               </Text>
-              <StyledInput type="date" />
-            </Box>
-            <Box marginLeft="16px">
+              <StyledInput forDate type="date" />
+            </StyledInputWrapper>
+            <StyledInputWrapper forDate>
               <Text small marginTop="8px">
                 End Time (UTC)
               </Text>
               <StyledInput forTime type="time" />
-            </Box>
-          </RowFixed>
-        </Box>
-      </Flex>
-      <Flex marginTop="50px">
+            </StyledInputWrapper>
+          </Flex>
+        </GridItem2>
+      </GridContainer>
+      <GridContainer marginTop="50px">
         <ItemIconCard>
-          <Box width="56px">
+          <IconBox width="56px">
             <ClockIcon width="100%" />
-          </Box>
+          </IconBox>
         </ItemIconCard>
-        <Box marginLeft="26px">
+        <GridItem1>
           <Heading color="primary">Liquidity Lockup Time</Heading>
           <Text small marginTop="4px">
             Minimum Liquidity Lockup time should be 5 minutes
           </Text>
+        </GridItem1>
+        <GridItem2>
           <Text small marginTop="8px">
             Enter Liquidity Lockup
           </Text>
           <StyledInput placeholder="Ex: 100" type="number" />
-        </Box>
-      </Flex>
+        </GridItem2>
+      </GridContainer>
 
-      <Flex marginTop="40px">
+      <GridContainer marginTop="40px">
         <ItemIconCard>
-          <Box width="56px">
+          <IconBox width="56px">
             <VestingIcon width="100%" />
-          </Box>
+          </IconBox>
         </ItemIconCard>
-        <Box width="88%" marginLeft="26px">
-          <Heading color="primary">What is and about vesting</Heading>
-
-          <Flex marginTop="8px" width="100%" justifyContent="space-between">
-            <RowFixed>
-              <Radio id="vestingEnabled" scale="sm" />
-              <label style={{ width: '350px' }} htmlFor="vestingEnabled">
+        <GridItem1>
+          <Heading color="primary">Vesting</Heading>
+          <Text small marginTop="4px">
+            What is and about vesting
+          </Text>
+        </GridItem1>
+        <GridItem2>
+          <Flex marginTop="8px" flexWrap="wrap">
+            <RowFixed marginRight="20px" marginBottom="8px">
+              <Box>
+                <Radio id="vestingEnabled" scale="sm" />
+              </Box>
+              <label htmlFor="vestingEnabled">
                 <Text marginLeft="8px">Enabled</Text>
-                <Caption marginLeft="8px" color="textDisabled">
+                <Caption marginLeft="8px" color="textDisabled" style={{ maxWidth: '300px' }}>
                   Once presale end, users will be able to claim their token gradually
                 </Caption>
               </label>
             </RowFixed>
-            <RowFixed>
-              <Radio id="vestingDisabled" scale="sm" />
-              <label style={{ width: '350px' }} htmlFor="vestingDisabled">
+            <RowFixed marginRight="70px" marginBottom="8px">
+              <Box>
+                <Radio id="vestingDisabled" scale="sm" />
+              </Box>
+              <label htmlFor="vestingDisabled">
                 <Text marginLeft="8px">Disabled</Text>
-                <Caption marginLeft="8px" color="textDisabled">
+                <Caption marginLeft="8px" color="textDisabled" style={{ maxWidth: '300px' }}>
                   Once presale end, users are able to claim all of the their tokens at once
                 </Caption>
               </label>
             </RowFixed>
           </Flex>
-          <Flex marginTop="8px" alignItems="flex-end">
+          <Flex alignItems="flex-end">
             <PlaceholderDiv />
             <Flex width="100%" flexDirection="column">
-              <Flex marginX="16px" justifyContent="space-between">
-                <Box>
+              <Flex marginX="16px" justifyContent="flex-start" flexWrap="wrap">
+                <StyledInputWrapper marginRight="16px">
                   <Text small marginTop="8px">
-                    Vesting Claim Percentage (%){' '}
+                    Vesting Claim Percentage (%)
                   </Text>
                   <StyledInput placeholder="Ex: 100" type="number" />
-                </Box>
-                <Box>
+                </StyledInputWrapper>
+                <StyledInputWrapper forDate marginRight="16px">
                   <Text small marginTop="8px">
                     Interval Day
                   </Text>
                   <StyledInput forTime placeholder="Ex: 100" type="number" />
-                </Box>
-                <Box>
+                </StyledInputWrapper>
+                <StyledInputWrapper forDate marginRight="16px">
                   <Text small marginTop="8px">
                     Interval Time (UTC)
                   </Text>
                   <StyledInput forTime placeholder="Ex: 100" type="number" />
-                </Box>
+                </StyledInputWrapper>
               </Flex>
               <Caption marginLeft="16px" color="textDisabled">
                 Every
@@ -160,8 +167,8 @@ const CreationStep04 = ({ changeStepNumber }: Props) => {
               </Caption>
             </Flex>
           </Flex>
-        </Box>
-      </Flex>
+        </GridItem2>
+      </GridContainer>
       <RowBetween marginTop="50px" marginBottom="15px">
         <Button variant="secondary" onClick={() => changeStepNumber(2)}>
           Previous Step
