@@ -23,6 +23,9 @@ const StyledInput = styled(Input)<{ forTime?: boolean; forDate?: boolean }>`
   border-radius: 16px;
   font-size: 16px;
   margin: 4px 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  word-break: break-all;
   ::-webkit-calendar-picker-indicator {
     filter: invert(47%) sepia(87%) saturate(382%) hue-rotate(92deg) brightness(96%) contrast(85%);
     &:hover {

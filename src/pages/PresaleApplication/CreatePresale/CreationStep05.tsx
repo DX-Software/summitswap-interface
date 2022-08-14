@@ -2,12 +2,9 @@
 import React from 'react'
 import styled from 'styled-components'
 import {
-  Box,
   Button,
   Flex,
-  Heading,
   Text,
-  Input,
   DetailIcon,
   ImageIcon,
   SocialGroupIcon,
@@ -15,9 +12,9 @@ import {
   darkColors,
 } from '@koda-finance/summitswap-uikit'
 import { RowBetween } from 'components/Row'
-import { ItemIconCard } from './GridComponents'
-import StyledInput from './StyledInput'
-import { Caption } from '../Texts'
+import { ItemIconCard, IconBox, GridContainer, GridItem1, GridItem2 } from './GridComponents'
+import StyledInput, { StyledInputWrapper } from './StyledInput'
+import { Caption, Heading } from '../Texts'
 
 interface Props {
   changeStepNumber: (num: number) => void
@@ -27,29 +24,37 @@ const StyledSelect = styled(Select)`
   & :first-child {
     padding: 10px 16px;
     gap: 10px;
-    width: 380px;
+    width: 400px;
     height: 44px;
     background: ${({ theme }) => theme.colors.sidebarBackground};
     border-radius: 16px;
     font-size: 16px;
     margin: 4px 0;
+    @media (max-width: 620px) {
+      width: 300px;
+    }
+    @media (max-width: 480px) {
+      width: 100%;
+    }
   }
 `
 
 const CreationStep05 = ({ changeStepNumber }: Props) => {
   return (
     <>
-      <Flex>
+      <GridContainer>
         <ItemIconCard>
-          <Box width="56px">
+          <IconBox width="56px">
             <ImageIcon width="100%" />
-          </Box>
+          </IconBox>
         </ItemIconCard>
-        <Box marginLeft="26px">
+        <GridItem1>
           <Heading color="primary">Presale Logo</Heading>
           <Text small marginTop="4px">
             Add logo to be more intriguing
           </Text>
+        </GridItem1>
+        <GridItem2>
           <Text small marginTop="8px">
             Enter Logo URL
           </Text>
@@ -58,42 +63,44 @@ const CreationStep05 = ({ changeStepNumber }: Props) => {
             Image should be 100x100, and URL must be hosted and shoul end with a supported image extension png, jpg,
             jpeg or gif.
           </Caption>
-        </Box>
-      </Flex>
+        </GridItem2>
+      </GridContainer>
 
-      <Flex marginTop="40px">
+      <GridContainer marginTop="40px">
         <ItemIconCard>
-          <Box width="56px">
+          <IconBox width="56px">
             <DetailIcon width="100%" />
-          </Box>
+          </IconBox>
         </ItemIconCard>
-        <Box marginLeft="26px">
+        <GridItem1>
           <Heading color="primary">Project Presale Details</Heading>
           <Text small marginTop="4px">
             Add your contact information for easier communication
           </Text>
+        </GridItem1>
+        <GridItem2>
           <Flex flexWrap="wrap">
-            <Box marginRight="16px">
+            <StyledInputWrapper marginRight="16px">
               <Text small marginTop="8px">
                 Project Name
               </Text>
               <StyledInput placeholder="Enter your project presale name" />
-            </Box>
-            <Box>
+            </StyledInputWrapper>
+            <StyledInputWrapper>
               <Text small marginTop="8px">
                 Contact Name
               </Text>
               <StyledInput placeholder="e.g. John Doe" />
-            </Box>
+            </StyledInputWrapper>
           </Flex>
           <Flex flexWrap="wrap">
-            <Box marginRight="16px">
+            <StyledInputWrapper marginRight="16px">
               <Text small marginTop="8px">
                 Contact Position
               </Text>
               <StyledInput placeholder="e.g. Manager" />
-            </Box>
-            <Box>
+            </StyledInputWrapper>
+            <StyledInputWrapper>
               <Text small marginTop="8px">
                 Chosen Contact Method
               </Text>
@@ -105,29 +112,32 @@ const CreationStep05 = ({ changeStepNumber }: Props) => {
                   },
                 ]}
               />
-            </Box>
+            </StyledInputWrapper>
           </Flex>
-        </Box>
-      </Flex>
-      <Flex marginTop="40px">
+        </GridItem2>
+      </GridContainer>
+
+      <GridContainer marginTop="40px">
         <ItemIconCard>
-          <Box width="56px">
+          <IconBox width="56px">
             <SocialGroupIcon width="100%" />
-          </Box>
+          </IconBox>
         </ItemIconCard>
-        <Box marginLeft="26px">
+        <GridItem1>
           <Heading color="primary">Contact Information</Heading>
           <Text small marginTop="4px">
             Add your contact information for easier communication
           </Text>
+        </GridItem1>
+        <GridItem2>
           <Flex flexWrap="wrap">
-            <Box marginRight="16px">
+            <StyledInputWrapper marginRight="16px">
               <Text small marginTop="8px">
                 Telegram ID
               </Text>
               <StyledInput placeholder="Ex: https://telegram.me..." />
-            </Box>
-            <Box>
+            </StyledInputWrapper>
+            <StyledInputWrapper>
               <Text small marginTop="8px">
                 Discord ID
                 <Text style={{ display: 'inline' }} small color={darkColors.borderColor}>
@@ -135,10 +145,10 @@ const CreationStep05 = ({ changeStepNumber }: Props) => {
                 </Text>
               </Text>
               <StyledInput placeholder="Ex: https://discord.me..." />
-            </Box>
+            </StyledInputWrapper>
           </Flex>
           <Flex flexWrap="wrap">
-            <Box marginRight="16px">
+            <StyledInputWrapper marginRight="16px">
               <Text small marginTop="8px">
                 E-mail address
                 <Text style={{ display: 'inline' }} small color={darkColors.borderColor}>
@@ -146,8 +156,8 @@ const CreationStep05 = ({ changeStepNumber }: Props) => {
                 </Text>
               </Text>
               <StyledInput placeholder="e.g. summitswap@domain.com" />
-            </Box>
-            <Box>
+            </StyledInputWrapper>
+            <StyledInputWrapper>
               <Text small marginTop="8px">
                 Twitter Username
                 <Text style={{ display: 'inline' }} small color={darkColors.borderColor}>
@@ -155,10 +165,10 @@ const CreationStep05 = ({ changeStepNumber }: Props) => {
                 </Text>
               </Text>
               <StyledInput placeholder="Ex: https://twitter.me..." />
-            </Box>
+            </StyledInputWrapper>
           </Flex>
-        </Box>
-      </Flex>
+        </GridItem2>
+      </GridContainer>
 
       <RowBetween marginTop="50px" marginBottom="15px">
         <Button variant="secondary" onClick={() => changeStepNumber(3)}>

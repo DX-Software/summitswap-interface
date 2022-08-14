@@ -46,7 +46,7 @@ const StyledRadio = styled(Radio)<{ completed: boolean }>`
   }
 `
 const CreatePresale = () => {
-  const [stepNumber, setStepNumber] = useState(3)
+  const [stepNumber, setStepNumber] = useState(4)
   const [currency, setCurrency] = useState('BNB')
 
   const changeStepNumber = useCallback((num: number) => setStepNumber(num), [])
