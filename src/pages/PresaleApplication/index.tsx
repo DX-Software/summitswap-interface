@@ -18,7 +18,7 @@ export default function PresaleApplication() {
   )
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
 
-  return account ? (
+  return true ? (
     <>
       <Box marginY="24px">
         <ButtonMenu activeIndex={buttonIndex} onItemClick={(index) => setButtonIndex(index)}>

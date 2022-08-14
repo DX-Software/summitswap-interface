@@ -16,7 +16,7 @@ import {
 } from '@koda-finance/summitswap-uikit'
 import { IconCard } from 'components/Card'
 import { RowBetween } from 'components/Row'
-import { Caption } from './CreationStep01'
+import { Caption } from '../Texts'
 
 interface Props {
   changeStepNumber: (num: number) => void

@@ -72,17 +72,11 @@ export default function ChooseToken({
     <>
       <div style={{ cursor: disabled ? 'not-allowed' : 'auto' }}>
         <LinkBox>
-          {selectedCurrency ? (
-            <>
-              <Box>
-                <Text small>{selectedCurrency.address}</Text>
-              </Box>
-            </>
-          ) : (
-            <Text small color="textDisabled">
-              Choose token
+          <Box>
+            <Text small color={(!selectedCurrency && 'textDisabled') || ''}>
+              {selectedCurrency ? selectedCurrency.address : 'Choose token'}
             </Text>
-          )}
+          </Box>
           <ChangeBox onClick={() => !disabled && setModalOpen(true)}>
             <Text small fontWeight={700}>
               {selectedCurrency ? 'Change' : 'Choose'}

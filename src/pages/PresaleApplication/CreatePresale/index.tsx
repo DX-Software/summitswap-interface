@@ -46,7 +46,7 @@ const StyledRadio = styled(Radio)<{ completed: boolean }>`
   }
 `
 const CreatePresale = () => {
-  const [stepNumber, setStepNumber] = useState(5)
+  const [stepNumber, setStepNumber] = useState(0)
   const [currency, setCurrency] = useState('BNB')
 
   const changeStepNumber = useCallback((num: number) => setStepNumber(num), [])
@@ -54,7 +54,7 @@ const CreatePresale = () => {
   const showStep = () => {
     switch (stepNumber) {
       case 0:
-        return <CreationStep01 changeStepNumber={changeStepNumber} />
+        return <CreationStep01 changeStepNumber={changeStepNumber} currency={currency} setCurrency={setCurrency} />
       case 1:
         return <CreationStep02 currency={currency} changeStepNumber={changeStepNumber} />
       case 2:

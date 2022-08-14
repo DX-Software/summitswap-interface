@@ -17,7 +17,7 @@ import {
 import { TOKEN_CHOICES } from 'constants/presale'
 import { IconCard } from 'components/Card'
 import { RowBetween, RowFixed } from 'components/Row'
-import { Caption } from './CreationStep01'
+import { Caption } from '../Texts'
 
 interface Props {
   changeStepNumber: (num: number) => void
