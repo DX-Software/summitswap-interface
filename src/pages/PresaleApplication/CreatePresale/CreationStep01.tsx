@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
 import { BigNumber } from 'ethers'
+import { formatUnits } from 'ethers/lib/utils'
 import { useWeb3React } from '@web3-react/core'
 import { Token } from '@koda-finance/summitswap-sdk'
 import {
@@ -18,26 +19,35 @@ import ChooseToken from 'components/ChooseToken'
 import { useTokenContract } from 'hooks/useContract'
 import { RowFixed } from 'components/Row'
 import { TOKEN_CHOICES, PRESALE_FACTORY_ADDRESS, MAX_APPROVE_VALUE } from 'constants/presale'
-
-export const Caption = styled(Text)`
-  font-size: 12px;
-  line-height: 18px;
-  display: inline-block;
-`
-export const XSmallText = styled(Text)`
-  font-size: 10px;
-  line-height: 16px;
-`
+import { Caption } from '../Texts'
 
 const Wrapper = styled(Box)`
   width: 522px;
+  min-width: 220px;
+  padding: 15px;
+  @media (max-width: 600px) {
+    width: 90%;
+  }
+  @media (max-width: 400px) {
+    width: 100%;
+  }
+`
+const SelectedTokenWrapper = styled(Box)`
   background: ${({ theme }) => theme.colors.menuItemBackground};
   border: 1px solid ${({ theme }) => theme.colors.inputColor};
-  border-radius: 24px;
-  padding: 15px;
+  padding: 15px 24px;
+  border-radius: 8px;
+  font-size: 10px;
 `
+const TextTokenDetails = styled(Text)`
+  font-size: 14px;
+  @media (max-width: 350px) {
+    font-size: 11px;
+  }
+`
+
 const Divider = styled.div`
-  width: 473px;
+  width: 100%;
   height: 0px;
   border: 1px solid ${({ theme }) => theme.colors.inputColor};
   margin: 16px 0;
@@ -45,15 +55,29 @@ const Divider = styled.div`
 `
 interface Props {
   changeStepNumber: (num: number) => void
+  currency: string
+  setCurrency: React.Dispatch<React.SetStateAction<string>>
 }
-const CreationStep01 = ({ changeStepNumber }: Props) => {
+const CreationStep01 = ({ changeStepNumber, currency, setCurrency }: Props) => {
   const { account, library } = useWeb3React()
 
   const [selectedToken, setSelectedToken] = useState<Token>()
   const [isFactoryApproved, setIsFactoryApproved] = useState<boolean>()
+  const [tokenTotalSupply, setTokenTotalSupply] = useState<string>()
   const [isLoading, setIsLoading] = useState(false)
 
   const tokenContract = useTokenContract(selectedToken?.address, true)
+
+  useEffect(() => {
+    async function fetchTotalSupply() {
+      setTokenTotalSupply(
+        Number(formatUnits(await tokenContract?.totalSupply(), selectedToken?.decimals)).toLocaleString()
+      )
+    }
+    if (selectedToken && tokenContract) {
+      fetchTotalSupply()
+    }
+  }, [tokenContract, selectedToken])
 
   useEffect(() => {
     async function checkTokenIsApproved() {
@@ -90,6 +114,10 @@ const CreationStep01 = ({ changeStepNumber }: Props) => {
     setSelectedToken(inputCurrency)
   }, [])
 
+  const handleCurrencyChange = (e) => {
+    setCurrency(e.target.name)
+  }
+
   return (
     <Wrapper>
       <Text marginBottom="8px" fontWeight={700}>
@@ -102,50 +130,59 @@ const CreationStep01 = ({ changeStepNumber }: Props) => {
         showOnlyUnknownTokens
       />
       {selectedToken ? (
-        <Box marginLeft="2px" marginTop="16px">
+        <SelectedTokenWrapper marginLeft="2px" marginTop="16px">
           <RowFixed>
-            <Text small color="textSubtle" style={{ width: '122px' }}>
+            <TextTokenDetails color="textSubtle" style={{ width: '122px' }}>
               Token Name
-            </Text>
-            <Text small>{selectedToken.name}</Text>
+            </TextTokenDetails>
+            <TextTokenDetails>{selectedToken.name}</TextTokenDetails>
           </RowFixed>
           <RowFixed>
-            <Text small color="textSubtle" style={{ width: '122px' }}>
+            <TextTokenDetails color="textSubtle" style={{ width: '122px' }}>
               Symbol
-            </Text>
-            <Text small>{selectedToken.symbol}</Text>
+            </TextTokenDetails>
+            <TextTokenDetails>{selectedToken.symbol}</TextTokenDetails>
           </RowFixed>
           <RowFixed>
-            <Text small color="textSubtle" style={{ width: '122px' }}>
+            <TextTokenDetails color="textSubtle" style={{ width: '122px' }}>
               Decimals
-            </Text>
-            <Text small>{selectedToken.decimals}</Text>
+            </TextTokenDetails>
+            <TextTokenDetails>{selectedToken.decimals}</TextTokenDetails>
           </RowFixed>
-        </Box>
+          <RowFixed>
+            <TextTokenDetails color="textSubtle" style={{ width: '122px' }}>
+              Total Supply
+            </TextTokenDetails>
+            <TextTokenDetails>{tokenTotalSupply}</TextTokenDetails>
+          </RowFixed>
+        </SelectedTokenWrapper>
       ) : (
-        <Flex marginLeft="2px" marginTop="4px">
-          <Caption small color="textSubtle">
-            Don’t have your own token?&nbsp;
-          </Caption>
+        <Caption small color="textSubtle">
+          Don’t have your own token?&nbsp;
           <a href="/#/create-token" rel="noopener noreferrer" target="_blank">
             <Caption color="linkColor" style={{ textDecoration: 'underline' }}>
               Create now here
             </Caption>
           </a>
-        </Flex>
+        </Caption>
       )}
       <Divider />
       <Box>
         <Text marginBottom="8px" fontWeight={700}>
           Choose Currency
         </Text>
-        <Flex width="180px" flexWrap="wrap" justifyContent="space-between">
+        <Flex
+          width="180px"
+          flexWrap="wrap"
+          justifyContent="space-between"
+          onChange={handleCurrencyChange}
+        >
           {Object.keys(TOKEN_CHOICES)
             .filter((key) => key !== 'KODA')
             .map((key) => (
               <label key={key} htmlFor={key}>
                 <RowFixed marginBottom="5px">
-                  <Radio scale="sm" name={key} value={TOKEN_CHOICES[key]} id={key} />
+                  <Radio scale="sm" name={key} value={TOKEN_CHOICES[key]} id={key} checked={currency === key} />
                   <Text marginLeft="5px">{key}</Text>
                 </RowFixed>
               </label>
@@ -155,8 +192,7 @@ const CreationStep01 = ({ changeStepNumber }: Props) => {
       <Caption small color="textSubtle" marginBottom="20px">
         Participant will pay with&nbsp;
         <Caption small color="primary" fontWeight={700}>
-          BNB&nbsp;
-          {/* TODO:: change this BNB when change currency */}
+          {currency}&nbsp;
         </Caption>
         for your token
       </Caption>
