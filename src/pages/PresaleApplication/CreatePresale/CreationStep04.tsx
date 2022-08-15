@@ -1,9 +1,9 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { Box, Button, Flex, Text, ClockIcon, CalendarIcon, VestingIcon, Radio } from '@koda-finance/summitswap-uikit'
 import { FormikProps } from 'formik'
-import {  RowFixed } from 'components/Row'
+import { RowFixed } from 'components/Row'
 import { RADIO_VALUES } from 'constants/presale'
 import { ItemIconCard, IconBox, GridContainer, GridItem1, GridItem2 } from './GridComponents'
 import StyledInput, { StyledInputWrapper } from './StyledInput'
@@ -30,6 +30,27 @@ const PlaceholderDiv = styled.div`
 `
 
 const CreationStep04 = ({ formik, changeStepNumber }: Props) => {
+  const [isStepValid, setIsStepValid] = useState(false)
+
+  useEffect(() => {
+    if (
+      !formik.errors.startPresaleDate &&
+      !formik.errors.startPresaleTime &&
+      !formik.errors.endPresaleDate &&
+      !formik.errors.endPresaleTime &&
+      !formik.errors.liquidyLockTimeInMins
+    ) {
+      if (
+        `${formik.values.isVestingEnabled}` === `${RADIO_VALUES.VESTING_DISABLED}` ||
+        (!formik.errors.maxClaimPercentage && !formik.errors.claimIntervalDay && !formik.errors.claimIntervalHour)
+      ) {
+        setIsStepValid(true)
+      } else {
+        setIsStepValid(false)
+      }
+    }
+  }, [formik])
+
   return (
     <>
       <GridContainer>
@@ -282,10 +303,12 @@ const CreationStep04 = ({ formik, changeStepNumber }: Props) => {
           </Text>
         ) : (
           <Text bold marginY="20px" color="success">
-            {formik.values.tokenAmount ? `${formik.values.tokenAmount.toFixed(2)} Presale Tokens` : ''}
+            {formik.values.tokenAmount ? `${formik.values.tokenAmount.toFixed(3)} Presale Tokens` : ''}
           </Text>
         )}
-        <Button onClick={() => changeStepNumber(3)}>Continue</Button>
+        <Button disabled={!isStepValid} onClick={() => changeStepNumber(4)}>
+          Continue
+        </Button>
       </ButtonsWrapper>
     </>
   )

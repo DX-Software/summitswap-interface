@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Box,
   Button,
@@ -27,6 +27,21 @@ interface Props {
 }
 
 const CreationStep02 = ({ formik, changeStepNumber, currency }: Props) => {
+  const [isStepValid, setIsStepValid] = useState(false)
+
+  useEffect(() => {
+    if (
+      !formik.errors.presaleRate &&
+      !formik.errors.softcap &&
+      !formik.errors.hardcap &&
+      !formik.errors.minBuy &&
+      !formik.errors.maxBuy &&
+      formik.touched.presaleRate
+    ) {
+      setIsStepValid(true)
+    }
+  }, [formik])
+
   return (
     <>
       <GridContainer>
@@ -236,7 +251,9 @@ const CreationStep02 = ({ formik, changeStepNumber, currency }: Props) => {
             {formik.values.tokenAmount ? `${formik.values.tokenAmount.toFixed(2)} Presale Tokens` : ''}
           </Text>
         )}
-        <Button onClick={() => changeStepNumber(2)}>Continue</Button>
+        <Button disabled={!isStepValid} onClick={() => changeStepNumber(2)}>
+          Continue
+        </Button>
       </ButtonsWrapper>
     </>
   )

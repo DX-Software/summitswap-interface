@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import {
   Box,
@@ -34,6 +34,13 @@ const BoxPairIcon = styled(Box)`
 `
 
 const CreationStep03 = ({ formik, changeStepNumber }: Props) => {
+  const [isStepValid, setIsStepValid] = useState(false)
+  useEffect(() => {
+    if (!formik.errors.liquidity && !formik.errors.listingRate && !formik.errors.tokenAmount) {
+      setIsStepValid(true)
+    }
+  }, [formik])
+
   return (
     <>
       <Flex flexWrap="wrap" justifyContent="space-between">
@@ -294,7 +301,9 @@ const CreationStep03 = ({ formik, changeStepNumber }: Props) => {
             {formik.values.tokenAmount ? `${formik.values.tokenAmount.toFixed(2)} Presale Tokens` : ''}
           </Text>
         )}
-        <Button onClick={() => changeStepNumber(3)}>Continue</Button>
+        <Button disabled={!isStepValid} onClick={() => changeStepNumber(3)}>
+          Continue
+        </Button>
       </ButtonsWrapper>
     </>
   )
