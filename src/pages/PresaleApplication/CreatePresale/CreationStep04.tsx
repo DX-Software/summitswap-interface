@@ -194,7 +194,12 @@ const CreationStep04 = ({ formik, changeStepNumber }: Props) => {
                 />
               </Box>
               <label htmlFor="vestingEnabled">
-                <Text marginLeft="8px">Enabled</Text>
+                <Text
+                  color={`${formik.values.isVestingEnabled}` === `${RADIO_VALUES.VESTING_ENABLED}` ? 'linkColor' : ''}
+                  marginLeft="8px"
+                >
+                  Enabled
+                </Text>
                 <Caption marginLeft="8px" color="textDisabled" style={{ maxWidth: '300px' }}>
                   Once presale end, users will be able to claim their token gradually
                 </Caption>
@@ -210,7 +215,12 @@ const CreationStep04 = ({ formik, changeStepNumber }: Props) => {
                 />
               </Box>
               <label htmlFor="vestingDisabled">
-                <Text marginLeft="8px">Disabled</Text>
+                <Text
+                  color={`${formik.values.isVestingEnabled}` === `${RADIO_VALUES.VESTING_DISABLED}` ? 'linkColor' : ''}
+                  marginLeft="8px"
+                >
+                  Disabled
+                </Text>
                 <Caption marginLeft="8px" color="textDisabled" style={{ maxWidth: '300px' }}>
                   Once presale end, users are able to claim all of the their tokens at once
                 </Caption>

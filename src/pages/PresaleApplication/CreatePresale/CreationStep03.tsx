@@ -58,7 +58,10 @@ const CreationStep03 = ({ formik, changeStepNumber }: Props) => {
                   />
                 </Box>
                 <label htmlFor="refund">
-                  <Text color="linkColor" marginLeft="8px">
+                  <Text
+                    color={Number(formik.values.refundType) === RADIO_VALUES.REFUND_TYPE_REFUND ? 'linkColor' : ''}
+                    marginLeft="8px"
+                  >
                     Refund
                   </Text>
                   <Caption marginX="8px" color="textDisabled">
@@ -76,7 +79,12 @@ const CreationStep03 = ({ formik, changeStepNumber }: Props) => {
                   />
                 </Box>
                 <label htmlFor="burn">
-                  <Text marginLeft="8px">Burn</Text>
+                  <Text
+                    marginLeft="8px"
+                    color={Number(formik.values.refundType) === RADIO_VALUES.REFUND_TYPE_BURN ? 'linkColor' : ''}
+                  >
+                    Burn
+                  </Text>
                   <Caption marginX="8px" color="textDisabled">
                     Burn remaining presale Token after finalizing
                   </Caption>
@@ -107,7 +115,10 @@ const CreationStep03 = ({ formik, changeStepNumber }: Props) => {
                   />
                 </Box>
                 <label htmlFor="summitswap">
-                  <Text color="linkColor" marginLeft="8px">
+                  <Text
+                    color={Number(formik.values.listingChoice) === RADIO_VALUES.LISTING_SS_100 ? 'linkColor' : ''}
+                    marginLeft="8px"
+                  >
                     SummitSwap (SS)
                   </Text>
                 </label>
@@ -122,7 +133,12 @@ const CreationStep03 = ({ formik, changeStepNumber }: Props) => {
                   />
                 </Box>
                 <label htmlFor="pancakeswap">
-                  <Text marginLeft="8px">PancakeSwap (PS)</Text>
+                  <Text
+                    marginLeft="8px"
+                    color={Number(formik.values.listingChoice) === RADIO_VALUES.LISTING_PS_100 ? 'linkColor' : ''}
+                  >
+                    PancakeSwap (PS)
+                  </Text>
                 </label>
               </RowFixed>
               <RowFixed>
@@ -135,7 +151,12 @@ const CreationStep03 = ({ formik, changeStepNumber }: Props) => {
                   />
                 </Box>
                 <label htmlFor="both">
-                  <Text marginLeft="8px">Both</Text>
+                  <Text
+                    marginLeft="8px"
+                    color={Number(formik.values.listingChoice) === RADIO_VALUES.LISTING_SS75_PK25 ? 'linkColor' : ''}
+                  >
+                    Both
+                  </Text>
                   <Caption marginLeft="8px" color="textDisabled">
                     This will be listed to 75% SS and 25% PS
                   </Caption>
@@ -235,7 +256,10 @@ const CreationStep03 = ({ formik, changeStepNumber }: Props) => {
                       />
                     </Box>
                     <label htmlFor={key}>
-                      <Text color="linkColor" marginLeft="8px">
+                      <Text
+                        color={formik.values.listingToken === TOKEN_CHOICES[key] ? 'linkColor' : ''}
+                        marginLeft="8px"
+                      >
                         {key}
                       </Text>
                     </label>

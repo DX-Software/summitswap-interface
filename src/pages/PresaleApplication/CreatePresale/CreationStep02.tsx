@@ -81,7 +81,14 @@ const CreationStep02 = ({ formik, changeStepNumber, currency }: Props) => {
                 checked={`${formik.values.isWhitelistEnabled}` === `${RADIO_VALUES.WHITELIST_ENABLED}`}
               />
               <label htmlFor="enable">
-                <Text marginLeft="8px">Enable</Text>
+                <Text
+                  marginLeft="8px"
+                  color={
+                    `${formik.values.isWhitelistEnabled}` === `${RADIO_VALUES.WHITELIST_ENABLED}` ? 'linkColor' : ''
+                  }
+                >
+                  Enable
+                </Text>
               </label>
             </RowFixed>
             <RowFixed>
@@ -92,7 +99,14 @@ const CreationStep02 = ({ formik, changeStepNumber, currency }: Props) => {
                 checked={`${formik.values.isWhitelistEnabled}` === `${RADIO_VALUES.WHITELIST_DISABLED}`}
               />
               <label htmlFor="disable">
-                <Text marginLeft="8px">Disable</Text>
+                <Text
+                  marginLeft="8px"
+                  color={
+                    `${formik.values.isWhitelistEnabled}` === `${RADIO_VALUES.WHITELIST_DISABLED}` ? 'linkColor' : ''
+                  }
+                >
+                  Disable
+                </Text>
               </label>
             </RowFixed>
           </Box>
