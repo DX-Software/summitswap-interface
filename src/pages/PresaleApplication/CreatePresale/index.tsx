@@ -1,6 +1,11 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
+import { BigNumber } from 'ethers'
+import { formatUnits } from 'ethers/lib/utils'
+import { useWeb3React } from '@web3-react/core'
 import styled from 'styled-components'
 import { useFormik, FormikProps } from 'formik'
+import { Token } from '@koda-finance/summitswap-sdk'
+import { useTokenContract } from 'hooks/useContract'
 import { Flex, Box, Radio, Text } from '@koda-finance/summitswap-uikit'
 import { RADIO_VALUES, TOKEN_CHOICES } from 'constants/presale'
 import steps from './steps-data'
@@ -50,12 +55,27 @@ const StyledRadio = styled(Radio)<{ completed: boolean }>`
   }
 `
 const CreatePresale = () => {
+  const { account } = useWeb3React()
+
+  const [selectedToken, setSelectedToken] = useState<Token>()
   const [stepNumber, setStepNumber] = useState(0)
+  const [accountBalance, setAccountBalance] = useState<BigNumber>()
   const [currency, setCurrency] = useState('BNB')
+
+  const tokenContract = useTokenContract(selectedToken?.address, true)
+
+  useEffect(() => {
+    async function fetchBalance() {
+      setAccountBalance(await tokenContract?.balanceOf(account))
+    }
+    if (account && tokenContract) {
+      fetchBalance()
+    }
+  }, [account, tokenContract])
 
   const changeStepNumber = useCallback((num: number) => setStepNumber(num), [])
 
-  const formikPresaleD: FormikProps<PresaleDetails> = useFormik({
+  const formikPresale: FormikProps<PresaleDetails> = useFormik({
     initialValues: {
       [FieldNames.presaleRate]: undefined,
       [FieldNames.isWhitelistEnabled]: RADIO_VALUES.WHITELIST_ENABLED,
@@ -84,24 +104,49 @@ const CreatePresale = () => {
     // eslint-disable-next-line
     onSubmit: () => {},
   })
-  console.log(formikPresaleD.values)
+
+  useEffect(() => {
+    if (accountBalance && selectedToken) {
+      formikPresale.values.accountBalance = Number(formatUnits(accountBalance, selectedToken.decimals))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountBalance, selectedToken])
+
+  useEffect(() => {
+    if (
+      formikPresale.values.hardcap &&
+      formikPresale.values.presaleRate &&
+      formikPresale.values.listingRate &&
+      formikPresale.values.liquidity &&
+      selectedToken
+    ) {
+      const presaleTokenAmount = formikPresale.values.presaleRate * formikPresale.values.hardcap
+      const tokensForLiquidity =
+        (formikPresale.values.liquidity / 100) * formikPresale.values.hardcap * formikPresale.values.listingRate
+      formikPresale.values.tokenAmount = presaleTokenAmount + tokensForLiquidity
+    }
+  }, [formikPresale, selectedToken])
+
+  console.log(formikPresale.values)
   const showStep = () => {
     switch (stepNumber) {
       case 0:
         return (
           <CreationStep01
-            formik={formikPresaleD}
-            changeStepNumber={changeStepNumber}
+            formik={formikPresale}
+            selectedToken={selectedToken}
             currency={currency}
+            changeStepNumber={changeStepNumber}
+            setSelectedToken={setSelectedToken}
             setCurrency={setCurrency}
           />
         )
       case 1:
-        return <CreationStep02 formik={formikPresaleD} currency={currency} changeStepNumber={changeStepNumber} />
+        return <CreationStep02 formik={formikPresale} currency={currency} changeStepNumber={changeStepNumber} />
       case 2:
-        return <CreationStep03 formik={formikPresaleD} changeStepNumber={changeStepNumber} />
+        return <CreationStep03 formik={formikPresale} changeStepNumber={changeStepNumber} />
       case 3:
-        return <CreationStep04 formik={formikPresaleD} changeStepNumber={changeStepNumber} />
+        return <CreationStep04 formik={formikPresale} changeStepNumber={changeStepNumber} />
       case 4:
         return <CreationStep05 changeStepNumber={changeStepNumber} />
       case 5:

@@ -56,15 +56,23 @@ const Divider = styled.div`
   border-radius: 2px;
 `
 interface Props {
+  selectedToken: Token | undefined
   changeStepNumber: (num: number) => void
   currency: string
   setCurrency: React.Dispatch<React.SetStateAction<string>>
+  setSelectedToken: React.Dispatch<React.SetStateAction<Token | undefined>>
   formik: FormikProps<PresaleDetails>
 }
-const CreationStep01 = ({ changeStepNumber, currency, setCurrency, formik }: Props) => {
+const CreationStep01 = ({
+  selectedToken,
+  changeStepNumber,
+  currency,
+  setSelectedToken,
+  setCurrency,
+  formik,
+}: Props) => {
   const { account, library } = useWeb3React()
 
-  const [selectedToken, setSelectedToken] = useState<Token>()
   const [isFactoryApproved, setIsFactoryApproved] = useState<boolean>()
   const [tokenTotalSupply, setTokenTotalSupply] = useState<string>()
   const [isLoading, setIsLoading] = useState(false)
@@ -113,9 +121,12 @@ const CreationStep01 = ({ changeStepNumber, currency, setCurrency, formik }: Pro
     }
   }, [tokenContract, library, account])
 
-  const handleTokenSelect = useCallback((inputCurrency) => {
-    setSelectedToken(inputCurrency)
-  }, [])
+  const handleTokenSelect = useCallback(
+    (inputCurrency) => {
+      setSelectedToken(inputCurrency)
+    },
+    [setSelectedToken]
+  )
 
   const handleCurrencyChange = (e) => {
     setCurrency(e.target.id)
