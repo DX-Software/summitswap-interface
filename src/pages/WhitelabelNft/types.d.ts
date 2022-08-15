@@ -13,6 +13,27 @@ type TotalNftSheet = {
 }
 
 type TraitSheet = {
-  display_type: string
-  trait_type: string
+  displayType: string
+  traitType: string
+}
+
+type MetadataSheet = {
+  tokenId: number
+  name: string
+  description: string
+  [key: string]: string
+}
+
+type AttributeJson = {
+  trait_type?: string
+  display_type?: DisplayType
+  value: string | number
+}
+
+type MetadataJson = {
+  name: string
+  description: string
+  external_url?: string
+  image: string
+  attributes: AttributeJson[]
 }
