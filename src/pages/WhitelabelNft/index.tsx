@@ -1,18 +1,13 @@
 import { Button, Input } from '@koda-finance/summitswap-uikit'
 import { FormikProps, FormikProvider, useFormik } from 'formik'
 import React, { useCallback, useState } from 'react'
-import styled from 'styled-components'
 import { convertFileToBase64 } from 'utils/convertFileToBase64'
 import parseMetadata from './spreadsheet'
 
-const NftImagePreview = styled.img`
-  width: 200px;
-  height: auto;
-`
-
-export default function WhitelabelNft({ children }) {
+export default function WhitelabelNft() {
   const [nftImages, setNftImages] = useState<NftImage[]>([])
   const [spreadsheet, setSpreadsheet] = useState<ArrayBuffer>()
+  const [metadata, setMetadata] = useState<MetadataJson[]>([])
 
   const handleImageOnChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -26,7 +21,7 @@ export default function WhitelabelNft({ children }) {
     }
   }, [])
 
-  const handleSpreadSheetOnChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSpreadsheetOnChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const file = e.target.files[0]
       const data = await file.arrayBuffer()
@@ -36,15 +31,14 @@ export default function WhitelabelNft({ children }) {
 
   const handleApply = useCallback(async () => {
     if (spreadsheet) {
-      const metadata = parseMetadata(spreadsheet, nftImages)
-      console.log(metadata)
+      const parsedMetadata = parseMetadata(spreadsheet, nftImages)
+      setMetadata(parsedMetadata)
     }
   }, [spreadsheet, nftImages])
 
   const formik: FormikProps<WhitelabelFormValues> = useFormik<WhitelabelFormValues>({
     initialValues: {
-      spreadsheet: undefined,
-      images: [],
+      metadata: [],
     },
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       setSubmitting(false)
@@ -54,20 +48,15 @@ export default function WhitelabelNft({ children }) {
   return (
     <div className="main-content">
       <FormikProvider value={formik}>
-        <Input type="file" name="images" scale="md" multiple accept="image/*" onChange={handleImageOnChange} />
+        <Input type="file" name="images" multiple accept="image/*" onChange={handleImageOnChange} />
         <Input
           type="file"
           name="spreadsheet"
-          scale="md"
           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-          onChange={handleSpreadSheetOnChange}
+          onChange={handleSpreadsheetOnChange}
         />
 
         <Button onClick={handleApply}>Apply</Button>
-
-        {nftImages.map((image) => (
-          <NftImagePreview src={image.base64} key={image.id} />
-        ))}
       </FormikProvider>
     </div>
   )

@@ -1,6 +1,5 @@
 interface WhitelabelFormValues {
-  spreadsheet?: File
-  images: HTMLImageElement[]
+  metadata: MetadataJson[]
 }
 
 type NftImage = {
