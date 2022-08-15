@@ -37,6 +37,7 @@ import CreateToken from './CreateToken'
 import DepositPage from './Staking/DepositPage'
 import WithdrawPage from './Staking/WithdrawPage'
 import ClaimPage from './Staking/ClaimPage'
+import WhitelabelNft from './WhitelabelNft'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -183,6 +184,7 @@ export default function App() {
                     <Route exact path="/staking/withdraw" component={WithdrawPage} />
                     <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
                     <Route exact path="/presale" component={CustomPresale} />
+                    <Route exact path="/whitelabel-nft" component={WhitelabelNft} />
 
                     {/* Redirection: These old routes are still used in the code base */}
                     <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />

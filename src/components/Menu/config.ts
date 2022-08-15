@@ -32,6 +32,11 @@ const config: MenuEntry[] = [
     icon: 'InfoIcon',
     href: '/info',
   },
+  {
+    label: 'Whitelabel NFT',
+    icon: 'SunIcon',
+    href: '/whitelabel-nft',
+  },
   // {
   //  label: 'Create Token',
   //   icon: 'SunIcon',
