@@ -1,29 +1,37 @@
 import { BigNumber, Contract } from 'ethers'
-import { FieldNames, PresaleInfo, PresalePhases } from '../pages/CustomPresale/types'
+import { FieldNames, PresaleInfo, PresalePhases, FeeInfo } from '../pages/PresaleApplication/types'
 
 export async function fetchPresaleInfo(presaleContract: Contract | null) {
   const owner: string = await presaleContract?.owner()
-  const info = await presaleContract?.getInfo()
+  const info = await presaleContract?.getPresaleInfo()
+
   const obKeys = [
     FieldNames.presaleToken,
-    FieldNames.router,
+    FieldNames.router0,
+    FieldNames.router1,
+    FieldNames.listingToken,
     FieldNames.presaleRate,
     FieldNames.listingRate,
     FieldNames.liquidyLockTimeInMins,
-    FieldNames.minBuyBnb,
-    FieldNames.maxBuyBnb,
+    FieldNames.minBuy,
+    FieldNames.maxBuy,
     FieldNames.softcap,
     FieldNames.hardcap,
     FieldNames.liquidity,
     FieldNames.startPresaleTime,
     FieldNames.endPresaleTime,
+    FieldNames.claimIntervalDay,
+    FieldNames.claimIntervalHour,
     FieldNames.totalBought,
-    FieldNames.feeType,
+    FieldNames.maxClaimPercentage,
     FieldNames.refundType,
+    FieldNames.listingChoice,
     FieldNames.isWhitelistEnabled,
     FieldNames.isClaimPhase,
     FieldNames.isPresaleCancelled,
     FieldNames.isWithdrawCancelledTokens,
+    FieldNames.isVestingEnabled,
+    FieldNames.isApproved,
   ]
   const preInfo: PresaleInfo = info.reduce(
     (acc: any, cur: string | BigNumber | number | boolean, i: number) => {
@@ -33,6 +41,22 @@ export async function fetchPresaleInfo(presaleContract: Contract | null) {
     { owner }
   )
   return preInfo
+}
+
+export async function fetchFeeInfo(presaleContract: Contract | null) {
+  const info = await presaleContract?.getFeeInfo()
+
+  const obKeys = [
+    FieldNames.paymentToken,
+    FieldNames.feePaymentToken,
+    FieldNames.feePresaleToken,
+    FieldNames.emergencyWithdrawFee,
+  ]
+  const feeInfo: FeeInfo = info.reduce((acc: any, cur: string | BigNumber, i: number) => {
+    acc[obKeys[i]] = cur
+    return acc
+  }, {})
+  return feeInfo
 }
 
 export const checkSalePhase = (presale: PresaleInfo | undefined) => {
