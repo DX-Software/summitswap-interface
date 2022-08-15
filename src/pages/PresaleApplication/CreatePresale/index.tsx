@@ -97,7 +97,7 @@ const CreatePresale = () => {
       case 1:
         return <CreationStep02 formik={formikPresaleD} currency={currency} changeStepNumber={changeStepNumber} />
       case 2:
-        return <CreationStep03 changeStepNumber={changeStepNumber} />
+        return <CreationStep03 formik={formikPresaleD} changeStepNumber={changeStepNumber} />
       case 3:
         return <CreationStep04 changeStepNumber={changeStepNumber} />
       case 4:
