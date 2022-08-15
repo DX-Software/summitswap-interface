@@ -1,6 +1,8 @@
 import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
+import { useFormik, FormikProps } from 'formik'
 import { Flex, Box, Radio, Text } from '@koda-finance/summitswap-uikit'
+import { RADIO_VALUES, TOKEN_CHOICES } from 'constants/presale'
 import steps from './steps-data'
 import CreationStep01 from './CreationStep01'
 import CreationStep02 from './CreationStep02'
@@ -8,6 +10,8 @@ import CreationStep03 from './CreationStep03'
 import CreationStep04 from './CreationStep04'
 import CreationStep05 from './CreationStep05'
 import CreationStep06, { Divider } from './CreationStep06'
+import { validatePresaleDetails } from './formValidations'
+import { PresaleDetails, FieldNames } from '../types'
 
 const StepsWrapper = styled(Box)`
   width: 522px;
@@ -46,10 +50,38 @@ const StyledRadio = styled(Radio)<{ completed: boolean }>`
   }
 `
 const CreatePresale = () => {
-  const [stepNumber, setStepNumber] = useState(5)
+  const [stepNumber, setStepNumber] = useState(0)
   const [currency, setCurrency] = useState('BNB')
 
   const changeStepNumber = useCallback((num: number) => setStepNumber(num), [])
+
+  const formikPresaleD: FormikProps<PresaleDetails> = useFormik({
+    initialValues: {
+      [FieldNames.presaleRate]: undefined,
+      [FieldNames.isWhitelistEnabled]: RADIO_VALUES.WHITELIST_ENABLED,
+      [FieldNames.softcap]: undefined,
+      [FieldNames.hardcap]: undefined,
+      [FieldNames.minBuy]: undefined,
+      [FieldNames.maxBuy]: undefined,
+      [FieldNames.refundType]: RADIO_VALUES.REFUND_TYPE_REFUND,
+      [FieldNames.listingChoice]: RADIO_VALUES.LISTING_SS_100,
+      [FieldNames.liquidity]: undefined,
+      [FieldNames.listingRate]: undefined,
+      [FieldNames.startPresaleTime]: undefined,
+      [FieldNames.endPresaleTime]: undefined,
+      [FieldNames.liquidyLockTimeInMins]: undefined,
+      [FieldNames.tokenAmount]: undefined,
+      [FieldNames.paymentToken]: TOKEN_CHOICES.BNB,
+      [FieldNames.listingToken]: TOKEN_CHOICES.KODA,
+      [FieldNames.maxClaimPercentage]: undefined,
+      [FieldNames.claimIntervalDay]: undefined,
+      [FieldNames.claimIntervalHour]: undefined,
+      [FieldNames.isVestingEnabled]: false,
+    } as PresaleDetails,
+    validate: validatePresaleDetails,
+    // eslint-disable-next-line
+    onSubmit: () => {},
+  })
 
   const showStep = () => {
     switch (stepNumber) {
