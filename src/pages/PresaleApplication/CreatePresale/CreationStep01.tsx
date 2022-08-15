@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useState, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
+import { FormikProps } from 'formik'
 import { BigNumber } from 'ethers'
 import { formatUnits } from 'ethers/lib/utils'
 import { useWeb3React } from '@web3-react/core'
@@ -20,6 +21,7 @@ import { useTokenContract } from 'hooks/useContract'
 import { RowFixed } from 'components/Row'
 import { TOKEN_CHOICES, PRESALE_FACTORY_ADDRESS, MAX_APPROVE_VALUE } from 'constants/presale'
 import { Caption } from '../Texts'
+import { PresaleDetails, FieldNames } from '../types'
 
 const Wrapper = styled(Box)`
   width: 522px;
@@ -57,8 +59,9 @@ interface Props {
   changeStepNumber: (num: number) => void
   currency: string
   setCurrency: React.Dispatch<React.SetStateAction<string>>
+  formik: FormikProps<PresaleDetails>
 }
-const CreationStep01 = ({ changeStepNumber, currency, setCurrency }: Props) => {
+const CreationStep01 = ({ changeStepNumber, currency, setCurrency, formik }: Props) => {
   const { account, library } = useWeb3React()
 
   const [selectedToken, setSelectedToken] = useState<Token>()
@@ -115,7 +118,8 @@ const CreationStep01 = ({ changeStepNumber, currency, setCurrency }: Props) => {
   }, [])
 
   const handleCurrencyChange = (e) => {
-    setCurrency(e.target.name)
+    setCurrency(e.target.id)
+    formik.handleChange(e)
   }
 
   return (
@@ -177,7 +181,13 @@ const CreationStep01 = ({ changeStepNumber, currency, setCurrency }: Props) => {
             .map((key) => (
               <label key={key} htmlFor={key}>
                 <RowFixed marginBottom="5px">
-                  <Radio scale="sm" name={key} value={TOKEN_CHOICES[key]} id={key} checked={currency === key} />
+                  <Radio
+                    scale="sm"
+                    name={FieldNames.paymentToken}
+                    value={TOKEN_CHOICES[key]}
+                    id={key}
+                    checked={currency === key}
+                  />
                   <Text marginLeft="5px">{key}</Text>
                 </RowFixed>
               </label>

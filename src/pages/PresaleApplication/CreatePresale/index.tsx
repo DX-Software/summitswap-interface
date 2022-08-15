@@ -86,7 +86,14 @@ const CreatePresale = () => {
   const showStep = () => {
     switch (stepNumber) {
       case 0:
-        return <CreationStep01 changeStepNumber={changeStepNumber} currency={currency} setCurrency={setCurrency} />
+        return (
+          <CreationStep01
+            formik={formikPresaleD}
+            changeStepNumber={changeStepNumber}
+            currency={currency}
+            setCurrency={setCurrency}
+          />
+        )
       case 1:
         return <CreationStep02 currency={currency} changeStepNumber={changeStepNumber} />
       case 2:
