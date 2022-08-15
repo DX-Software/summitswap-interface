@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React from 'react'
 import styled from 'styled-components'
+import { FormikProps } from 'formik'
 import {
   Button,
   Flex,
@@ -11,12 +12,14 @@ import {
   Select,
   darkColors,
 } from '@koda-finance/summitswap-uikit'
-import { RowBetween } from 'components/Row'
 import { ItemIconCard, IconBox, GridContainer, GridItem1, GridItem2 } from './GridComponents'
 import StyledInput, { StyledInputWrapper } from './StyledInput'
+import ButtonsWrapper from './ButtonsWrapper'
 import { Caption, Heading } from '../Texts'
+import { PresaleDetails } from '../types'
 
 interface Props {
+  formikPresale: FormikProps<PresaleDetails>
   changeStepNumber: (num: number) => void
 }
 
@@ -39,7 +42,7 @@ const StyledSelect = styled(Select)`
   }
 `
 
-const CreationStep05 = ({ changeStepNumber }: Props) => {
+const CreationStep05 = ({ formikPresale, changeStepNumber }: Props) => {
   return (
     <>
       <GridContainer>
@@ -170,12 +173,21 @@ const CreationStep05 = ({ changeStepNumber }: Props) => {
         </GridItem2>
       </GridContainer>
 
-      <RowBetween marginTop="50px" marginBottom="15px">
-        <Button variant="secondary" onClick={() => changeStepNumber(3)}>
+      <ButtonsWrapper>
+        <Button variant="secondary" onClick={() => changeStepNumber(1)}>
           Previous Step
         </Button>
-        <Button onClick={() => changeStepNumber(5)}>Continue</Button>
-      </RowBetween>
+        {formikPresale.errors.tokenAmount ? (
+          <Text bold marginY="20px" color="failure">
+            {formikPresale.errors.tokenAmount}
+          </Text>
+        ) : (
+          <Text bold marginY="20px" color="success">
+            {formikPresale.values.tokenAmount ? `${formikPresale.values.tokenAmount.toFixed(2)} Presale Tokens` : ''}
+          </Text>
+        )}
+        <Button onClick={() => changeStepNumber(3)}>Continue</Button>
+      </ButtonsWrapper>
     </>
   )
 }

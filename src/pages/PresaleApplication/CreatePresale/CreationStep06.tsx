@@ -2,7 +2,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Box, Button, Flex, Heading, Text } from '@koda-finance/summitswap-uikit'
-import { RowBetween } from 'components/Row'
+import ButtonsWrapper from './ButtonsWrapper'
 import { GridContainer as Grid, GridItem1, GridItem2 } from './GridComponents'
 
 interface Props {
@@ -229,12 +229,21 @@ const CreationStep06 = ({ currency, changeStepNumber }: Props) => {
           </GridContainer>
         </Box>
       </Box>
-      <RowBetween marginTop="50px" marginBottom="15px">
-        <Button variant="secondary" onClick={() => changeStepNumber(4)}>
+      <ButtonsWrapper>
+        <Button variant="secondary" onClick={() => changeStepNumber(1)}>
           Previous Step
         </Button>
-        <Button onClick={() => changeStepNumber(6)}>Continue</Button>
-      </RowBetween>
+        {/* {formik.errors.tokenAmount ? (
+          <Text bold marginY="20px" color="failure">
+            {formik.errors.tokenAmount}
+          </Text>
+        ) : (
+          <Text bold marginY="20px" color="success">
+            {formik.values.tokenAmount ? `${formik.values.tokenAmount.toFixed(2)} Presale Tokens` : ''}
+          </Text>
+        )} */}
+        <Button onClick={() => changeStepNumber(3)}>Continue</Button>
+      </ButtonsWrapper>
     </>
   )
 }

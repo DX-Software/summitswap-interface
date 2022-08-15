@@ -3,10 +3,11 @@ import React from 'react'
 import styled from 'styled-components'
 import { Box, Button, Flex, Text, ClockIcon, CalendarIcon, VestingIcon, Radio } from '@koda-finance/summitswap-uikit'
 import { FormikProps } from 'formik'
-import { RowBetween, RowFixed } from 'components/Row'
+import {  RowFixed } from 'components/Row'
 import { RADIO_VALUES } from 'constants/presale'
 import { ItemIconCard, IconBox, GridContainer, GridItem1, GridItem2 } from './GridComponents'
 import StyledInput, { StyledInputWrapper } from './StyledInput'
+import ButtonsWrapper from './ButtonsWrapper'
 import { Caption, Heading } from '../Texts'
 import { PresaleDetails, FieldNames } from '../types'
 
@@ -271,12 +272,21 @@ const CreationStep04 = ({ formik, changeStepNumber }: Props) => {
           )}
         </GridItem2>
       </GridContainer>
-      <RowBetween marginTop="50px" marginBottom="15px">
-        <Button variant="secondary" onClick={() => changeStepNumber(2)}>
+      <ButtonsWrapper>
+        <Button variant="secondary" onClick={() => changeStepNumber(1)}>
           Previous Step
         </Button>
-        <Button onClick={() => changeStepNumber(4)}>Continue</Button>
-      </RowBetween>
+        {formik.errors.tokenAmount ? (
+          <Text bold marginY="20px" color="failure">
+            {formik.errors.tokenAmount}
+          </Text>
+        ) : (
+          <Text bold marginY="20px" color="success">
+            {formik.values.tokenAmount ? `${formik.values.tokenAmount.toFixed(2)} Presale Tokens` : ''}
+          </Text>
+        )}
+        <Button onClick={() => changeStepNumber(3)}>Continue</Button>
+      </ButtonsWrapper>
     </>
   )
 }

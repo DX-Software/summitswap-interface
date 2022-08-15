@@ -14,9 +14,10 @@ import {
 } from '@koda-finance/summitswap-uikit'
 import { FormikProps } from 'formik'
 import { TOKEN_CHOICES, RADIO_VALUES } from 'constants/presale'
-import { RowBetween, RowFixed } from 'components/Row'
+import { RowFixed } from 'components/Row'
 import { ItemIconCard, IconBox, GridContainer, GridItem1, GridItem2 } from './GridComponents'
 import StyledInput, { StyledInputWrapper } from './StyledInput'
+import ButtonsWrapper from './ButtonsWrapper'
 import { Caption, Heading } from '../Texts'
 import { PresaleDetails, FieldNames } from '../types'
 
@@ -280,12 +281,21 @@ const CreationStep03 = ({ formik, changeStepNumber }: Props) => {
         </GridContainer>
       )}
 
-      <RowBetween marginTop="50px" marginBottom="15px">
+      <ButtonsWrapper>
         <Button variant="secondary" onClick={() => changeStepNumber(1)}>
           Previous Step
         </Button>
+        {formik.errors.tokenAmount ? (
+          <Text bold marginY="20px" color="failure">
+            {formik.errors.tokenAmount}
+          </Text>
+        ) : (
+          <Text bold marginY="20px" color="success">
+            {formik.values.tokenAmount ? `${formik.values.tokenAmount.toFixed(2)} Presale Tokens` : ''}
+          </Text>
+        )}
         <Button onClick={() => changeStepNumber(3)}>Continue</Button>
-      </RowBetween>
+      </ButtonsWrapper>
     </>
   )
 }

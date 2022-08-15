@@ -124,6 +124,8 @@ const CreatePresale = () => {
       const tokensForLiquidity =
         (formikPresale.values.liquidity / 100) * formikPresale.values.hardcap * formikPresale.values.listingRate
       formikPresale.values.tokenAmount = presaleTokenAmount + tokensForLiquidity
+    } else {
+      formikPresale.values.tokenAmount = 0
     }
   }, [formikPresale, selectedToken])
 
@@ -148,7 +150,7 @@ const CreatePresale = () => {
       case 3:
         return <CreationStep04 formik={formikPresale} changeStepNumber={changeStepNumber} />
       case 4:
-        return <CreationStep05 changeStepNumber={changeStepNumber} />
+        return <CreationStep05 formikPresale={formikPresale} changeStepNumber={changeStepNumber} />
       case 5:
         return <CreationStep06 currency={currency} changeStepNumber={changeStepNumber} />
       default:
