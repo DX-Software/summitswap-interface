@@ -4,7 +4,7 @@ import React, { useMemo } from "react"
 import styled from "styled-components"
 import ProgressBox from "./ProgressBox"
 import StatusLabel from "./shared/StatusLabel"
-import { STATUSES } from "./types"
+import { Statuses } from "./types"
 import { getDayRemaining, getKickstarterStatus } from "./utility"
 
 type Props = {
@@ -53,7 +53,7 @@ function ProjectCard({ title, creator, projectGoals, totalContribution, endTimes
     <Card flexDirection="column" onClick={onClick}>
       <Banner flexDirection="column">
         <StatusLabel status={status} style={{ marginLeft: "auto" }}>
-          {status !== STATUSES.END_SOON
+          {status !== Statuses.END_SOON
             ? status
             : `${getDayRemaining(endTimestamp)} day(s) left`
           }

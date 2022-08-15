@@ -1,18 +1,23 @@
-export enum STATUSES {
+export enum Statuses {
   ONGOING = "ongoing",
   END_SOON = "end_soon",
   COMPLETED = "completed",
 }
 
-export enum TABS {
+export enum Tabs {
   MY_PROJECT = "my_project",
   BROWSE_PROJECT = "browse_project",
   BACKED_PROJECT = "backed_project",
 }
 
+export enum SortBy {
+  NAME_ASC = "name_asc",
+  NAME_DESC = "name_desc",
+}
+
 export type NavItem = {
   label: string
-  code: TABS
+  code: Tabs
   component: React.ReactNode
 }
 
