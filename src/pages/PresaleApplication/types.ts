@@ -17,7 +17,9 @@ export enum FieldNames {
   listingChoice ="listingChoice",
   liquidity = "liquidity",
   listingRate = "listingRate",
+  startPresaleDate = "startPresaleDate",
   startPresaleTime = "startPresaleTime",
+  endPresaleDate = "endPresaleDate",
   endPresaleTime = "endPresaleTime",
   liquidyLockTimeInMins = "liquidyLockTimeInMins",
   tokenAmount = "tokenAmount",
@@ -110,7 +112,7 @@ export interface PresaleInfo {
 
 export interface PresaleDetails {
   [FieldNames.presaleRate]?: number;
-  [FieldNames.isWhitelistEnabled]: string;
+  [FieldNames.isWhitelistEnabled]: boolean;
   [FieldNames.softcap]?: number;
   [FieldNames.hardcap]?: number;
   [FieldNames.minBuy]?: number;
@@ -118,8 +120,10 @@ export interface PresaleDetails {
   [FieldNames.listingChoice]: number;
   [FieldNames.liquidity]?: number;
   [FieldNames.listingRate]?: number;
-  [FieldNames.startPresaleTime]?: string| number;
-  [FieldNames.endPresaleTime]?: string  |number;
+  [FieldNames.startPresaleDate]?: string;
+  [FieldNames.startPresaleTime]?: string;
+  [FieldNames.endPresaleDate]?: string;
+  [FieldNames.endPresaleTime]?: string;
   [FieldNames.liquidyLockTimeInMins]?: number;
   [FieldNames.tokenAmount]?: number;
   [FieldNames.paymentToken]: string;
@@ -145,7 +149,9 @@ export interface PresaleDetailsErrors {
   [FieldNames.maxBuy]?: string;
   [FieldNames.liquidity]?: string;
   [FieldNames.listingRate]?: string;
+  [FieldNames.startPresaleDate]?: string;
   [FieldNames.startPresaleTime]?: string;
+  [FieldNames.endPresaleDate]?: string;
   [FieldNames.endPresaleTime]?: string;
   [FieldNames.liquidyLockTimeInMins]?: string;
   [FieldNames.maxClaimPercentage]?: string;

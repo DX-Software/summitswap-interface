@@ -2,12 +2,16 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Box, Button, Flex, Text, ClockIcon, CalendarIcon, VestingIcon, Radio } from '@koda-finance/summitswap-uikit'
+import { FormikProps } from 'formik'
 import { RowBetween, RowFixed } from 'components/Row'
+import { RADIO_VALUES } from 'constants/presale'
 import { ItemIconCard, IconBox, GridContainer, GridItem1, GridItem2 } from './GridComponents'
 import StyledInput, { StyledInputWrapper } from './StyledInput'
 import { Caption, Heading } from '../Texts'
+import { PresaleDetails, FieldNames } from '../types'
 
 interface Props {
+  formik: FormikProps<PresaleDetails>
   changeStepNumber: (num: number) => void
 }
 
@@ -24,7 +28,7 @@ const PlaceholderDiv = styled.div`
   }
 `
 
-const CreationStep04 = ({ changeStepNumber }: Props) => {
+const CreationStep04 = ({ formik, changeStepNumber }: Props) => {
   return (
     <>
       <GridContainer>
@@ -45,13 +49,44 @@ const CreationStep04 = ({ changeStepNumber }: Props) => {
               <Text small marginTop="8px">
                 Start Date
               </Text>
-              <StyledInput forDate type="date" />
+              <StyledInput
+                forDate
+                type="date"
+                value={formik.values.startPresaleDate}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                name={FieldNames.startPresaleDate}
+                isWarning={formik.touched.startPresaleDate && !!formik.errors.startPresaleDate}
+              />
+              <Caption
+                color={formik.touched.startPresaleDate && !!formik.errors.startPresaleDate ? 'failure' : 'textDisabled'}
+              >
+                {formik.touched.startPresaleDate && formik.errors.startPresaleDate
+                  ? formik.errors.startPresaleDate
+                  : ''}
+              </Caption>
             </StyledInputWrapper>
             <StyledInputWrapper forDate>
               <Text small marginTop="8px">
                 Start Time (UTC)
               </Text>
-              <StyledInput forTime type="time" />
+              <StyledInput
+                forTime
+                type="time"
+                defaultValue="00:00"
+                value={formik.values.startPresaleTime}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                name={FieldNames.startPresaleTime}
+                isWarning={formik.touched.startPresaleTime && !!formik.errors.startPresaleTime}
+              />
+              <Caption
+                color={formik.touched.startPresaleTime && !!formik.errors.startPresaleTime ? 'failure' : 'textDisabled'}
+              >
+                {formik.touched.startPresaleTime && formik.errors.startPresaleTime
+                  ? formik.errors.startPresaleTime
+                  : ''}
+              </Caption>
             </StyledInputWrapper>
           </Flex>
           <Flex flexWrap="wrap">
@@ -59,13 +94,40 @@ const CreationStep04 = ({ changeStepNumber }: Props) => {
               <Text small marginTop="8px">
                 End Date
               </Text>
-              <StyledInput forDate type="date" />
+              <StyledInput
+                forDate
+                type="date"
+                value={formik.values.endPresaleDate}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                name={FieldNames.endPresaleDate}
+                isWarning={formik.touched.endPresaleDate && !!formik.errors.endPresaleDate}
+              />
+              <Caption
+                color={formik.touched.endPresaleDate && !!formik.errors.endPresaleDate ? 'failure' : 'textDisabled'}
+              >
+                {formik.touched.endPresaleDate && formik.errors.endPresaleDate ? formik.errors.endPresaleDate : ''}
+              </Caption>
             </StyledInputWrapper>
             <StyledInputWrapper forDate>
               <Text small marginTop="8px">
                 End Time (UTC)
               </Text>
-              <StyledInput forTime type="time" />
+              <StyledInput
+                forTime
+                type="time"
+                defaultValue="00:00"
+                value={formik.values.endPresaleTime}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                name={FieldNames.endPresaleTime}
+                isWarning={formik.touched.endPresaleTime && !!formik.errors.endPresaleTime}
+              />
+              <Caption
+                color={formik.touched.endPresaleTime && !!formik.errors.endPresaleTime ? 'failure' : 'textDisabled'}
+              >
+                {formik.touched.endPresaleTime && formik.errors.endPresaleTime ? formik.errors.endPresaleTime : ''}
+              </Caption>
             </StyledInputWrapper>
           </Flex>
         </GridItem2>
@@ -86,7 +148,25 @@ const CreationStep04 = ({ changeStepNumber }: Props) => {
           <Text small marginTop="8px">
             Enter Liquidity Lockup
           </Text>
-          <StyledInput placeholder="Ex: 100" type="number" />
+          <StyledInput
+            placeholder="Ex: 100"
+            type="number"
+            value={formik.values.liquidyLockTimeInMins}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            name={FieldNames.liquidyLockTimeInMins}
+            id={FieldNames.liquidyLockTimeInMins}
+            isWarning={formik.touched.liquidyLockTimeInMins && !!formik.errors.liquidyLockTimeInMins}
+          />
+          <Caption
+            color={
+              formik.touched.liquidyLockTimeInMins && !!formik.errors.liquidyLockTimeInMins ? 'failure' : 'textDisabled'
+            }
+          >
+            {formik.touched.liquidyLockTimeInMins && formik.errors.liquidyLockTimeInMins
+              ? formik.errors.liquidyLockTimeInMins
+              : ''}
+          </Caption>
         </GridItem2>
       </GridContainer>
 
@@ -103,10 +183,15 @@ const CreationStep04 = ({ changeStepNumber }: Props) => {
           </Text>
         </GridItem1>
         <GridItem2>
-          <Flex marginTop="8px" flexWrap="wrap">
+          <Flex marginTop="8px" flexWrap="wrap" onChange={formik.handleChange}>
             <RowFixed marginRight="20px" marginBottom="8px">
               <Box>
-                <Radio id="vestingEnabled" scale="sm" />
+                <Radio
+                  scale="sm"
+                  name={FieldNames.isVestingEnabled}
+                  value={`${RADIO_VALUES.VESTING_ENABLED}`}
+                  checked={`${formik.values.isVestingEnabled}` === `${RADIO_VALUES.VESTING_ENABLED}`}
+                />
               </Box>
               <label htmlFor="vestingEnabled">
                 <Text marginLeft="8px">Enabled</Text>
@@ -117,7 +202,12 @@ const CreationStep04 = ({ changeStepNumber }: Props) => {
             </RowFixed>
             <RowFixed marginRight="70px" marginBottom="8px">
               <Box>
-                <Radio id="vestingDisabled" scale="sm" />
+                <Radio
+                  scale="sm"
+                  name={FieldNames.isVestingEnabled}
+                  value={`${RADIO_VALUES.VESTING_DISABLED}`}
+                  checked={`${formik.values.isVestingEnabled}` === `${RADIO_VALUES.VESTING_DISABLED}`}
+                />
               </Box>
               <label htmlFor="vestingDisabled">
                 <Text marginLeft="8px">Disabled</Text>
@@ -127,46 +217,48 @@ const CreationStep04 = ({ changeStepNumber }: Props) => {
               </label>
             </RowFixed>
           </Flex>
-          <Flex alignItems="flex-end">
-            <PlaceholderDiv />
-            <Flex width="100%" flexDirection="column">
-              <Flex marginX="16px" justifyContent="flex-start" flexWrap="wrap">
-                <StyledInputWrapper marginRight="16px">
-                  <Text small marginTop="8px">
-                    Vesting Claim Percentage (%)
-                  </Text>
-                  <StyledInput placeholder="Ex: 100" type="number" />
-                </StyledInputWrapper>
-                <StyledInputWrapper forDate marginRight="16px">
-                  <Text small marginTop="8px">
-                    Interval Day
-                  </Text>
-                  <StyledInput forTime placeholder="Ex: 100" type="number" />
-                </StyledInputWrapper>
-                <StyledInputWrapper forDate marginRight="16px">
-                  <Text small marginTop="8px">
-                    Interval Time (UTC)
-                  </Text>
-                  <StyledInput forTime placeholder="Ex: 100" type="number" />
-                </StyledInputWrapper>
+          {`${formik.values.isVestingEnabled}` === `${RADIO_VALUES.VESTING_ENABLED}` && (
+            <Flex alignItems="flex-end">
+              <PlaceholderDiv />
+              <Flex width="100%" flexDirection="column">
+                <Flex marginX="16px" justifyContent="flex-start" flexWrap="wrap">
+                  <StyledInputWrapper marginRight="16px">
+                    <Text small marginTop="8px">
+                      Vesting Claim Percentage (%)
+                    </Text>
+                    <StyledInput placeholder="Ex: 100" type="number" />
+                  </StyledInputWrapper>
+                  <StyledInputWrapper forDate marginRight="16px">
+                    <Text small marginTop="8px">
+                      Interval Day
+                    </Text>
+                    <StyledInput forTime placeholder="Ex: 100" type="number" />
+                  </StyledInputWrapper>
+                  <StyledInputWrapper forDate marginRight="16px">
+                    <Text small marginTop="8px">
+                      Interval Time (UTC)
+                    </Text>
+                    <StyledInput forTime placeholder="Ex: 100" type="number" />
+                  </StyledInputWrapper>
+                </Flex>
+                <Caption marginLeft="16px" color="textDisabled">
+                  Every
+                  <Caption bold small color="primary">
+                    &nbsp;10%&nbsp;
+                  </Caption>
+                  of the total claimable token will be available for redeem on
+                  <Caption bold small color="primary">
+                    &nbsp;day 1&nbsp;
+                  </Caption>
+                  at
+                  <Caption bold small color="primary">
+                    &nbsp;07:00 UTC&nbsp;
+                  </Caption>
+                  of the following month
+                </Caption>
               </Flex>
-              <Caption marginLeft="16px" color="textDisabled">
-                Every
-                <Caption bold small color="primary">
-                  &nbsp;10%&nbsp;
-                </Caption>
-                of the total claimable token will be available for redeem on
-                <Caption bold small color="primary">
-                  &nbsp;day 1&nbsp;
-                </Caption>
-                at
-                <Caption bold small color="primary">
-                  &nbsp;07:00 UTC&nbsp;
-                </Caption>
-                of the following month
-              </Caption>
             </Flex>
-          </Flex>
+          )}
         </GridItem2>
       </GridContainer>
       <RowBetween marginTop="50px" marginBottom="15px">

@@ -1,6 +1,7 @@
+import { differenceInDays } from 'date-fns'
 import checkUrl from 'utils/checkUrl'
 import checkEmail from 'utils/checkEmail'
-import { PresaleDetails, PresaleDetailsErrors, ProjectDetails } from "../types"
+import { PresaleDetails, PresaleDetailsErrors, ProjectDetails } from '../types'
 
 export const validatePresaleDetails = (values: PresaleDetails) => {
   const errors: PresaleDetailsErrors = {}
@@ -31,7 +32,7 @@ export const validatePresaleDetails = (values: PresaleDetails) => {
     errors.minBuy = 'Required*'
   } else if (values.minBuy <= 0) {
     errors.minBuy = 'Min(BNB) should be a positive number'
-  } else if ( values.maxBuy && values.minBuy >= values.maxBuy) {
+  } else if (values.maxBuy && values.minBuy >= values.maxBuy) {
     errors.minBuy = 'Min(BNB) <= Max(BNB)'
   }
 
@@ -59,18 +60,61 @@ export const validatePresaleDetails = (values: PresaleDetails) => {
     errors.listingRate = 'Listing Rate should be a postive Number'
   }
 
-  if (!values.startPresaleTime) {
-    errors.startPresaleTime = 'Required*'
-  } else if (new Date(values.startPresaleTime) <= new Date()) {
-    errors.startPresaleTime = 'Start time > current time'
-  } else if (values.endPresaleTime && new Date(values.startPresaleTime) >= new Date(values.endPresaleTime)) {
-    errors.startPresaleTime = 'Start time < End time'
+  const date1 = new Date()
+  const dateUtc = new Date(Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate()))
+
+  if (!values.startPresaleDate) {
+    errors.startPresaleDate = 'Start Presale Date is Required'
+  } else if (values.startPresaleDate) {
+    const date2 = new Date(values.startPresaleDate)
+    const diff = differenceInDays(date2, dateUtc)
+    if (diff < 0) {
+      errors.startPresaleDate = 'Start Presale date >= current date'
+    } else if (diff === 0) {
+      if (!values.startPresaleTime) {
+        errors.startPresaleTime = 'Start Presale Time is Required'
+      } else {
+        const [hours, mins] = values.startPresaleTime.split(':')
+        const fullDate = new Date(
+          Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate(), Number(hours), Number(mins))
+        )
+        if (fullDate <= new Date()) {
+          errors.startPresaleTime = 'Start Presale time > current time'
+        } else if (values.endPresaleTime && values.endPresaleDate) {
+          const date3 = new Date(values.endPresaleDate)
+          const [hours2, mins2] = values.endPresaleTime.split(':')
+
+          const fullDate2 = new Date(
+            Date.UTC(date3.getFullYear(), date3.getMonth(), date3.getDate(), Number(hours2), Number(mins2))
+          )
+          if (fullDate >= fullDate2) {
+            errors.startPresaleDate = 'Start time < End time'
+          }
+        }
+      }
+    }
   }
 
-  if (!values.endPresaleTime) {
-    errors.endPresaleTime = 'Required*'
-  } else if (new Date(values.endPresaleTime) <= new Date()) {
-    errors.endPresaleTime = 'End time > current time'
+  if (!values.endPresaleDate) {
+    errors.endPresaleDate = 'End Presale Date is Required'
+  } else if (values.endPresaleDate) {
+    const date2 = new Date(values.endPresaleDate)
+    const diff = differenceInDays(date2, dateUtc)
+    if (diff < 0) {
+      errors.endPresaleDate = 'End Presale date >= current date'
+    } else if (diff === 0) {
+      if (!values.endPresaleTime) {
+        errors.endPresaleTime = 'End Presale Time is Required'
+      } else {
+        const [hours, mins] = values.endPresaleTime.split(':')
+        const fullDate = new Date(
+          Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate(), Number(hours), Number(mins))
+        )
+        if (fullDate <= new Date()) {
+          errors.endPresaleTime = 'End Presale time > current time'
+        }
+      }
+    }
   }
 
   if (!values.liquidyLockTimeInMins) {
@@ -79,22 +123,16 @@ export const validatePresaleDetails = (values: PresaleDetails) => {
     errors.liquidyLockTimeInMins = 'Liquidity Lock time >= 5mins'
   }
 
-  if (
-    values.hardcap &&
-    values.presaleRate &&
-    values.listingRate &&
-    values.liquidity &&
-    values.accountBalance) {
+  if (values.hardcap && values.presaleRate && values.listingRate && values.liquidity && values.accountBalance) {
     const presaleTokenAmount = values.presaleRate * values.hardcap
     const tokensForLiquidity = (values.liquidity / 100) * values.hardcap * values.listingRate
     const tokenAmount = presaleTokenAmount + tokensForLiquidity
-    if (tokenAmount >  values.accountBalance) {
+    if (tokenAmount > values.accountBalance) {
       errors.tokenAmount = 'Token Amounts Exceeds Balance'
     }
   }
 
   if (values.isVestingEnabled) {
-
     if (!values.maxClaimPercentage) {
       errors.maxClaimPercentage = 'Required*'
     } else if (values.maxClaimPercentage <= 0) {

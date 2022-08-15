@@ -30,6 +30,8 @@ export const EMERGENCY_WITHDRAW_BNB = 'emergencyWithdrawBNB'
 export const RADIO_VALUES = {
   WHITELIST_ENABLED: true,
   WHITELIST_DISABLED: false,
+  VESTING_ENABLED: true,
+  VESTING_DISABLED: false,
   REFUND_TYPE_REFUND: 0,
   REFUND_TYPE_BURN: 1,
   LISTING_SS_100: 0, // 100% liquididty added to summitswap

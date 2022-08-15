@@ -58,7 +58,7 @@ const CreatePresale = () => {
   const formikPresaleD: FormikProps<PresaleDetails> = useFormik({
     initialValues: {
       [FieldNames.presaleRate]: undefined,
-      [FieldNames.isWhitelistEnabled]: `${RADIO_VALUES.WHITELIST_ENABLED}`,
+      [FieldNames.isWhitelistEnabled]: RADIO_VALUES.WHITELIST_ENABLED,
       [FieldNames.softcap]: undefined,
       [FieldNames.hardcap]: undefined,
       [FieldNames.minBuy]: undefined,
@@ -67,8 +67,10 @@ const CreatePresale = () => {
       [FieldNames.listingChoice]: RADIO_VALUES.LISTING_SS_100,
       [FieldNames.liquidity]: undefined,
       [FieldNames.listingRate]: undefined,
+      [FieldNames.startPresaleDate]: undefined,
       [FieldNames.startPresaleTime]: undefined,
       [FieldNames.endPresaleTime]: undefined,
+      [FieldNames.endPresaleDate]: undefined,
       [FieldNames.liquidyLockTimeInMins]: undefined,
       [FieldNames.tokenAmount]: undefined,
       [FieldNames.paymentToken]: TOKEN_CHOICES.BNB,
@@ -76,7 +78,7 @@ const CreatePresale = () => {
       [FieldNames.maxClaimPercentage]: undefined,
       [FieldNames.claimIntervalDay]: undefined,
       [FieldNames.claimIntervalHour]: undefined,
-      [FieldNames.isVestingEnabled]: false,
+      [FieldNames.isVestingEnabled]: RADIO_VALUES.VESTING_DISABLED,
     } as PresaleDetails,
     validate: validatePresaleDetails,
     // eslint-disable-next-line
@@ -99,7 +101,7 @@ const CreatePresale = () => {
       case 2:
         return <CreationStep03 formik={formikPresaleD} changeStepNumber={changeStepNumber} />
       case 3:
-        return <CreationStep04 changeStepNumber={changeStepNumber} />
+        return <CreationStep04 formik={formikPresaleD} changeStepNumber={changeStepNumber} />
       case 4:
         return <CreationStep05 changeStepNumber={changeStepNumber} />
       case 5:
