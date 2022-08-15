@@ -58,7 +58,7 @@ const CreatePresale = () => {
   const formikPresaleD: FormikProps<PresaleDetails> = useFormik({
     initialValues: {
       [FieldNames.presaleRate]: undefined,
-      [FieldNames.isWhitelistEnabled]: RADIO_VALUES.WHITELIST_ENABLED,
+      [FieldNames.isWhitelistEnabled]: `${RADIO_VALUES.WHITELIST_ENABLED}`,
       [FieldNames.softcap]: undefined,
       [FieldNames.hardcap]: undefined,
       [FieldNames.minBuy]: undefined,
@@ -82,7 +82,7 @@ const CreatePresale = () => {
     // eslint-disable-next-line
     onSubmit: () => {},
   })
-
+  console.log(formikPresaleD.values)
   const showStep = () => {
     switch (stepNumber) {
       case 0:
@@ -95,7 +95,7 @@ const CreatePresale = () => {
           />
         )
       case 1:
-        return <CreationStep02 currency={currency} changeStepNumber={changeStepNumber} />
+        return <CreationStep02 formik={formikPresaleD} currency={currency} changeStepNumber={changeStepNumber} />
       case 2:
         return <CreationStep03 changeStepNumber={changeStepNumber} />
       case 3:

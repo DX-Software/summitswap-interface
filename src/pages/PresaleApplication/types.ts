@@ -110,7 +110,7 @@ export interface PresaleInfo {
 
 export interface PresaleDetails {
   [FieldNames.presaleRate]?: number;
-  [FieldNames.isWhitelistEnabled]: boolean;
+  [FieldNames.isWhitelistEnabled]: string;
   [FieldNames.softcap]?: number;
   [FieldNames.hardcap]?: number;
   [FieldNames.minBuy]?: number;

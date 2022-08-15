@@ -11,17 +11,21 @@ import {
   ChecklistIcon,
   HandCoinIcon,
 } from '@koda-finance/summitswap-uikit'
+import { FormikProps } from 'formik'
 import { RowBetween, RowFixed } from 'components/Row'
+import { RADIO_VALUES } from 'constants/presale'
 import { ItemIconCard, IconBox, GridContainer, GridItem1, GridItem2 } from './GridComponents'
 import StyledInput, { StyledInputWrapper } from './StyledInput'
 import { Caption, Heading } from '../Texts'
+import { PresaleDetails, FieldNames } from '../types'
 
 interface Props {
+  formik: FormikProps<PresaleDetails>
   changeStepNumber: (num: number) => void
   currency: string
 }
 
-const CreationStep02 = ({ changeStepNumber, currency }: Props) => {
+const CreationStep02 = ({ formik, changeStepNumber, currency }: Props) => {
   return (
     <>
       <GridContainer>
@@ -40,8 +44,21 @@ const CreationStep02 = ({ changeStepNumber, currency }: Props) => {
           <Text small marginTop="8px">
             Presale Rate
           </Text>
-          <StyledInput placeholder="Ex: 100" />
-          <Caption color="textDisabled">If I spend 1 BNB, how many CTK tokens will I receive?</Caption>
+          <StyledInput
+            placeholder="Ex: 100"
+            value={formik.values.presaleRate}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            name={FieldNames.presaleRate}
+            id={FieldNames.presaleRate}
+            type="number"
+            isWarning={formik.touched.presaleRate && !!formik.errors.presaleRate}
+          />
+          <Caption color={formik.touched.presaleRate && !!formik.errors.presaleRate ? 'failure' : 'textDisabled'}>
+            {formik.touched.presaleRate && formik.errors.presaleRate
+              ? formik.errors.presaleRate
+              : 'If I spend 1 BNB, how many CTK tokens will I receive?'}
+          </Caption>
         </GridItem2>
       </GridContainer>
       <GridContainer marginTop="40px">
@@ -55,15 +72,25 @@ const CreationStep02 = ({ changeStepNumber, currency }: Props) => {
           <Text small marginTop="4px">
             Whitelist system is where you only permit certain users to participate in your presale
           </Text>
-          <Box marginTop="16px">
+          <Box marginTop="16px" onChange={formik.handleChange}>
             <RowFixed marginBottom="8px">
-              <Radio defaultChecked id="enable" scale="sm" />
+              <Radio
+                scale="sm"
+                name={FieldNames.isWhitelistEnabled}
+                value={`${RADIO_VALUES.WHITELIST_ENABLED}`}
+                checked={formik.values.isWhitelistEnabled === `${RADIO_VALUES.WHITELIST_ENABLED}`}
+              />
               <label htmlFor="enable">
                 <Text marginLeft="8px">Enable</Text>
               </label>
             </RowFixed>
             <RowFixed>
-              <Radio id="disable" scale="sm" />
+              <Radio
+                scale="sm"
+                name={FieldNames.isWhitelistEnabled}
+                value={`${RADIO_VALUES.WHITELIST_DISABLED}`}
+                checked={formik.values.isWhitelistEnabled === `${RADIO_VALUES.WHITELIST_DISABLED}`}
+              />
               <label htmlFor="disable">
                 <Text marginLeft="8px">Disable</Text>
               </label>
@@ -89,14 +116,39 @@ const CreationStep02 = ({ changeStepNumber, currency }: Props) => {
               <Text small marginTop="8px">
                 Softcap ({currency})
               </Text>
-              <StyledInput placeholder="Ex: 7.5" />
-              <Caption color="textDisabled">Softcap must be less or equal to 50% of Hardcap!</Caption>
+              <StyledInput
+                placeholder="Ex: 7.5"
+                value={formik.values.softcap}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                name={FieldNames.softcap}
+                id={FieldNames.softcap}
+                type="number"
+                isWarning={formik.touched.softcap && !!formik.errors.softcap}
+              />
+              <Caption color={formik.touched.softcap && !!formik.errors.softcap ? 'failure' : 'textDisabled'}>
+                {formik.touched.softcap && formik.errors.softcap
+                  ? formik.errors.softcap
+                  : 'Softcap must be less or equal to 50% of Hardcap!'}
+              </Caption>
             </StyledInputWrapper>
             <StyledInputWrapper>
               <Text small marginTop="8px">
                 Hardcap ({currency})
               </Text>
-              <StyledInput placeholder="Ex: 10" />
+              <StyledInput
+                placeholder="Ex: 10"
+                value={formik.values.hardcap}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                name={FieldNames.hardcap}
+                id={FieldNames.hardcap}
+                type="number"
+                isWarning={formik.touched.hardcap && !!formik.errors.hardcap}
+              />
+              <Caption color={formik.touched.hardcap && !!formik.errors.hardcap ? 'failure' : 'textDisabled'}>
+                {formik.touched.hardcap && formik.errors.hardcap ? formik.errors.hardcap : ''}
+              </Caption>
             </StyledInputWrapper>
           </Flex>
         </GridItem2>
@@ -119,14 +171,39 @@ const CreationStep02 = ({ changeStepNumber, currency }: Props) => {
               <Text small marginTop="8px">
                 Minimum Buy ({currency})
               </Text>
-              <StyledInput placeholder="Ex: 0.5" />
-              <Caption color="textDisabled">Maximum Buy must be less or equal to Hardcap!</Caption>
+              <StyledInput
+                placeholder="Ex: 0.5"
+                value={formik.values.minBuy}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                name={FieldNames.minBuy}
+                id={FieldNames.minBuy}
+                type="number"
+                isWarning={formik.touched.minBuy && !!formik.errors.minBuy}
+              />
+              <Caption color={formik.touched.minBuy && !!formik.errors.minBuy ? 'failure' : 'textDisabled'}>
+                {formik.touched.minBuy && formik.errors.minBuy
+                  ? formik.errors.minBuy
+                  : 'Maximum Buy must be less or equal to Hardcap!'}
+              </Caption>
             </StyledInputWrapper>
             <StyledInputWrapper>
               <Text small marginTop="8px">
                 Maximum Buy ({currency})
               </Text>
-              <StyledInput placeholder="Ex: 6" />
+              <StyledInput
+                placeholder="Ex: 6"
+                value={formik.values.maxBuy}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                name={FieldNames.maxBuy}
+                id={FieldNames.maxBuy}
+                type="number"
+                isWarning={formik.touched.maxBuy && !!formik.errors.maxBuy}
+              />
+              <Caption color={formik.touched.maxBuy && !!formik.errors.maxBuy ? 'failure' : 'textDisabled'}>
+                {formik.touched.maxBuy && formik.errors.maxBuy ? formik.errors.maxBuy : ''}
+              </Caption>
             </StyledInputWrapper>
           </Flex>
         </GridItem2>
