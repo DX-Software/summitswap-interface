@@ -1,7 +1,7 @@
 import { Field, FormikProps, FormikProvider, useFormik } from 'formik'
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
-import { convertFileToBase64 } from 'utils/convertFileAsBase64'
+import { convertFileToBase64 } from 'utils/convertFileToBase64'
 import * as XLSX from 'xlsx'
 
 const NftImagePreview = styled.img`
@@ -33,26 +33,27 @@ export function getMetadata(sheet: XLSX.WorkSheet, traits: TraitSheet[], totalNf
 
 export default function WhitelabelNft({ children }) {
   const [nftImages, setNftImages] = useState<NftImage[]>([])
-  // const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.files) {
-  //     const file = e.target.files[0]
-  //     const reader = new FileReader()
 
-  //     reader.onload = (evt) => {
-  //       const bstr = evt?.target?.result
-  //       const wb = XLSX.read(bstr, { type: 'binary' })
-  //       const { traits: traitsSheet, metadata: metadataSheet, totalNft: totalNftSheet } = wb.Sheets
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const file = e.target.files[0]
+      const reader = new FileReader()
 
-  //       const totalNft = getTotalNft(totalNftSheet)
-  //       const traits = getTraits(traitsSheet)
-  //       const metadata = getMetadata(metadataSheet, traits, totalNft)
-  //       // console.log(traits);
-  //       // console.log(traits);
-  //       console.log(metadata)
-  //     }
-  //     reader.readAsBinaryString(file)
-  //   }
-  // }
+      reader.onload = (evt) => {
+        const bstr = evt?.target?.result
+        const wb = XLSX.read(bstr, { type: 'binary' })
+        const { traits: traitsSheet, metadata: metadataSheet, totalNft: totalNftSheet } = wb.Sheets
+
+        const totalNft = getTotalNft(totalNftSheet)
+        const traits = getTraits(traitsSheet)
+        const metadata = getMetadata(metadataSheet, traits, totalNft)
+        // console.log(traits);
+        // console.log(traits);
+        console.log(metadata)
+      }
+      reader.readAsBinaryString(file)
+    }
+  }
 
   const handleImageOnChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
