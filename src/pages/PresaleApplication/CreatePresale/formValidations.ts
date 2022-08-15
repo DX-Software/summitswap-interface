@@ -174,15 +174,7 @@ export const validateProjectDetails = (values: ProjectDetails) => {
     errors.projectName = 'Required*'
   }
 
-  if (!values.websiteUrl) {
-    errors.websiteUrl = 'Required*'
-  } else if (!checkUrl(values.websiteUrl)) {
-    errors.websiteUrl = 'Not a valid Url'
-  }
-
-  if (!values.twitterId) {
-    errors.twitterId = 'Required*'
-  } else if (!checkUrl(values.twitterId)) {
+  if (values.twitterId && !checkUrl(values.twitterId)) {
     errors.twitterId = 'Not a valid Url'
   }
 
@@ -202,15 +194,11 @@ export const validateProjectDetails = (values: ProjectDetails) => {
     errors.logoUrl = 'Enter valid url logo'
   }
 
-  if (!values.discordId) {
-    errors.discordId = 'Required*'
-  } else if (!checkUrl(values.discordId)) {
+  if (values.discordId && !checkUrl(values.discordId)) {
     errors.discordId = 'Not a valid Url'
   }
 
-  if (!values.email) {
-    errors.email = 'Required*'
-  } else if (!checkEmail(values.email)) {
+  if (values.email && !checkEmail(values.email)) {
     errors.email = 'Not a valid Email'
   }
 

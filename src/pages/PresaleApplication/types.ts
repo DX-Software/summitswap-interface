@@ -36,7 +36,6 @@ export enum FieldNames {
   claimIntervalDay = 'claimIntervalDay',
   claimIntervalHour = 'claimIntervalHour',
   projectName = 'projectName',
-  websiteUrl = 'websiteUrl',
   logoUrl = 'logoUrl',
   contactName = 'contactName',
   contactPosition = 'contactPosition',
@@ -44,7 +43,6 @@ export enum FieldNames {
   discordId = 'discordId',
   twitterId ='twitterId',
   email = 'email',
-  description = 'description',
   isVestingEnabled = 'isVestingEnabled',
   logoHeight = 'logoHeight',
   logoWidth = 'logoWidth',
@@ -58,7 +56,6 @@ export enum FieldNames {
 
 export interface ProjectDetails {
   [FieldNames.projectName]?: string
-  [FieldNames.websiteUrl]?: string
   [FieldNames.logoUrl]?: string
   [FieldNames.contactName]?: string
   [FieldNames.contactPosition]?: string
@@ -66,7 +63,6 @@ export interface ProjectDetails {
   [FieldNames.discordId]?: string
   [FieldNames.twitterId]?: string
   [FieldNames.email]?: string
-  [FieldNames.description]?: string
   [FieldNames.logoHeight]?: number
   [FieldNames.logoWidth]?: number
 }

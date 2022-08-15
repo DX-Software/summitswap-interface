@@ -5,9 +5,9 @@ import { useWeb3React } from '@web3-react/core'
 import styled from 'styled-components'
 import { useFormik, FormikProps } from 'formik'
 import { Token } from '@koda-finance/summitswap-sdk'
-import { useTokenContract } from 'hooks/useContract'
+import { useFactoryPresaleContract, useTokenContract } from 'hooks/useContract'
 import { Flex, Box, Radio, Text } from '@koda-finance/summitswap-uikit'
-import { RADIO_VALUES, TOKEN_CHOICES } from 'constants/presale'
+import { RADIO_VALUES, TOKEN_CHOICES, PRESALE_FACTORY_ADDRESS } from 'constants/presale'
 import steps from './steps-data'
 import CreationStep01 from './CreationStep01'
 import CreationStep02 from './CreationStep02'
@@ -15,8 +15,8 @@ import CreationStep03 from './CreationStep03'
 import CreationStep04 from './CreationStep04'
 import CreationStep05 from './CreationStep05'
 import CreationStep06, { Divider } from './CreationStep06'
-import { validatePresaleDetails } from './formValidations'
-import { PresaleDetails, FieldNames } from '../types'
+import { validatePresaleDetails, validateProjectDetails } from './formValidations'
+import { PresaleDetails, ProjectDetails, FieldNames } from '../types'
 
 const StepsWrapper = styled(Box)`
   width: 522px;
@@ -57,12 +57,14 @@ const StyledRadio = styled(Radio)<{ completed: boolean }>`
 const CreatePresale = () => {
   const { account } = useWeb3React()
 
-  const [selectedToken, setSelectedToken] = useState<Token>()
   const [stepNumber, setStepNumber] = useState(0)
-  const [accountBalance, setAccountBalance] = useState<BigNumber>()
   const [currency, setCurrency] = useState('BNB')
+  const [isLoading, setIsLoading] = useState(false)
+  const [selectedToken, setSelectedToken] = useState<Token>()
+  const [accountBalance, setAccountBalance] = useState<BigNumber>()
 
   const tokenContract = useTokenContract(selectedToken?.address, true)
+  const factoryContract = useFactoryPresaleContract(PRESALE_FACTORY_ADDRESS)
 
   useEffect(() => {
     async function fetchBalance() {
@@ -101,6 +103,22 @@ const CreatePresale = () => {
       [FieldNames.isVestingEnabled]: RADIO_VALUES.VESTING_DISABLED,
     } as PresaleDetails,
     validate: validatePresaleDetails,
+    // eslint-disable-next-line
+    onSubmit: () => {},
+  })
+
+  const formikProject: FormikProps<ProjectDetails> = useFormik({
+    initialValues: {
+      [FieldNames.projectName]: '',
+      [FieldNames.logoUrl]: '',
+      [FieldNames.contactName]: '',
+      [FieldNames.contactPosition]: '',
+      [FieldNames.telegramId]: '',
+      [FieldNames.discordId]: '',
+      [FieldNames.twitterId]: '',
+      [FieldNames.email]: '',
+    } as ProjectDetails,
+    validate: validateProjectDetails,
     // eslint-disable-next-line
     onSubmit: () => {},
   })
@@ -150,7 +168,13 @@ const CreatePresale = () => {
       case 3:
         return <CreationStep04 formik={formikPresale} changeStepNumber={changeStepNumber} />
       case 4:
-        return <CreationStep05 formikPresale={formikPresale} changeStepNumber={changeStepNumber} />
+        return (
+          <CreationStep05
+            formikProject={formikProject}
+            formikPresale={formikPresale}
+            changeStepNumber={changeStepNumber}
+          />
+        )
       case 5:
         return <CreationStep06 currency={currency} changeStepNumber={changeStepNumber} />
       default:
