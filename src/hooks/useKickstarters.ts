@@ -3,6 +3,21 @@ import { gql } from 'graphql-request'
 import { useEffect, useState } from 'react'
 import { kickstarterClient } from 'utils/graphql'
 
+export enum OrderBy {
+  TITLE = "title",
+  CREATOR = "creator",
+  TOTAL_CONTRIBUTION = "totalContribution",
+  PROJECT_GOALS = "projectGoals",
+  START_TIMESTAMP = "startTimestamp",
+  END_TIMESTAMP = "endTimestamp",
+  CREATED_AT = "createdAt",
+}
+
+export enum OrderDirection {
+  ASC = "asc",
+  DESC = "desc",
+}
+
 export type Kickstarter = {
   id: string
   owner: {
@@ -23,11 +38,8 @@ export type Kickstarter = {
 }
 
 const KICKSTARTERS = gql`
-  query kickstarters($first: Int!, $startTimestamp: BigInt!, $endTimestamp: BigInt!) {
-    kickstarters(
-      first: $first,
-      where: { endTimestamp_gte: $startTimestamp, endTimestamp_lte: $endTimestamp }
-    ) {
+  query kickstarters($first: Int!, $orderBy: Bytes!, $orderDirection: Bytes!) {
+    kickstarters(first: $first, orderBy: $orderBy, orderDirection: $orderDirection) {
       id
       owner {
         id
@@ -48,7 +60,7 @@ const KICKSTARTERS = gql`
   }
 `
 
-const fetchKickstarters = async (startTimestamp: number, endTimestamp: number, perPage: number): Promise<{ data?: Kickstarter[]; error: boolean }> => {
+const fetchKickstarters = async (orderBy: string, orderDirection: string, perPage: number): Promise<{ data?: Kickstarter[]; error: boolean }> => {
   try {
     const data = await kickstarterClient.request<{
       kickstarters: {
@@ -71,11 +83,9 @@ const fetchKickstarters = async (startTimestamp: number, endTimestamp: number, p
       }[]
     }>(KICKSTARTERS, {
       first: perPage,
-      startTimestamp,
-      endTimestamp,
+      orderBy,
+      orderDirection,
     })
-
-    console.log("data", data)
 
     const kickstarter: Kickstarter[] = data.kickstarters.map((item) => {
       return {
@@ -104,13 +114,13 @@ const fetchKickstarters = async (startTimestamp: number, endTimestamp: number, p
   }
 }
 
-const useKickstarters = (startTimestamp = 0, endTimestamp = 2070517065, perPage = 6): Kickstarter[] | undefined => {
+const useKickstarters = (orderBy = OrderBy.TITLE, orderDirection = OrderDirection.ASC, perPage = 6): Kickstarter[] | undefined => {
   const [kickstarters, setKickstarters] = useState<Kickstarter[]>()
   const [isError, setIsError] = useState(false)
 
   useEffect(() => {
     const fetch = async () => {
-      const { error: fetchError, data } = await fetchKickstarters(startTimestamp, endTimestamp, perPage)
+      const { error: fetchError, data } = await fetchKickstarters(orderBy, orderDirection, perPage)
       if (fetchError) {
         setIsError(true)
       } else if (data) {
@@ -120,7 +130,7 @@ const useKickstarters = (startTimestamp = 0, endTimestamp = 2070517065, perPage 
     if (!isError) {
       fetch()
     }
-  }, [startTimestamp, endTimestamp, perPage, isError])
+  }, [orderBy, orderDirection, perPage, isError])
 
   return kickstarters
 }

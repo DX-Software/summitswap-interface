@@ -1,6 +1,7 @@
 import { Flex, Heading, Input, Select, SortIcon } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import { useKickstarterContext } from 'contexts/kickstarter'
+import { OrderDirection } from 'hooks/useKickstarters'
 import React from 'react'
 import { isDesktop } from 'react-device-detect'
 import ProjectCard from './ProjectCard'
@@ -9,15 +10,21 @@ import ProjectDetails from './ProjectDetails'
 import ProductLoadingSection from './shared/ProductLoadingSection'
 
 function BrowseProject() {
-  const { almostEndedKickstarters, kickstarters, browseProjectAddress, handleBrowseProjectChanged } = useKickstarterContext()
+  const {
+    almostEndedKickstarters,
+    kickstarters,
+    browseProjectAddress,
+    handleBrowseProjectChanged,
+    handleKickstarterOrderDirectionChanged,
+  } = useKickstarterContext()
   const sortOptions = [
     {
-      label: 'Default',
-      value: 'default',
+      label: 'Title Asc',
+      value: OrderDirection.ASC,
     },
     {
-      label: 'Name',
-      value: 'name',
+      label: 'Title Desc',
+      value: OrderDirection.DESC,
     },
   ]
 
@@ -75,8 +82,9 @@ function BrowseProject() {
         />
         <Select
           startIcon={<SortIcon color="text" />}
+          onValueChanged={(value) => handleKickstarterOrderDirectionChanged(value as OrderDirection)}
           options={sortOptions}
-          minWidth="150px"
+          minWidth="165px"
         />
       </Flex>
       <Grid container spacing={2}>

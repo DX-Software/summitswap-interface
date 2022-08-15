@@ -1,7 +1,8 @@
 import { useWalletModal } from "@koda-finance/summitswap-uikit"
 import { useWeb3React } from "@web3-react/core"
 import useBackedKickstarter, { BackedKickstarter } from "hooks/useBackedKickstarter"
-import useKickstarters, { Kickstarter } from "hooks/useKickstarters"
+import useKickstarters, { Kickstarter, OrderBy, OrderDirection } from "hooks/useKickstarters"
+import useKickstartersByTime from "hooks/useKickstartersByTime"
 import React, { createContext, useCallback, useContext, useState } from "react"
 import login from "utils/login"
 
@@ -18,6 +19,8 @@ type KickstarterContextProps = {
 
   browseProjectAddress?: string
   handleBrowseProjectChanged: (address?: string) => void
+
+  handleKickstarterOrderDirectionChanged: (orderDirection: OrderDirection) => void
 };
 
 
@@ -26,7 +29,9 @@ const KickstarterContext = createContext<KickstarterContextProps>({
   onPresentConnectModal: () => null,
 
   handleBackedProjectChanged: (newAddress?: string) => null,
-  handleBrowseProjectChanged: (newAddress?: string) => null
+  handleBrowseProjectChanged: (newAddress?: string) => null,
+
+  handleKickstarterOrderDirectionChanged: (orderDirection: OrderDirection) => null
 });
 
 export function KickstarterProvider({ children }: { children: React.ReactNode }) {
@@ -34,8 +39,10 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
   const ONE_WEEK_IN_SECONDS = 60 * 60 * 24 * 7
 
   const { account, activate, deactivate } = useWeb3React()
-  const almostEndedKickstarters = useKickstarters(currentTimestamp, currentTimestamp + ONE_WEEK_IN_SECONDS, 3)
-  const kickstarters = useKickstarters()
+  const [kickstarterOrderDirection, setKickstarterOrderDirection] = useState<OrderDirection>(OrderDirection.ASC)
+
+  const almostEndedKickstarters = useKickstartersByTime(currentTimestamp, currentTimestamp + ONE_WEEK_IN_SECONDS, 3)
+  const kickstarters = useKickstarters(OrderBy.TITLE, kickstarterOrderDirection)
   const backedProjects = useBackedKickstarter(account)
   const [backedProjectAddress, setBackedProjectAddress] = useState<string | undefined>()
   const [browseProjectAddress, setBrowseProjectAddress] = useState<string | undefined>()
@@ -57,6 +64,10 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
     setBrowseProjectAddress(newAddress)
   }
 
+  const handleKickstarterOrderDirectionChanged = (newOrderDirection: OrderDirection) => {
+    setKickstarterOrderDirection(newOrderDirection)
+  }
+
   return (
     <KickstarterContext.Provider
       // eslint-disable-next-line react/jsx-no-constructed-context-values
@@ -73,6 +84,8 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
 
         browseProjectAddress,
         handleBrowseProjectChanged,
+
+        handleKickstarterOrderDirectionChanged,
       }}
     >
       {children}

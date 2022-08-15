@@ -10,11 +10,6 @@ export enum Tabs {
   BACKED_PROJECT = "backed_project",
 }
 
-export enum SortBy {
-  NAME_ASC = "name_asc",
-  NAME_DESC = "name_desc",
-}
-
 export type NavItem = {
   label: string
   code: Tabs
