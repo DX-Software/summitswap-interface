@@ -27,6 +27,13 @@ const GridContainer = styled(Grid)`
   }
 `
 
+const ContainerToken = styled(GridContainer)`
+  @media (max-width: 600px) {
+    grid-template-columns: 60px auto;
+    grid-column-gap: 12px;
+  }
+`
+
 const ContainerInformation = styled(GridContainer)`
   grid-template-columns: 170px auto;
   @media (max-width: 600px) {
@@ -49,6 +56,11 @@ const StyledImage = styled.img`
   width: 150px;
   border-radius: 8px;
   grid-area: icon;
+  align-self: center;
+  @media (max-width: 600px) {
+    max-height: 60px;
+    max-width: 60px;
+  }
 `
 
 export const Divider = styled.div`
@@ -83,7 +95,7 @@ const TextAddress = styled(StyledText)`
 `
 
 const TextAddressHeading = styled(StyledText)`
-  width: 160px;
+  width: 184px;
   @media (max-width: 600px) {
     width: 130px;
   }
@@ -136,7 +148,7 @@ const CreationStep06 = ({ selectedToken, formikPresale, formikProject, currency,
       <Heading size="lg" color="success">
         Token Information
       </Heading>
-      <GridContainer marginTop="16px" marginBottom="45px">
+      <ContainerToken marginTop="16px" marginBottom="45px">
         <StyledImage src={formikProject.values.logoUrl} alt="presale-icon" />
         <StyledGridItem1>
           <AddressBox marginTop="20px">
@@ -167,7 +179,7 @@ const CreationStep06 = ({ selectedToken, formikPresale, formikProject, currency,
             <StyledText bold>{currency}</StyledText>
           </GridContainer>
         </GridItem2>
-      </GridContainer>
+      </ContainerToken>
       <Divider style={{ width: '100%' }} />
       <Heading marginTop="24px" size="lg" color="success">
         Presale System
@@ -336,19 +348,19 @@ const CreationStep06 = ({ selectedToken, formikPresale, formikProject, currency,
           </StyledText>
           <ContainerInformation marginTop="4px">
             <StyledText>Telegram ID</StyledText>
-            <StyledText>{formikProject.values.telegramId}</StyledText>
+            <StyledText>{formikProject.values.telegramId || '-'}</StyledText>
           </ContainerInformation>
           <ContainerInformation marginTop="4px">
             <StyledText>Discord ID (optional)</StyledText>
-            <StyledText>{formikProject.values.discordId}</StyledText>
+            <StyledText>{formikProject.values.discordId || '-'}</StyledText>
           </ContainerInformation>
           <ContainerInformation marginTop="4px">
             <StyledText>Twitter ID (optional)</StyledText>
-            <StyledText>{formikProject.values.twitterId}</StyledText>
+            <StyledText>{formikProject.values.twitterId || '-'}</StyledText>
           </ContainerInformation>
           <ContainerInformation marginTop="4px">
             <StyledText>E-mail (optional)</StyledText>
-            <StyledText>{formikProject.values.email}</StyledText>
+            <StyledText>{formikProject.values.email || '-'}</StyledText>
           </ContainerInformation>
         </Box>
       </Box>
