@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Token } from '@koda-finance/summitswap-sdk'
-import { Box, Button, Flex, Heading, Text } from '@koda-finance/summitswap-uikit'
+import { AutoRenewIcon, Box, Button, Flex, Heading, Text } from '@koda-finance/summitswap-uikit'
 import { formatUnits } from 'ethers/lib/utils'
 import { FormikProps } from 'formik'
 import styled from 'styled-components'
@@ -12,6 +12,7 @@ import { PresaleDetails, ProjectDetails } from '../types'
 
 interface Props {
   currency: string
+  isLoading: boolean
   selectedToken: Token | undefined
   formikPresale: FormikProps<PresaleDetails>
   formikProject: FormikProps<ProjectDetails>
@@ -114,7 +115,20 @@ const AddressBox = styled(Flex)`
   }
 `
 
-const CreationStep06 = ({ selectedToken, formikPresale, formikProject, currency, changeStepNumber }: Props) => {
+export const getUtcDate = (date: string, time: string) => {
+  const date2 = new Date(date)
+  const [hours, mins] = time.split(':')
+  return new Date(Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate(), Number(hours), Number(mins)))
+}
+
+const CreationStep06 = ({
+  isLoading,
+  selectedToken,
+  formikPresale,
+  formikProject,
+  currency,
+  changeStepNumber,
+}: Props) => {
   const [tokenTotalSupply, setTokenTotalSupply] = useState<string>()
 
   const tokenContract = useTokenContract(selectedToken?.address, true)
@@ -144,11 +158,10 @@ const CreationStep06 = ({ selectedToken, formikPresale, formikProject, currency,
     return Object.keys(TOKEN_CHOICES).find((key) => TOKEN_CHOICES[key] === formikPresale.values.listingToken)
   }
 
-  const getUtcDate = useCallback((date: string, time: string) => {
-    const date2 = new Date(date)
-    const [hours, mins] = time.split(':')
-    return new Date(Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate(), Number(hours), Number(mins)))
-  }, [])
+  const handleFormSubmit = () => {
+    formikPresale.handleSubmit()
+    formikProject.handleSubmit()
+  }
 
   return (
     <>
@@ -378,16 +391,29 @@ const CreationStep06 = ({ selectedToken, formikPresale, formikProject, currency,
         <Button variant="secondary" onClick={() => changeStepNumber(1)}>
           Previous Step
         </Button>
-        {/* {formik.errors.tokenAmount ? (
+        {formikPresale.errors.tokenAmount ? (
           <Text bold marginY="20px" color="failure">
-            {formik.errors.tokenAmount}
+            {formikPresale.errors.tokenAmount}
           </Text>
         ) : (
           <Text bold marginY="20px" color="success">
-            {formik.values.tokenAmount ? `${formik.values.tokenAmount.toFixed(2)} Presale Tokens` : ''}
+            {formikPresale.values.tokenAmount ? `${formikPresale.values.tokenAmount.toFixed(2)} Presale Tokens` : ''}
           </Text>
-        )} */}
-        <Button onClick={() => changeStepNumber(3)}>Continue</Button>
+        )}
+        <Button
+          disabled={
+            !selectedToken ||
+            isLoading ||
+            !formikPresale.isValid ||
+            !formikPresale.isValid ||
+            !formikProject.touched.projectName
+          }
+          endIcon={isLoading && <AutoRenewIcon spin color="currentColor" />}
+          type="button"
+          onClick={handleFormSubmit}
+        >
+          Create
+        </Button>
       </ButtonsWrapper>
     </>
   )

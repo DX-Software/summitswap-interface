@@ -17,8 +17,10 @@ export const PUBLIC_SALE: Option = { label: 'Public', value: 'Public' }
 export const NO_FILTER: Option = { value: 'NO_FILTER', label: 'No Filter' }
 export const FILTER_OWNER: Option = { value: 'OWNER', label: 'Owner' }
 
-export const FEE_BNB_ONLY = 5 // 5%
-export const FEE_BNB_N_TOKEN = 2 // 2%
+export const FEE_PAYMENT_TOKEN = 2 // 2%
+export const FEE_PRESALE_TOKEN = 2 // 2%
+export const FEE_EMERGENCY_WITHDRAW = 10 // 2%
+
 export const FEE_DECIMALS = 9
 
 export const PRESALE_CARDS_PER_PAGE = 6

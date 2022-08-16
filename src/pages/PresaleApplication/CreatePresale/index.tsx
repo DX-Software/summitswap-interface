@@ -1,20 +1,29 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { BigNumber } from 'ethers'
-import { formatUnits } from 'ethers/lib/utils'
+import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { useWeb3React } from '@web3-react/core'
 import styled from 'styled-components'
 import { useFormik, FormikProps } from 'formik'
 import { Token } from '@koda-finance/summitswap-sdk'
 import { useFactoryPresaleContract, useTokenContract } from 'hooks/useContract'
 import { Flex, Box, Radio, Text } from '@koda-finance/summitswap-uikit'
-import { RADIO_VALUES, TOKEN_CHOICES, PRESALE_FACTORY_ADDRESS } from 'constants/presale'
+import {
+  RADIO_VALUES,
+  TOKEN_CHOICES,
+  PRESALE_FACTORY_ADDRESS,
+  FEE_DECIMALS,
+  FEE_PAYMENT_TOKEN,
+  FEE_PRESALE_TOKEN,
+  FEE_EMERGENCY_WITHDRAW,
+} from 'constants/presale'
+import { ROUTER_ADDRESS, PANCAKESWAP_ROUTER_V2_ADDRESS } from '../../../constants'
 import steps from './steps-data'
 import CreationStep01 from './CreationStep01'
 import CreationStep02 from './CreationStep02'
 import CreationStep03 from './CreationStep03'
 import CreationStep04 from './CreationStep04'
 import CreationStep05 from './CreationStep05'
-import CreationStep06, { Divider } from './CreationStep06'
+import CreationStep06, { Divider, getUtcDate } from './CreationStep06'
 import { validatePresaleDetails, validateProjectDetails } from './formValidations'
 import { PresaleDetails, ProjectDetails, FieldNames } from '../types'
 
@@ -55,8 +64,10 @@ const StyledRadio = styled(Radio)<{ completed: boolean }>`
   }
 `
 const CreatePresale = () => {
-  const { account } = useWeb3React()
+  const { account, library } = useWeb3React()
 
+  const [isLoading, setIsLoading] = useState(false)
+  const [presaleAddress, setPresaleAddress] = useState('')
   const [stepNumber, setStepNumber] = useState(0)
   const [currency, setCurrency] = useState('BNB')
   const [selectedToken, setSelectedToken] = useState<Token>()
@@ -118,8 +129,89 @@ const CreatePresale = () => {
       [FieldNames.email]: '',
     } as ProjectDetails,
     validate: validateProjectDetails,
-    // eslint-disable-next-line
-    onSubmit: () => {},
+    onSubmit: async (valuesProject: ProjectDetails) => {
+      const values = { ...valuesProject, ...formikPresale.values }
+      if (!factoryContract || !selectedToken || !formikPresale.isValid) {
+        return
+      }
+
+      setIsLoading(true)
+      try {
+        const receipt = await factoryContract.createPresale(
+          [
+            values.logoUrl,
+            values.projectName,
+            values.contactName,
+            values.contactPosition,
+            values.email,
+            values.telegramId,
+            values.discordId,
+            values.telegramId,
+          ],
+          {
+            presaleToken: selectedToken.address,
+            router0: ROUTER_ADDRESS,
+            router1: PANCAKESWAP_ROUTER_V2_ADDRESS,
+            listingToken: values.listingToken,
+            presalePrice: parseUnits((values.presaleRate || 0).toString(), 18),
+            listingPrice: parseUnits((values.listingRate || 0).toString(), 18),
+            liquidityLockTime: (values.liquidyLockTimeInMins || 0) * 60,
+            minBuy: parseUnits((values.minBuy || 0).toString(), 18),
+            maxBuy: parseUnits((values.maxBuy || 0).toString(), 18),
+            softCap: parseUnits((values.softcap || 0).toString(), 18),
+            hardCap: parseUnits((values.hardcap || 0).toString(), 18),
+            liquidityPercentage: BigNumber.from(values.liquidity)
+              .mul(10 ** FEE_DECIMALS)
+              .div(100),
+            startPresaleTime: getUtcDate(values.startPresaleDate || '', values.startPresaleTime || '').getTime() / 1000,
+            endPresaleTime: getUtcDate(values.endPresaleDate || '', values.endPresaleTime || '').getTime() / 1000,
+            claimIntervalDay: `${values.isVestingEnabled}` === 'true' ? values.claimIntervalDay : 15,
+            claimIntervalHour: `${values.isVestingEnabled}` === 'true' ? values.claimIntervalHour : 0,
+            totalBought: '0',
+            maxClaimPercentage:
+              `${values.isVestingEnabled}` === 'true'
+                ? BigNumber.from(values.maxClaimPercentage)
+                    .mul(10 ** FEE_DECIMALS)
+                    .div(100)
+                : BigNumber.from(1).mul(10 ** FEE_DECIMALS),
+            refundType: values.refundType,
+            listingChoice: values.listingChoice,
+            isWhiteListPhase: `${values.isWhitelistEnabled}` === 'true',
+            isClaimPhase: false,
+            isPresaleCancelled: false,
+            isWithdrawCancelledTokens: false,
+            isVestingEnabled: `${values.isVestingEnabled}` === 'true',
+            isApproved: false,
+          },
+          {
+            paymentToken: values.paymentToken,
+            feePaymentToken: BigNumber.from(FEE_PAYMENT_TOKEN)
+              .mul(10 ** FEE_DECIMALS)
+              .div(100),
+            feePresaleToken: BigNumber.from(FEE_PRESALE_TOKEN)
+              .mul(10 ** FEE_DECIMALS)
+              .div(100),
+            feeEmergencyWithdraw: BigNumber.from(FEE_EMERGENCY_WITHDRAW)
+              .mul(10 ** FEE_DECIMALS)
+              .div(100),
+          },
+          parseUnits(`${values.tokenAmount}`, selectedToken.decimals),
+          {
+            value: await factoryContract.preSaleFee(),
+          }
+        )
+
+        await library.waitForTransaction(receipt.hash)
+
+        const tokenPresales: string[] = await factoryContract.getTokenPresales(selectedToken.address)
+        setIsLoading(false)
+        setPresaleAddress(tokenPresales[tokenPresales.length - 1])
+        window.location.href = `/#/presale?address=${tokenPresales[tokenPresales.length - 1]}`
+      } catch (err) {
+        setIsLoading(false)
+        console.error(err)
+      }
+    },
   })
 
   useEffect(() => {
@@ -146,7 +238,6 @@ const CreatePresale = () => {
     }
   }, [formikPresale, selectedToken])
 
-  console.log(formikPresale.values)
   const showStep = () => {
     switch (stepNumber) {
       case 0:
@@ -180,6 +271,7 @@ const CreatePresale = () => {
         return (
           <CreationStep06
             currency={currency}
+            isLoading={isLoading}
             formikProject={formikProject}
             formikPresale={formikPresale}
             selectedToken={selectedToken}
