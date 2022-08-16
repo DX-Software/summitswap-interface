@@ -60,34 +60,77 @@ const KICKSTARTERS = gql`
   }
 `
 
-const fetchKickstarters = async (orderBy: string, orderDirection: string, perPage: number): Promise<{ data?: Kickstarter[]; error: boolean }> => {
-  try {
-    const data = await kickstarterClient.request<{
-      kickstarters: {
-        id: string,
-        owner: {
-          id: string
-        },
-        title: string,
-        creator: string,
-        projectDescription: string,
-        rewardDescription: string,
-        minContribution: string,
-        totalContribution: string,
-        projectGoals: string,
-        rewardDistributionTimestamp: string,
-        hasDistributedRewards: boolean,
-        startTimestamp: string,
-        endTimestamp: string,
-        createdAt: string,
-      }[]
-    }>(KICKSTARTERS, {
-      first: perPage,
-      orderBy,
-      orderDirection,
-    })
+const KICKSTARTERS_BY_TEXT = gql`
+  query kickstarters($text: Bytes!, $first: Int!, $orderBy: Bytes!, $orderDirection: Bytes!) {
+    kickstarterSearch(text: $text, first: $first, orderBy: $orderBy, orderDirection: $orderDirection) {
+      id
+      owner {
+        id
+      }
+      title
+      creator
+      projectDescription
+      rewardDescription
+      minContribution
+      totalContribution
+      projectGoals
+      rewardDistributionTimestamp
+      hasDistributedRewards
+      startTimestamp
+      endTimestamp
+      createdAt
+    }
+  }
+`
 
-    const kickstarter: Kickstarter[] = data.kickstarters.map((item) => {
+const fetchKickstarters = async (searchText: string, orderBy: string, orderDirection: string, perPage: number): Promise<{ data?: Kickstarter[]; error: boolean }> => {
+  try {
+    const subgraphGql = searchText === "" ? KICKSTARTERS : KICKSTARTERS_BY_TEXT
+
+    type Result = {
+      id: string,
+      owner: {
+        id: string
+      },
+      title: string,
+      creator: string,
+      projectDescription: string,
+      rewardDescription: string,
+      minContribution: string,
+      totalContribution: string,
+      projectGoals: string,
+      rewardDistributionTimestamp: string,
+      hasDistributedRewards: boolean,
+      startTimestamp: string,
+      endTimestamp: string,
+      createdAt: string,
+    }
+
+    type KickstarterResult = {
+      kickstarters: Result[]
+    }
+
+    type KickstarterSearchResult = {
+      kickstarterSearch: Result[]
+    }
+
+    let data: Result[];
+    if (searchText === "") {
+      data = (await kickstarterClient.request<KickstarterResult>(subgraphGql, {
+        first: perPage,
+        orderBy,
+        orderDirection,
+      })).kickstarters
+    } else {
+      data = (await kickstarterClient.request<KickstarterSearchResult>(subgraphGql, {
+        text: `'${searchText}'`,
+        first: perPage,
+        orderBy,
+        orderDirection,
+      })).kickstarterSearch
+    }
+
+    const kickstarter: Kickstarter[] = data.map((item) => {
       return {
         id: item.id,
         owner: item.owner,
@@ -114,13 +157,13 @@ const fetchKickstarters = async (orderBy: string, orderDirection: string, perPag
   }
 }
 
-const useKickstarters = (orderBy = OrderBy.TITLE, orderDirection = OrderDirection.ASC, perPage = 6): Kickstarter[] | undefined => {
+const useKickstarters = (searchText = "", orderBy = OrderBy.TITLE, orderDirection = OrderDirection.ASC, perPage = 6): Kickstarter[] | undefined => {
   const [kickstarters, setKickstarters] = useState<Kickstarter[]>()
   const [isError, setIsError] = useState(false)
 
   useEffect(() => {
     const fetch = async () => {
-      const { error: fetchError, data } = await fetchKickstarters(orderBy, orderDirection, perPage)
+      const { error: fetchError, data } = await fetchKickstarters(searchText, orderBy, orderDirection, perPage)
       if (fetchError) {
         setIsError(true)
       } else if (data) {
@@ -130,7 +173,7 @@ const useKickstarters = (orderBy = OrderBy.TITLE, orderDirection = OrderDirectio
     if (!isError) {
       fetch()
     }
-  }, [orderBy, orderDirection, perPage, isError])
+  }, [searchText, orderBy, orderDirection, perPage, isError])
 
   return kickstarters
 }

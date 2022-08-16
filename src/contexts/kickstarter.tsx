@@ -1,6 +1,7 @@
 import { useWalletModal } from "@koda-finance/summitswap-uikit"
 import { useWeb3React } from "@web3-react/core"
 import useBackedKickstarter, { BackedKickstarter } from "hooks/useBackedKickstarter"
+import useDebounce from "hooks/useDebounce"
 import useKickstarters, { Kickstarter, OrderBy, OrderDirection } from "hooks/useKickstarters"
 import useKickstartersByTime from "hooks/useKickstartersByTime"
 import React, { createContext, useCallback, useContext, useState } from "react"
@@ -21,6 +22,7 @@ type KickstarterContextProps = {
   handleBrowseProjectChanged: (address?: string) => void
 
   handleKickstarterOrderDirectionChanged: (orderDirection: OrderDirection) => void
+  handleSearchKickstarterChanged: (search: string) => void
 };
 
 
@@ -31,7 +33,8 @@ const KickstarterContext = createContext<KickstarterContextProps>({
   handleBackedProjectChanged: (newAddress?: string) => null,
   handleBrowseProjectChanged: (newAddress?: string) => null,
 
-  handleKickstarterOrderDirectionChanged: (orderDirection: OrderDirection) => null
+  handleKickstarterOrderDirectionChanged: (orderDirection: OrderDirection) => null,
+  handleSearchKickstarterChanged: (search: string) => null
 });
 
 export function KickstarterProvider({ children }: { children: React.ReactNode }) {
@@ -40,9 +43,11 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
 
   const { account, activate, deactivate } = useWeb3React()
   const [kickstarterOrderDirection, setKickstarterOrderDirection] = useState<OrderDirection>(OrderDirection.ASC)
+  const [searchKickstarter, setSearchKickstarter] = useState<string | undefined>()
+  const searchValue = useDebounce(searchKickstarter || "", 1000)
 
   const almostEndedKickstarters = useKickstartersByTime(currentTimestamp, currentTimestamp + ONE_WEEK_IN_SECONDS, 3)
-  const kickstarters = useKickstarters(OrderBy.TITLE, kickstarterOrderDirection)
+  const kickstarters = useKickstarters(searchValue, OrderBy.TITLE, kickstarterOrderDirection)
   const backedProjects = useBackedKickstarter(account)
   const [backedProjectAddress, setBackedProjectAddress] = useState<string | undefined>()
   const [browseProjectAddress, setBrowseProjectAddress] = useState<string | undefined>()
@@ -68,6 +73,10 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
     setKickstarterOrderDirection(newOrderDirection)
   }
 
+  const handleSearchKickstarterChanged = (newSearchValue: string) => {
+    setSearchKickstarter(newSearchValue)
+  }
+
   return (
     <KickstarterContext.Provider
       // eslint-disable-next-line react/jsx-no-constructed-context-values
@@ -86,6 +95,7 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
         handleBrowseProjectChanged,
 
         handleKickstarterOrderDirectionChanged,
+        handleSearchKickstarterChanged,
       }}
     >
       {children}

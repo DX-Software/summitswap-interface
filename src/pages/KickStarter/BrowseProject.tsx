@@ -1,4 +1,4 @@
-import { Flex, Heading, Input, Select, SortIcon } from '@koda-finance/summitswap-uikit'
+import { Flex, Heading, Input, SearchIcon, Select, SortIcon, Text } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import { useKickstarterContext } from 'contexts/kickstarter'
 import { OrderDirection } from 'hooks/useKickstarters'
@@ -16,6 +16,7 @@ function BrowseProject() {
     browseProjectAddress,
     handleBrowseProjectChanged,
     handleKickstarterOrderDirectionChanged,
+    handleSearchKickstarterChanged,
   } = useKickstarterContext()
   const sortOptions = [
     {
@@ -47,30 +48,30 @@ function BrowseProject() {
             {!almostEndedKickstarters && (
               <ProductLoadingSection />
             )}
-              {almostEndedKickstarters && almostEndedKickstarters.map((kickstarter) => (
-                <Grid item xs={12} sm={6} lg={4}>
-                  {isDesktop ? (
-                    <ProjectCard
-                      title={kickstarter.title}
-                      creator={kickstarter.creator}
-                      projectGoals={kickstarter.projectGoals}
-                      totalContribution={kickstarter.totalContribution}
-                      endTimestamp={kickstarter.endTimestamp}
-                      onClick={() => handleBrowseProjectChanged(kickstarter.id)}
-                    />
-                  ) : (
-                    <ProjectCardMobile
-                      title={kickstarter.title}
-                      creator={kickstarter.creator}
-                      projectGoals={kickstarter.projectGoals}
-                      totalContribution={kickstarter.totalContribution}
-                      endTimestamp={kickstarter.endTimestamp}
-                      showStatus
-                      onClick={() => handleBrowseProjectChanged(kickstarter.id)}
-                    />
-                  )}
-                </Grid>
-              ))}
+            {almostEndedKickstarters && almostEndedKickstarters.map((kickstarter) => (
+              <Grid item xs={12} sm={6} lg={4}>
+                {isDesktop ? (
+                  <ProjectCard
+                    title={kickstarter.title}
+                    creator={kickstarter.creator}
+                    projectGoals={kickstarter.projectGoals}
+                    totalContribution={kickstarter.totalContribution}
+                    endTimestamp={kickstarter.endTimestamp}
+                    onClick={() => handleBrowseProjectChanged(kickstarter.id)}
+                  />
+                ) : (
+                  <ProjectCardMobile
+                    title={kickstarter.title}
+                    creator={kickstarter.creator}
+                    projectGoals={kickstarter.projectGoals}
+                    totalContribution={kickstarter.totalContribution}
+                    endTimestamp={kickstarter.endTimestamp}
+                    showStatus
+                    onClick={() => handleBrowseProjectChanged(kickstarter.id)}
+                  />
+                )}
+              </Grid>
+            ))}
           </Grid>
         </>
       )}
@@ -78,7 +79,8 @@ function BrowseProject() {
       <Flex style={{ columnGap: "12px" }} marginBottom="24px">
         <Input
           type="search"
-          placeholder="Search project by name or creator name"
+          placeholder="Search project by title or creator name"
+          onChange={(e) => handleSearchKickstarterChanged(e.target.value)}
         />
         <Select
           startIcon={<SortIcon color="text" />}
@@ -90,6 +92,14 @@ function BrowseProject() {
       <Grid container spacing={2}>
         {!kickstarters && (
           <ProductLoadingSection />
+        )}
+        {kickstarters && kickstarters.length === 0 && (
+          <Grid item xs={12} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", paddingTop: "48px" }}>
+            <SearchIcon color="backgroundDisabled" width="120px" />
+            <Text textAlign="center" color="textDisabled">
+              Search Not Found
+            </Text>
+          </Grid>
         )}
         {kickstarters && kickstarters.map((kickstarter) => (
           <Grid item xs={12} sm={6} lg={4}>
