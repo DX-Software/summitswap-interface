@@ -78,6 +78,13 @@ const StyledText = styled(Text)`
   }
 `
 
+const SectionHeading = styled(Heading)`
+  font-size: 24px;
+  @media (max-width: 600px) {
+    font-size: 20px;
+  }
+`
+
 const TextAddress = styled(StyledText)`
   max-width: 100%;
   @media (max-width: 1080px) {
@@ -145,9 +152,7 @@ const CreationStep06 = ({ selectedToken, formikPresale, formikProject, currency,
 
   return (
     <>
-      <Heading size="lg" color="success">
-        Token Information
-      </Heading>
+      <SectionHeading color="success">Token Information</SectionHeading>
       <ContainerToken marginTop="16px" marginBottom="45px">
         <StyledImage src={formikProject.values.logoUrl} alt="presale-icon" />
         <StyledGridItem1>
@@ -181,9 +186,9 @@ const CreationStep06 = ({ selectedToken, formikPresale, formikProject, currency,
         </GridItem2>
       </ContainerToken>
       <Divider style={{ width: '100%' }} />
-      <Heading marginTop="24px" size="lg" color="success">
+      <SectionHeading marginTop="24px" color="success">
         Presale System
-      </Heading>
+      </SectionHeading>
       <Flex justifyContent="space-between" flexWrap="wrap">
         <Box marginTop="16px" marginRight="20px">
           <Box>
@@ -322,9 +327,9 @@ const CreationStep06 = ({ selectedToken, formikPresale, formikProject, currency,
         </GridContainer>
       </Box>
       <Divider style={{ width: '100%' }} />
-      <Heading marginTop="24px" size="lg" color="success">
+      <SectionHeading marginTop="24px" color="success">
         Additional Information
-      </Heading>
+      </SectionHeading>
       <Box>
         <Box marginTop="16px">
           <StyledText bold color="primaryDark">
