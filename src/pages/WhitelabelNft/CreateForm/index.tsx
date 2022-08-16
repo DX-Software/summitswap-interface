@@ -1,9 +1,22 @@
-import { Button, Flex } from '@koda-finance/summitswap-uikit'
+import { Button, Flex, Image, Input, Text } from '@koda-finance/summitswap-uikit'
+import { Grid } from '@mui/material'
 import { FormikProps, FormikProvider, useFormik } from 'formik'
 import React, { useCallback, useState } from 'react'
 import { convertFileToBase64 } from 'utils/convertFileToBase64'
 import parseMetadata from '../spreadsheet'
 import DragAndDrop from './DragAndDrop'
+
+const NftCardPreview = ({ nftMetadata }: { nftMetadata: MetadataJson }) => {
+  return (
+    <Flex>
+      <Image src={nftMetadata.image} width={100} height={100} />
+      <Flex flexDirection="column">
+        <Text>Name: {nftMetadata.name}</Text>
+        <Text>Description: {nftMetadata.description}</Text>
+      </Flex>
+    </Flex>
+  )
+}
 
 export default function CreateWhitelabelNftForm() {
   const [nftImages, setNftImages] = useState<NftImage[]>([])
@@ -49,23 +62,59 @@ export default function CreateWhitelabelNftForm() {
   return (
     <div className="main-content">
       <FormikProvider value={formik}>
-        <Flex flexDirection="column">
-          <Flex justifyContent="space-around">
-            <DragAndDrop name="images" accept="image/*" multiple handleChange={handleImageOnChange}>
-              Drag and Drop your NFT images here
-            </DragAndDrop>
-            <DragAndDrop
-              name="spreadsheet"
-              accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-              handleChange={handleSpreadsheetOnChange}
-            >
-              Upload your metadata spreadsheet here
-            </DragAndDrop>
-          </Flex>
-          <Button marginX="auto" marginTop={3} onClick={handleApply}>
-            Apply
-          </Button>
-        </Flex>
+        <Grid container spacing={2}>
+          <Grid item xs={8}>
+            <Flex flexDirection="column">
+              <Input name="name" placeholder="Name" onChange={formik.handleChange} style={{ marginBottom: 12 }} />
+              <Input name="symbol" placeholder="Symbol" onChange={formik.handleChange} style={{ marginBottom: 12 }} />
+              <Input
+                name="maxSupply"
+                placeholder="Max Supply"
+                onChange={formik.handleChange}
+                style={{ marginBottom: 12 }}
+              />
+              <Input
+                name="whitelistMintPrice"
+                placeholder="Whitelist Mint Price"
+                onChange={formik.handleChange}
+                style={{ marginBottom: 12 }}
+              />
+              <Input
+                name="publicMintPrice"
+                placeholder="Public Mint Price"
+                onChange={formik.handleChange}
+                style={{ marginBottom: 12 }}
+              />
+              <Input
+                name="signer"
+                placeholder="Signer Address"
+                onChange={formik.handleChange}
+                style={{ marginBottom: 12 }}
+              />
+              <Flex justifyContent="space-between" style={{ marginBottom: 12 }}>
+                <DragAndDrop name="images" accept="image/*" multiple handleChange={handleImageOnChange}>
+                  {nftImages.length > 0 ? `${nftImages.length} images selected` : 'Drag and Drop your NFT images here'}
+                </DragAndDrop>
+                <DragAndDrop
+                  name="spreadsheet"
+                  accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                  handleChange={handleSpreadsheetOnChange}
+                >
+                  {spreadsheet ? 'Spreadsheet selected' : 'Upload your metadata spreadsheet here'}
+                </DragAndDrop>
+              </Flex>
+              <Button marginX="auto" onClick={handleApply}>
+                Apply
+              </Button>
+            </Flex>
+          </Grid>
+          <Grid item xs={4}>
+            <Text>NFT Preview</Text>
+            {nftMetadata.map((nftMetadatum) => (
+              <NftCardPreview nftMetadata={nftMetadatum} />
+            ))}
+          </Grid>
+        </Grid>
       </FormikProvider>
     </div>
   )
