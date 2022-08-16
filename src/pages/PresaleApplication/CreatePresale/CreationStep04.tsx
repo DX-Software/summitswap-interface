@@ -100,15 +100,9 @@ const CreationStep04 = ({ formik, changeStepNumber }: Props) => {
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 name={FieldNames.startPresaleTime}
-                isWarning={formik.touched.startPresaleTime && !!formik.errors.startPresaleTime}
+                isWarning={!!formik.errors.startPresaleTime}
               />
-              <Caption
-                color={formik.touched.startPresaleTime && !!formik.errors.startPresaleTime ? 'failure' : 'textDisabled'}
-              >
-                {formik.touched.startPresaleTime && formik.errors.startPresaleTime
-                  ? formik.errors.startPresaleTime
-                  : ''}
-              </Caption>
+              <Caption color="failure">{formik.errors.startPresaleTime ? formik.errors.startPresaleTime : ''}</Caption>
             </StyledInputWrapper>
           </Flex>
           <Flex flexWrap="wrap">
@@ -143,13 +137,9 @@ const CreationStep04 = ({ formik, changeStepNumber }: Props) => {
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 name={FieldNames.endPresaleTime}
-                isWarning={formik.touched.endPresaleTime && !!formik.errors.endPresaleTime}
+                isWarning={!!formik.errors.endPresaleTime}
               />
-              <Caption
-                color={formik.touched.endPresaleTime && !!formik.errors.endPresaleTime ? 'failure' : 'textDisabled'}
-              >
-                {formik.touched.endPresaleTime && formik.errors.endPresaleTime ? formik.errors.endPresaleTime : ''}
-              </Caption>
+              <Caption color="failure">{formik.errors.endPresaleTime ? formik.errors.endPresaleTime : ''}</Caption>
             </StyledInputWrapper>
           </Flex>
         </GridItem2>
@@ -180,11 +170,7 @@ const CreationStep04 = ({ formik, changeStepNumber }: Props) => {
             id={FieldNames.liquidyLockTimeInMins}
             isWarning={formik.touched.liquidyLockTimeInMins && !!formik.errors.liquidyLockTimeInMins}
           />
-          <Caption
-            color={
-              formik.touched.liquidyLockTimeInMins && !!formik.errors.liquidyLockTimeInMins ? 'failure' : 'textDisabled'
-            }
-          >
+          <Caption color="failure">
             {formik.touched.liquidyLockTimeInMins && formik.errors.liquidyLockTimeInMins
               ? formik.errors.liquidyLockTimeInMins
               : ''}

@@ -176,7 +176,7 @@ const CreationStep02 = ({ formik, changeStepNumber, currency }: Props) => {
                 type="number"
                 isWarning={formik.touched.hardcap && !!formik.errors.hardcap}
               />
-              <Caption color={formik.touched.hardcap && !!formik.errors.hardcap ? 'failure' : 'textDisabled'}>
+              <Caption color="failure">
                 {formik.touched.hardcap && formik.errors.hardcap ? formik.errors.hardcap : ''}
               </Caption>
             </StyledInputWrapper>
@@ -231,7 +231,7 @@ const CreationStep02 = ({ formik, changeStepNumber, currency }: Props) => {
                 type="number"
                 isWarning={formik.touched.maxBuy && !!formik.errors.maxBuy}
               />
-              <Caption color={formik.touched.maxBuy && !!formik.errors.maxBuy ? 'failure' : 'textDisabled'}>
+              <Caption color="failure">
                 {formik.touched.maxBuy && formik.errors.maxBuy ? formik.errors.maxBuy : ''}
               </Caption>
             </StyledInputWrapper>

@@ -300,6 +300,11 @@ const CreationStep06 = ({ selectedToken, formikPresale, formikProject, currency,
               formikPresale.values.startPresaleDate || '',
               formikPresale.values.startPresaleTime || ''
             ).toUTCString()}
+            {formikPresale.errors.startPresaleTime && (
+              <StyledText color="failure" style={{ display: 'inline' }}>
+                &nbsp;({formikPresale.errors.startPresaleTime})
+              </StyledText>
+            )}
           </StyledText>
         </GridContainer>
         <GridContainer marginTop="4px">
