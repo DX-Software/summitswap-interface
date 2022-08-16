@@ -59,7 +59,6 @@ const CreatePresale = () => {
 
   const [stepNumber, setStepNumber] = useState(0)
   const [currency, setCurrency] = useState('BNB')
-  const [isLoading, setIsLoading] = useState(false)
   const [selectedToken, setSelectedToken] = useState<Token>()
   const [accountBalance, setAccountBalance] = useState<BigNumber>()
 
@@ -176,7 +175,15 @@ const CreatePresale = () => {
           />
         )
       case 5:
-        return <CreationStep06 currency={currency} changeStepNumber={changeStepNumber} />
+        return (
+          <CreationStep06
+            currency={currency}
+            formikProject={formikProject}
+            formikPresale={formikPresale}
+            selectedToken={selectedToken}
+            changeStepNumber={changeStepNumber}
+          />
+        )
       default:
         return <></>
     }

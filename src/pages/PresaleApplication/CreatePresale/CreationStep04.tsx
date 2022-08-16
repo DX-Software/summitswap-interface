@@ -303,7 +303,7 @@ const CreationStep04 = ({ formik, changeStepNumber }: Props) => {
           </Text>
         ) : (
           <Text bold marginY="20px" color="success">
-            {formik.values.tokenAmount ? `${formik.values.tokenAmount.toFixed(3)} Presale Tokens` : ''}
+            {formik.values.tokenAmount ? `${formik.values.tokenAmount.toFixed(2)} Presale Tokens` : ''}
           </Text>
         )}
         <Button disabled={!isStepValid} onClick={() => changeStepNumber(4)}>
