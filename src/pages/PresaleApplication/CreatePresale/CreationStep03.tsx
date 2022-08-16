@@ -12,6 +12,7 @@ import {
   RefundIcon,
   RouterIcon,
 } from '@koda-finance/summitswap-uikit'
+import { Token } from '@koda-finance/summitswap-sdk'
 import { FormikProps } from 'formik'
 import { TOKEN_CHOICES, RADIO_VALUES } from 'constants/presale'
 import { RowFixed } from 'components/Row'
@@ -22,6 +23,7 @@ import { Caption, Heading } from '../Texts'
 import { PresaleDetails, FieldNames } from '../types'
 
 interface Props {
+  selectedToken: Token | undefined
   formik: FormikProps<PresaleDetails>
   changeStepNumber: (num: number) => void
 }
@@ -33,7 +35,7 @@ const BoxPairIcon = styled(Box)`
   }
 `
 
-const CreationStep03 = ({ formik, changeStepNumber }: Props) => {
+const CreationStep03 = ({ selectedToken, formik, changeStepNumber }: Props) => {
   const [isStepValid, setIsStepValid] = useState(false)
   useEffect(() => {
     if (!formik.errors.liquidity && !formik.errors.listingRate && !formik.errors.tokenAmount) {
@@ -277,7 +279,8 @@ const CreationStep03 = ({ formik, changeStepNumber }: Props) => {
             <Caption color="textDisabled">
               You will have the pair of&nbsp;
               <Caption bold color="primary">
-                STN-{Object.keys(TOKEN_CHOICES).find((key) => TOKEN_CHOICES[key] === formik.values.listingToken)}&nbsp;
+                {selectedToken?.symbol}-
+                {Object.keys(TOKEN_CHOICES).find((key) => TOKEN_CHOICES[key] === formik.values.listingToken)}&nbsp;
               </Caption>
               in
               <Caption bold color="primary">
