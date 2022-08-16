@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Token } from '@koda-finance/summitswap-sdk'
 import { AutoRenewIcon, Box, Button, Flex, Heading, Text } from '@koda-finance/summitswap-uikit'
 import { formatUnits } from 'ethers/lib/utils'
