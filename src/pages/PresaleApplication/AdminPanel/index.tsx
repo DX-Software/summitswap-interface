@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import styled from 'styled-components'
+import React, { useEffect, useState, useMemo } from 'react'
+import styled, { useTheme } from 'styled-components'
+import { Pagination } from '@mui/material'
 import { useFactoryPresaleContract } from 'hooks/useContract'
-import { PRESALE_FACTORY_ADDRESS } from 'constants/presale'
-import { Box, Text, TabPresale } from '@koda-finance/summitswap-uikit'
+import { PRESALE_FACTORY_ADDRESS, PRESALES_PER_PAGE_ADMIN_PANEL } from 'constants/presale'
+import { Flex, Box, Text, TabPresale, darkColors } from '@koda-finance/summitswap-uikit'
 import HeadingCotainer, { StyledText } from './HeadingContainer'
 import PresaleDetail from './PresaleDetails'
 
@@ -45,7 +46,32 @@ const Heading = styled(Text)`
 
 const AdminPanel = () => {
   const [tabIndex, setTabIndex] = useState(0)
+  const [page, setPage] = useState(1)
   const [pendingPresales, setPendingPresales] = useState<string[]>([])
+
+  const theme = useTheme()
+  const paginationStyle = useMemo(
+    () => ({
+      '& .MuiPaginationItem-root': {
+        color: theme.colors.sidebarActiveColor,
+        background: theme.colors.inputColor,
+      },
+      '& .MuiPaginationItem-ellipsis': {
+        background: 'none',
+      },
+      '& .Mui-selected': {
+        color: theme.colors.sidebarColor,
+        background: `${theme.colors.primary} !important`,
+        fontWeight: '700',
+      },
+      '& .Mui-disabled': {
+        background: darkColors.textDisabled,
+        color: theme.colors.textSubtle,
+        opacity: '1 !important',
+      },
+    }),
+    [theme.colors]
+  )
 
   const factoryContract = useFactoryPresaleContract(PRESALE_FACTORY_ADDRESS)
 
@@ -59,6 +85,14 @@ const AdminPanel = () => {
   }, [factoryContract])
 
   const handleChangeTabIndex = (newIndex: number) => setTabIndex(newIndex)
+  const changePageHandler = (_: React.ChangeEvent<unknown>, value: number) => setPage(value)
+
+  const startIndex = page * PRESALES_PER_PAGE_ADMIN_PANEL - PRESALES_PER_PAGE_ADMIN_PANEL
+  const endIndex =
+    startIndex + PRESALES_PER_PAGE_ADMIN_PANEL > pendingPresales.length
+      ? pendingPresales.length
+      : startIndex + PRESALES_PER_PAGE_ADMIN_PANEL
+  const slicedPresaleAddresses = pendingPresales.slice(startIndex, endIndex)
 
   return (
     <ContentWrapper>
@@ -72,13 +106,23 @@ const AdminPanel = () => {
         <Divider bottomOnly />
         <HeadingCotainer />
         <Divider bottomOnly />
-        {pendingPresales.map((address) => (
-          <>
+        {slicedPresaleAddresses.map((address) => (
+          <Box key={address}>
             <PresaleDetail presaleAddress={address} />
             <Divider />
-          </>
+          </Box>
         ))}
       </Box>
+      <Flex marginTop="24px" justifyContent="end">
+        <Pagination
+          sx={paginationStyle}
+          variant="outlined"
+          shape="rounded"
+          count={Math.ceil(pendingPresales.length / PRESALES_PER_PAGE_ADMIN_PANEL)}
+          page={page}
+          onChange={changePageHandler}
+        />
+      </Flex>
     </ContentWrapper>
   )
 }

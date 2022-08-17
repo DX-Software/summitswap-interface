@@ -25,6 +25,7 @@ export const FEE_DECIMALS = 9
 
 export const PRESALE_CARDS_PER_PAGE = 6
 export const WHITELIST_ADDRESSES_PER_PAGE = 10
+export const PRESALES_PER_PAGE_ADMIN_PANEL = 10
 
 export const WITHDRAW_BNB = 'withdrawBNB'
 export const EMERGENCY_WITHDRAW_BNB = 'emergencyWithdrawBNB'
