@@ -11,7 +11,7 @@ import AdminPanel from './AdminPanel'
 
 export default function PresaleApplication() {
   const { account, activate, deactivate } = useWeb3React()
-  const [buttonIndex, setButtonIndex] = useState(1)
+  const [buttonIndex, setButtonIndex] = useState(0)
   const [accountIsAdmin, setAccountIsAdmin] = useState(false)
 
   const factoryContract = useFactoryPresaleContract(PRESALE_FACTORY_ADDRESS)
