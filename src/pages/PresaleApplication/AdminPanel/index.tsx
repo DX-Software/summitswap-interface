@@ -3,7 +3,8 @@ import styled from 'styled-components'
 import { useFactoryPresaleContract } from 'hooks/useContract'
 import { PRESALE_FACTORY_ADDRESS } from 'constants/presale'
 import { Box, Text, TabPresale } from '@koda-finance/summitswap-uikit'
-import HeadingCotainer from './HeadingContainer'
+import HeadingCotainer, { StyledText } from './HeadingContainer'
+import PresaleDetail from './PresaleDetails'
 
 const ContentWrapper = styled(Box)`
   max-width: 90%;
@@ -15,6 +16,9 @@ const ContentWrapper = styled(Box)`
   }
   -ms-overflow-style: none;
   scrollbar-width: none;
+  @media (max-width: 1250px) {
+    max-width: 95%;
+  }
 `
 
 const Divider = styled.div<{ bottomOnly?: boolean }>`
@@ -61,13 +65,19 @@ const AdminPanel = () => {
       <Box width="950px">
         <Heading>Admin Panel</Heading>
         <TabPresale activeIndex={tabIndex} onItemClick={handleChangeTabIndex}>
-          <Text>Waiting for Approval ({pendingPresales.length})</Text>
-          <Text>Approval History</Text>
-          <Text>Presale Settings</Text>
+          <StyledText>Waiting for Approval ({pendingPresales.length})</StyledText>
+          <StyledText>Approval History</StyledText>
+          <StyledText>Presale Settings</StyledText>
         </TabPresale>
         <Divider bottomOnly />
         <HeadingCotainer />
         <Divider bottomOnly />
+        {pendingPresales.map((address) => (
+          <>
+            <PresaleDetail presaleAddress={address} />
+            <Divider />
+          </>
+        ))}
       </Box>
     </ContentWrapper>
   )
