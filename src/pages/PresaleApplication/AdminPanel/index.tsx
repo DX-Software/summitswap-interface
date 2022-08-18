@@ -55,6 +55,11 @@ const Heading = styled(Text)`
   }
 `
 
+const PaginationWrapper = styled.div`
+  position: fixed;
+  right: 1;
+`
+
 const AdminPanel = () => {
   const [tabIndex, setTabIndex] = useState(0)
   const [page, setPage] = useState(1)
@@ -177,14 +182,16 @@ const AdminPanel = () => {
       </Box>
       {!selectedPresale && tabIndex !== 2 && (
         <Flex marginTop="24px" justifyContent="end">
-          <Pagination
-            sx={paginationStyle}
-            variant="outlined"
-            shape="rounded"
-            count={Math.ceil(pendingPresales.length / PRESALES_PER_PAGE_ADMIN_PANEL)}
-            page={page}
-            onChange={changePageHandler}
-          />
+          <PaginationWrapper>
+            <Pagination
+              sx={paginationStyle}
+              variant="outlined"
+              shape="rounded"
+              count={Math.ceil(pendingPresales.length / PRESALES_PER_PAGE_ADMIN_PANEL)}
+              page={page}
+              onChange={changePageHandler}
+            />
+          </PaginationWrapper>
         </Flex>
       )}
     </ContentWrapper>
