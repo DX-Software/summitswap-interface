@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo, useCallback } from 'react'
 import styled, { useTheme } from 'styled-components'
 import { Pagination } from '@mui/material'
 import { useFactoryPresaleContract } from 'hooks/useContract'
@@ -6,12 +6,12 @@ import { PRESALE_FACTORY_ADDRESS, PRESALES_PER_PAGE_ADMIN_PANEL } from 'constant
 import { Flex, Box, Text, TabPresale, darkColors } from '@koda-finance/summitswap-uikit'
 import HeadingCotainer, { StyledText } from './HeadingContainer'
 import PresaleDetail from './PresaleDetails'
+import PresaleSettings from './PresaleSettings'
 
 const ContentWrapper = styled(Box)`
   max-width: 90%;
   margin: 0 auto;
   margin-top: 24px;
-  overflow: scroll;
   ::-webkit-scrollbar {
     display: none;
   }
@@ -87,6 +87,28 @@ const AdminPanel = () => {
   const handleChangeTabIndex = (newIndex: number) => setTabIndex(newIndex)
   const changePageHandler = (_: React.ChangeEvent<unknown>, value: number) => setPage(value)
 
+  const chooseSection = useCallback((slicedPresaleAddresses: string[], index: number) => {
+    switch (index) {
+      case 0:
+        return (
+          <>
+            <HeadingCotainer />
+            <Divider bottomOnly />
+            {slicedPresaleAddresses.map((address) => (
+              <Box key={address}>
+                <PresaleDetail presaleAddress={address} />
+                <Divider />
+              </Box>
+            ))}
+          </>
+        )
+      case 2:
+        return <PresaleSettings />
+      default:
+        return <></>
+    }
+  }, [])
+
   const startIndex = page * PRESALES_PER_PAGE_ADMIN_PANEL - PRESALES_PER_PAGE_ADMIN_PANEL
   const endIndex =
     startIndex + PRESALES_PER_PAGE_ADMIN_PANEL > pendingPresales.length
@@ -95,7 +117,7 @@ const AdminPanel = () => {
   const slicedPresaleAddresses = pendingPresales.slice(startIndex, endIndex)
 
   return (
-    <ContentWrapper>
+    <ContentWrapper overflow={tabIndex === 2 ? 'visible' : 'scroll'}>
       <Box width="950px">
         <Heading>Admin Panel</Heading>
         <TabPresale activeIndex={tabIndex} onItemClick={handleChangeTabIndex}>
@@ -104,25 +126,20 @@ const AdminPanel = () => {
           <StyledText>Presale Settings</StyledText>
         </TabPresale>
         <Divider bottomOnly />
-        <HeadingCotainer />
-        <Divider bottomOnly />
-        {slicedPresaleAddresses.map((address) => (
-          <Box key={address}>
-            <PresaleDetail presaleAddress={address} />
-            <Divider />
-          </Box>
-        ))}
+        {chooseSection(slicedPresaleAddresses, tabIndex)}
       </Box>
-      <Flex marginTop="24px" justifyContent="end">
-        <Pagination
-          sx={paginationStyle}
-          variant="outlined"
-          shape="rounded"
-          count={Math.ceil(pendingPresales.length / PRESALES_PER_PAGE_ADMIN_PANEL)}
-          page={page}
-          onChange={changePageHandler}
-        />
-      </Flex>
+      {tabIndex !== 2 && (
+        <Flex marginTop="24px" justifyContent="end">
+          <Pagination
+            sx={paginationStyle}
+            variant="outlined"
+            shape="rounded"
+            count={Math.ceil(pendingPresales.length / PRESALES_PER_PAGE_ADMIN_PANEL)}
+            page={page}
+            onChange={changePageHandler}
+          />
+        </Flex>
+      )}
     </ContentWrapper>
   )
 }
