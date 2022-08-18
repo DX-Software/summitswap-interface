@@ -1,5 +1,5 @@
 import { BigNumber, Contract } from 'ethers'
-import { FieldNames, PresaleInfo, PresalePhases, FeeInfo } from '../pages/PresaleApplication/types'
+import { FieldNames, PresaleInfo, PresalePhases, FeeInfo, ProjectDetails } from '../pages/PresaleApplication/types'
 
 export async function fetchPresaleInfo(presaleContract: Contract | null) {
   const owner: string = await presaleContract?.owner()
@@ -58,6 +58,30 @@ export async function fetchFeeInfo(presaleContract: Contract | null) {
   }, {})
   return feeInfo
 }
+
+export async function fetchProjectDetails(presaleContract: Contract | null) {
+  const [
+    logoUrl,
+    projectName,
+    contactName,
+    contactPosition,
+    email,
+    telegramId,
+    discordId,
+    twitterId,
+  ] = await presaleContract?.getProjectsDetails()
+  return {
+    logoUrl,
+    projectName,
+    contactName,
+    contactPosition,
+    email,
+    telegramId,
+    discordId,
+    twitterId,
+  } as ProjectDetails
+}
+
 
 export const checkSalePhase = (presale: PresaleInfo | undefined) => {
   if (presale) {
