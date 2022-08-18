@@ -29,9 +29,10 @@ export type Kickstarter = {
 }
 
 const KICKSTARTERS = gql`
-  query kickstarters($first: Int!, $owner: Bytes!) {
+  query kickstarters($first: Int!, $skip: Int!, $owner: Bytes!) {
     kickstarters(
-      first: $first, orderBy: createdAt, orderDirection: desc,
+      first: $first, skip: $skip,
+      orderBy: createdAt, orderDirection: desc,
       where: { owner: $owner }
     ) {
       id
@@ -54,7 +55,7 @@ const KICKSTARTERS = gql`
   }
 `
 
-const fetchKickstarters = async (account: string, perPage: number): Promise<{ data?: Kickstarter[]; error: boolean }> => {
+const fetchKickstarters = async (account: string, page: number, perPage: number): Promise<{ data?: Kickstarter[]; error: boolean }> => {
   try {
     type Result = {
       id: string,
@@ -80,6 +81,7 @@ const fetchKickstarters = async (account: string, perPage: number): Promise<{ da
     }>(KICKSTARTERS, {
       first: perPage,
       owner: account.toLowerCase(),
+      skip: (page - 1) * perPage,
     })).kickstarters
 
     const kickstarter: Kickstarter[] = data.map((item) => {
@@ -109,13 +111,13 @@ const fetchKickstarters = async (account: string, perPage: number): Promise<{ da
   }
 }
 
-const useKickstarters = (account?: string | null, perPage = PER_PAGE): Kickstarter[] | undefined => {
+const useKickstarters = (account?: string | null, page = 1, perPage = PER_PAGE): Kickstarter[] | undefined => {
   const [kickstarters, setKickstarters] = useState<Kickstarter[]>()
   const [isError, setIsError] = useState(false)
 
   useEffect(() => {
     const fetch = async () => {
-      const { error: fetchError, data } = await fetchKickstarters(account || "", perPage)
+      const { error: fetchError, data } = await fetchKickstarters(account || "", page, perPage)
       if (fetchError) {
         setIsError(true)
       } else if (data) {
@@ -125,7 +127,7 @@ const useKickstarters = (account?: string | null, perPage = PER_PAGE): Kickstart
     if (!isError) {
       fetch()
     }
-  }, [account, perPage, isError])
+  }, [account, page, perPage, isError])
 
   return kickstarters
 }

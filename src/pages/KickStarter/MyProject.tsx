@@ -1,8 +1,11 @@
-import { AddIcon, Button, Flex, Heading, Text, useWalletModal, WalletIcon } from '@koda-finance/summitswap-uikit'
+import { AddIcon, ArrowBackIcon, ArrowForwardIcon, Button, Flex, Heading, Text, useWalletModal, WalletIcon } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import BigNumber from 'bignumber.js'
+import { Arrow, PageButtons } from 'components/InfoTables/shared'
+import { PER_PAGE } from 'constants/kickstarter'
 import { useKickstarterContext } from 'contexts/kickstarter'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import CreateProject from './CreateProject'
 import ProjectCard from './ProjectCard'
 import ProjectDetails from './ProjectDetails'
@@ -27,12 +30,22 @@ function MyProject({
   projectCreation,
   handleOnProjectCreationChanged,
 }: Props) {
-  const { account, myKickstarters } = useKickstarterContext()
-  const [selectedProject, setSelectedProject] = useState("")
+  const { t } = useTranslation()
 
-  const toggleSelectedProject = () => {
-    setSelectedProject("")
-  }
+  const {
+    account,
+    kickstarterAccount,
+    myKickstarters,
+    myProjectAddress,
+    myProjectPage,
+    handleMyProjectChanged,
+    handleMyProjectPageChanged,
+  } = useKickstarterContext()
+
+  const maxPage = useMemo(() => {
+    const totalItems = kickstarterAccount?.totalKickstarter.toNumber() || 1;
+    return Math.ceil(totalItems / PER_PAGE)
+  }, [kickstarterAccount?.totalKickstarter])
 
   if (!account) {
     return <ConnectWalletSection />
@@ -54,11 +67,11 @@ function MyProject({
     return <EmptyMyKickstarterSection toggleCreate={toggleCreate} />
   }
 
-  if (selectedProject !== "") {
+  if (myProjectAddress) {
     return (
       <ProjectDetails
-        projectAddress='0x3b8113CC62B490e4a7f35Aec9135d4581a8f7564'
-        onBack={toggleSelectedProject}
+        projectAddress={myProjectAddress}
+        onBack={() => handleMyProjectChanged(undefined)}
       />
     )
   }
@@ -80,11 +93,30 @@ function MyProject({
               projectGoals={kickstarter.projectGoals}
               totalContribution={new BigNumber(0)}
               endTimestamp={kickstarter.endTimestamp}
-              onClick={() => setSelectedProject("ID")}
+              onClick={() => handleMyProjectChanged(kickstarter.id)}
             />
           </Grid>
         ))}
       </Grid>
+      <br />
+      <PageButtons>
+        <Arrow
+          onClick={() => {
+            handleMyProjectPageChanged(myProjectPage === 1 ? myProjectPage : myProjectPage - 1)
+          }}
+        >
+          <ArrowBackIcon color={myProjectPage === 1 ? 'textDisabled' : 'primary'} />
+        </Arrow>
+
+        <Text>{t('Page {{ myProjectPage }} of {{ maxPage }}', { myProjectPage, maxPage })}</Text>
+        <Arrow
+          onClick={() => {
+            handleMyProjectPageChanged(myProjectPage === maxPage ? myProjectPage : myProjectPage + 1)
+          }}
+        >
+          <ArrowForwardIcon color={myProjectPage === maxPage ? 'textDisabled' : 'primary'} />
+        </Arrow>
+      </PageButtons>
     </Flex>
   )
 }

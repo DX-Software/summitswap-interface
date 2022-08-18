@@ -2,6 +2,7 @@ import { useWalletModal } from "@koda-finance/summitswap-uikit"
 import { useWeb3React } from "@web3-react/core"
 import useBackedKickstarter, { BackedKickstarter } from "hooks/useBackedKickstarter"
 import useDebounce from "hooks/useDebounce"
+import useKickstarterAccount, { KickstarterAccount } from "hooks/useKickstarterAccount"
 import useKickstarterByAccount from "hooks/useKickstarterByAccount"
 import useKickstarters, { Kickstarter, OrderBy, OrderDirection } from "hooks/useKickstarters"
 import useKickstartersByTime from "hooks/useKickstartersByTime"
@@ -12,20 +13,30 @@ type KickstarterContextProps = {
   account: string | null | undefined
   onPresentConnectModal: () => void
 
+  kickstarterAccount?: KickstarterAccount
+
   myKickstarters?: Kickstarter[]
-
-  kickstarters?: Kickstarter[]
   almostEndedKickstarters?: Kickstarter[]
-
+  kickstarters?: Kickstarter[]
   backedProjects?: BackedKickstarter[]
-  backedProjectAddress?: string,
+
+  myProjectAddress?: string
+  browseProjectAddress?: string
+  backedProjectAddress?: string
+
+  myProjectPage: number
+  browseProjectPage: number
+  backedProjectPage: number
+
+  handleMyProjectChanged: (address?: string) => void
+  handleBrowseProjectChanged: (address?: string) => void
+  handleSearchKickstarterChanged: (search: string) => void
+  handleKickstarterOrderDirectionChanged: (orderDirection: OrderDirection) => void
   handleBackedProjectChanged: (address?: string) => void
 
-  browseProjectAddress?: string
-  handleBrowseProjectChanged: (address?: string) => void
-
-  handleKickstarterOrderDirectionChanged: (orderDirection: OrderDirection) => void
-  handleSearchKickstarterChanged: (search: string) => void
+  handleMyProjectPageChanged: (page: number) => void
+  handleBrowseProjectPageChanged: (page: number) => void
+  handleBackedProjectPageChanged: (page: number) => void
 };
 
 
@@ -33,11 +44,19 @@ const KickstarterContext = createContext<KickstarterContextProps>({
   account: null,
   onPresentConnectModal: () => null,
 
-  handleBackedProjectChanged: (newAddress?: string) => null,
-  handleBrowseProjectChanged: (newAddress?: string) => null,
+  myProjectPage: 1,
+  browseProjectPage: 1,
+  backedProjectPage: 1,
 
+  handleMyProjectChanged: (newAddress?: string) => null,
+  handleBrowseProjectChanged: (newAddress?: string) => null,
+  handleSearchKickstarterChanged: (search: string) => null,
   handleKickstarterOrderDirectionChanged: (orderDirection: OrderDirection) => null,
-  handleSearchKickstarterChanged: (search: string) => null
+  handleBackedProjectChanged: (newAddress?: string) => null,
+
+  handleMyProjectPageChanged: (page: number) => null,
+  handleBrowseProjectPageChanged: (page: number) => null,
+  handleBackedProjectPageChanged: (page: number) => null,
 });
 
 export function KickstarterProvider({ children }: { children: React.ReactNode }) {
@@ -45,16 +64,23 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
   const ONE_WEEK_IN_SECONDS = 60 * 60 * 24 * 7
 
   const { account, activate, deactivate } = useWeb3React()
-  const [kickstarterOrderDirection, setKickstarterOrderDirection] = useState<OrderDirection>(OrderDirection.ASC)
-  const [searchKickstarter, setSearchKickstarter] = useState<string | undefined>()
-  const searchValue = useDebounce(searchKickstarter || "", 1000)
 
+  const [myProjectAddress, setMyProjectAddress] = useState<string | undefined>()
+  const [browseProjectAddress, setBrowseProjectAddress] = useState<string | undefined>()
+  const [searchKickstarter, setSearchKickstarter] = useState<string | undefined>()
+  const [kickstarterOrderDirection, setKickstarterOrderDirection] = useState<OrderDirection>(OrderDirection.ASC)
+  const [backedProjectAddress, setBackedProjectAddress] = useState<string | undefined>()
+
+  const [myProjectPage, setMyProjectPage] = useState<number>(1)
+  const [browseProjectPage, setBrowseProjectPage] = useState<number>(1)
+  const [backedProjectPage, setBackedProjectPage] = useState<number>(1)
+
+  const searchValue = useDebounce(searchKickstarter || "", 1000)
   const almostEndedKickstarters = useKickstartersByTime(currentTimestamp, currentTimestamp + ONE_WEEK_IN_SECONDS, 3)
-  const myKickstarters = useKickstarterByAccount(account)
+  const kickstarterAccount = useKickstarterAccount(account)
+  const myKickstarters = useKickstarterByAccount(account, myProjectPage)
   const kickstarters = useKickstarters(searchValue, OrderBy.TITLE, kickstarterOrderDirection)
   const backedProjects = useBackedKickstarter(account)
-  const [backedProjectAddress, setBackedProjectAddress] = useState<string | undefined>()
-  const [browseProjectAddress, setBrowseProjectAddress] = useState<string | undefined>()
 
   const handleLogin = useCallback(
     (connectorId: string) => {
@@ -65,22 +91,6 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
 
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
 
-  const handleBackedProjectChanged = (newAddress?: string) => {
-    setBackedProjectAddress(newAddress)
-  }
-
-  const handleBrowseProjectChanged = (newAddress?: string) => {
-    setBrowseProjectAddress(newAddress)
-  }
-
-  const handleKickstarterOrderDirectionChanged = (newOrderDirection: OrderDirection) => {
-    setKickstarterOrderDirection(newOrderDirection)
-  }
-
-  const handleSearchKickstarterChanged = (newSearchValue: string) => {
-    setSearchKickstarter(newSearchValue)
-  }
-
   return (
     <KickstarterContext.Provider
       // eslint-disable-next-line react/jsx-no-constructed-context-values
@@ -88,20 +98,30 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
         account,
         onPresentConnectModal,
 
+        kickstarterAccount,
+
         myKickstarters,
-
-        kickstarters,
         almostEndedKickstarters,
-
+        kickstarters,
         backedProjects,
-        backedProjectAddress,
-        handleBackedProjectChanged,
 
+        myProjectAddress,
         browseProjectAddress,
-        handleBrowseProjectChanged,
+        backedProjectAddress,
 
-        handleKickstarterOrderDirectionChanged,
-        handleSearchKickstarterChanged,
+        myProjectPage,
+        browseProjectPage,
+        backedProjectPage,
+
+        handleMyProjectChanged: setMyProjectAddress,
+        handleBrowseProjectChanged: setBrowseProjectAddress,
+        handleSearchKickstarterChanged: setSearchKickstarter,
+        handleKickstarterOrderDirectionChanged: setKickstarterOrderDirection,
+        handleBackedProjectChanged: setBackedProjectAddress,
+
+        handleMyProjectPageChanged: setMyProjectPage,
+        handleBrowseProjectPageChanged: setBrowseProjectPage,
+        handleBackedProjectPageChanged: setBackedProjectPage,
       }}
     >
       {children}
