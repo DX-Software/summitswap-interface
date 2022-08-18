@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js'
+import { PER_PAGE } from 'constants/kickstarter'
 import { gql } from 'graphql-request'
 import { useEffect, useState } from 'react'
 import { kickstarterClient } from 'utils/graphql'
@@ -157,7 +158,7 @@ const fetchKickstarters = async (searchText: string, orderBy: string, orderDirec
   }
 }
 
-const useKickstarters = (searchText = "", orderBy = OrderBy.TITLE, orderDirection = OrderDirection.ASC, perPage = 6): Kickstarter[] | undefined => {
+const useKickstarters = (searchText = "", orderBy = OrderBy.TITLE, orderDirection = OrderDirection.ASC, perPage = PER_PAGE): Kickstarter[] | undefined => {
   const [kickstarters, setKickstarters] = useState<Kickstarter[]>()
   const [isError, setIsError] = useState(false)
 
