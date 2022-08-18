@@ -146,7 +146,7 @@ const CreatePresale = () => {
             values.email,
             values.telegramId,
             values.discordId,
-            values.telegramId,
+            values.twitterId,
           ],
           {
             presaleToken: selectedToken.address,
