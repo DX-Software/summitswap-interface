@@ -19,7 +19,7 @@ interface Props {
   changeStepNumber: (num: number) => void
 }
 
-const GridContainer = styled(Grid)`
+export const GridContainer = styled(Grid)`
   grid-template-columns: 160px auto;
   @media (max-width: 600px) {
     grid-template-columns: 130px auto;
@@ -28,14 +28,14 @@ const GridContainer = styled(Grid)`
   }
 `
 
-const ContainerToken = styled(GridContainer)`
+export const ContainerToken = styled(GridContainer)`
   @media (max-width: 600px) {
     grid-template-columns: 60px auto;
     grid-column-gap: 12px;
   }
 `
 
-const ContainerInformation = styled(GridContainer)`
+export const ContainerInformation = styled(GridContainer)`
   grid-template-columns: 170px auto;
   @media (max-width: 600px) {
     grid-template-columns: 150px auto;
@@ -45,14 +45,14 @@ const ContainerInformation = styled(GridContainer)`
   }
 `
 
-const StyledGridItem1 = styled(GridItem1)`
+export const StyledGridItem1 = styled(GridItem1)`
   align-self: end;
   @media (max-width: 600px) {
     align-self: start;
   }
 `
 
-const StyledImage = styled.img`
+export const StyledImage = styled.img`
   height: 150px;
   width: 150px;
   border-radius: 8px;
@@ -71,45 +71,31 @@ export const Divider = styled.div`
   border-bottom: 2px solid ${({ theme }) => theme.colors.backgroundDisabled};
   margin-bottom: 25px;
 `
-const StyledText = styled(Text)`
+export const StyledText = styled(Text)`
   word-wrap: break-word;
+  word-break: break-word;
   text-align: left;
   @media (max-width: 600px) {
     font-size: 14px;
   }
 `
 
-const SectionHeading = styled(Heading)`
+export const SectionHeading = styled(Heading)`
   font-size: 24px;
   @media (max-width: 600px) {
     font-size: 20px;
   }
 `
 
-const TextAddress = styled(StyledText)`
-  max-width: 100%;
-  @media (max-width: 1080px) {
-    max-width: calc(100vw * 0.3);
-  }
-  @media (max-width: 967px) {
-    max-width: calc(100vw * 0.4);
-  }
-  @media (max-width: 700px) {
-    max-width: calc(100vw * 0.3);
-  }
-  @media (max-width: 600px) {
-    max-width: calc(100vw * 0.47);
-  }
-`
-
-const TextAddressHeading = styled(StyledText)`
-  width: 184px;
+export const TextAddressHeading = styled(StyledText)`
+  min-width: 160px;
+  margin-right: 24px;
   @media (max-width: 600px) {
     width: 130px;
   }
 `
 
-const AddressBox = styled(Flex)`
+export const ResponsiveFlex = styled(Flex)`
   @media (max-width: 600px) {
     flex-direction: column;
   }
@@ -169,10 +155,10 @@ const CreationStep06 = ({
       <ContainerToken marginTop="16px" marginBottom="45px">
         <StyledImage src={formikProject.values.logoUrl} alt="presale-icon" />
         <StyledGridItem1>
-          <AddressBox marginTop="20px">
+          <ResponsiveFlex marginTop="20px">
             <TextAddressHeading>Token Address</TextAddressHeading>
-            <TextAddress color="sidebarActiveColor">{selectedToken?.address}</TextAddress>
-          </AddressBox>
+            <StyledText color="sidebarActiveColor">{selectedToken?.address}</StyledText>
+          </ResponsiveFlex>
         </StyledGridItem1>
 
         <GridItem2>
