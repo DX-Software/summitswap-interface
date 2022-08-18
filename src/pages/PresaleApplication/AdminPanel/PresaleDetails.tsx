@@ -12,6 +12,7 @@ import { Grid, StyledText } from './HeadingContainer'
 
 interface Props {
   presaleAddress: string
+  selectPresaleHandler: (presaleAddress: string) => void
 }
 
 const ResponsiveGrid = styled(Grid)`
@@ -23,7 +24,7 @@ const ResponsiveGrid = styled(Grid)`
   }
 `
 
-const PresaleDetails = ({ presaleAddress }: Props) => {
+const PresaleDetails = ({ presaleAddress, selectPresaleHandler }: Props) => {
   const [presaleInfo, setPresaleInfo] = useState<PresaleInfo>()
   const presaleContract = usePresaleContract(presaleAddress)
 
@@ -61,7 +62,12 @@ const PresaleDetails = ({ presaleAddress }: Props) => {
       <StyledText>{presaleInfo?.startPresaleTime ? formatDate(presaleInfo.startPresaleTime) : ''}</StyledText>
       <Box />
       <StyledText>{presaleInfo?.endPresaleTime ? formatDate(presaleInfo.endPresaleTime) : ''}</StyledText>
-      <StyledText color="linkColor" textAlign="right">
+      <StyledText
+        style={{ cursor: 'pointer' }}
+        color="linkColor"
+        textAlign="right"
+        onClick={() => selectPresaleHandler(presaleAddress)}
+      >
         View
       </StyledText>
     </ResponsiveGrid>

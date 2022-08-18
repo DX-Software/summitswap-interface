@@ -2,11 +2,22 @@ import React, { useEffect, useState, useMemo, useCallback } from 'react'
 import styled, { useTheme } from 'styled-components'
 import { Pagination } from '@mui/material'
 import { useFactoryPresaleContract } from 'hooks/useContract'
+import { RowFixed } from 'components/Row'
 import { PRESALE_FACTORY_ADDRESS, PRESALES_PER_PAGE_ADMIN_PANEL } from 'constants/presale'
-import { Flex, Box, Text, TabPresale, darkColors } from '@koda-finance/summitswap-uikit'
+import {
+  Flex,
+  Box,
+  Text,
+  TabPresale,
+  darkColors,
+  Breadcrumbs,
+  ArrowBackIcon,
+  ChevronRightIcon,
+} from '@koda-finance/summitswap-uikit'
 import HeadingCotainer, { StyledText } from './HeadingContainer'
 import PresaleDetail from './PresaleDetails'
 import PresaleSettings from './PresaleSettings'
+import PresaleSummary from './PresaleSummary'
 
 const ContentWrapper = styled(Box)`
   max-width: 90%;
@@ -48,6 +59,7 @@ const AdminPanel = () => {
   const [tabIndex, setTabIndex] = useState(0)
   const [page, setPage] = useState(1)
   const [pendingPresales, setPendingPresales] = useState<string[]>([])
+  const [selectedPresale, setSelectedPresale] = useState('')
 
   const theme = useTheme()
   const paginationStyle = useMemo(
@@ -86,7 +98,9 @@ const AdminPanel = () => {
 
   const handleChangeTabIndex = (newIndex: number) => setTabIndex(newIndex)
   const changePageHandler = (_: React.ChangeEvent<unknown>, value: number) => setPage(value)
+  const selectPresaleHandler = (presaleAddress: string) => setSelectedPresale(presaleAddress)
 
+  const sectionTexts = ['Waiting for Approval', 'Approval History']
   const chooseSection = useCallback((slicedPresaleAddresses: string[], index: number) => {
     switch (index) {
       case 0:
@@ -96,7 +110,7 @@ const AdminPanel = () => {
             <Divider bottomOnly />
             {slicedPresaleAddresses.map((address) => (
               <Box key={address}>
-                <PresaleDetail presaleAddress={address} />
+                <PresaleDetail selectPresaleHandler={selectPresaleHandler} presaleAddress={address} />
                 <Divider />
               </Box>
             ))}
@@ -117,18 +131,51 @@ const AdminPanel = () => {
   const slicedPresaleAddresses = pendingPresales.slice(startIndex, endIndex)
 
   return (
-    <ContentWrapper overflow={tabIndex === 2 ? 'visible' : 'scroll'}>
-      <Box width="950px">
-        <Heading>Admin Panel</Heading>
-        <TabPresale activeIndex={tabIndex} onItemClick={handleChangeTabIndex}>
-          <StyledText>Waiting for Approval ({pendingPresales.length})</StyledText>
-          <StyledText>Approval History</StyledText>
-          <StyledText>Presale Settings</StyledText>
-        </TabPresale>
-        <Divider bottomOnly />
-        {chooseSection(slicedPresaleAddresses, tabIndex)}
+    <ContentWrapper overflow={tabIndex === 2 && !selectedPresale ? 'visible' : 'scroll'}>
+      <Box width={selectedPresale || '950px'}>
+        {selectedPresale ? (
+          <>
+            <Breadcrumbs separator={<ChevronRightIcon color={darkColors.textDisabled} width="20px" />}>
+              <StyledText color="primaryDark">Admin Panel</StyledText>
+              <StyledText color="primaryDark">{sectionTexts[tabIndex]}</StyledText>
+              <StyledText bold>Presale Details</StyledText>
+            </Breadcrumbs>
+            <Box marginBottom="8px" />
+            <Divider bottomOnly />
+          </>
+        ) : (
+          <Heading>Admin Panel</Heading>
+        )}
+        {selectedPresale ? (
+          <>
+            <RowFixed marginY="24px">
+              <ArrowBackIcon color="linkColor" />
+              <Text
+                color="linkColor"
+                marginLeft="8px"
+                style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                onClick={() => selectPresaleHandler('')}
+              >
+                Back To Admin Panel
+              </Text>
+            </RowFixed>
+            <PresaleSummary presaleAddress={selectedPresale} />
+          </>
+        ) : (
+          <>
+            <TabPresale activeIndex={tabIndex} onItemClick={handleChangeTabIndex}>
+              <StyledText>
+                {sectionTexts[0]} ({pendingPresales.length})
+              </StyledText>
+              <StyledText>{sectionTexts[1]}</StyledText>
+              <StyledText>Presale Settings</StyledText>
+            </TabPresale>
+            <Divider bottomOnly />
+            {chooseSection(slicedPresaleAddresses, tabIndex)}
+          </>
+        )}
       </Box>
-      {tabIndex !== 2 && (
+      {!selectedPresale && tabIndex !== 2 && (
         <Flex marginTop="24px" justifyContent="end">
           <Pagination
             sx={paginationStyle}
