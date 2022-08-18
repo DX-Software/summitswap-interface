@@ -958,6 +958,11 @@
         "internalType": "struct PresaleFeeInfo",
         "name": "_feeInfo",
         "type": "tuple"
+      },
+      {
+        "internalType": "string[8]",
+        "name": "_projectDetails",
+        "type": "string[8]"
       }
     ],
     "name": "updatePresaleAndApprove",

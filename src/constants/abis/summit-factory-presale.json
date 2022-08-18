@@ -450,6 +450,25 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "presaleRequestTime",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "renounceOwnership",
     "outputs": [],
@@ -741,6 +760,11 @@
         "internalType": "struct PresaleFeeInfo",
         "name": "_feeInfo",
         "type": "tuple"
+      },
+      {
+        "internalType": "string[8]",
+        "name": "_projectDetails",
+        "type": "string[8]"
       },
       {
         "internalType": "address",
