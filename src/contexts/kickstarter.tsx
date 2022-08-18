@@ -83,7 +83,7 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
   const kickstarterFactory = useKickstarterFactory(KICKSTARTER_ADDRESS)
   const kickstarterAccount = useKickstarterAccount(account)
   const myKickstarters = useKickstarterByAccount(account, myProjectPage)
-  const kickstarters = useKickstarters(searchValue, OrderBy.TITLE, kickstarterOrderDirection)
+  const kickstarters = useKickstarters(searchValue, OrderBy.TITLE, kickstarterOrderDirection, browseProjectPage)
   const backedProjects = useBackedKickstarters(account, backedProjectPage)
 
   const handleLogin = useCallback(

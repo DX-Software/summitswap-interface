@@ -140,30 +140,30 @@ function BrowseProject() {
             )}
           </Grid>
         ))}
-        {maxPage > 1 && (
-          <>
-            <br />
-            <PageButtons>
-              <Arrow
-                onClick={() => {
-                  handleBrowseProjectPageChanged(browseProjectPage === 1 ? browseProjectPage : browseProjectPage - 1)
-                }}
-              >
-                <ArrowBackIcon color={browseProjectPage === 1 ? 'textDisabled' : 'primary'} />
-              </Arrow>
-
-              <Text>{t('Page {{ browseProjectPage }} of {{ maxPage }}', { browseProjectPage, maxPage })}</Text>
-              <Arrow
-                onClick={() => {
-                  handleBrowseProjectPageChanged(browseProjectPage === maxPage ? browseProjectPage : browseProjectPage + 1)
-                }}
-              >
-                <ArrowForwardIcon color={browseProjectPage === maxPage ? 'textDisabled' : 'primary'} />
-              </Arrow>
-            </PageButtons>
-          </>
-        )}
       </Grid>
+      {maxPage > 1 && (
+        <>
+          <br />
+          <PageButtons>
+            <Arrow
+              onClick={() => {
+                handleBrowseProjectPageChanged(browseProjectPage === 1 ? browseProjectPage : browseProjectPage - 1)
+              }}
+            >
+              <ArrowBackIcon color={browseProjectPage === 1 ? 'textDisabled' : 'primary'} />
+            </Arrow>
+
+            <Text>{t('Page {{ browseProjectPage }} of {{ maxPage }}', { browseProjectPage, maxPage })}</Text>
+            <Arrow
+              onClick={() => {
+                handleBrowseProjectPageChanged(browseProjectPage === maxPage ? browseProjectPage : browseProjectPage + 1)
+              }}
+            >
+              <ArrowForwardIcon color={browseProjectPage === maxPage ? 'textDisabled' : 'primary'} />
+            </Arrow>
+          </PageButtons>
+        </>
+      )}
     </Flex>
   )
 }

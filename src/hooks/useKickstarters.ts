@@ -39,8 +39,8 @@ export type Kickstarter = {
 }
 
 const KICKSTARTERS = gql`
-  query kickstarters($first: Int!, $orderBy: Bytes!, $orderDirection: Bytes!) {
-    kickstarters(first: $first, orderBy: $orderBy, orderDirection: $orderDirection) {
+  query kickstarters($first: Int!, $orderBy: Bytes!, $orderDirection: Bytes!, $skip: Int!) {
+    kickstarters(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection) {
       id
       owner {
         id
@@ -62,8 +62,8 @@ const KICKSTARTERS = gql`
 `
 
 const KICKSTARTERS_BY_TEXT = gql`
-  query kickstarters($text: Bytes!, $first: Int!, $orderBy: Bytes!, $orderDirection: Bytes!) {
-    kickstarterSearch(text: $text, first: $first, orderBy: $orderBy, orderDirection: $orderDirection) {
+  query kickstarters($text: Bytes!, $first: Int!, $orderBy: Bytes!, $orderDirection: Bytes!, $skip: Int!) {
+    kickstarterSearch(text: $text, first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection) {
       id
       owner {
         id
@@ -84,7 +84,7 @@ const KICKSTARTERS_BY_TEXT = gql`
   }
 `
 
-const fetchKickstarters = async (searchText: string, orderBy: string, orderDirection: string, perPage: number): Promise<{ data?: Kickstarter[]; error: boolean }> => {
+const fetchKickstarters = async (searchText: string, orderBy: string, orderDirection: string, page: number, perPage: number): Promise<{ data?: Kickstarter[]; error: boolean }> => {
   try {
     const subgraphGql = searchText === "" ? KICKSTARTERS : KICKSTARTERS_BY_TEXT
 
@@ -121,6 +121,7 @@ const fetchKickstarters = async (searchText: string, orderBy: string, orderDirec
         first: perPage,
         orderBy,
         orderDirection,
+        skip: (page - 1) * perPage,
       })).kickstarters
     } else {
       data = (await kickstarterClient.request<KickstarterSearchResult>(subgraphGql, {
@@ -128,6 +129,7 @@ const fetchKickstarters = async (searchText: string, orderBy: string, orderDirec
         first: perPage,
         orderBy,
         orderDirection,
+        skip: (page - 1) * perPage,
       })).kickstarterSearch
     }
 
@@ -158,13 +160,13 @@ const fetchKickstarters = async (searchText: string, orderBy: string, orderDirec
   }
 }
 
-const useKickstarters = (searchText = "", orderBy = OrderBy.TITLE, orderDirection = OrderDirection.ASC, perPage = PER_PAGE): Kickstarter[] | undefined => {
+const useKickstarters = (searchText = "", orderBy = OrderBy.TITLE, orderDirection = OrderDirection.ASC, page = 1, perPage = PER_PAGE): Kickstarter[] | undefined => {
   const [kickstarters, setKickstarters] = useState<Kickstarter[]>()
   const [isError, setIsError] = useState(false)
 
   useEffect(() => {
     const fetch = async () => {
-      const { error: fetchError, data } = await fetchKickstarters(searchText, orderBy, orderDirection, perPage)
+      const { error: fetchError, data } = await fetchKickstarters(searchText, orderBy, orderDirection, page, perPage)
       if (fetchError) {
         setIsError(true)
       } else if (data) {
@@ -174,7 +176,7 @@ const useKickstarters = (searchText = "", orderBy = OrderBy.TITLE, orderDirectio
     if (!isError) {
       fetch()
     }
-  }, [searchText, orderBy, orderDirection, perPage, isError])
+  }, [searchText, orderBy, orderDirection, page, perPage, isError])
 
   return kickstarters
 }
