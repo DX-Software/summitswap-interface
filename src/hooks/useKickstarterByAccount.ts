@@ -104,7 +104,7 @@ const fetchKickstarters = async (account: string, page: number, perPage: number)
     })
     return { data: kickstarter, error: false }
   } catch (error) {
-    console.error(`Failed to fetch kickstarters`, error)
+    console.error(`Failed to fetch kickstarters by account ${account}`, error)
     return {
       error: true,
     }

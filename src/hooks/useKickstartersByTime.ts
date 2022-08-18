@@ -96,7 +96,7 @@ const fetchKickstarters = async (startTimestamp: number, endTimestamp: number, p
     })
     return { data: kickstarter, error: false }
   } catch (error) {
-    console.error(`Failed to fetch kickstarters`, error)
+    console.error(`Failed to fetch kickstarters by time`, error)
     return {
       error: true,
     }

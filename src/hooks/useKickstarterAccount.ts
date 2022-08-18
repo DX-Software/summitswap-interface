@@ -47,7 +47,7 @@ const fetchKickstarterAccount = async (address?: string | null): Promise<{ data?
     }
     return { data: kickstarterAccount, error: false }
   } catch (error) {
-    console.error(`Failed to fetch kickstarter for address ${address}`, error)
+    console.error(`Failed to fetch kickstarter account ${address}`, error)
     return {
       error: true,
     }
