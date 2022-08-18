@@ -7,6 +7,7 @@ import CreateProject from './CreateProject'
 import ProjectCard from './ProjectCard'
 import ProjectDetails from './ProjectDetails'
 import ConnectWalletSection from './shared/ConnectWalletSection'
+import EmptyMyKickstarterSection from './shared/EmptyMyKickstarterSection'
 import { Project } from './types'
 
 type Props = {
@@ -26,16 +27,7 @@ function MyProject({
   projectCreation,
   handleOnProjectCreationChanged,
 }: Props) {
-  const { account, onPresentConnectModal } = useKickstarterContext()
-  const [projects, setProjects] = useState<Project[]>([
-    {
-      title: "Lorem Ipsum",
-      creator: "Lorem Ipsum",
-      description: "Lorem Ipsum",
-      goals: 0,
-      minimumBacking: 0,
-    }
-  ])
+  const { account, myKickstarters } = useKickstarterContext()
   const [selectedProject, setSelectedProject] = useState("")
 
   const toggleSelectedProject = () => {
@@ -58,17 +50,8 @@ function MyProject({
     )
   }
 
-  if (projects.length === 0) {
-    return (
-      <Flex mb={3} flexDirection="column" alignItems="center" justifyContent="center" height={300}>
-        <Heading size="lg" color="primaryDark" style={{ fontWeight: 400 }} marginBottom={38} textAlign="center">
-          You don’t have any ongoing project
-        </Heading>
-        <Button startIcon={<AddIcon color="text" />} style={{ fontFamily: 'Poppins' }} onClick={toggleCreate}>
-          Create New Project
-        </Button>
-      </Flex>
-    )
+  if (!myKickstarters || myKickstarters.length === 0) {
+    return <EmptyMyKickstarterSection toggleCreate={toggleCreate} />
   }
 
   if (selectedProject !== "") {
@@ -89,16 +72,18 @@ function MyProject({
         </Button>
       </Flex>
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={6} lg={4}>
-          <ProjectCard
-            title=""
-            creator=""
-            projectGoals={new BigNumber(0)}
-            totalContribution={new BigNumber(0)}
-            endTimestamp={0}
-            onClick={() => setSelectedProject("ID")}
-          />
-        </Grid>
+        {myKickstarters && myKickstarters.map((kickstarter) => (
+          <Grid item xs={12} sm={6} lg={4}>
+            <ProjectCard
+              title={kickstarter.title}
+              creator={kickstarter.creator}
+              projectGoals={kickstarter.projectGoals}
+              totalContribution={new BigNumber(0)}
+              endTimestamp={kickstarter.endTimestamp}
+              onClick={() => setSelectedProject("ID")}
+            />
+          </Grid>
+        ))}
       </Grid>
     </Flex>
   )
