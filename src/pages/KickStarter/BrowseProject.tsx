@@ -1,23 +1,39 @@
-import { Flex, Heading, Input, SearchIcon, Select, SortIcon, Text } from '@koda-finance/summitswap-uikit'
+import { ArrowBackIcon, ArrowForwardIcon, Flex, Heading, Input, SearchIcon, Select, SortIcon, Text } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
+import { Arrow, PageButtons } from 'components/InfoTables/shared'
+import { PER_PAGE } from 'constants/kickstarter'
 import { useKickstarterContext } from 'contexts/kickstarter'
 import { OrderDirection } from 'hooks/useKickstarters'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { isDesktop } from 'react-device-detect'
+import { useTranslation } from 'react-i18next'
 import ProjectCard from './ProjectCard'
 import ProjectCardMobile from './ProjectCardMobile'
 import ProjectDetails from './ProjectDetails'
 import ProductLoadingSection from './shared/ProductLoadingSection'
 
 function BrowseProject() {
+  const { t } = useTranslation()
+
   const {
+    kickstarterFactory,
     almostEndedKickstarters,
     kickstarters,
     browseProjectAddress,
+    browseProjectPage,
     handleBrowseProjectChanged,
     handleKickstarterOrderDirectionChanged,
     handleSearchKickstarterChanged,
+    handleBrowseProjectPageChanged,
   } = useKickstarterContext()
+
+  const maxPage = useMemo(() => {
+    const totalItems = kickstarterFactory?.totalKickstarter.toNumber() || 1;
+    return Math.ceil(totalItems / PER_PAGE)
+  }, [kickstarterFactory?.totalKickstarter])
+
+  console.log("kickstarterFactory", kickstarterFactory)
+
   const sortOptions = [
     {
       label: 'Title Asc',
@@ -49,7 +65,7 @@ function BrowseProject() {
               <ProductLoadingSection />
             )}
             {almostEndedKickstarters && almostEndedKickstarters.map((kickstarter) => (
-              <Grid item xs={12} sm={6} lg={4}>
+              <Grid item xs={12} sm={6} lg={4} key={kickstarter.id}>
                 {isDesktop ? (
                   <ProjectCard
                     title={kickstarter.title}
@@ -102,7 +118,7 @@ function BrowseProject() {
           </Grid>
         )}
         {kickstarters && kickstarters.map((kickstarter) => (
-          <Grid item xs={12} sm={6} lg={4}>
+          <Grid item xs={12} sm={6} lg={4} key={kickstarter.id}>
             {isDesktop ? (
               <ProjectCard
                 title={kickstarter.title}
@@ -124,6 +140,29 @@ function BrowseProject() {
             )}
           </Grid>
         ))}
+        {maxPage > 1 && (
+          <>
+            <br />
+            <PageButtons>
+              <Arrow
+                onClick={() => {
+                  handleBrowseProjectPageChanged(browseProjectPage === 1 ? browseProjectPage : browseProjectPage - 1)
+                }}
+              >
+                <ArrowBackIcon color={browseProjectPage === 1 ? 'textDisabled' : 'primary'} />
+              </Arrow>
+
+              <Text>{t('Page {{ browseProjectPage }} of {{ maxPage }}', { browseProjectPage, maxPage })}</Text>
+              <Arrow
+                onClick={() => {
+                  handleBrowseProjectPageChanged(browseProjectPage === maxPage ? browseProjectPage : browseProjectPage + 1)
+                }}
+              >
+                <ArrowForwardIcon color={browseProjectPage === maxPage ? 'textDisabled' : 'primary'} />
+              </Arrow>
+            </PageButtons>
+          </>
+        )}
       </Grid>
     </Flex>
   )

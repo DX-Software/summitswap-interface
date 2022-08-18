@@ -1,9 +1,11 @@
 import { useWalletModal } from "@koda-finance/summitswap-uikit"
 import { useWeb3React } from "@web3-react/core"
+import { KICKSTARTER_ADDRESS } from "constants/kickstarter"
 import useBackedKickstarters, { BackedKickstarter } from "hooks/useBackedKickstarters"
 import useDebounce from "hooks/useDebounce"
 import useKickstarterAccount, { KickstarterAccount } from "hooks/useKickstarterAccount"
 import useKickstarterByAccount from "hooks/useKickstarterByAccount"
+import useKickstarterFactory, { KickstarterFactory } from "hooks/useKickstarterFactory"
 import useKickstarters, { Kickstarter, OrderBy, OrderDirection } from "hooks/useKickstarters"
 import useKickstartersByTime from "hooks/useKickstartersByTime"
 import React, { createContext, useCallback, useContext, useState } from "react"
@@ -13,6 +15,7 @@ type KickstarterContextProps = {
   account: string | null | undefined
   onPresentConnectModal: () => void
 
+  kickstarterFactory?: KickstarterFactory
   kickstarterAccount?: KickstarterAccount
 
   myKickstarters?: Kickstarter[]
@@ -77,6 +80,7 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
 
   const searchValue = useDebounce(searchKickstarter || "", 1000)
   const almostEndedKickstarters = useKickstartersByTime(currentTimestamp, currentTimestamp + ONE_WEEK_IN_SECONDS, 3)
+  const kickstarterFactory = useKickstarterFactory(KICKSTARTER_ADDRESS)
   const kickstarterAccount = useKickstarterAccount(account)
   const myKickstarters = useKickstarterByAccount(account, myProjectPage)
   const kickstarters = useKickstarters(searchValue, OrderBy.TITLE, kickstarterOrderDirection)
@@ -98,6 +102,7 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
         account,
         onPresentConnectModal,
 
+        kickstarterFactory,
         kickstarterAccount,
 
         myKickstarters,
