@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+import { PER_PAGE } from 'constants/kickstarter';
 import { gql } from 'graphql-request'
 import { useEffect, useState } from 'react';
 import { kickstarterClient } from 'utils/graphql'
@@ -18,8 +19,11 @@ export type BackedKickstarter = {
 }
 
 const BACKED_KICKSTARTERS = gql`
-  query backedKickstarters($address: Bytes!) {
-    backedKickstarters(first: 100, orderBy: lastUpdated, orderDirection: desc, where: { contributor: $address }) {
+  query backedKickstarters($address: Bytes!, $first: Int!, $skip: Int!) {
+    backedKickstarters(
+      first: $first, orderBy: lastUpdated, orderDirection: desc,
+      where: { contributor: $address }, skip: $skip
+    ) {
       id
       amount
       kickstarter {
@@ -35,7 +39,7 @@ const BACKED_KICKSTARTERS = gql`
   }
 `
 
-const fetchBackedKickstarters = async (address?: string | null): Promise<{ data?: BackedKickstarter[]; error: boolean }> => {
+const fetchBackedKickstarters = async (address: string | null, page: number, perPage: number): Promise<{ data?: BackedKickstarter[]; error: boolean }> => {
   try {
     if (!address) return { data: [], error: false }
     const data = await kickstarterClient.request<{
@@ -54,6 +58,8 @@ const fetchBackedKickstarters = async (address?: string | null): Promise<{ data?
       }[]
     }>(BACKED_KICKSTARTERS, {
       address: address.toLowerCase(),
+      first: perPage,
+      skip: (page - 1) * perPage,
     })
     const contributions: BackedKickstarter[] = data.backedKickstarters.map((contribution) => {
       return {
@@ -79,13 +85,13 @@ const fetchBackedKickstarters = async (address?: string | null): Promise<{ data?
   }
 }
 
-const useBackedKickstarter = (address?: string | null): BackedKickstarter[] | undefined => {
+const useBackedKickstarters = (address?: string | null, page = 1, perPage = PER_PAGE): BackedKickstarter[] | undefined => {
   const [backedProjects, setBackedProjects] = useState<BackedKickstarter[] | undefined>(undefined)
   const [isError, setIsError] = useState(false)
 
   useEffect(() => {
     const fetch = async () => {
-      const { error: fetchError, data } = await fetchBackedKickstarters(address)
+      const { error: fetchError, data } = await fetchBackedKickstarters(address || "", page, perPage)
       if (fetchError) {
         setIsError(true)
       } else if (data) {
@@ -95,9 +101,9 @@ const useBackedKickstarter = (address?: string | null): BackedKickstarter[] | un
     if (!isError) {
       fetch()
     }
-  }, [address, isError])
+  }, [address, page, perPage, isError])
 
   return backedProjects
 }
 
-export default useBackedKickstarter
+export default useBackedKickstarters

@@ -98,25 +98,29 @@ function MyProject({
           </Grid>
         ))}
       </Grid>
-      <br />
-      <PageButtons>
-        <Arrow
-          onClick={() => {
-            handleMyProjectPageChanged(myProjectPage === 1 ? myProjectPage : myProjectPage - 1)
-          }}
-        >
-          <ArrowBackIcon color={myProjectPage === 1 ? 'textDisabled' : 'primary'} />
-        </Arrow>
+      {maxPage > 1 && (
+        <>
+          <br />
+          <PageButtons>
+            <Arrow
+              onClick={() => {
+                handleMyProjectPageChanged(myProjectPage === 1 ? myProjectPage : myProjectPage - 1)
+              }}
+            >
+              <ArrowBackIcon color={myProjectPage === 1 ? 'textDisabled' : 'primary'} />
+            </Arrow>
 
-        <Text>{t('Page {{ myProjectPage }} of {{ maxPage }}', { myProjectPage, maxPage })}</Text>
-        <Arrow
-          onClick={() => {
-            handleMyProjectPageChanged(myProjectPage === maxPage ? myProjectPage : myProjectPage + 1)
-          }}
-        >
-          <ArrowForwardIcon color={myProjectPage === maxPage ? 'textDisabled' : 'primary'} />
-        </Arrow>
-      </PageButtons>
+            <Text>{t('Page {{ myProjectPage }} of {{ maxPage }}', { myProjectPage, maxPage })}</Text>
+            <Arrow
+              onClick={() => {
+                handleMyProjectPageChanged(myProjectPage === maxPage ? myProjectPage : myProjectPage + 1)
+              }}
+            >
+              <ArrowForwardIcon color={myProjectPage === maxPage ? 'textDisabled' : 'primary'} />
+            </Arrow>
+          </PageButtons>
+        </>
+      )}
     </Flex>
   )
 }

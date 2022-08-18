@@ -1,6 +1,6 @@
 import { useWalletModal } from "@koda-finance/summitswap-uikit"
 import { useWeb3React } from "@web3-react/core"
-import useBackedKickstarter, { BackedKickstarter } from "hooks/useBackedKickstarter"
+import useBackedKickstarters, { BackedKickstarter } from "hooks/useBackedKickstarters"
 import useDebounce from "hooks/useDebounce"
 import useKickstarterAccount, { KickstarterAccount } from "hooks/useKickstarterAccount"
 import useKickstarterByAccount from "hooks/useKickstarterByAccount"
@@ -80,7 +80,7 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
   const kickstarterAccount = useKickstarterAccount(account)
   const myKickstarters = useKickstarterByAccount(account, myProjectPage)
   const kickstarters = useKickstarters(searchValue, OrderBy.TITLE, kickstarterOrderDirection)
-  const backedProjects = useBackedKickstarter(account)
+  const backedProjects = useBackedKickstarters(account, backedProjectPage)
 
   const handleLogin = useCallback(
     (connectorId: string) => {
