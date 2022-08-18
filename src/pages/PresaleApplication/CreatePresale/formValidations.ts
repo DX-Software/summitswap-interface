@@ -132,7 +132,7 @@ export const validatePresaleDetails = (values: PresaleDetails) => {
     }
   }
 
-  if (values.isVestingEnabled) {
+  if (`${values.isVestingEnabled}` === 'true') {
     if (!values.maxClaimPercentage) {
       errors.maxClaimPercentage = 'Required*'
     } else if (values.maxClaimPercentage <= 0) {
