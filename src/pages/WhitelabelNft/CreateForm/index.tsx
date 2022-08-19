@@ -1,6 +1,8 @@
 import { Button, Flex, Image, Input, Text } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
-import { FormikProps, FormikProvider, useFormik } from 'formik'
+import { Phase } from 'constants/whitelabel'
+import { Field, FormikProps, FormikProvider, useFormik } from 'formik'
+import { useWhitelabelFactoryContract } from 'hooks/useContract'
 import React, { useCallback, useState } from 'react'
 import { convertFileToBase64 } from 'utils/convertFileToBase64'
 import parseMetadata from '../spreadsheet'
@@ -22,6 +24,8 @@ export default function CreateWhitelabelNftForm() {
   const [nftImages, setNftImages] = useState<NftImage[]>([])
   const [spreadsheet, setSpreadsheet] = useState<ArrayBuffer>()
   const [nftMetadata, setNftMetadata] = useState<MetadataJson[]>([])
+
+  const whitelabelFactoryContract = useWhitelabelFactoryContract()
 
   const handleImageOnChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -52,9 +56,24 @@ export default function CreateWhitelabelNftForm() {
 
   const formik: FormikProps<WhitelabelFormValues> = useFormik<WhitelabelFormValues>({
     initialValues: {
-      metadata: [],
+      name: '',
+      symbol: '',
+      maxSupply: '0',
+      whitelistMintPrice: '0',
+      publicMintPrice: '0',
+      signer: '',
+      phase: Phase.Pause,
     },
     onSubmit: async (values, { setSubmitting, setErrors }) => {
+      const tokenInfo = values
+      const baseUrl = ''
+
+      const serviceFee = await whitelabelFactoryContract?.serviceFee()
+
+      await whitelabelFactoryContract?.createNft(tokenInfo, baseUrl, {
+        value: serviceFee,
+      })
+
       setSubmitting(false)
     },
   })
@@ -65,31 +84,53 @@ export default function CreateWhitelabelNftForm() {
         <Grid container spacing={2}>
           <Grid item xs={8}>
             <Flex flexDirection="column">
-              <Input name="name" placeholder="Name" onChange={formik.handleChange} style={{ marginBottom: 12 }} />
-              <Input name="symbol" placeholder="Symbol" onChange={formik.handleChange} style={{ marginBottom: 12 }} />
+              <Text>Name</Text>
+              <Input
+                name="name"
+                placeholder="Name"
+                onChange={formik.handleChange}
+                style={{ marginBottom: 12 }}
+                as={Field}
+              />
+              <Text>Symbol</Text>
+              <Input
+                name="symbol"
+                placeholder="Symbol"
+                onChange={formik.handleChange}
+                style={{ marginBottom: 12 }}
+                as={Field}
+              />
+              <Text>Max Supply</Text>
               <Input
                 name="maxSupply"
                 placeholder="Max Supply"
                 onChange={formik.handleChange}
                 style={{ marginBottom: 12 }}
+                as={Field}
               />
+              <Text>Whitelist Mint Price</Text>
               <Input
                 name="whitelistMintPrice"
                 placeholder="Whitelist Mint Price"
                 onChange={formik.handleChange}
                 style={{ marginBottom: 12 }}
+                as={Field}
               />
+              <Text>Public Mint Price</Text>
               <Input
                 name="publicMintPrice"
                 placeholder="Public Mint Price"
                 onChange={formik.handleChange}
                 style={{ marginBottom: 12 }}
+                as={Field}
               />
+              <Text>Signer</Text>
               <Input
                 name="signer"
                 placeholder="Signer Address"
                 onChange={formik.handleChange}
                 style={{ marginBottom: 12 }}
+                as={Field}
               />
               <Flex justifyContent="space-between" style={{ marginBottom: 12 }}>
                 <DragAndDrop name="images" accept="image/*" multiple handleChange={handleImageOnChange}>
@@ -106,6 +147,7 @@ export default function CreateWhitelabelNftForm() {
               <Button marginX="auto" onClick={handleApply}>
                 Apply
               </Button>
+              <Button onClick={formik.submitForm}>Submit</Button>
             </Flex>
           </Grid>
           <Grid item xs={4}>

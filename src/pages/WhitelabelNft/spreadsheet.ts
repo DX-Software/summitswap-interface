@@ -65,7 +65,7 @@ export default function parseMetadata(spreadsheet: ArrayBuffer, nftImages: NftIm
     const { tokenId, name, description, ...metaAttributes } = meta
     const image = nftImages[tokenId].base64
     const attributes = parseAttributes(metaAttributes, traits)
-    metadata.push({ name, description, image, attributes })
+    metadata.push({ name, description, image, attributes } as MetadataJson)
   })
 
   return metadata
