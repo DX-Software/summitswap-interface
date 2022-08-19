@@ -1,5 +1,6 @@
 import { BinanceIcon, Flex, Progress, Text } from "@koda-finance/summitswap-uikit"
 import BigNumber from "bignumber.js"
+import { Kickstarter } from "hooks/useKickstarters"
 import React, { useMemo } from "react"
 import styled from "styled-components"
 import ProgressBox from "./ProgressBox"
@@ -8,11 +9,7 @@ import { Statuses } from "./types"
 import { getDayRemaining, getKickstarterStatus } from "./utility"
 
 type Props = {
-  title: string
-  creator: string
-  projectGoals: BigNumber
-  totalContribution: BigNumber
-  endTimestamp: number
+  kickstarter: Kickstarter
   onClick: () => void
 }
 
@@ -39,34 +36,34 @@ const Banner = styled(Flex)`
   padding: 12px;
 `
 
-function ProjectCard({ title, creator, projectGoals, totalContribution, endTimestamp, onClick }: Props) {
+function ProjectCard({ kickstarter, onClick }: Props) {
 
-  const status = useMemo(() => getKickstarterStatus(endTimestamp), [endTimestamp])
+  const status = useMemo(() => getKickstarterStatus(kickstarter.endTimestamp), [kickstarter.endTimestamp])
 
   const fundedPercentage = useMemo(() => {
-    if (totalContribution.toString() === "0") {
+    if (kickstarter.totalContribution.toString() === "0") {
       return "0"
     }
-    return totalContribution.div(projectGoals).times(100).toString()
-  }, [projectGoals, totalContribution])
+    return kickstarter.totalContribution.div(kickstarter.projectGoals).times(100).toString()
+  }, [kickstarter.projectGoals, kickstarter.totalContribution])
   return (
     <Card flexDirection="column" onClick={onClick}>
       <Banner flexDirection="column">
         <StatusLabel status={status} style={{ marginLeft: "auto" }}>
           {status !== Statuses.END_SOON
             ? status
-            : `${getDayRemaining(endTimestamp)} day(s) left`
+            : `${getDayRemaining(kickstarter.endTimestamp)} day(s) left`
           }
         </StatusLabel>
       </Banner>
       <Flex flexDirection="column" paddingTop="16px" paddingBottom="24px" paddingX="20px">
-        <Text fontSize="12px" marginBottom="4px" color="textSubtle">{creator}</Text>
-        <Title marginBottom={16}>{title}</Title>
+        <Text fontSize="12px" marginBottom="4px" color="textSubtle">{kickstarter.creator}</Text>
+        <Title marginBottom={16}>{kickstarter.title}</Title>
         <Flex justifyContent="space-between" alignItems="center" marginBottom="24px">
           <Text fontSize="14px">Project Goal</Text>
           <Flex alignItems="center" style={{ columnGap: "8px" }}>
             <BinanceIcon width="20px" />
-            <Text fontSize="14px">{projectGoals.toString()}</Text>
+            <Text fontSize="14px">{kickstarter.projectGoals.toString()}</Text>
           </Flex>
         </Flex>
         <Text color="primary" marginBottom="8px"><b>{fundedPercentage}%</b> funded</Text>

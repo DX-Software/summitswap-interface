@@ -3,19 +3,12 @@ import { PER_PAGE } from 'constants/kickstarter';
 import { gql } from 'graphql-request'
 import { useEffect, useState } from 'react';
 import { kickstarterClient } from 'utils/graphql'
+import { Kickstarter } from './useKickstarters';
 
 export type BackedKickstarter = {
   id: string
   amount: BigNumber
-  kickstarter: {
-    id: string
-    title: string
-    creator: string
-    totalContribution: BigNumber
-    projectGoals: BigNumber
-    startTimestamp: number
-    endTimestamp: number
-  }
+  kickstarter: Kickstarter
 }
 
 const BACKED_KICKSTARTERS = gql`
@@ -47,13 +40,22 @@ const fetchBackedKickstarters = async (address: string | null, page: number, per
         id: string
         amount: string
         kickstarter: {
-          id: string
-          title: string
-          creator: string
-          totalContribution: string
-          projectGoals: string
-          startTimestamp: string
-          endTimestamp: string
+          id: string,
+          owner: {
+            id: string
+          },
+          title: string,
+          creator: string,
+          projectDescription: string,
+          rewardDescription: string,
+          minContribution: string,
+          totalContribution: string,
+          projectGoals: string,
+          rewardDistributionTimestamp: string,
+          hasDistributedRewards: boolean,
+          startTimestamp: string,
+          endTimestamp: string,
+          createdAt: string,
         }
       }[]
     }>(BACKED_KICKSTARTERS, {
@@ -67,12 +69,19 @@ const fetchBackedKickstarters = async (address: string | null, page: number, per
         amount: new BigNumber(contribution.amount),
         kickstarter: {
           id: contribution.kickstarter.id,
+          owner: contribution.kickstarter.owner,
           title: contribution.kickstarter.title,
           creator: contribution.kickstarter.creator,
+          projectDescription: contribution.kickstarter.projectDescription,
+          rewardDescription: contribution.kickstarter.rewardDescription,
+          minContribution: new BigNumber(contribution.kickstarter.minContribution),
           totalContribution: new BigNumber(contribution.kickstarter.totalContribution),
           projectGoals: new BigNumber(contribution.kickstarter.projectGoals),
+          rewardDistributionTimestamp: Number(contribution.kickstarter.rewardDistributionTimestamp),
+          hasDistributedRewards: contribution.kickstarter.hasDistributedRewards,
           startTimestamp: Number(contribution.kickstarter.startTimestamp),
           endTimestamp: Number(contribution.kickstarter.endTimestamp),
+          createdAt: Number(contribution.kickstarter.createdAt),
         }
       }
     })

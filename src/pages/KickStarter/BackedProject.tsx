@@ -59,11 +59,7 @@ function BackedProject({ goToBrowseTab }: Props) {
         {backedProjects && backedProjects.map((backedProject) => (
           <Grid item xs={12} sm={6} lg={4} key={backedProject.id}>
             <ProjectCard
-              title={backedProject.kickstarter.title}
-              creator={backedProject.kickstarter.creator}
-              projectGoals={backedProject.kickstarter.projectGoals}
-              totalContribution={backedProject.kickstarter.totalContribution}
-              endTimestamp={backedProject.kickstarter.endTimestamp}
+              kickstarter={backedProject.kickstarter}
               onClick={() => handleBackedProjectChanged(backedProject.kickstarter.id)}
             />
           </Grid>

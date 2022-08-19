@@ -68,20 +68,12 @@ function BrowseProject() {
               <Grid item xs={12} sm={6} lg={4} key={kickstarter.id}>
                 {isDesktop ? (
                   <ProjectCard
-                    title={kickstarter.title}
-                    creator={kickstarter.creator}
-                    projectGoals={kickstarter.projectGoals}
-                    totalContribution={kickstarter.totalContribution}
-                    endTimestamp={kickstarter.endTimestamp}
+                    kickstarter={kickstarter}
                     onClick={() => handleBrowseProjectChanged(kickstarter.id)}
                   />
                 ) : (
                   <ProjectCardMobile
-                    title={kickstarter.title}
-                    creator={kickstarter.creator}
-                    projectGoals={kickstarter.projectGoals}
-                    totalContribution={kickstarter.totalContribution}
-                    endTimestamp={kickstarter.endTimestamp}
+                    kickstarter={kickstarter}
                     showStatus
                     onClick={() => handleBrowseProjectChanged(kickstarter.id)}
                   />
@@ -121,20 +113,12 @@ function BrowseProject() {
           <Grid item xs={12} sm={6} lg={4} key={kickstarter.id}>
             {isDesktop ? (
               <ProjectCard
-                title={kickstarter.title}
-                creator={kickstarter.creator}
-                projectGoals={kickstarter.projectGoals}
-                totalContribution={kickstarter.totalContribution}
-                endTimestamp={kickstarter.endTimestamp}
+                kickstarter={kickstarter}
                 onClick={() => handleBrowseProjectChanged(kickstarter.id)}
               />
             ) : (
               <ProjectCardMobile
-                title={kickstarter.title}
-                creator={kickstarter.creator}
-                projectGoals={kickstarter.projectGoals}
-                totalContribution={kickstarter.totalContribution}
-                endTimestamp={kickstarter.endTimestamp}
+                kickstarter={kickstarter}
                 onClick={() => handleBrowseProjectChanged(kickstarter.id)}
               />
             )}

@@ -88,11 +88,7 @@ function MyProject({
         {myKickstarters && myKickstarters.map((kickstarter) => (
           <Grid item xs={12} sm={6} lg={4}>
             <ProjectCard
-              title={kickstarter.title}
-              creator={kickstarter.creator}
-              projectGoals={kickstarter.projectGoals}
-              totalContribution={new BigNumber(0)}
-              endTimestamp={kickstarter.endTimestamp}
+              kickstarter={kickstarter}
               onClick={() => handleMyProjectChanged(kickstarter.id)}
             />
           </Grid>
