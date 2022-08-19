@@ -22,6 +22,8 @@ enum TabCode {
 
 type Props = {
   projectAddress: string
+  isPayment: boolean
+  toggleIsPayment: () => void
   onBack: () => void
 }
 
@@ -127,7 +129,7 @@ const StyledCornerIllustration = styled.img`
   height: 100%;
 `
 
-function ProjectDetails({ projectAddress, onBack }: Props) {
+function ProjectDetails({ projectAddress, isPayment, toggleIsPayment, onBack }: Props) {
   const { account } = useKickstarterContext()
   const kickstarter = useKickstarter(projectAddress)
   const generalTabs: Tab[] = [
@@ -178,7 +180,6 @@ function ProjectDetails({ projectAddress, onBack }: Props) {
   ])
   const [hasBackedProject, setHasBackedProject] = useState(true)
   const [backedAmount, setBackedAmount] = useState(1000)
-  const [isPayment, setIsPayment] = useState(false)
   const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
 
   const displayTooltip = () => {
@@ -188,18 +189,23 @@ function ProjectDetails({ projectAddress, onBack }: Props) {
     }, 1000)
   }
 
-  const togglePayment = () => {
-    setIsPayment((prevValue) => !prevValue)
-  }
-
   useEffect(() => {
     if (account?.toLowerCase() === kickstarter?.owner.id) return
     if (selectedTab !== TabCode.DONATORS) return
     setSelectedTab(TabCode.PROJECT_DETAILS)
   }, [selectedTab, account, kickstarter])
 
-  if (isPayment) {
-    return <ProjectPayment onBack={onBack} togglePayment={togglePayment}  />
+  if (isPayment && kickstarter) {
+    return (
+      <ProjectPayment
+        kickstarter={kickstarter}
+        onBack={() => {
+          toggleIsPayment();
+          onBack();
+        }}
+        togglePayment={toggleIsPayment}
+      />
+    )
   }
 
   const currentPageLink = encodeURIComponent(`${window.location.href}?kickstarter=${kickstarter?.id}`)
@@ -270,7 +276,7 @@ function ProjectDetails({ projectAddress, onBack }: Props) {
             </BackedAmountWrapper>
           )}
           <Flex style={{ columnGap: "8px" }} alignItems="center">
-            <Button onClick={togglePayment}>Back this project</Button>
+            <Button onClick={toggleIsPayment}>Back this project</Button>
             {!kickstarter ? (
               <Skeleton width={50} height={38} />
             ) : (

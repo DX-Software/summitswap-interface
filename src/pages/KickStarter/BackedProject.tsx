@@ -24,8 +24,10 @@ function BackedProject({ goToBrowseTab }: Props) {
     backedProjects,
     backedProjectAddress,
     backedProjectPage,
+    isPaymentOnBackedProjectPage,
     handleBackedProjectChanged,
     handleBackedProjectPageChanged,
+    handleIsPaymentOnBackedProjectPage,
   } = useKickstarterContext()
 
   const maxPage = useMemo(() => {
@@ -41,6 +43,8 @@ function BackedProject({ goToBrowseTab }: Props) {
     return (
       <ProjectDetails
         projectAddress={backedProjectAddress}
+        isPayment={isPaymentOnBackedProjectPage}
+        toggleIsPayment={() => handleIsPaymentOnBackedProjectPage(!isPaymentOnBackedProjectPage)}
         onBack={() => handleBackedProjectChanged(undefined)}
       />
     )

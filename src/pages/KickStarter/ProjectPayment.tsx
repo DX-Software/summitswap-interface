@@ -1,6 +1,7 @@
 import { ArrowBackIcon, ArrowForwardIcon, BinanceIcon, Box, Breadcrumbs, Button, Flex, Heading, Text, useModal, WalletIcon } from "@koda-finance/summitswap-uikit"
 import { Grid } from "@mui/material"
 import { useKickstarterContext } from "contexts/kickstarter"
+import { Kickstarter } from "hooks/useKickstarter"
 import React, { useState } from "react"
 import styled from "styled-components"
 import FundingInput from "./FundingInput"
@@ -8,6 +9,7 @@ import MobilePayment from "./MobilePayment"
 import PaymentModal from "./PaymentModal"
 
 type Props = {
+  kickstarter: Kickstarter
   onBack: () => void
   togglePayment: () => void
 }
@@ -97,7 +99,7 @@ const ButtonContinue = styled(Button)`
   }
 `
 
-function ProjectPayment({ onBack, togglePayment }: Props) {
+function ProjectPayment({ kickstarter, onBack, togglePayment }: Props) {
   const { account, onPresentConnectModal } = useKickstarterContext()
 
   const [showPayment] = useModal(<PaymentModal title="Payment Process" />)

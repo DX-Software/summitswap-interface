@@ -31,6 +31,10 @@ type KickstarterContextProps = {
   browseProjectPage: number
   backedProjectPage: number
 
+  isPaymentOnMyProjectPage: boolean
+  isPaymentOnBrowseProjectPage: boolean
+  isPaymentOnBackedProjectPage: boolean
+
   handleMyProjectChanged: (address?: string) => void
   handleBrowseProjectChanged: (address?: string) => void
   handleSearchKickstarterChanged: (search: string) => void
@@ -40,6 +44,10 @@ type KickstarterContextProps = {
   handleMyProjectPageChanged: (page: number) => void
   handleBrowseProjectPageChanged: (page: number) => void
   handleBackedProjectPageChanged: (page: number) => void
+
+  handleIsPaymentOnMyProjectPage: (value: boolean) => void
+  handleIsPaymentOnBrowseProjectPage: (value: boolean) => void
+  handleIsPaymentOnBackedProjectPage: (value: boolean) => void
 };
 
 
@@ -51,6 +59,10 @@ const KickstarterContext = createContext<KickstarterContextProps>({
   browseProjectPage: 1,
   backedProjectPage: 1,
 
+  isPaymentOnMyProjectPage: false,
+  isPaymentOnBrowseProjectPage: false,
+  isPaymentOnBackedProjectPage: false,
+
   handleMyProjectChanged: (newAddress?: string) => null,
   handleBrowseProjectChanged: (newAddress?: string) => null,
   handleSearchKickstarterChanged: (search: string) => null,
@@ -60,6 +72,10 @@ const KickstarterContext = createContext<KickstarterContextProps>({
   handleMyProjectPageChanged: (page: number) => null,
   handleBrowseProjectPageChanged: (page: number) => null,
   handleBackedProjectPageChanged: (page: number) => null,
+
+  handleIsPaymentOnMyProjectPage: (value: boolean) => null,
+  handleIsPaymentOnBrowseProjectPage: (value: boolean) => null,
+  handleIsPaymentOnBackedProjectPage: (value: boolean) => null,
 });
 
 export function KickstarterProvider({ children }: { children: React.ReactNode }) {
@@ -78,7 +94,11 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
   const [browseProjectPage, setBrowseProjectPage] = useState<number>(1)
   const [backedProjectPage, setBackedProjectPage] = useState<number>(1)
 
-  const searchValue = useDebounce(searchKickstarter || "", 1000)
+  const [isPaymentOnMyProjectPage, setIsPaymentOnMyProjectPage] = useState<boolean>(false)
+  const [isPaymentOnBrowseProjectPage, setIsPaymentOnBrowseProjectPage] = useState<boolean>(false)
+  const [isPaymentOnBackedProjectPage, setIsPaymentOnBackedProjectPage] = useState<boolean>(false)
+
+  const searchValue = useDebounce(searchKickstarter || "", 600)
   const almostEndedKickstarters = useKickstartersByTime(currentTimestamp, currentTimestamp + ONE_WEEK_IN_SECONDS, 3)
   const kickstarterFactory = useKickstarterFactory(KICKSTARTER_ADDRESS)
   const kickstarterAccount = useKickstarterAccount(account)
@@ -118,6 +138,10 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
         browseProjectPage,
         backedProjectPage,
 
+        isPaymentOnMyProjectPage: isPaymentOnMyProjectPage && !!account,
+        isPaymentOnBrowseProjectPage: isPaymentOnBrowseProjectPage && !!account,
+        isPaymentOnBackedProjectPage: isPaymentOnBackedProjectPage && !!account,
+
         handleMyProjectChanged: setMyProjectAddress,
         handleBrowseProjectChanged: setBrowseProjectAddress,
         handleSearchKickstarterChanged: setSearchKickstarter,
@@ -127,6 +151,10 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
         handleMyProjectPageChanged: setMyProjectPage,
         handleBrowseProjectPageChanged: setBrowseProjectPage,
         handleBackedProjectPageChanged: setBackedProjectPage,
+
+        handleIsPaymentOnMyProjectPage: setIsPaymentOnMyProjectPage,
+        handleIsPaymentOnBrowseProjectPage: setIsPaymentOnBrowseProjectPage,
+        handleIsPaymentOnBackedProjectPage: setIsPaymentOnBackedProjectPage,
       }}
     >
       {children}

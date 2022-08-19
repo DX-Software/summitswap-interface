@@ -21,18 +21,18 @@ function BrowseProject() {
     kickstarters,
     browseProjectAddress,
     browseProjectPage,
+    isPaymentOnBrowseProjectPage,
     handleBrowseProjectChanged,
     handleKickstarterOrderDirectionChanged,
     handleSearchKickstarterChanged,
     handleBrowseProjectPageChanged,
+    handleIsPaymentOnBrowseProjectPage,
   } = useKickstarterContext()
 
   const maxPage = useMemo(() => {
     const totalItems = kickstarterFactory?.totalKickstarter.toNumber() || 1;
     return Math.ceil(totalItems / PER_PAGE)
   }, [kickstarterFactory?.totalKickstarter])
-
-  console.log("kickstarterFactory", kickstarterFactory)
 
   const sortOptions = [
     {
@@ -49,6 +49,8 @@ function BrowseProject() {
     return (
       <ProjectDetails
         projectAddress={browseProjectAddress}
+        isPayment={isPaymentOnBrowseProjectPage}
+        toggleIsPayment={() => handleIsPaymentOnBrowseProjectPage(!isPaymentOnBrowseProjectPage)}
         onBack={() => handleBrowseProjectChanged(undefined)}
       />
     )
