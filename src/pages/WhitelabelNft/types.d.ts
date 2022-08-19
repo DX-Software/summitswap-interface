@@ -17,12 +17,12 @@ type TotalNftSheet = {
   totalNft: number
 }
 
-type TraitSheet = {
+type NftTraitSheet = {
   displayType: string
   traitType: string
 }
 
-type MetadataSheet = {
+type NftMetadataSheet = {
   tokenId: number
   name: string
   description: string

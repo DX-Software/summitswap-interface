@@ -15,11 +15,11 @@ function getTotalNft(sheet: XLSX.WorkSheet) {
 }
 
 function getTraits(sheet: XLSX.WorkSheet) {
-  const traits = XLSX.utils.sheet_to_json(sheet) as TraitSheet[]
+  const traits = XLSX.utils.sheet_to_json(sheet) as NftTraitSheet[]
   return traits
 }
 
-function getMetadata(sheet: XLSX.WorkSheet, traits: TraitSheet[], totalNft: number) {
+function getMetadata(sheet: XLSX.WorkSheet, traits: NftTraitSheet[], totalNft: number) {
   const traitValues = traits.map((trait) => trait.traitType)
   const header = ['tokenId', 'name', 'description', ...traitValues]
   const columnUpperBound = String.fromCharCode(65 + 3 + traits.length)
@@ -27,11 +27,11 @@ function getMetadata(sheet: XLSX.WorkSheet, traits: TraitSheet[], totalNft: numb
     header,
     range: `A2:${columnUpperBound}${totalNft + 1}`,
     defval: null,
-  }) as MetadataSheet[]
+  }) as NftMetadataSheet[]
   return metadata
 }
 
-function parseAttributes(metaAttributes: { [key: string]: string }, traits: TraitSheet[]) {
+function parseAttributes(metaAttributes: { [key: string]: string }, traits: NftTraitSheet[]) {
   const attributes: NftAttribute[] = traits.map((trait) => {
     const { traitType, displayType } = trait
     const value = metaAttributes[traitType]
