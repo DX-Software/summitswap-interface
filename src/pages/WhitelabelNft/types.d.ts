@@ -35,7 +35,7 @@ type AttributeJson = {
   value: string | number
 }
 
-type MetadataJson = {
+type NftMetadata = JSON & {
   name: string
   description: string
   external_url?: string

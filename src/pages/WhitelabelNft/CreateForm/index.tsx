@@ -8,7 +8,7 @@ import { convertFileToBase64 } from 'utils/convertFileToBase64'
 import parseMetadata from '../spreadsheet'
 import DragAndDrop from './DragAndDrop'
 
-const NftCardPreview = ({ nftMetadata }: { nftMetadata: MetadataJson }) => {
+const NftCardPreview = ({ nftMetadata }: { nftMetadata: NftMetadata }) => {
   return (
     <Flex>
       <Image src={nftMetadata.image} width={100} height={100} />
@@ -23,7 +23,7 @@ const NftCardPreview = ({ nftMetadata }: { nftMetadata: MetadataJson }) => {
 export default function CreateWhitelabelNftForm() {
   const [nftImages, setNftImages] = useState<NftImage[]>([])
   const [spreadsheet, setSpreadsheet] = useState<ArrayBuffer>()
-  const [nftMetadata, setNftMetadata] = useState<MetadataJson[]>([])
+  const [nftMetadata, setNftMetadata] = useState<NftMetadata[]>([])
 
   const whitelabelFactoryContract = useWhitelabelFactoryContract()
 

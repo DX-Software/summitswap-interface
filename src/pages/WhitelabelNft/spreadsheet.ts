@@ -53,7 +53,7 @@ function parseAttributes(metaAttributes: { [key: string]: string }, traits: Trai
 }
 
 export default function parseMetadata(spreadsheet: ArrayBuffer, nftImages: NftImage[]) {
-  const metadata: MetadataJson[] = []
+  const metadata: NftMetadata[] = []
 
   const workbook = XLSX.read(spreadsheet, { type: 'binary' })
   const { traitSheet, metadataSheet, totalNftSheet } = workbook.Sheets
@@ -65,7 +65,7 @@ export default function parseMetadata(spreadsheet: ArrayBuffer, nftImages: NftIm
     const { tokenId, name, description, ...metaAttributes } = meta
     const image = nftImages[tokenId].base64
     const attributes = parseAttributes(metaAttributes, traits)
-    metadata.push({ name, description, image, attributes } as MetadataJson)
+    metadata.push({ name, description, image, attributes } as NftMetadata)
   })
 
   return metadata
