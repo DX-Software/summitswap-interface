@@ -29,7 +29,7 @@ type MetadataSheet = {
   [key: string]: string
 }
 
-type AttributeJson = {
+type NftAttribute = {
   trait_type?: string
   display_type?: DisplayType
   value: string | number
@@ -40,5 +40,5 @@ type NftMetadata = JSON & {
   description: string
   external_url?: string
   image: string
-  attributes: AttributeJson[]
+  attributes: NftAttribute[]
 }

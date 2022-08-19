@@ -32,11 +32,11 @@ function getMetadata(sheet: XLSX.WorkSheet, traits: TraitSheet[], totalNft: numb
 }
 
 function parseAttributes(metaAttributes: { [key: string]: string }, traits: TraitSheet[]) {
-  const attributes: AttributeJson[] = traits.map((trait) => {
+  const attributes: NftAttribute[] = traits.map((trait) => {
     const { traitType, displayType } = trait
     const value = metaAttributes[traitType]
 
-    const attribute: AttributeJson = {
+    const attribute: NftAttribute = {
       trait_type: traitType,
       value,
     }
