@@ -22,6 +22,7 @@ function BrowseProject() {
     browseProjectAddress,
     browseProjectPage,
     isPaymentOnBrowseProjectPage,
+    kickstarterOnBrowseProject,
     handleBrowseProjectChanged,
     handleKickstarterOrderDirectionChanged,
     handleSearchKickstarterChanged,
@@ -48,7 +49,7 @@ function BrowseProject() {
   if (browseProjectAddress) {
     return (
       <ProjectDetails
-        projectAddress={browseProjectAddress}
+        kickstarter={kickstarterOnBrowseProject}
         isPayment={isPaymentOnBrowseProjectPage}
         toggleIsPayment={() => handleIsPaymentOnBrowseProjectPage(!isPaymentOnBrowseProjectPage)}
         onBack={() => handleBrowseProjectChanged(undefined)}

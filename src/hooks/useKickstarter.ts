@@ -105,9 +105,8 @@ const useKickstarter = (address?: string | null): Kickstarter | undefined => {
       const { error: fetchError, data } = await fetchKickstarter(address)
       if (fetchError) {
         setIsError(true)
-      } else if (data) {
-        setKickstarter(data)
       }
+      setKickstarter(data)
     }
     if (!isError) {
       fetch()

@@ -3,12 +3,13 @@ import { useWeb3React } from "@web3-react/core"
 import { KICKSTARTER_ADDRESS } from "constants/kickstarter"
 import useBackedKickstarters, { BackedKickstarter } from "hooks/useBackedKickstarters"
 import useDebounce from "hooks/useDebounce"
+import useKickstarter from "hooks/useKickstarter"
 import useKickstarterAccount, { KickstarterAccount } from "hooks/useKickstarterAccount"
 import useKickstarterByAccount from "hooks/useKickstarterByAccount"
 import useKickstarterFactory, { KickstarterFactory } from "hooks/useKickstarterFactory"
 import useKickstarters, { Kickstarter, OrderBy, OrderDirection } from "hooks/useKickstarters"
 import useKickstartersByTime from "hooks/useKickstartersByTime"
-import React, { createContext, useCallback, useContext, useState } from "react"
+import React, { createContext, useCallback, useContext, useEffect, useState } from "react"
 import login from "utils/login"
 
 type KickstarterContextProps = {
@@ -30,6 +31,10 @@ type KickstarterContextProps = {
   myProjectPage: number
   browseProjectPage: number
   backedProjectPage: number
+
+  kickstarterOnMyProject?: Kickstarter
+  kickstarterOnBrowseProject?: Kickstarter
+  kickstarterOnBackedProject?: Kickstarter
 
   isPaymentOnMyProjectPage: boolean
   isPaymentOnBrowseProjectPage: boolean
@@ -106,6 +111,10 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
   const kickstarters = useKickstarters(searchValue, OrderBy.TITLE, kickstarterOrderDirection, browseProjectPage)
   const backedProjects = useBackedKickstarters(account, backedProjectPage)
 
+  const kickstarterOnMyProject = useKickstarter(myProjectAddress)
+  const kickstarterOnBrowseProject = useKickstarter(browseProjectAddress)
+  const kickstarterOnBackedProject = useKickstarter(backedProjectAddress)
+
   const handleLogin = useCallback(
     (connectorId: string) => {
       login(connectorId, activate)
@@ -133,6 +142,9 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
         myProjectAddress,
         browseProjectAddress,
         backedProjectAddress,
+        kickstarterOnMyProject,
+        kickstarterOnBrowseProject,
+        kickstarterOnBackedProject,
 
         myProjectPage,
         browseProjectPage,

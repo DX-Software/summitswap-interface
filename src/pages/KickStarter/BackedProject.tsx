@@ -23,6 +23,7 @@ function BackedProject({ goToBrowseTab }: Props) {
     kickstarterAccount,
     backedProjects,
     backedProjectAddress,
+    kickstarterOnBackedProject,
     backedProjectPage,
     isPaymentOnBackedProjectPage,
     handleBackedProjectChanged,
@@ -42,7 +43,7 @@ function BackedProject({ goToBrowseTab }: Props) {
   if (backedProjectAddress) {
     return (
       <ProjectDetails
-        projectAddress={backedProjectAddress}
+        kickstarter={kickstarterOnBackedProject}
         isPayment={isPaymentOnBackedProjectPage}
         toggleIsPayment={() => handleIsPaymentOnBackedProjectPage(!isPaymentOnBackedProjectPage)}
         onBack={() => handleBackedProjectChanged(undefined)}

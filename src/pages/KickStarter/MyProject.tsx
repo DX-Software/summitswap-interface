@@ -1,10 +1,9 @@
-import { AddIcon, ArrowBackIcon, ArrowForwardIcon, Button, Flex, Heading, Text, useWalletModal, WalletIcon } from '@koda-finance/summitswap-uikit'
+import { AddIcon, ArrowBackIcon, ArrowForwardIcon, Button, Flex, Heading, Text } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
-import BigNumber from 'bignumber.js'
 import { Arrow, PageButtons } from 'components/InfoTables/shared'
 import { PER_PAGE } from 'constants/kickstarter'
 import { useKickstarterContext } from 'contexts/kickstarter'
-import React, { useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import CreateProject from './CreateProject'
 import ProjectCard from './ProjectCard'
@@ -39,6 +38,7 @@ function MyProject({
     myProjectAddress,
     myProjectPage,
     isPaymentOnMyProjectPage,
+    kickstarterOnMyProject,
     handleMyProjectChanged,
     handleMyProjectPageChanged,
     handleIsPaymentOnMyProjectPage,
@@ -72,7 +72,7 @@ function MyProject({
   if (myProjectAddress) {
     return (
       <ProjectDetails
-        projectAddress={myProjectAddress}
+        kickstarter={kickstarterOnMyProject}
         isPayment={isPaymentOnMyProjectPage}
         toggleIsPayment={() => handleIsPaymentOnMyProjectPage(!isPaymentOnMyProjectPage)}
         onBack={() => handleMyProjectChanged(undefined)}

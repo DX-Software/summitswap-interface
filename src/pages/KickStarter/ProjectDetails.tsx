@@ -1,9 +1,9 @@
 import { ArrowBackIcon, BinanceIcon, Breadcrumbs, Button, FacebookIcon, FileIcon, Flex, Progress, ShareIcon, Skeleton, Tag, Text, TwitterIcon } from "@koda-finance/summitswap-uikit"
-import { Grid, TabScrollButton } from "@mui/material"
+import { Grid } from "@mui/material"
 import Tooltip from "components/Tooltip"
 import { useKickstarterContext } from "contexts/kickstarter"
 import { format } from "date-fns"
-import useKickstarter from "hooks/useKickstarter"
+import { Kickstarter } from "hooks/useKickstarter"
 import ImgCornerIllustration from "img/corner-illustration.svg"
 import React, { useEffect, useState } from "react"
 import styled from "styled-components"
@@ -21,7 +21,7 @@ enum TabCode {
 }
 
 type Props = {
-  projectAddress: string
+  kickstarter?: Kickstarter
   isPayment: boolean
   toggleIsPayment: () => void
   onBack: () => void
@@ -129,9 +129,8 @@ const StyledCornerIllustration = styled.img`
   height: 100%;
 `
 
-function ProjectDetails({ projectAddress, isPayment, toggleIsPayment, onBack }: Props) {
+function ProjectDetails({ kickstarter, isPayment, toggleIsPayment, onBack }: Props) {
   const { account } = useKickstarterContext()
-  const kickstarter = useKickstarter(projectAddress)
   const generalTabs: Tab[] = [
     {
       code: TabCode.PROJECT_DETAILS,
