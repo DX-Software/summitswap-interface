@@ -61,7 +61,7 @@ const PresaleStatus = ({ presaleInfo, presaleAddress, isPresaleEdit = false }: P
         </TextStatusBox>
         <TextStatusBox color={getColor()}>
           <TextStatusBox bold color={getColor()} style={{ display: 'inline' }}>
-            {presaleInfo?.isApproved ? <CheckmarkIcon color="success" width="15px" /> : 'O'}
+            {presaleInfo?.isApproved ? <CheckmarkIcon color="primary" width="15px" /> : 'O'}
           </TextStatusBox>
           &nbsp;{presaleInfo?.isApproved ? 'Approved' : 'Waiting for Approval'}
         </TextStatusBox>
