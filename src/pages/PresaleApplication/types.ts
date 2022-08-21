@@ -51,7 +51,9 @@ export enum FieldNames {
   feePaymentToken = 'feePaymentToken',
   feePresaleToken = 'feePresaleToken',
   emergencyWithdrawFee = 'emergencyWithdrawFee',
-  presaleInfo = 'presaleInfo'
+  presaleInfo = 'presaleInfo',
+  feeInfo = 'feeInfo',
+  ProjectDetails = 'ProjectDetails',
 }
 
 export interface ProjectDetails {
@@ -133,7 +135,6 @@ export interface PresaleDetails {
   [FieldNames.feePaymentToken]?: number;
   [FieldNames.feePresaleToken]?: number;
   [FieldNames.emergencyWithdrawFee]?: number;
-  [FieldNames.presaleInfo]?: PresaleInfo;
 }
 
 export interface PresaleDetailsErrors {
@@ -156,6 +157,13 @@ export interface PresaleDetailsErrors {
   [FieldNames.feePaymentToken]?: string;
   [FieldNames.feePresaleToken]?: string;
   [FieldNames.emergencyWithdrawFee]?: string;
+}
+
+export interface AdminForm extends PresaleDetails, ProjectDetails {
+  [FieldNames.presaleInfo]?: PresaleInfo;
+}
+
+export interface AdminFormErrors extends PresaleDetailsErrors, ProjectDetails {
 }
 
 export enum PresalePhases {
