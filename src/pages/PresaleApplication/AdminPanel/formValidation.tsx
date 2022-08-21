@@ -144,16 +144,6 @@ const validateAdminForm = (values: AdminForm) => {
     errors.telegramId = 'Not a valid Url'
   }
 
-  if (!values.logoUrl) {
-    errors.logoUrl = 'Required*'
-  } else if (!checkUrl(values.logoUrl)) {
-    errors.logoUrl = 'Not a valid Url'
-  } else if (values.logoHeight && values.logoHeight !== 100 && values.logoWidth !== 100) {
-    errors.logoUrl = 'Size should be 100x100'
-  } else if (values.logoUrl && !values.logoHeight) {
-    errors.logoUrl = 'Enter valid url logo'
-  }
-
   if (values.discordId && !checkUrl(values.discordId)) {
     errors.discordId = 'Not a valid Url'
   }
