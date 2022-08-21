@@ -24,6 +24,7 @@ import {
 
 interface Props {
   presaleAddress: string
+  handleEditButtonHandler: (isEdit: boolean) => void
 }
 
 const Divider = styled.div`
@@ -43,7 +44,7 @@ const HeadingPresaleDetails = styled(Heading)`
   }
 `
 
-const PresaleSummary = ({ presaleAddress }: Props) => {
+const PresaleSummary = ({ presaleAddress, handleEditButtonHandler }: Props) => {
   const { account, library } = useWeb3React()
 
   const [isLoading, setIsLoading] = useState(false)
@@ -133,6 +134,7 @@ const PresaleSummary = ({ presaleAddress }: Props) => {
           scale="sm"
           width="fit-content"
           variant="tertiary"
+          onClick={() => handleEditButtonHandler(true)}
         >
           Edit Presale
         </Button>
