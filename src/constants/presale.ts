@@ -49,3 +49,28 @@ export const TOKEN_CHOICES = {
   USDC: USDC.address,
   USDT: USDT.address,
 }
+
+export const ROUTER_OPTIONS = [
+  {
+    label: 'Summitswap',
+    value: `${RADIO_VALUES.LISTING_SS_100}`,
+  },
+  {
+    label: 'Pancakeswap',
+    value: `${RADIO_VALUES.LISTING_PS_100}`,
+  },
+  {
+    label: 'Both',
+    value: `${RADIO_VALUES.LISTING_SS75_PK25}`,
+  },
+]
+
+export const DAY_OPTIONS = [...Array(31).keys()].map((i) => ({
+  label: `${i + 1}`,
+  value: `${i + 1}`,
+}))
+
+export const HOUR_OPTIONS = [...Array(24).keys()].map((i) => ({
+  label: `${i}`,
+  value: `${i}`,
+}))

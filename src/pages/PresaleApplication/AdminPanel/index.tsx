@@ -18,6 +18,7 @@ import HeadingCotainer, { StyledText } from './HeadingContainer'
 import PresaleDetail from './PresaleDetails'
 import PresaleSettings from './PresaleSettings'
 import PresaleSummary from './PresaleSummary'
+import EditPresale from './EditPresale'
 
 const ContentWrapper = styled(Box)`
   max-width: 90%;
@@ -62,9 +63,12 @@ const PaginationWrapper = styled.div`
 
 const AdminPanel = () => {
   const [tabIndex, setTabIndex] = useState(0)
-  const [page, setPage] = useState(1)
+  const [pagePendingPresales, setPagePendingPresales] = useState(1)
+  const [pageApprovedPresales, setPageApprovedPresales] = useState(1)
   const [pendingPresales, setPendingPresales] = useState<string[]>([])
+  const [approvedPresales, setApprovedPresales] = useState<string[]>([])
   const [selectedPresale, setSelectedPresale] = useState('')
+  const [isEditMode, setEditMode] = useState(false)
 
   const theme = useTheme()
   const paginationStyle = useMemo(
@@ -93,27 +97,52 @@ const AdminPanel = () => {
   const factoryContract = useFactoryPresaleContract(PRESALE_FACTORY_ADDRESS)
 
   useEffect(() => {
-    async function fetchPendingPresale() {
+    async function fetchPresales() {
       setPendingPresales(await factoryContract?.getPendingPresales())
+      setApprovedPresales(await factoryContract?.getApprovedPresales())
     }
     if (factoryContract) {
-      fetchPendingPresale()
+      fetchPresales()
     }
   }, [factoryContract])
 
+  const handleEditButtonHandler = (isEdit: boolean) => setEditMode(isEdit)
   const handleChangeTabIndex = (newIndex: number) => setTabIndex(newIndex)
-  const changePageHandler = (_: React.ChangeEvent<unknown>, value: number) => setPage(value)
+  const changePendingPageHandler = (_: React.ChangeEvent<unknown>, value: number) => setPagePendingPresales(value)
+  const changeApprovedPageHandler = (_: React.ChangeEvent<unknown>, value: number) => setPageApprovedPresales(value)
   const selectPresaleHandler = (presaleAddress: string) => setSelectedPresale(presaleAddress)
 
-  const sectionTexts = ['Waiting for Approval', 'Approval History']
-  const chooseSection = useCallback((slicedPresaleAddresses: string[], index: number) => {
-    switch (index) {
+  const getSlicedAddress = useCallback((addresses: string[], pageNum: number) => {
+    const startIndex = pageNum * PRESALES_PER_PAGE_ADMIN_PANEL - PRESALES_PER_PAGE_ADMIN_PANEL
+    const endIndex =
+      startIndex + PRESALES_PER_PAGE_ADMIN_PANEL > addresses.length
+        ? addresses.length
+        : startIndex + PRESALES_PER_PAGE_ADMIN_PANEL
+    return addresses.slice(startIndex, endIndex)
+  }, [])
+
+  const sectionTexts = ['Waiting for Approval', 'Approved Presales']
+  const chooseSection = () => {
+    switch (tabIndex) {
       case 0:
         return (
           <>
             <HeadingCotainer />
             <Divider bottomOnly />
-            {slicedPresaleAddresses.map((address) => (
+            {getSlicedAddress(pendingPresales, pagePendingPresales).map((address) => (
+              <Box key={address}>
+                <PresaleDetail selectPresaleHandler={selectPresaleHandler} presaleAddress={address} />
+                <Divider />
+              </Box>
+            ))}
+          </>
+        )
+      case 1:
+        return (
+          <>
+            <HeadingCotainer />
+            <Divider bottomOnly />
+            {getSlicedAddress(approvedPresales, pagePendingPresales).map((address) => (
               <Box key={address}>
                 <PresaleDetail selectPresaleHandler={selectPresaleHandler} presaleAddress={address} />
                 <Divider />
@@ -126,23 +155,22 @@ const AdminPanel = () => {
       default:
         return <></>
     }
-  }, [])
-
-  const startIndex = page * PRESALES_PER_PAGE_ADMIN_PANEL - PRESALES_PER_PAGE_ADMIN_PANEL
-  const endIndex =
-    startIndex + PRESALES_PER_PAGE_ADMIN_PANEL > pendingPresales.length
-      ? pendingPresales.length
-      : startIndex + PRESALES_PER_PAGE_ADMIN_PANEL
-  const slicedPresaleAddresses = pendingPresales.slice(startIndex, endIndex)
+  }
 
   return (
-    <ContentWrapper overflow={tabIndex === 2 && !selectedPresale ? 'visible' : 'scroll'}>
+    <ContentWrapper
+      overflow={(tabIndex === 2 && !selectedPresale) || (isEditMode && selectedPresale) ? 'visible' : 'scroll'}
+    >
       <Box width={selectedPresale || '950px'}>
         {selectedPresale ? (
           <>
             <Breadcrumbs separator={<ChevronRightIcon color={darkColors.textDisabled} width="20px" />}>
-              <StyledText color="primaryDark">Admin Panel</StyledText>
-              <StyledText color="primaryDark">{sectionTexts[tabIndex]}</StyledText>
+              <StyledText style={{ cursor: 'pointer' }} onClick={() => setSelectedPresale('')} color="primaryDark">
+                Admin Panel
+              </StyledText>
+              <StyledText style={{ cursor: 'pointer' }} onClick={() => setSelectedPresale('')} color="primaryDark">
+                {sectionTexts[tabIndex]}
+              </StyledText>
               <StyledText bold>Presale Details</StyledText>
             </Breadcrumbs>
             <Box marginBottom="8px" />
@@ -164,7 +192,11 @@ const AdminPanel = () => {
                 Back To Admin Panel
               </Text>
             </RowFixed>
-            <PresaleSummary presaleAddress={selectedPresale} />
+            {isEditMode ? (
+              <EditPresale presaleAddress={selectedPresale} handleEditButtonHandler={handleEditButtonHandler} />
+            ) : (
+              <PresaleSummary presaleAddress={selectedPresale} handleEditButtonHandler={handleEditButtonHandler} />
+            )}
           </>
         ) : (
           <>
@@ -176,21 +208,33 @@ const AdminPanel = () => {
               <StyledText>Presale Settings</StyledText>
             </TabPresale>
             <Divider bottomOnly />
-            {chooseSection(slicedPresaleAddresses, tabIndex)}
+            {chooseSection()}
           </>
         )}
       </Box>
       {!selectedPresale && tabIndex !== 2 && (
         <Flex marginTop="24px" justifyContent="end">
           <PaginationWrapper>
-            <Pagination
-              sx={paginationStyle}
-              variant="outlined"
-              shape="rounded"
-              count={Math.ceil(pendingPresales.length / PRESALES_PER_PAGE_ADMIN_PANEL)}
-              page={page}
-              onChange={changePageHandler}
-            />
+            {tabIndex === 0 && (
+              <Pagination
+                sx={paginationStyle}
+                variant="outlined"
+                shape="rounded"
+                count={Math.ceil(pendingPresales.length / PRESALES_PER_PAGE_ADMIN_PANEL)}
+                page={pagePendingPresales}
+                onChange={changePendingPageHandler}
+              />
+            )}
+            {tabIndex === 1 && (
+              <Pagination
+                sx={paginationStyle}
+                variant="outlined"
+                shape="rounded"
+                count={Math.ceil(approvedPresales.length / PRESALES_PER_PAGE_ADMIN_PANEL)}
+                page={pageApprovedPresales}
+                onChange={changeApprovedPageHandler}
+              />
+            )}
           </PaginationWrapper>
         </Flex>
       )}
