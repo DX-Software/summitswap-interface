@@ -2,7 +2,15 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import { formatUnits } from 'ethers/lib/utils'
-import { CheckmarkCircleIcon, Box, Button, EditIcon, Flex, Heading } from '@koda-finance/summitswap-uikit'
+import {
+  AutoRenewIcon,
+  CheckmarkCircleIcon,
+  Box,
+  Button,
+  EditIcon,
+  Flex,
+  Heading,
+} from '@koda-finance/summitswap-uikit'
 import { useTokenContract, usePresaleContract, useFactoryPresaleContract } from 'hooks/useContract'
 import { useToken } from 'hooks/Tokens'
 import { fetchPresaleInfo, fetchFeeInfo, fetchProjectDetails } from 'utils/presale'
@@ -128,16 +136,18 @@ const PresaleSummary = ({ presaleAddress, handleEditButtonHandler }: Props) => {
         <HeadingPresaleDetails marginTop="30px" size="xl">
           Presale Details
         </HeadingPresaleDetails>
-        <Button
-          marginTop="30px"
-          startIcon={<EditIcon color="currentColor" />}
-          scale="sm"
-          width="fit-content"
-          variant="tertiary"
-          onClick={() => handleEditButtonHandler(true)}
-        >
-          Edit Presale
-        </Button>
+        {!presaleInfo?.isApproved && (
+          <Button
+            marginTop="30px"
+            startIcon={<EditIcon color="currentColor" />}
+            scale="sm"
+            width="fit-content"
+            variant="tertiary"
+            onClick={() => handleEditButtonHandler(true)}
+          >
+            Edit Presale
+          </Button>
+        )}
       </ResponsiveFlex>
       <SectionHeading marginTop="16px" color="success">
         Token Information
@@ -379,7 +389,8 @@ const PresaleSummary = ({ presaleAddress, handleEditButtonHandler }: Props) => {
           <Divider />
           <Button
             variant="awesome"
-            startIcon={<CheckmarkCircleIcon color="currentColor" />}
+            startIcon={!isLoading && <CheckmarkCircleIcon color="currentColor" />}
+            endIcon={isLoading && <AutoRenewIcon spin color="currentColor" />}
             disabled={!presaleToken || !presaleContract || !factoryContract || isLoading || !account}
             type="button"
             onClick={approvePresaleHandler}
