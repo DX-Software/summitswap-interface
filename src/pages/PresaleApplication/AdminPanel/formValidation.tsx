@@ -51,7 +51,7 @@ const validateAdminForm = (values: AdminForm) => {
         const fullDate = new Date(
           Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate(), Number(hours), Number(mins))
         )
-        if (fullDate <= date) {
+        if (fullDate < date) {
           errors.startPresaleTime = 'Start time >= start time set by owner'
         } else if (values.endPresaleTime && values.endPresaleDate) {
           const date3 = new Date(values.endPresaleDate)
@@ -88,9 +88,9 @@ const validateAdminForm = (values: AdminForm) => {
 
   if (values.feePresaleToken) {
     if (values.feePresaleToken < 0) {
-      errors.feePresaleToken = 'feePresaleToken should be a positive number'
+      errors.feePresaleToken = 'PresaleToken fee should be a positive number'
     } else if (!Number.isInteger(values.feePresaleToken)) {
-      errors.feePresaleToken = 'feePresaleToken should be an Integer'
+      errors.feePresaleToken = 'PresaleToken fee should be an Integer'
     } else if (
       values.presaleInfo &&
       values.feePresaleToken >=
@@ -99,13 +99,13 @@ const validateAdminForm = (values: AdminForm) => {
           .div(10 ** FEE_DECIMALS)
           .toNumber()
     ) {
-      errors.feePresaleToken = 'feePresaleToken should be less than liquidity%'
+      errors.feePresaleToken = 'PresaleToken fee should be less than liquidity%'
     }
   }
 
   if (values.feePaymentToken) {
     if (values.feePaymentToken < 0) {
-      errors.feePaymentToken = 'PaymentToken should be a positive number'
+      errors.feePaymentToken = 'PaymentToken fee should be a positive number'
     } else if (!Number.isInteger(values.feePaymentToken)) {
       errors.feePaymentToken = 'PaymentToken should be an Integer'
     } else if (
@@ -116,18 +116,18 @@ const validateAdminForm = (values: AdminForm) => {
           .div(10 ** FEE_DECIMALS)
           .toNumber()
     ) {
-      errors.feePaymentToken = 'pa.paymentToken should be less than liquidity%'
+      errors.feePaymentToken = 'PaymentToken fee should be less than liquidity%'
     }
   }
 
   if (!values.emergencyWithdrawFee) {
     errors.emergencyWithdrawFee = 'Required*'
   } else if (values.emergencyWithdrawFee < 0) {
-    errors.emergencyWithdrawFee = 'emergencyWithdrawFee should be a positive number'
+    errors.emergencyWithdrawFee = 'Emergency withdraw fee should be a positive number'
   } else if (!Number.isInteger(values.emergencyWithdrawFee)) {
-    errors.emergencyWithdrawFee = 'emergencyWithdrawFee should be an Integer'
+    errors.emergencyWithdrawFee = 'Emergency withdraw fee should be an Integer'
   } else if (values.emergencyWithdrawFee >= 100) {
-    errors.emergencyWithdrawFee = 'emergencyWithdrawFee should be less than 100%'
+    errors.emergencyWithdrawFee = 'Emergency withdraw fee should be less than 100%'
   }
 
   if (!values.projectName) {
