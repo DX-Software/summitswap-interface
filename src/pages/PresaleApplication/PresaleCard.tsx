@@ -4,28 +4,19 @@ import { useWeb3React } from '@web3-react/core'
 import { differenceInDays, formatDuration, intervalToDuration } from 'date-fns'
 import { BigNumber } from 'ethers'
 import { formatUnits } from 'ethers/lib/utils'
-import {
-  LockIcon,
-  UnLockIcon,
-  CircleFilledIcon,
-  Box,
-  Button,
-  Flex,
-  Progress,
-  Text,
-  Tag,
-  darkColors,
-} from '@koda-finance/summitswap-uikit'
+import { Box, Button, Flex, Progress, Text, darkColors } from '@koda-finance/summitswap-uikit'
 import { usePresaleContract } from 'hooks/useContract'
 import { useToken } from 'hooks/Tokens'
-import { RowBetween, RowFixed } from 'components/Row'
+import { RowBetween } from 'components/Row'
 import { fetchPresaleInfo, fetchFeeInfo, fetchProjectDetails, checkSalePhase } from 'utils/presale'
 import { FEE_DECIMALS, TOKEN_CHOICES } from 'constants/presale'
 import { PresaleInfo, ProjectDetails, FeeInfo, PresalePhases } from './types'
 import ProgressWrapper from './ProgressWrapper'
+import PresaleTags from './PresaleTags'
 
 interface Props {
   presaleAddress: string
+  viewPresaleHandler: (address: string) => void
 }
 
 const StyledCard = styled(Box)`
@@ -35,6 +26,8 @@ const StyledCard = styled(Box)`
   border-radius: 8px;
   min-width: 306px;
   padding: 16px;
+  margin-bottom: 16px;
+
   @media (max-width: 330px) {
     width: 100%;
     min-width: 250px;
@@ -56,72 +49,6 @@ const StyledText = styled(Text)`
     font-size: ${({ fontSize }) => `calc(${fontSize} - 2px)` || '14px'};
   }
 `
-const CardTags = ({ presaleInfo }: { presaleInfo: PresaleInfo | undefined }) => {
-  const SaleTypeTage = () => (
-    <Box marginLeft="6px">
-      {presaleInfo?.isVestingEnabled ? (
-        <Tag startIcon={<LockIcon width="10px" color="textDisabled" />} variant="default">
-          <StyledText color="black" bold fontSize="12px">
-            WHITELIST ONLY
-          </StyledText>
-        </Tag>
-      ) : (
-        <Tag startIcon={<UnLockIcon width="10px" color="primary" />} variant="default">
-          <StyledText color="primary" bold fontSize="12px">
-            PUBLIC
-          </StyledText>
-        </Tag>
-      )}
-    </Box>
-  )
-  if (!presaleInfo) return <Box height="26px" />
-
-  if (!presaleInfo.isApproved)
-    return (
-      <Tag variant="info">
-        <StyledText bold fontSize="12px">
-          WAITING FOR APPROVAL
-        </StyledText>
-      </Tag>
-    )
-  if (new Date() < new Date(presaleInfo.startPresaleTime.mul(1000).toNumber())) {
-    return (
-      <RowFixed>
-        <Tag variant="binance">
-          <StyledText bold fontSize="12px">
-            UPCOMING
-          </StyledText>
-        </Tag>
-        {SaleTypeTage()}
-      </RowFixed>
-    )
-  }
-  if (new Date() < new Date(presaleInfo.endPresaleTime.mul(1000).toNumber())) {
-    return (
-      <RowFixed>
-        <Tag startIcon={<CircleFilledIcon color="currentColor" width="10px" />} variant="failure">
-          <StyledText bold fontSize="12px">
-            LIVE
-          </StyledText>
-        </Tag>
-        {SaleTypeTage()}
-      </RowFixed>
-    )
-  }
-  if (new Date() > new Date(presaleInfo.endPresaleTime.mul(1000).toNumber())) {
-    return (
-      <RowFixed>
-        <Tag bold variant="textDisabled">
-          <StyledText bold fontSize="12px">
-            ENDED
-          </StyledText>
-        </Tag>
-        {SaleTypeTage()}
-      </RowFixed>
-    )
-  }
-  return <></>
-}
 
 const PresalePhaseTitle = ({ presaleInfo }: { presaleInfo: PresaleInfo | undefined }) => {
   const [days, setDays] = useState<number>()
@@ -229,7 +156,7 @@ const PresalePhaseTitle = ({ presaleInfo }: { presaleInfo: PresaleInfo | undefin
   }
 }
 
-const PresaleCard = ({ presaleAddress }: Props) => {
+const PresaleCard = ({ presaleAddress, viewPresaleHandler }: Props) => {
   const { account } = useWeb3React()
 
   const [currency, setCurrency] = useState('BNB')
@@ -272,10 +199,10 @@ const PresaleCard = ({ presaleAddress }: Props) => {
   }, [presaleFeeInfo])
 
   return (
-    <StyledCard>
-      <CardTags presaleInfo={presaleInfo} />
+    <StyledCard marginX="4px">
+      <PresaleTags presaleInfo={presaleInfo} />
       <StyledText fontSize="12px" marginTop="8px" color="textSubtle">
-        {projectDetails?.contactName}
+        {presaleToken?.name || ''}
       </StyledText>
       <StyledText bold fontSize="18px">
         {projectDetails?.projectName}
@@ -346,7 +273,11 @@ const PresaleCard = ({ presaleAddress }: Props) => {
           {presaleInfo?.isClaimPhase && claimableTokens?.gt(0) ? 'You haven’t claimed your token yet' : ''}
         </StyledText>
       </Box>
-      <Button width="100%" variant={presaleInfo?.isApproved ? 'secondary' : 'tertiary'}>
+      <Button
+        onClick={() => viewPresaleHandler(presaleAddress)}
+        width="100%"
+        variant={presaleInfo?.isApproved ? 'secondary' : 'tertiary'}
+      >
         View Presale
       </Button>
       <Box marginTop="8px">
