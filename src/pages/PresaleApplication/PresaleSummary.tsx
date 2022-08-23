@@ -15,9 +15,9 @@ import { useTokenContract, usePresaleContract, useFactoryPresaleContract } from 
 import { useToken } from 'hooks/Tokens'
 import { fetchPresaleInfo, fetchFeeInfo, fetchProjectDetails } from 'utils/presale'
 import { FEE_DECIMALS, RADIO_VALUES, TOKEN_CHOICES, PRESALE_FACTORY_ADDRESS } from 'constants/presale'
-import { GridItem2 } from '../CreatePresale/GridComponents'
-import { PresaleInfo, ProjectDetails, FeeInfo } from '../types'
-import PresaleStatus from './PresaleStatus'
+import { GridItem2 } from './CreatePresale/GridComponents'
+import { PresaleInfo, ProjectDetails, FeeInfo } from './types'
+import PresaleStatus from './AdminPanel/PresaleStatus'
 import {
   GridContainer,
   ContainerToken,
@@ -28,11 +28,11 @@ import {
   SectionHeading,
   ResponsiveFlex,
   TextAddressHeading,
-} from '../CreatePresale/CreationStep06'
+} from './CreatePresale/CreationStep06'
 
 interface Props {
   presaleAddress: string
-  handleEditButtonHandler: (isEdit: boolean) => void
+  handleEditButtonHandler?: (isEdit: boolean) => void
 }
 
 const Divider = styled.div`
@@ -56,6 +56,7 @@ const PresaleSummary = ({ presaleAddress, handleEditButtonHandler }: Props) => {
   const { account, library } = useWeb3React()
 
   const [isLoading, setIsLoading] = useState(false)
+  const [accountIsAdmin, setAccountIsAdmin] = useState(false)
   const [tokenTotalSupply, setTokenTotalSupply] = useState<string>()
   const [presaleInfo, setPresaleInfo] = useState<PresaleInfo>()
   const [presaleFeeInfo, setPresaleFeeInfo] = useState<FeeInfo>()
@@ -80,6 +81,13 @@ const PresaleSummary = ({ presaleAddress, handleEditButtonHandler }: Props) => {
       fetchData()
     }
   }, [presaleContract])
+
+  useEffect(() => {
+    async function checkAccountIsAdmin() {
+      setAccountIsAdmin(await factoryContract?.isAdmin(account))
+    }
+    if (factoryContract && account) checkAccountIsAdmin()
+  }, [factoryContract, account])
 
   useEffect(() => {
     async function fetchTotalSupply() {
@@ -136,18 +144,6 @@ const PresaleSummary = ({ presaleAddress, handleEditButtonHandler }: Props) => {
         <HeadingPresaleDetails marginTop="30px" size="xl">
           Presale Details
         </HeadingPresaleDetails>
-        {!presaleInfo?.isApproved && (
-          <Button
-            marginTop="30px"
-            startIcon={<EditIcon color="currentColor" />}
-            scale="sm"
-            width="fit-content"
-            variant="tertiary"
-            onClick={() => handleEditButtonHandler(true)}
-          >
-            Edit Presale
-          </Button>
-        )}
       </ResponsiveFlex>
       <SectionHeading marginTop="16px" color="success">
         Token Information
@@ -356,47 +352,65 @@ const PresaleSummary = ({ presaleAddress, handleEditButtonHandler }: Props) => {
           </ContainerInformation>
         </Box>
       </Box>
-      <Divider />
-      <SectionHeading marginTop="24px" color="success">
-        Fee Information
-      </SectionHeading>
-      <Flex flexWrap="wrap" justifyContent="space-between" marginBottom="25px">
-        <Box marginTop="16px" marginRight="20px">
-          <StyledText bold color="primaryDark">
-            Presale Finalising Fee
-          </StyledText>
-          <ContainerInformation marginTop="4px">
-            <StyledText>Payment Token</StyledText>
-            <StyledText>{`${presaleFeeInfo?.feePaymentToken.mul(100).div(10 ** FEE_DECIMALS)}%`}</StyledText>
-          </ContainerInformation>
-          <ContainerInformation marginTop="4px">
-            <StyledText>Presale Token</StyledText>
-            <StyledText>{`${presaleFeeInfo?.feePresaleToken.mul(100).div(10 ** FEE_DECIMALS)}%`}</StyledText>
-          </ContainerInformation>
-        </Box>
-        <Box marginTop="16px" marginRight="100px">
-          <StyledText bold color="primaryDark">
-            Emergency Withdraw Fee
-          </StyledText>
-          <ContainerInformation marginTop="4px">
-            <StyledText>Withdrawal Fee</StyledText>
-            <StyledText>{`${presaleFeeInfo?.emergencyWithdrawFee.mul(100).div(10 ** FEE_DECIMALS)}%`}</StyledText>
-          </ContainerInformation>
-        </Box>
-      </Flex>
-      {!presaleInfo?.isApproved && (
+      {accountIsAdmin && (
         <>
           <Divider />
-          <Button
-            variant="awesome"
-            startIcon={!isLoading && <CheckmarkCircleIcon color="currentColor" />}
-            endIcon={isLoading && <AutoRenewIcon spin color="currentColor" />}
-            disabled={!presaleToken || !presaleContract || !factoryContract || isLoading || !account}
-            type="button"
-            onClick={approvePresaleHandler}
-          >
-            Approve Presale
-          </Button>
+          <SectionHeading marginTop="24px" color="success">
+            Fee Information
+          </SectionHeading>
+          <Flex flexWrap="wrap" justifyContent="space-between" marginBottom="25px">
+            <Box marginTop="16px" marginRight="20px">
+              <StyledText bold color="primaryDark">
+                Presale Finalising Fee
+              </StyledText>
+              <ContainerInformation marginTop="4px">
+                <StyledText>Payment Token</StyledText>
+                <StyledText>{`${presaleFeeInfo?.feePaymentToken.mul(100).div(10 ** FEE_DECIMALS)}%`}</StyledText>
+              </ContainerInformation>
+              <ContainerInformation marginTop="4px">
+                <StyledText>Presale Token</StyledText>
+                <StyledText>{`${presaleFeeInfo?.feePresaleToken.mul(100).div(10 ** FEE_DECIMALS)}%`}</StyledText>
+              </ContainerInformation>
+            </Box>
+            <Box marginTop="16px" marginRight="100px">
+              <StyledText bold color="primaryDark">
+                Emergency Withdraw Fee
+              </StyledText>
+              <ContainerInformation marginTop="4px">
+                <StyledText>Withdrawal Fee</StyledText>
+                <StyledText>{`${presaleFeeInfo?.emergencyWithdrawFee.mul(100).div(10 ** FEE_DECIMALS)}%`}</StyledText>
+              </ContainerInformation>
+            </Box>
+          </Flex>
+          {!presaleInfo?.isApproved && (
+            <>
+              <Divider />
+              <Button
+                variant="awesome"
+                marginTop="16px"
+                startIcon={!isLoading && <CheckmarkCircleIcon color="currentColor" />}
+                endIcon={isLoading && <AutoRenewIcon spin color="currentColor" />}
+                disabled={!presaleToken || !presaleContract || !factoryContract || isLoading || !account}
+                type="button"
+                marginRight="8px"
+                onClick={approvePresaleHandler}
+              >
+                Approve Presale
+              </Button>
+              {handleEditButtonHandler && (
+                <Button
+                  marginTop="16px"
+                  startIcon={<EditIcon color="currentColor" />}
+                  scale="md"
+                  width="fit-content"
+                  variant="tertiary"
+                  onClick={() => handleEditButtonHandler && handleEditButtonHandler(true)}
+                >
+                  Edit Presale
+                </Button>
+              )}
+            </>
+          )}
         </>
       )}
     </>
