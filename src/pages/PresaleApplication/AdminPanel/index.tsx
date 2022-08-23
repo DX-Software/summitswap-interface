@@ -17,7 +17,7 @@ import {
 import HeadingCotainer, { StyledText } from './HeadingContainer'
 import PresaleDetail from './PresaleDetails'
 import PresaleSettings from './PresaleSettings'
-import PresaleSummary from './PresaleSummary'
+import PresaleSummary from '../PresaleSummary'
 import EditPresale from './EditPresale'
 
 const ContentWrapper = styled(Box)`
@@ -44,7 +44,7 @@ const Divider = styled.div<{ bottomOnly?: boolean }>`
   flex-grow: 0;
 `
 
-const Heading = styled(Text)`
+export const Heading = styled(Text)`
   font-weight: 700;
   font-size: 40px;
   line-height: 44px;
