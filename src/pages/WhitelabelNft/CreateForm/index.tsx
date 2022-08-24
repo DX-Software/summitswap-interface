@@ -1,4 +1,6 @@
 import { Button, Flex, Input, Text } from '@koda-finance/summitswap-uikit'
+import { useWeb3React } from '@web3-react/core'
+import { useWhitelabelNftUpload } from 'api/useWhitelabelNft'
 import { Phase } from 'constants/whitelabel'
 import { Field, FormikProps, FormikProvider, useFormik } from 'formik'
 import { useWhitelabelFactoryContract } from 'hooks/useContract'
@@ -21,7 +23,9 @@ export default function CreateWhitelabelNftForm() {
   const [nftImages, setNftImages] = useState<File[]>([])
   const [spreadsheet, setSpreadsheet] = useState<File>()
 
+  const whitelabelNftUpload = useWhitelabelNftUpload()
   const whitelabelFactoryContract = useWhitelabelFactoryContract()
+  const { account } = useWeb3React()
 
   const handleImageOnChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -48,8 +52,15 @@ export default function CreateWhitelabelNftForm() {
       phase: Phase.Pause,
     },
     onSubmit: async (values, { setSubmitting, setErrors }) => {
+      const result = await whitelabelNftUpload.mutateAsync({
+        walletAddress: account!,
+        spreadsheet: spreadsheet!,
+        nftImages,
+      })
+
       const tokenInfo = values
-      const baseUrl = ''
+      const baseUrl = `ipfs://${result.rootCid}`
+      tokenInfo.maxSupply = result.totalNft.toString()
 
       const serviceFee = await whitelabelFactoryContract?.serviceFee()
 
@@ -77,14 +88,6 @@ export default function CreateWhitelabelNftForm() {
           <Input
             name="symbol"
             placeholder="Symbol"
-            onChange={formik.handleChange}
-            style={{ marginBottom: 12 }}
-            as={Field}
-          />
-          <Text>Max Supply</Text>
-          <Input
-            name="maxSupply"
-            placeholder="Max Supply"
             onChange={formik.handleChange}
             style={{ marginBottom: 12 }}
             as={Field}
