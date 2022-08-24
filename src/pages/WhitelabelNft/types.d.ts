@@ -1,11 +1,14 @@
 type WhitelabelFormValues = {
   name: string
   symbol: string
-  maxSupply: string
   whitelistMintPrice: string
   publicMintPrice: string
   signer: string
   phase: number
+}
+
+type WhitelabelNftTokenInfo = WhitelabelFormValues & {
+  maxSupply: string
 }
 
 type WhitelabelUploadParameter = {

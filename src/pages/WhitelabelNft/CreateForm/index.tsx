@@ -45,7 +45,6 @@ export default function CreateWhitelabelNftForm() {
     initialValues: {
       name: '',
       symbol: '',
-      maxSupply: '0',
       whitelistMintPrice: '0',
       publicMintPrice: '0',
       signer: '',
@@ -58,9 +57,9 @@ export default function CreateWhitelabelNftForm() {
         nftImages,
       })
 
-      const tokenInfo = values
-      const baseUrl = `ipfs://${result.rootCid}`
-      tokenInfo.maxSupply = result.totalNft.toString()
+      const { rootCid, totalNft } = result
+      const tokenInfo: WhitelabelNftTokenInfo = { ...values, maxSupply: totalNft.toString() }
+      const baseUrl = `ipfs://${rootCid}`
 
       const serviceFee = await whitelabelFactoryContract?.serviceFee()
 
