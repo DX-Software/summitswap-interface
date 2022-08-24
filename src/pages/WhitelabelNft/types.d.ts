@@ -1,4 +1,4 @@
-interface WhitelabelFormValues {
+type WhitelabelFormValues = {
   name: string
   symbol: string
   maxSupply: string
@@ -6,4 +6,15 @@ interface WhitelabelFormValues {
   publicMintPrice: string
   signer: string
   phase: number
+}
+
+type WhitelabelUploadParameter = {
+  walletAddress: string
+  spreadsheet: File
+  nftImages: File[]
+}
+
+type WhitelabelUploadResult = {
+  rootCid: string
+  totalNft: number
 }
