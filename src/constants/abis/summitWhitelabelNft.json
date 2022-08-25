@@ -10,6 +10,11 @@
         "internalType": "address",
         "name": "_serviceFeeReceiver",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_signer",
+        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
@@ -56,11 +61,6 @@
             "internalType": "uint256",
             "name": "publicMintPrice",
             "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "signer",
-            "type": "address"
           },
           {
             "internalType": "enum Phase",
@@ -143,11 +143,6 @@
             "internalType": "uint256",
             "name": "publicMintPrice",
             "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "signer",
-            "type": "address"
           },
           {
             "internalType": "enum Phase",
@@ -323,6 +318,32 @@
     "name": "setServiceFeeReceiver",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_signer",
+        "type": "address"
+      }
+    ],
+    "name": "setSigner",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "signer",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
