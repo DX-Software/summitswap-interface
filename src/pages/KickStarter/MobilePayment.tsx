@@ -1,11 +1,17 @@
-import { ArrowForwardIcon, BinanceIcon, Box, Button, Flex, Heading, Text, WalletIcon } from "@koda-finance/summitswap-uikit"
+import { ArrowForwardIcon, BinanceIcon, Box, Button, Flex, Heading, Skeleton, Text, WalletIcon } from "@koda-finance/summitswap-uikit"
+import AccountIcon from "components/AccountIcon"
 import { useKickstarterContext } from "contexts/kickstarter"
+import { Kickstarter } from "hooks/useKickstarter"
 import React from "react"
 import styled from "styled-components"
+import { shortenAddress } from "utils"
 import FundingInput from "./FundingInput"
 
 type Props = {
   showPayment: () => void
+  totalPayment: string,
+  kickstarter: Kickstarter,
+  handleBackedAmountChanged: (value: string) => void,
 }
 
 const Banner = styled.div`
@@ -33,13 +39,6 @@ const Divider = styled.div`
   margin: 24px 0px;
 `
 
-const ImgAccount = styled.div`
-  width: 40px;
-  height: 40px;
-  background: gray;
-  border-radius: 50%;
-`
-
 const ConnectionWrapper = styled(Flex)`
   background: ${({ theme }) => theme.colors.menuItemBackground};
   border-width: 1px;
@@ -59,8 +58,8 @@ const OnlineDot = styled(Box)<{ isOnline: boolean }>`
   background-color: ${({ isOnline, theme }) => isOnline ? theme.colors.linkColor : theme.colors.textDisabled};
 `
 
-function MobilePayment({ showPayment }: Props) {
-  const { account, onPresentConnectModal } = useKickstarterContext()
+function MobilePayment({ showPayment, totalPayment, kickstarter, handleBackedAmountChanged }: Props) {
+  const { account, accountBalance, onPresentConnectModal } = useKickstarterContext()
 
   return (
     <Flex flexDirection="column">
@@ -70,11 +69,11 @@ function MobilePayment({ showPayment }: Props) {
       <Flex style={{ columnGap: "16px" }}>
         <Banner />
         <Flex flexDirection="column">
-          <Name>ROGER KENTER</Name>
-          <Title>Roger Kenter#1 Project</Title>
+          <Name>{kickstarter.creator}</Name>
+          <Title>{kickstarter.title}</Title>
           <Flex style={{ columnGap: "8px" }}>
             <BinanceIcon />
-            <Text color="textSubtle"><b style={{ color: "white" }}>0.0000123</b> / 10 BNB</Text>
+            <Text color="textSubtle"><b style={{ color: "white" }}>{kickstarter.totalContribution.toString()}</b> / {kickstarter.projectGoals.toString()} BNB</Text>
           </Flex>
         </Flex>
       </Flex>
@@ -83,11 +82,12 @@ function MobilePayment({ showPayment }: Props) {
         Backing Project
       </Heading>
       <Text color="textSubtle" style={{ marginBottom: "24px" }}>
-        You have to back with minimum amount of <b style={{ color: "#00D4A4" }}>0.005 BNB</b> to participate in this project
+        You have to back with minimum amount of <b style={{ color: "#00D4A4" }}>{kickstarter.minContribution.toString()} BNB</b> to participate in this project
       </Text>
-      <FundingInput label="Enter Backing Amount" value="1" onChange={(value) => console.log("value", value)} />
+      <FundingInput label="Enter Backing Amount" value={totalPayment} onChange={handleBackedAmountChanged} />
+      <br />
       <ConnectionWrapper>
-        <Flex alignItems="center" marginTop="8px" style={{ columnGap: "8px" }}>
+        <Flex alignItems="center" style={{ columnGap: "8px" }}>
           <OnlineDot isOnline={!!account} />
           <Text fontSize="12px">Connected Wallet</Text>
         </Flex>
@@ -96,12 +96,15 @@ function MobilePayment({ showPayment }: Props) {
         )}
         {account && (
           <Flex alignItems="center" style={{ columnGap: "8px" }}>
-            <ImgAccount />
+            <AccountIcon account={account} size={32} />
             <Flex flexDirection="column" marginRight= "auto">
-              <Text fontSize="14px">Account 1</Text>
-              <Text fontSize="12px" color="textDisabled">0x7Bb...0E8C3</Text>
+              <Text fontSize="12px" color="textDisabled">{shortenAddress(account)}</Text>
             </Flex>
-            <Text fontWeight="bold">3.4927 BNB</Text>
+            {!accountBalance ? (
+              <Skeleton width={100} height={28} />
+            ) : (
+              <Text fontWeight="bold" color="primaryDark">{accountBalance} BNB</Text>
+            )}
           </Flex>
         )}
       </ConnectionWrapper>

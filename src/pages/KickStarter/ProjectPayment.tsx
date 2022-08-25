@@ -5,6 +5,8 @@ import AccountIcon from "components/AccountIcon"
 import TransactionConfirmationModal, { TransactionErrorContent } from "components/TransactionConfirmationModal"
 import { useKickstarterContext } from "contexts/kickstarter"
 import { format } from "date-fns"
+import { parseUnits } from 'ethers/lib/utils'
+import { useKickstarterContract } from 'hooks/useContract'
 import { Kickstarter } from "hooks/useKickstarter"
 import React, { useCallback, useState } from "react"
 import { useTransactionAdder } from "state/transactions/hooks"
@@ -104,6 +106,7 @@ const ButtonContinue = styled(Button)`
 function ProjectPayment({ backedAmount, handleBackedAmountChanged, kickstarter, onBack, togglePayment }: Props) {
   const { account, accountBalance, onPresentConnectModal } = useKickstarterContext()
   const addTransaction = useTransactionAdder()
+  const kickstarterContract = useKickstarterContract(kickstarter.id)
 
   const [isOpen, setIsOpen] = useState(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
@@ -138,14 +141,30 @@ function ProjectPayment({ backedAmount, handleBackedAmountChanged, kickstarter, 
     setErrorMessage(messFromError)
   }, [])
 
+  const handlePayment = useCallback(async () => {
+    try {
+      if (!kickstarterContract || !account || !backedAmount || !kickstarter) {
+        return
+      }
+      const transactionValue = parseUnits(backedAmount, 18).toString()
+      const receipt = await kickstarterContract.contribute({
+        value: transactionValue,
+      })
+      transactionSubmitted(receipt, 'The contribution has been submitted successfully')
+    } catch (err) {
+      const callError = err as any
+      const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message
+      transactionFailed(callErrorMessage)
+    }
+  }, [kickstarterContract, account, backedAmount, kickstarter, transactionSubmitted, transactionFailed])
+
   const [showPayment] = useModal(
     <PaymentModal
       account={account}
       accountBalance={accountBalance}
       totalPayment={backedAmount}
       kickstarter={kickstarter}
-      transactionSubmitted={transactionSubmitted}
-      transactionFailed={transactionFailed}
+      handlePayment={handlePayment}
     />
   )
   const [isMobilePaymentPage, setIsMobilePaymentPage] = useState(false)
@@ -242,7 +261,14 @@ function ProjectPayment({ backedAmount, handleBackedAmountChanged, kickstarter, 
           </SideWrapper>
         </SideItems>
       </DesktopPaymentWrapper>
-      {isMobilePaymentPage && <MobilePayment showPayment={showPayment} />}
+      {isMobilePaymentPage && (
+        <MobilePayment
+          showPayment={showPayment}
+          totalPayment={backedAmount}
+          handleBackedAmountChanged={handleBackedAmountChanged}
+          kickstarter={kickstarter}
+        />
+      )}
       {!isMobilePaymentPage && (
         <ButtonContinue
           endIcon={<ArrowForwardIcon color="text" />}

@@ -5,16 +5,13 @@ import styled from "styled-components"
 import { TransactionResponse } from '@ethersproject/providers'
 import { shortenAddress } from "utils"
 import AccountIcon from "components/AccountIcon"
-import { useKickstarterContract } from "hooks/useContract"
-import { parseUnits } from "ethers/lib/utils"
 
 interface PaymentModalProps extends InjectedModalProps {
   account: string | null | undefined;
   accountBalance: string | undefined;
   totalPayment: string;
   kickstarter: Kickstarter;
-  transactionSubmitted: (response: TransactionResponse, summary: string) => void;
-  transactionFailed: (message: string) => void;
+  handlePayment: () => void;
 }
 
 const ContentWrapper = styled(Flex)`
@@ -48,26 +45,12 @@ const DescriptionWrapper = styled(Flex)`
   justify-content: space-between;
 `
 
-function PaymentModal({ account, accountBalance, totalPayment, kickstarter, onDismiss, transactionSubmitted, transactionFailed }: PaymentModalProps) {
-  const kickstarterContract = useKickstarterContract(kickstarter.id)
+function PaymentModal({ account, accountBalance, totalPayment, kickstarter, onDismiss, handlePayment }: PaymentModalProps) {
 
-  const handlePayment = useCallback(async () => {
-    try {
-      if (!kickstarterContract || !account || !totalPayment || !kickstarter) {
-        return
-      }
-      const transactionValue = parseUnits(totalPayment, 18).toString()
-      const receipt = await kickstarterContract.contribute({
-        value: transactionValue,
-      })
-      transactionSubmitted(receipt, 'The contribution has been submitted successfully')
-    } catch (err) {
-      const callError = err as any
-      const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message
-      transactionFailed(callErrorMessage)
-    }
+  const pay = useCallback(() => {
+    handlePayment()
     if (onDismiss) onDismiss()
-  }, [kickstarterContract, account, totalPayment, kickstarter, onDismiss, transactionSubmitted, transactionFailed])
+  }, [handlePayment, onDismiss])
 
   return (
     <Modal title="Payment Process" bodyPadding="0" onDismiss={onDismiss}>
@@ -102,7 +85,7 @@ function PaymentModal({ account, accountBalance, totalPayment, kickstarter, onDi
             <Text small fontWeight="bold">{totalPayment}</Text>
           </Flex>
         </DescriptionWrapper>
-        <Button startIcon={<WalletIcon color="text" />} onClick={handlePayment}>Pay Now</Button>
+        <Button startIcon={<WalletIcon color="text" />} onClick={pay}>Pay Now</Button>
       </ContentWrapper>
     </Modal>
   )
