@@ -1,10 +1,13 @@
+import { TransactionResponse } from '@ethersproject/providers'
 import { ArrowBackIcon, ArrowForwardIcon, BinanceIcon, Box, Breadcrumbs, Button, Flex, Heading, Skeleton, Text, useModal, WalletIcon } from "@koda-finance/summitswap-uikit"
 import { Grid } from "@mui/material"
 import AccountIcon from "components/AccountIcon"
+import TransactionConfirmationModal, { TransactionErrorContent } from "components/TransactionConfirmationModal"
 import { useKickstarterContext } from "contexts/kickstarter"
-import { Kickstarter } from "hooks/useKickstarter"
 import { format } from "date-fns"
-import React, { useState } from "react"
+import { Kickstarter } from "hooks/useKickstarter"
+import React, { useCallback, useState } from "react"
+import { useTransactionAdder } from "state/transactions/hooks"
 import styled from "styled-components"
 import { shortenAddress } from "utils"
 import FundingInput from "./FundingInput"
@@ -100,8 +103,51 @@ const ButtonContinue = styled(Button)`
 
 function ProjectPayment({ backedAmount, handleBackedAmountChanged, kickstarter, onBack, togglePayment }: Props) {
   const { account, accountBalance, onPresentConnectModal } = useKickstarterContext()
+  const addTransaction = useTransactionAdder()
 
-  const [showPayment] = useModal(<PaymentModal title="Payment Process" />)
+  const [isOpen, setIsOpen] = useState(false)
+  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
+  const [hash, setHash] = useState<string | undefined>()
+  const [pendingText, setPendingText] = useState<string>('')
+  const [errorMessage, setErrorMessage] = useState<string | undefined>()
+
+  const onDismiss = () => {
+    setHash(undefined)
+    setPendingText('')
+    setErrorMessage('')
+    setAttemptingTxn(false)
+    setIsOpen(false)
+  }
+
+  const transactionSubmitted = useCallback(
+    (response: TransactionResponse, summary: string) => {
+      setIsOpen(true)
+      setAttemptingTxn(false)
+      setHash(response.hash)
+      addTransaction(response, {
+        summary,
+      })
+    },
+    [addTransaction]
+  )
+
+  const transactionFailed = useCallback((messFromError: string) => {
+    setIsOpen(true)
+    setAttemptingTxn(false)
+    setHash(undefined)
+    setErrorMessage(messFromError)
+  }, [])
+
+  const [showPayment] = useModal(
+    <PaymentModal
+      account={account}
+      accountBalance={accountBalance}
+      totalPayment={backedAmount}
+      kickstarter={kickstarter}
+      transactionSubmitted={transactionSubmitted}
+      transactionFailed={transactionFailed}
+    />
+  )
   const [isMobilePaymentPage, setIsMobilePaymentPage] = useState(false)
 
   return (
@@ -205,6 +251,16 @@ function ProjectPayment({ backedAmount, handleBackedAmountChanged, kickstarter, 
           Continue
         </ButtonContinue>
       )}
+      <TransactionConfirmationModal
+        isOpen={isOpen}
+        onDismiss={onDismiss}
+        attemptingTxn={attemptingTxn}
+        hash={hash}
+        pendingText={pendingText}
+        content={() =>
+          errorMessage ? <TransactionErrorContent onDismiss={onDismiss} message={errorMessage || ''} /> : null
+        }
+      />
     </Flex>
   )
 }

@@ -1,9 +1,20 @@
-import { BinanceIcon, Button, Flex, Modal, Text, WalletIcon } from "@koda-finance/summitswap-uikit";
-import React from "react"
-import styled from "styled-components";
+import { BinanceIcon, Button, Flex, InjectedModalProps, Modal, Skeleton, Text, WalletIcon } from "@koda-finance/summitswap-uikit"
+import React, { useCallback } from "react"
+import { Kickstarter } from "hooks/useKickstarter"
+import styled from "styled-components"
+import { TransactionResponse } from '@ethersproject/providers'
+import { shortenAddress } from "utils"
+import AccountIcon from "components/AccountIcon"
+import { useKickstarterContract } from "hooks/useContract"
+import { parseUnits } from "ethers/lib/utils"
 
-type PaymentModalProps = {
-  title: string;
+interface PaymentModalProps extends InjectedModalProps {
+  account: string | null | undefined;
+  accountBalance: string | undefined;
+  totalPayment: string;
+  kickstarter: Kickstarter;
+  transactionSubmitted: (response: TransactionResponse, summary: string) => void;
+  transactionFailed: (message: string) => void;
 }
 
 const ContentWrapper = styled(Flex)`
@@ -30,13 +41,6 @@ const Title = styled(Text)`
   font-weight: bold;
 `
 
-const ImgAccount = styled.div`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: gray;
-`
-
 const DescriptionWrapper = styled(Flex)`
   padding: 8px 0;
   border-top: 1px solid;
@@ -44,34 +48,61 @@ const DescriptionWrapper = styled(Flex)`
   justify-content: space-between;
 `
 
-function PaymentModal({ title }: PaymentModalProps) {
+function PaymentModal({ account, accountBalance, totalPayment, kickstarter, onDismiss, transactionSubmitted, transactionFailed }: PaymentModalProps) {
+  const kickstarterContract = useKickstarterContract(kickstarter.id)
+
+  const handlePayment = useCallback(async () => {
+    try {
+      if (!kickstarterContract || !account || !totalPayment || !kickstarter) {
+        return
+      }
+      const transactionValue = parseUnits(totalPayment, 18).toString()
+      const receipt = await kickstarterContract.contribute({
+        value: transactionValue,
+      })
+      transactionSubmitted(receipt, 'The contribution has been submitted successfully')
+    } catch (err) {
+      const callError = err as any
+      const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message
+      transactionFailed(callErrorMessage)
+    }
+    if (onDismiss) onDismiss()
+  }, [kickstarterContract, account, totalPayment, kickstarter, onDismiss, transactionSubmitted, transactionFailed])
+
   return (
-    <Modal title={title} bodyPadding="0">
+    <Modal title="Payment Process" bodyPadding="0" onDismiss={onDismiss}>
       <ContentWrapper>
         <Flex marginBottom="16px" style={{ columnGap: "8px" }}>
           <Banner />
           <Flex flexDirection="column">
-            <Name color="textSubtle" marginBottom="4px">Roger Kenter</Name>
-            <Title>Roger Kenter#1 Project</Title>
+            <Name color="textSubtle" marginBottom="4px">{kickstarter.creator}</Name>
+            <Title style={{ maxWidth: "320px" }}>{kickstarter.title}</Title>
           </Flex>
         </Flex>
-        <Text fontWeight="bold" color="warning" marginBottom="8px">Payment Details</Text>
-        <Flex alignItems="center" marginBottom="16px" style={{ columnGap: "8px" }}>
-          <ImgAccount />
-          <Flex flexDirection="column" marginRight="auto">
-            <Text fontSize="14px">Account 1</Text>
-            <Text fontSize="12px" color="textDisabled">0x7Bb...0E8C3</Text>
-          </Flex>
-          <Text fontWeight="bold" color="primaryDark">3.4927 BNB</Text>
-        </Flex>
+        {account && (
+          <>
+            <Text fontWeight="bold" color="warning" marginBottom="8px">Payment Details</Text>
+            <Flex alignItems="center" marginBottom="16px" style={{ columnGap: "8px" }}>
+              <AccountIcon account={account} size={32} />
+              <Flex flexDirection="column" marginRight="auto">
+                <Text fontSize="12px" color="textDisabled">{shortenAddress(account)}</Text>
+              </Flex>
+              {!accountBalance ? (
+                <Skeleton width={100} height={28} />
+              ) : (
+                <Text fontWeight="bold" color="primaryDark">{accountBalance} BNB</Text>
+              )}
+            </Flex>
+          </>
+        )}
         <DescriptionWrapper marginBottom="24px">
           <Text fontWeight="bold" small>Total Payment</Text>
           <Flex style={{ columnGap: "5px" }}>
             <BinanceIcon />
-            <Text small fontWeight="bold">0.005</Text>
+            <Text small fontWeight="bold">{totalPayment}</Text>
           </Flex>
         </DescriptionWrapper>
-        <Button startIcon={<WalletIcon color="text" />}>Pay Now</Button>
+        <Button startIcon={<WalletIcon color="text" />} onClick={handlePayment}>Pay Now</Button>
       </ContentWrapper>
     </Modal>
   )

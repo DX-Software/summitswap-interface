@@ -202,7 +202,6 @@ function ProjectDetails({ kickstarter, backedAmount, handleBackedAmountChanged, 
         kickstarter={kickstarter}
         onBack={() => {
           toggleIsPayment();
-          onBack();
         }}
         togglePayment={toggleIsPayment}
         backedAmount={backedAmount}
