@@ -1,6 +1,7 @@
 import { ArrowForwardIcon, BinanceIcon, Box, Button, Flex, Heading, Skeleton, Text, WalletIcon } from "@koda-finance/summitswap-uikit"
 import AccountIcon from "components/AccountIcon"
 import { useKickstarterContext } from "contexts/kickstarter"
+import { parseUnits } from "ethers/lib/utils"
 import { Kickstarter } from "hooks/useKickstarter"
 import React from "react"
 import styled from "styled-components"
@@ -60,6 +61,9 @@ const OnlineDot = styled(Box)<{ isOnline: boolean }>`
 
 function MobilePayment({ showPayment, totalPayment, kickstarter, handleBackedAmountChanged }: Props) {
   const { account, accountBalance, onPresentConnectModal } = useKickstarterContext()
+
+  const minContributionInEth = parseUnits(kickstarter.minContribution.toString(), 18)
+  const isGreaterThanMinContribution = parseUnits(totalPayment || "0", 18).gte(minContributionInEth)
 
   return (
     <Flex flexDirection="column">
@@ -122,7 +126,8 @@ function MobilePayment({ showPayment, totalPayment, kickstarter, handleBackedAmo
           variant='awesome'
           endIcon={<ArrowForwardIcon color="text" />}
           style={{ fontFamily: 'Poppins', marginTop: "32px" }}
-          onClick={showPayment}>
+          onClick={showPayment}
+          disabled={!Number(totalPayment) || !isGreaterThanMinContribution}>
           Continue
         </Button>
       )}

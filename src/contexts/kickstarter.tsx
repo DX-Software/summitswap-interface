@@ -141,15 +141,15 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
   const kickstarterOnBackedProject = useKickstarter(backedProjectAddress)
 
   useEffect(() => {
-    setBackingAmountOnMyProjectPage("0")
+    setBackingAmountOnMyProjectPage("")
   }, [isPaymentOnMyProjectPage])
 
   useEffect(() => {
-    setBackingAmountOnBrowseProjectPage("0")
+    setBackingAmountOnBrowseProjectPage("")
   }, [isPaymentOnBrowseProjectPage])
 
   useEffect(() => {
-    setBackingAmountOnBackedProjectPage("0")
+    setBackingAmountOnBackedProjectPage("")
   }, [isPaymentOnBackedProjectPage])
 
   const handleLogin = useCallback(
@@ -160,6 +160,21 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
   )
 
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
+
+  const handleBackingAmountOnMyProjectPageChanged = useCallback((value: string) => {
+    if ((value !== "" && value.match("^[0-5](\\.[0-9]{0,18})?$") == null)) return
+    setBackingAmountOnMyProjectPage(value)
+  }, [])
+
+  const handleBackingAmountOnBrowseProjectPageChanged = useCallback((value: string) => {
+    if ((value !== "" && value.match("^[0-5](\\.[0-9]{0,18})?$") == null)) return
+    setBackingAmountOnBrowseProjectPage(value)
+  }, [])
+
+  const handleBackingAmountOnBackedProjectPageChanged = useCallback((value: string) => {
+    if ((value !== "" && value.match("^[0-5](\\.[0-9]{0,18})?$") == null)) return
+    setBackingAmountOnBackedProjectPage(value)
+  }, [])
 
   return (
     <KickstarterContext.Provider
@@ -210,9 +225,9 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
         handleIsPaymentOnBrowseProjectPage: setIsPaymentOnBrowseProjectPage,
         handleIsPaymentOnBackedProjectPage: setIsPaymentOnBackedProjectPage,
 
-        handleBackingAmountOnMyProjectPageChanged: setBackingAmountOnMyProjectPage,
-        handleBackingAmountOnBrowseProjectPageChanged: setBackingAmountOnBrowseProjectPage,
-        handleBackingAmountOnBackedProjectPageChanged: setBackingAmountOnBackedProjectPage,
+        handleBackingAmountOnMyProjectPageChanged,
+        handleBackingAmountOnBrowseProjectPageChanged,
+        handleBackingAmountOnBackedProjectPageChanged,
       }}
     >
       {children}

@@ -169,6 +169,9 @@ function ProjectPayment({ backedAmount, handleBackedAmountChanged, kickstarter, 
   )
   const [isMobilePaymentPage, setIsMobilePaymentPage] = useState(false)
 
+  const minContributionInEth = parseUnits(kickstarter.minContribution.toString(), 18)
+  const isGreaterThanMinContribution = parseUnits(backedAmount || "0", 18).gte(minContributionInEth)
+
   return (
     <Flex flexDirection="column">
       <Flex flex={1} borderBottom="1px solid" borderBottomColor="inputColor" paddingBottom="12px" marginBottom="32px">
@@ -232,7 +235,8 @@ function ProjectPayment({ backedAmount, handleBackedAmountChanged, kickstarter, 
                 variant='awesome'
                 endIcon={<ArrowForwardIcon color="text" />}
                 style={{ fontFamily: 'Poppins', marginTop: "32px" }}
-                onClick={showPayment}>
+                onClick={showPayment}
+                disabled={!Number(backedAmount) || !isGreaterThanMinContribution}>
                 Proceed
               </Button>
             )}
