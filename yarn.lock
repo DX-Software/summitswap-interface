@@ -2932,6 +2932,14 @@
     recharts "^2.1.12"
     styled-system "^5.1.5"
 
+"@metamask/jazzicon@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@metamask/jazzicon/-/jazzicon-2.0.0.tgz#5615528e91c0fc5c9d79202d1f0954a7922525a0"
+  integrity sha512-7M+WSZWKcQAo0LEhErKf1z+D3YX0tEDAcGvcKbDyvDg34uvgeKR00mFNIYwAhdAS9t8YXxhxZgsrRBBg6X8UQg==
+  dependencies:
+    color "^0.11.3"
+    mersenne-twister "^1.1.0"
+
 "@metamask/safe-event-emitter@2.0.0", "@metamask/safe-event-emitter@^2.0.0":
   version "2.0.0"
   resolved "https://registry.npmjs.org/@metamask/safe-event-emitter/-/safe-event-emitter-2.0.0.tgz"
@@ -7277,7 +7285,7 @@ color-string@^1.5.4:
     color-name "^1.0.0"
     simple-swizzle "^0.2.2"
 
-color@^0.11.1:
+color@^0.11.1, color@^0.11.3:
   version "0.11.4"
   resolved "https://registry.npmjs.org/color/-/color-0.11.4.tgz"
   integrity sha1-bXtcdPtl6EHNSHkq0e1eB7kE12Q=
@@ -14267,7 +14275,7 @@ merkle-patricia-tree@^2.1.2, merkle-patricia-tree@^2.3.2:
     rlp "^2.0.0"
     semaphore ">=1.0.1"
 
-mersenne-twister@^1.0.1:
+mersenne-twister@^1.0.1, mersenne-twister@^1.1.0:
   version "1.1.0"
   resolved "https://registry.npmjs.org/mersenne-twister/-/mersenne-twister-1.1.0.tgz"
   integrity sha1-+RZhjuQ9cXnvz2Qb7EUx65Zwl4o=
