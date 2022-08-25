@@ -3,6 +3,7 @@ import { ChainId, FACTORY_ADDRESS, WETH } from '@koda-finance/summitswap-sdk'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { useMemo } from 'react'
 import { STAKING_ADDRESS } from 'constants/staking'
+import { KICKSTARTER_FACTORY_ADDRESS } from 'constants/kickstarter'
 import ENS_ABI from '../constants/abis/ens-registrar.json'
 import ENS_PUBLIC_RESOLVER_ABI from '../constants/abis/ens-public-resolver.json'
 import { ERC20_BYTES32_ABI } from '../constants/abis/erc20'
@@ -22,6 +23,7 @@ import STAKING_ABI from '../constants/abis/kodaStaking.json'
 import ROUTER_ABI from '../constants/abis/summitswap-router.json'
 import PRESALE_FACOTRY_ABI from '../constants/abis/summit-factory-presale.json'
 import PRESALE_ABI from '../constants/abis/summit-custom-presale.json'
+import SUMMIT_KICKSTARTER_ABI from '../constants/abis/summitKickstarter.json'
 
 // returns null on errors
 function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {
@@ -52,6 +54,10 @@ export function useFactoryContract(withSignerIfPossible?: boolean): Contract | n
 
 export function useLockerContract(withSignerIfPossible?: boolean): Contract | null {
   return useContract(LOCKER_ADDRESS, LOCKER_ABI, withSignerIfPossible)
+}
+
+export function useKickstarterContract(kickstarterAddress: string, withSignerIfPossible?: boolean): Contract | null {
+  return useContract(kickstarterAddress, SUMMIT_KICKSTARTER_ABI, withSignerIfPossible)
 }
 
 export function useTokenContract(tokenAddress?: string, withSignerIfPossible?: boolean): Contract | null {
