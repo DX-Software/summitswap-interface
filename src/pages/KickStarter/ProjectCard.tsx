@@ -37,8 +37,8 @@ const Banner = styled(Flex)`
 `
 
 function ProjectCard({ kickstarter, onClick }: Props) {
-
   const status = useMemo(() => getKickstarterStatus(kickstarter.endTimestamp), [kickstarter.endTimestamp])
+  const dayRemaining = getDayRemaining(kickstarter.endTimestamp)
 
   const fundedPercentage = useMemo(() => {
     if (kickstarter.totalContribution.toString() === "0") {
@@ -52,7 +52,7 @@ function ProjectCard({ kickstarter, onClick }: Props) {
         <StatusLabel status={status} style={{ marginLeft: "auto" }}>
           {status !== Statuses.END_SOON
             ? status
-            : `${getDayRemaining(kickstarter.endTimestamp)} day(s) left`
+            : `${dayRemaining} day${dayRemaining > 1 ? "s" : ""} left`
           }
         </StatusLabel>
       </Banner>
