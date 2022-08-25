@@ -11,23 +11,15 @@ import styled from 'styled-components'
 import CreationStep01 from './CreationStep01'
 import CreationStep02 from './CreationStep02'
 import CreationStep03 from './CreationStep03'
-import { Project } from './types'
-
-type Props = {
-  projectCreation: Project
-  handleOnProjectCreationChanged: (newUpdate: { [key: string]: number }) => void
-}
 
 const Divider = styled.div`
   height: 1px;
   background-color: #444444;
 `
 
-function CreateProject({
-  projectCreation,
-  handleOnProjectCreationChanged,
-}: Props) {
+function CreateProject() {
   const { toggleIsCreate, currentCreationStep } = useKickstarterContext()
+
   return (
     <Flex flexDirection="column">
       <Flex borderBottom="1px solid" borderBottomColor="inputColor" paddingBottom="12px" marginBottom="32px">
@@ -51,23 +43,9 @@ function CreateProject({
         Create New Project
       </Heading>
       <Divider style={{ marginBottom: '24px' }} />
-      {currentCreationStep === 1 && (
-        <CreationStep01
-          projectCreation={projectCreation}
-          handleOnProjectCreationChanged={handleOnProjectCreationChanged}
-        />
-      )}
-      {currentCreationStep === 2 && (
-        <CreationStep02
-          projectCreation={projectCreation}
-          handleOnProjectCreationChanged={handleOnProjectCreationChanged}
-        />
-      )}
-      {currentCreationStep === 3 && (
-        <CreationStep03
-          projectCreation={projectCreation}
-        />
-      )}
+      {currentCreationStep === 1 && <CreationStep01 />}
+      {currentCreationStep === 2 && <CreationStep02 />}
+      {currentCreationStep === 3 && <CreationStep03 />}
     </Flex>
   )
 }

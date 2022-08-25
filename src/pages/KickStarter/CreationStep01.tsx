@@ -46,16 +46,8 @@ const ButtonNext = styled(Button)`
   }
 `
 
-type Props = {
-  projectCreation: Project
-  handleOnProjectCreationChanged: (newUpdate: { [key: string]: number }) => void
-}
-
-function CreationStep01({
-  projectCreation,
-  handleOnProjectCreationChanged,
-}: Props) {
-  const { handleCurrentCreationStepChanged } = useKickstarterContext()
+function CreationStep01() {
+  const { projectCreation, handleOnProjectCreationChanged, handleCurrentCreationStepChanged } = useKickstarterContext()
 
   const handleProjectGoalsChanged = (goals: string) => {
     handleOnProjectCreationChanged({ goals: Number(goals) })

@@ -12,15 +12,7 @@ import ConnectWalletSection from './shared/ConnectWalletSection'
 import EmptyMyKickstarterSection from './shared/EmptyMyKickstarterSection'
 import { Project } from './types'
 
-type Props = {
-  projectCreation: Project
-  handleOnProjectCreationChanged: (newUpdate: { [key: string]: number }) => void
-}
-
-function MyProject({
-  projectCreation,
-  handleOnProjectCreationChanged,
-}: Props) {
+function MyProject() {
   const { t } = useTranslation()
 
   const {
@@ -55,12 +47,7 @@ function MyProject({
   }
 
   if (isCreate) {
-    return (
-      <CreateProject
-        projectCreation={projectCreation}
-        handleOnProjectCreationChanged={handleOnProjectCreationChanged}
-      />
-    )
+    return <CreateProject />
   }
 
   if (!myKickstarters || myKickstarters.length === 0) {

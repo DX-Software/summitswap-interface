@@ -10,6 +10,7 @@ import useKickstarterByAccount from "hooks/useKickstarterByAccount"
 import useKickstarterFactory, { KickstarterFactory } from "hooks/useKickstarterFactory"
 import useKickstarters, { Kickstarter, OrderBy, OrderDirection } from "hooks/useKickstarters"
 import useKickstartersByTime from "hooks/useKickstartersByTime"
+import { Project } from "pages/KickStarter/types"
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react"
 import { useCurrencyBalance } from "state/wallet/hooks"
 import login from "utils/login"
@@ -21,6 +22,7 @@ type KickstarterContextProps = {
 
   isCreate: boolean
   currentCreationStep: number
+  projectCreation: Project
 
   kickstarterFactory?: KickstarterFactory
   kickstarterAccount?: KickstarterAccount
@@ -52,6 +54,7 @@ type KickstarterContextProps = {
 
   toggleIsCreate: () => void
   handleCurrentCreationStepChanged: (value: number) => void
+  handleOnProjectCreationChanged: (newUpdate: { [key: string]: any }) => void
 
   handleMyProjectChanged: (address?: string) => void
   handleBrowseProjectChanged: (address?: string) => void
@@ -72,6 +75,13 @@ type KickstarterContextProps = {
   handleBackingAmountOnBackedProjectPageChanged: (value: string) => void
 };
 
+const initialProjectCreation = {
+  title: '',
+  creator: '',
+  description: '',
+  goals: 0,
+  minimumBacking: 0,
+}
 
 const KickstarterContext = createContext<KickstarterContextProps>({
   account: null,
@@ -80,6 +90,7 @@ const KickstarterContext = createContext<KickstarterContextProps>({
 
   isCreate: false,
   currentCreationStep: 1,
+  projectCreation: initialProjectCreation,
 
   myProjectPage: 1,
   browseProjectPage: 1,
@@ -95,6 +106,7 @@ const KickstarterContext = createContext<KickstarterContextProps>({
 
   toggleIsCreate: () => null,
   handleCurrentCreationStepChanged: () => null,
+  handleOnProjectCreationChanged: (newUpdate: { [key: string]: any }) => null,
 
   handleMyProjectChanged: (newAddress?: string) => null,
   handleBrowseProjectChanged: (newAddress?: string) => null,
@@ -123,7 +135,8 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
   const accountBalance = useCurrencyBalance(account ?? undefined, ETHER)
 
   const [isCreate, setIsCreate] = useState(false)
-  const [currentCreationStep, setCurrentCreationStep] = useState(1);
+  const [currentCreationStep, setCurrentCreationStep] = useState(1)
+  const [projectCreation, setProjectCreation] = useState<Project>(initialProjectCreation)
 
   const [myProjectAddress, setMyProjectAddress] = useState<string | undefined>()
   const [browseProjectAddress, setBrowseProjectAddress] = useState<string | undefined>()
@@ -170,6 +183,7 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
   useEffect(() => {
     if (isCreate) return
     setCurrentCreationStep(1)
+    setProjectCreation(initialProjectCreation)
   }, [isCreate])
 
   const handleLogin = useCallback(
@@ -184,6 +198,10 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
   const toggleIsCreate = () => {
     setIsCreate((prevValue) => !prevValue)
   }
+
+  const handleOnProjectCreationChanged = useCallback((newUpdate: { [key: string]: any }) => {
+    setProjectCreation({ ...projectCreation, ...newUpdate })
+  }, [projectCreation])
 
   const handleBackingAmountOnMyProjectPageChanged = useCallback((value: string) => {
     if ((value !== "" && value.match("^[0-5](\\.[0-9]{0,18})?$") == null)) return
@@ -210,6 +228,7 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
 
         isCreate,
         currentCreationStep,
+        projectCreation,
 
         kickstarterFactory,
         kickstarterAccount,
@@ -240,6 +259,7 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
 
         toggleIsCreate,
         handleCurrentCreationStepChanged: setCurrentCreationStep,
+        handleOnProjectCreationChanged,
 
         handleMyProjectChanged: setMyProjectAddress,
         handleBrowseProjectChanged: setBrowseProjectAddress,

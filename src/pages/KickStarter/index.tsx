@@ -4,31 +4,17 @@ import React, { useCallback, useState } from 'react'
 import BackedProject from './BackedProject'
 import BrowseProject from './BrowseProject'
 import MyProject from './MyProject'
-import { NavItem, Project, Tabs } from './types'
+import { NavItem, Tabs } from './types'
 
 function KickStarter() {
   const [buttonIndex, setButtonIndex] = useState(0)
-  const [projectCreation, setProjectCreation] = useState<Project>({
-    title: '',
-    creator: '',
-    description: '',
-    goals: 0,
-    minimumBacking: 0,
-  });
-
-  const handleOnProjectCreationChanged = useCallback((newUpdate: { [key: string]: number }) => {
-    setProjectCreation({ ...projectCreation, ...newUpdate })
-  }, [projectCreation])
 
   const navItems: NavItem[] = [
     {
       label: 'My Project',
       code: Tabs.MY_PROJECT,
       component:
-        <MyProject
-          projectCreation={projectCreation}
-          handleOnProjectCreationChanged={handleOnProjectCreationChanged}
-        />,
+        <MyProject />,
     },
     {
       label: 'Browse Project',

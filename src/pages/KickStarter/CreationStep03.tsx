@@ -70,15 +70,8 @@ const ButtonWrapper = styled(Flex)`
   }
 `
 
-type Props = {
-  projectCreation: Project
-}
-
-function CreationStep03({
-  projectCreation,
-}: Props) {
-
-  const { handleCurrentCreationStepChanged } = useKickstarterContext()
+function CreationStep03() {
+  const { projectCreation, handleCurrentCreationStepChanged } = useKickstarterContext()
 
   return (
     <Flex flexDirection="column">

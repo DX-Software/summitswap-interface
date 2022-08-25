@@ -6,11 +6,6 @@ import styled from "styled-components"
 import FundingInput from "./FundingInput"
 import { Project } from "./types"
 
-type Props = {
-  projectCreation: Project
-  handleOnProjectCreationChanged: (newUpdate: { [key: string]: number }) => void
-}
-
 const ImgAccount = styled.div`
   width: 72px;
   height: 72px;
@@ -51,8 +46,8 @@ const ButtonWrapper = styled(Flex)`
   }
 `
 
-function CreationStep02({ projectCreation, handleOnProjectCreationChanged }: Props) {
-  const { handleCurrentCreationStepChanged } = useKickstarterContext()
+function CreationStep02() {
+  const { projectCreation, handleOnProjectCreationChanged, handleCurrentCreationStepChanged } = useKickstarterContext()
 
   const handleProjectGoalsChanged = (value: string) => {
     console.log("handleProjectGoalsChanged", value)
