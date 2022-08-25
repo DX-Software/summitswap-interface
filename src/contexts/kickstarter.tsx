@@ -1,8 +1,7 @@
 import { ETHER } from "@koda-finance/summitswap-sdk"
 import { useWalletModal } from "@koda-finance/summitswap-uikit"
 import { useWeb3React } from "@web3-react/core"
-import { CHAIN_ID } from "constants/index"
-import { KICKSTARTER_ADDRESS } from "constants/kickstarter"
+import { KICKSTARTER_FACTORY_ADDRESS } from "constants/kickstarter"
 import useBackedKickstarters, { BackedKickstarter } from "hooks/useBackedKickstarters"
 import useDebounce from "hooks/useDebounce"
 import useKickstarter from "hooks/useKickstarter"
@@ -131,7 +130,7 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
 
   const searchValue = useDebounce(searchKickstarter || "", 600)
   const almostEndedKickstarters = useKickstartersByTime(currentTimestamp, currentTimestamp + ONE_WEEK_IN_SECONDS, 3)
-  const kickstarterFactory = useKickstarterFactory(KICKSTARTER_ADDRESS)
+  const kickstarterFactory = useKickstarterFactory(KICKSTARTER_FACTORY_ADDRESS)
   const kickstarterAccount = useKickstarterAccount(account)
   const myKickstarters = useKickstarterByAccount(account, myProjectPage)
   const kickstarters = useKickstarters(searchValue, OrderBy.TITLE, kickstarterOrderDirection, browseProjectPage)
