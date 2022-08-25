@@ -39,9 +39,11 @@ function MyProject({
     myProjectPage,
     isPaymentOnMyProjectPage,
     kickstarterOnMyProject,
+    backingAmountOnMyProjectPage,
     handleMyProjectChanged,
     handleMyProjectPageChanged,
     handleIsPaymentOnMyProjectPage,
+    handleBackingAmountOnMyProjectPageChanged,
   } = useKickstarterContext()
 
   const maxPage = useMemo(() => {
@@ -75,6 +77,8 @@ function MyProject({
         kickstarter={kickstarterOnMyProject}
         isPayment={isPaymentOnMyProjectPage}
         toggleIsPayment={() => handleIsPaymentOnMyProjectPage(!isPaymentOnMyProjectPage)}
+        backedAmount={backingAmountOnMyProjectPage}
+        handleBackedAmountChanged={handleBackingAmountOnMyProjectPageChanged}
         onBack={() => handleMyProjectChanged(undefined)}
       />
     )

@@ -1,9 +1,12 @@
-import { ArrowBackIcon, ArrowForwardIcon, BinanceIcon, Box, Breadcrumbs, Button, Flex, Heading, Text, useModal, WalletIcon } from "@koda-finance/summitswap-uikit"
+import { ArrowBackIcon, ArrowForwardIcon, BinanceIcon, Box, Breadcrumbs, Button, Flex, Heading, Skeleton, Text, useModal, WalletIcon } from "@koda-finance/summitswap-uikit"
 import { Grid } from "@mui/material"
+import AccountIcon from "components/AccountIcon"
 import { useKickstarterContext } from "contexts/kickstarter"
 import { Kickstarter } from "hooks/useKickstarter"
+import { format } from "date-fns"
 import React, { useState } from "react"
 import styled from "styled-components"
+import { shortenAddress } from "utils"
 import FundingInput from "./FundingInput"
 import MobilePayment from "./MobilePayment"
 import PaymentModal from "./PaymentModal"
@@ -12,6 +15,8 @@ type Props = {
   kickstarter: Kickstarter
   onBack: () => void
   togglePayment: () => void
+  backedAmount: string
+  handleBackedAmountChanged: (value: string) => void
 }
 
 const MobileBanner = styled(Flex)`
@@ -31,6 +36,7 @@ const DesktopBanner = styled.div`
   width: 120px;
   height: 120px;
   border-radius: 8px;
+  flex-shrink: 0;
 
   @media (max-width: 900px) {
     display: none;
@@ -85,13 +91,6 @@ const OnlineDot = styled(Box)<{ isOnline: boolean }>`
   background-color: ${({ isOnline, theme }) => isOnline ? theme.colors.linkColor : theme.colors.textDisabled};
 `
 
-const ImgAccount = styled.div`
-  width: 40px;
-  height: 40px;
-  background: gray;
-  border-radius: 50%;
-`
-
 const ButtonContinue = styled(Button)`
   display: none;
   @media (max-width: 900px) {
@@ -99,8 +98,8 @@ const ButtonContinue = styled(Button)`
   }
 `
 
-function ProjectPayment({ kickstarter, onBack, togglePayment }: Props) {
-  const { account, onPresentConnectModal } = useKickstarterContext()
+function ProjectPayment({ backedAmount, handleBackedAmountChanged, kickstarter, onBack, togglePayment }: Props) {
+  const { account, accountBalance, onPresentConnectModal } = useKickstarterContext()
 
   const [showPayment] = useModal(<PaymentModal title="Payment Process" />)
   const [isMobilePaymentPage, setIsMobilePaymentPage] = useState(false)
@@ -133,29 +132,27 @@ function ProjectPayment({ kickstarter, onBack, togglePayment }: Props) {
           <Flex style={{ columnGap: "16px" }}>
             <DesktopBanner />
             <Flex flexDirection="column">
-              <Name>ROGER KENTER</Name>
-              <Title>Roger Kenter#1 Project</Title>
+              <Name>{kickstarter.creator}</Name>
+              <Title>{kickstarter.title}</Title>
               <Flex style={{ columnGap: "8px" }}>
                 <BinanceIcon />
-                <Text fontSize="24px" color="textSubtle"><b style={{ color: "white" }}>0.0000123</b> / 10 BNB</Text>
+                <Text fontSize="24px" color="textSubtle"><b style={{ color: "white" }}>{kickstarter.totalContribution.toString()}</b> / {kickstarter.projectGoals.toString()} BNB</Text>
               </Flex>
             </Flex>
           </Flex>
           <Divider />
           <Text color="textSubtle" marginBottom="4px">Project Reward</Text>
-          <Text marginBottom="16px">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ultricies consequat tincidunt nulla neque laoreet elit. Ipsum malesuada quam vel maecenas tempus aliquet semper tortor. Tortor, auctor lectus nam pu
-          </Text>
+          <Text marginBottom="16px">{kickstarter.rewardDescription}</Text>
           <Text color="textSubtle" marginBottom="4px">Reward Distribution</Text>
-          <Text>September 09th, 2022</Text>
+          <Text>{format(new Date(kickstarter.rewardDistributionTimestamp * 1000), 'LLLL do, yyyy')}</Text>
         </Grid>
         <SideItems item xs={12} md={5}>
           <SideWrapper marginBottom="16px">
             <Heading size="md" marginBottom="8px">Backing Project</Heading>
             <Text color="textSubtle" marginBottom="16px">
-              You have to back with minimum amount of <b style={{ color: "#00D4A4" }}>0.005 BNB</b> to participate in this project
+              You have to back with minimum amount of <b style={{ color: "#00D4A4" }}>{kickstarter.minContribution.toString()} BNB</b> to participate in this project
             </Text>
-            <FundingInput label="Enter Backing Amount" value={1} onChange={(value) => console.log("value", value)} />
+            <FundingInput label="Enter Backing Amount" value={backedAmount} onChange={handleBackedAmountChanged} />
             {!account && (
               <Button
                 variant='tertiary'
@@ -185,12 +182,15 @@ function ProjectPayment({ kickstarter, onBack, togglePayment }: Props) {
             )}
             {account && (
               <Flex alignItems="center" style={{ columnGap: "8px" }}>
-                <ImgAccount />
+                <AccountIcon account={account} size={32} />
                 <Flex flexDirection="column" marginRight= "auto">
-                  <Text fontSize="14px">Account 1</Text>
-                  <Text fontSize="12px" color="textDisabled">0x7Bb...0E8C3</Text>
+                  <Text fontSize="16px" color="textDisabled">{shortenAddress(account)}</Text>
                 </Flex>
-                <Text fontWeight="bold">3.4927 BNB</Text>
+                {!accountBalance ? (
+                  <Skeleton width={100} height={28} />
+                ) : (
+                  <Text fontWeight="bold">{accountBalance} BNB</Text>
+                )}
               </Flex>
             )}
           </SideWrapper>

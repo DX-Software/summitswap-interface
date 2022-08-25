@@ -85,7 +85,7 @@ function MobilePayment({ showPayment }: Props) {
       <Text color="textSubtle" style={{ marginBottom: "24px" }}>
         You have to back with minimum amount of <b style={{ color: "#00D4A4" }}>0.005 BNB</b> to participate in this project
       </Text>
-      <FundingInput label="Enter Backing Amount" value={1} onChange={(value) => console.log("value", value)} />
+      <FundingInput label="Enter Backing Amount" value="1" onChange={(value) => console.log("value", value)} />
       <ConnectionWrapper>
         <Flex alignItems="center" marginTop="8px" style={{ columnGap: "8px" }}>
           <OnlineDot isOnline={!!account} />

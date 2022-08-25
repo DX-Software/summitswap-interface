@@ -1,5 +1,7 @@
+import { ETHER } from "@koda-finance/summitswap-sdk"
 import { useWalletModal } from "@koda-finance/summitswap-uikit"
 import { useWeb3React } from "@web3-react/core"
+import { CHAIN_ID } from "constants/index"
 import { KICKSTARTER_ADDRESS } from "constants/kickstarter"
 import useBackedKickstarters, { BackedKickstarter } from "hooks/useBackedKickstarters"
 import useDebounce from "hooks/useDebounce"
@@ -10,10 +12,12 @@ import useKickstarterFactory, { KickstarterFactory } from "hooks/useKickstarterF
 import useKickstarters, { Kickstarter, OrderBy, OrderDirection } from "hooks/useKickstarters"
 import useKickstartersByTime from "hooks/useKickstartersByTime"
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react"
+import { useCurrencyBalance } from "state/wallet/hooks"
 import login from "utils/login"
 
 type KickstarterContextProps = {
   account: string | null | undefined
+  accountBalance: string | undefined
   onPresentConnectModal: () => void
 
   kickstarterFactory?: KickstarterFactory
@@ -40,6 +44,10 @@ type KickstarterContextProps = {
   isPaymentOnBrowseProjectPage: boolean
   isPaymentOnBackedProjectPage: boolean
 
+  backingAmountOnMyProjectPage: string
+  backingAmountOnBrowseProjectPage: string
+  backingAmountOnBackedProjectPage: string
+
   handleMyProjectChanged: (address?: string) => void
   handleBrowseProjectChanged: (address?: string) => void
   handleSearchKickstarterChanged: (search: string) => void
@@ -53,11 +61,16 @@ type KickstarterContextProps = {
   handleIsPaymentOnMyProjectPage: (value: boolean) => void
   handleIsPaymentOnBrowseProjectPage: (value: boolean) => void
   handleIsPaymentOnBackedProjectPage: (value: boolean) => void
+
+  handleBackingAmountOnMyProjectPageChanged: (value: string) => void
+  handleBackingAmountOnBrowseProjectPageChanged: (value: string) => void
+  handleBackingAmountOnBackedProjectPageChanged: (value: string) => void
 };
 
 
 const KickstarterContext = createContext<KickstarterContextProps>({
   account: null,
+  accountBalance: undefined,
   onPresentConnectModal: () => null,
 
   myProjectPage: 1,
@@ -67,6 +80,10 @@ const KickstarterContext = createContext<KickstarterContextProps>({
   isPaymentOnMyProjectPage: false,
   isPaymentOnBrowseProjectPage: false,
   isPaymentOnBackedProjectPage: false,
+
+  backingAmountOnMyProjectPage: "",
+  backingAmountOnBrowseProjectPage: "",
+  backingAmountOnBackedProjectPage: "",
 
   handleMyProjectChanged: (newAddress?: string) => null,
   handleBrowseProjectChanged: (newAddress?: string) => null,
@@ -81,6 +98,10 @@ const KickstarterContext = createContext<KickstarterContextProps>({
   handleIsPaymentOnMyProjectPage: (value: boolean) => null,
   handleIsPaymentOnBrowseProjectPage: (value: boolean) => null,
   handleIsPaymentOnBackedProjectPage: (value: boolean) => null,
+
+  handleBackingAmountOnMyProjectPageChanged: (value: string) => null,
+  handleBackingAmountOnBrowseProjectPageChanged: (value: string) => null,
+  handleBackingAmountOnBackedProjectPageChanged: (value: string) => null,
 });
 
 export function KickstarterProvider({ children }: { children: React.ReactNode }) {
@@ -88,6 +109,7 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
   const ONE_WEEK_IN_SECONDS = 60 * 60 * 24 * 7
 
   const { account, activate, deactivate } = useWeb3React()
+  const accountBalance = useCurrencyBalance(account ?? undefined, ETHER)
 
   const [myProjectAddress, setMyProjectAddress] = useState<string | undefined>()
   const [browseProjectAddress, setBrowseProjectAddress] = useState<string | undefined>()
@@ -103,6 +125,10 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
   const [isPaymentOnBrowseProjectPage, setIsPaymentOnBrowseProjectPage] = useState<boolean>(false)
   const [isPaymentOnBackedProjectPage, setIsPaymentOnBackedProjectPage] = useState<boolean>(false)
 
+  const [backingAmountOnMyProjectPage, setBackingAmountOnMyProjectPage] = useState("")
+  const [backingAmountOnBrowseProjectPage, setBackingAmountOnBrowseProjectPage] = useState("")
+  const [backingAmountOnBackedProjectPage, setBackingAmountOnBackedProjectPage] = useState("")
+
   const searchValue = useDebounce(searchKickstarter || "", 600)
   const almostEndedKickstarters = useKickstartersByTime(currentTimestamp, currentTimestamp + ONE_WEEK_IN_SECONDS, 3)
   const kickstarterFactory = useKickstarterFactory(KICKSTARTER_ADDRESS)
@@ -114,6 +140,18 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
   const kickstarterOnMyProject = useKickstarter(myProjectAddress)
   const kickstarterOnBrowseProject = useKickstarter(browseProjectAddress)
   const kickstarterOnBackedProject = useKickstarter(backedProjectAddress)
+
+  useEffect(() => {
+    setBackingAmountOnMyProjectPage("0")
+  }, [isPaymentOnMyProjectPage])
+
+  useEffect(() => {
+    setBackingAmountOnBrowseProjectPage("0")
+  }, [isPaymentOnBrowseProjectPage])
+
+  useEffect(() => {
+    setBackingAmountOnBackedProjectPage("0")
+  }, [isPaymentOnBackedProjectPage])
 
   const handleLogin = useCallback(
     (connectorId: string) => {
@@ -129,6 +167,7 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
       // eslint-disable-next-line react/jsx-no-constructed-context-values
       value={{
         account,
+        accountBalance: accountBalance?.toSignificant(6),
         onPresentConnectModal,
 
         kickstarterFactory,
@@ -150,9 +189,13 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
         browseProjectPage,
         backedProjectPage,
 
-        isPaymentOnMyProjectPage: isPaymentOnMyProjectPage && !!account,
-        isPaymentOnBrowseProjectPage: isPaymentOnBrowseProjectPage && !!account,
-        isPaymentOnBackedProjectPage: isPaymentOnBackedProjectPage && !!account,
+        isPaymentOnMyProjectPage,
+        isPaymentOnBrowseProjectPage,
+        isPaymentOnBackedProjectPage,
+
+        backingAmountOnMyProjectPage,
+        backingAmountOnBrowseProjectPage,
+        backingAmountOnBackedProjectPage,
 
         handleMyProjectChanged: setMyProjectAddress,
         handleBrowseProjectChanged: setBrowseProjectAddress,
@@ -167,6 +210,10 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
         handleIsPaymentOnMyProjectPage: setIsPaymentOnMyProjectPage,
         handleIsPaymentOnBrowseProjectPage: setIsPaymentOnBrowseProjectPage,
         handleIsPaymentOnBackedProjectPage: setIsPaymentOnBackedProjectPage,
+
+        handleBackingAmountOnMyProjectPageChanged: setBackingAmountOnMyProjectPage,
+        handleBackingAmountOnBrowseProjectPageChanged: setBackingAmountOnBrowseProjectPage,
+        handleBackingAmountOnBackedProjectPageChanged: setBackingAmountOnBackedProjectPage,
       }}
     >
       {children}

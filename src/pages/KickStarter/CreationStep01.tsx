@@ -91,10 +91,10 @@ function CreationStep01({
         </InputWrapper>
       </ImageAndDescriptionWrapper>
       <FundingWrapper>
-        <FundingInput label="Project Goals" value={projectCreation.goals} onChange={handleProjectGoalsChanged} />
+        <FundingInput label="Project Goals" value={projectCreation.goals.toString()} onChange={handleProjectGoalsChanged} />
         <FundingInput
           label="Minimum Backing"
-          value={projectCreation.minimumBacking}
+          value={projectCreation.minimumBacking.toString()}
           description="NB : This is the minimum amount for participate in donating the project"
           onChange={handleMinimumBackingChanged}
         />

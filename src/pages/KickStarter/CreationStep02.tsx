@@ -88,14 +88,14 @@ function CreationStep02({setCurrentCreationStep, projectCreation, handleOnProjec
         <FundingInput
           label="Project Due Date"
           type="datetime-local"
-          value={projectCreation.goals}
+          value={projectCreation.goals.toString()}
           description="NB: Due date should be minimum a week after the project is created"
           onChange={handleProjectGoalsChanged}
         />
         <FundingInput
           label="Reward Distribution"
           type="datetime-local"
-          value={projectCreation.minimumBacking}
+          value={projectCreation.minimumBacking.toString()}
           description="NB: Enter the estimate date for the reward distribution"
           onChange={handleMinimumBackingChanged}
         />

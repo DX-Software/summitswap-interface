@@ -23,11 +23,13 @@ function BrowseProject() {
     browseProjectPage,
     isPaymentOnBrowseProjectPage,
     kickstarterOnBrowseProject,
+    backingAmountOnBrowseProjectPage,
     handleBrowseProjectChanged,
     handleKickstarterOrderDirectionChanged,
     handleSearchKickstarterChanged,
     handleBrowseProjectPageChanged,
     handleIsPaymentOnBrowseProjectPage,
+    handleBackingAmountOnBrowseProjectPageChanged,
   } = useKickstarterContext()
 
   const maxPage = useMemo(() => {
@@ -52,6 +54,8 @@ function BrowseProject() {
         kickstarter={kickstarterOnBrowseProject}
         isPayment={isPaymentOnBrowseProjectPage}
         toggleIsPayment={() => handleIsPaymentOnBrowseProjectPage(!isPaymentOnBrowseProjectPage)}
+        backedAmount={backingAmountOnBrowseProjectPage}
+        handleBackedAmountChanged={handleBackingAmountOnBrowseProjectPageChanged}
         onBack={() => handleBrowseProjectChanged(undefined)}
       />
     )
