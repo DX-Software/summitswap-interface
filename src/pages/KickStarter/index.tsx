@@ -8,8 +8,6 @@ import { NavItem, Project, Tabs } from './types'
 
 function KickStarter() {
   const [buttonIndex, setButtonIndex] = useState(0)
-  const [isCreate, setIsCreate] = useState(false)
-  const [currentCreationStep, setCurrentCreationStep] = useState(1)
   const [projectCreation, setProjectCreation] = useState<Project>({
     title: '',
     creator: '',
@@ -20,12 +18,7 @@ function KickStarter() {
 
   const handleOnProjectCreationChanged = useCallback((newUpdate: { [key: string]: number }) => {
     setProjectCreation({ ...projectCreation, ...newUpdate })
-  }, [projectCreation]);
-
-  const toggleCreate = () => {
-    setCurrentCreationStep(1)
-    setIsCreate((prevValue) => !prevValue)
-  }
+  }, [projectCreation])
 
   const navItems: NavItem[] = [
     {
@@ -33,10 +26,6 @@ function KickStarter() {
       code: Tabs.MY_PROJECT,
       component:
         <MyProject
-          isCreate={isCreate}
-          toggleCreate={toggleCreate}
-          currentCreationStep={currentCreationStep}
-          setCurrentCreationStep={setCurrentCreationStep}
           projectCreation={projectCreation}
           handleOnProjectCreationChanged={handleOnProjectCreationChanged}
         />,

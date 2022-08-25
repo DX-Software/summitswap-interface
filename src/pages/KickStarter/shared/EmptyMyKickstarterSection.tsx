@@ -1,11 +1,10 @@
 import { ArrowForwardIcon, Button, Flex, Heading } from "@koda-finance/summitswap-uikit";
+import { useKickstarterContext } from "contexts/kickstarter";
 import React from "react"
 
-type Props = {
-  toggleCreate: () => void
-}
+function EmptyMyKickstarterSection() {
+  const { toggleIsCreate } = useKickstarterContext()
 
-function EmptyMyKickstarterSection({ toggleCreate }: Props) {
   return (
     <Flex mb={3} flexDirection="column" alignItems="center" justifyContent="center" height={300} style={{ width: "100%" }}>
       <Heading size="lg" color="primaryDark" style={{ fontWeight: 400, lineHeight: "36px" }} marginBottom={38} textAlign="center">
@@ -15,7 +14,7 @@ function EmptyMyKickstarterSection({ toggleCreate }: Props) {
         variant="tertiary"
         endIcon={<ArrowForwardIcon />}
         style={{ fontFamily: 'Poppins' }}
-        onClick={toggleCreate}
+        onClick={toggleIsCreate}
       >
         Create Project
       </Button>

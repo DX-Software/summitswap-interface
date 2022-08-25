@@ -1,4 +1,5 @@
 import { ArrowForwardIcon, Button, Flex, ImageAddIcon, Input, Text, TextArea } from '@koda-finance/summitswap-uikit'
+import { useKickstarterContext } from 'contexts/kickstarter'
 import React from 'react'
 import styled from 'styled-components'
 import FundingInput from './FundingInput'
@@ -46,16 +47,16 @@ const ButtonNext = styled(Button)`
 `
 
 type Props = {
-  setCurrentCreationStep: (step: number) => void
   projectCreation: Project
   handleOnProjectCreationChanged: (newUpdate: { [key: string]: number }) => void
 }
 
 function CreationStep01({
-  setCurrentCreationStep,
   projectCreation,
   handleOnProjectCreationChanged,
 }: Props) {
+  const { handleCurrentCreationStepChanged } = useKickstarterContext()
+
   const handleProjectGoalsChanged = (goals: string) => {
     handleOnProjectCreationChanged({ goals: Number(goals) })
   }
@@ -102,7 +103,7 @@ function CreationStep01({
       <ButtonNext
         variant="tertiary"
         endIcon={<ArrowForwardIcon />}
-        onClick={() => setCurrentCreationStep(2)}
+        onClick={() => handleCurrentCreationStepChanged(2)}
       >
         Next Step
       </ButtonNext>

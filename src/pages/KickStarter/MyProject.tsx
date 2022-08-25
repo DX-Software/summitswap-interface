@@ -13,19 +13,11 @@ import EmptyMyKickstarterSection from './shared/EmptyMyKickstarterSection'
 import { Project } from './types'
 
 type Props = {
-  isCreate: boolean
-  toggleCreate: () => void
-  currentCreationStep: number
-  setCurrentCreationStep: (step: number) => void
   projectCreation: Project
   handleOnProjectCreationChanged: (newUpdate: { [key: string]: number }) => void
 }
 
 function MyProject({
-  isCreate,
-  toggleCreate,
-  currentCreationStep,
-  setCurrentCreationStep,
   projectCreation,
   handleOnProjectCreationChanged,
 }: Props) {
@@ -34,12 +26,19 @@ function MyProject({
   const {
     account,
     kickstarterAccount,
+
     myKickstarters,
     myProjectAddress,
     myProjectPage,
+
     isPaymentOnMyProjectPage,
+    isCreate,
+
     kickstarterOnMyProject,
     backingAmountOnMyProjectPage,
+
+    toggleIsCreate,
+
     handleMyProjectChanged,
     handleMyProjectPageChanged,
     handleIsPaymentOnMyProjectPage,
@@ -58,9 +57,6 @@ function MyProject({
   if (isCreate) {
     return (
       <CreateProject
-        toggleCreate={toggleCreate}
-        currentCreationStep={currentCreationStep}
-        setCurrentCreationStep={setCurrentCreationStep}
         projectCreation={projectCreation}
         handleOnProjectCreationChanged={handleOnProjectCreationChanged}
       />
@@ -68,7 +64,7 @@ function MyProject({
   }
 
   if (!myKickstarters || myKickstarters.length === 0) {
-    return <EmptyMyKickstarterSection toggleCreate={toggleCreate} />
+    return <EmptyMyKickstarterSection />
   }
 
   if (myProjectAddress) {
@@ -88,7 +84,7 @@ function MyProject({
     <Flex flexDirection="column">
       <Flex justifyContent="space-between" marginBottom="24px">
         <Heading size="xl">My Projects</Heading>
-        <Button scale="sm" startIcon={<AddIcon width="12px" color="text" />} style={{ fontFamily: 'Poppins' }} onClick={toggleCreate}>
+        <Button scale="sm" startIcon={<AddIcon width="12px" color="text" />} style={{ fontFamily: 'Poppins' }} onClick={toggleIsCreate}>
           Create New Project
         </Button>
       </Flex>

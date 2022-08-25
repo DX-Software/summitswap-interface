@@ -19,6 +19,9 @@ type KickstarterContextProps = {
   accountBalance: string | undefined
   onPresentConnectModal: () => void
 
+  isCreate: boolean
+  currentCreationStep: number
+
   kickstarterFactory?: KickstarterFactory
   kickstarterAccount?: KickstarterAccount
 
@@ -47,6 +50,9 @@ type KickstarterContextProps = {
   backingAmountOnBrowseProjectPage: string
   backingAmountOnBackedProjectPage: string
 
+  toggleIsCreate: () => void
+  handleCurrentCreationStepChanged: (value: number) => void
+
   handleMyProjectChanged: (address?: string) => void
   handleBrowseProjectChanged: (address?: string) => void
   handleSearchKickstarterChanged: (search: string) => void
@@ -72,6 +78,9 @@ const KickstarterContext = createContext<KickstarterContextProps>({
   accountBalance: undefined,
   onPresentConnectModal: () => null,
 
+  isCreate: false,
+  currentCreationStep: 1,
+
   myProjectPage: 1,
   browseProjectPage: 1,
   backedProjectPage: 1,
@@ -83,6 +92,9 @@ const KickstarterContext = createContext<KickstarterContextProps>({
   backingAmountOnMyProjectPage: "",
   backingAmountOnBrowseProjectPage: "",
   backingAmountOnBackedProjectPage: "",
+
+  toggleIsCreate: () => null,
+  handleCurrentCreationStepChanged: () => null,
 
   handleMyProjectChanged: (newAddress?: string) => null,
   handleBrowseProjectChanged: (newAddress?: string) => null,
@@ -109,6 +121,9 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
 
   const { account, activate, deactivate } = useWeb3React()
   const accountBalance = useCurrencyBalance(account ?? undefined, ETHER)
+
+  const [isCreate, setIsCreate] = useState(false)
+  const [currentCreationStep, setCurrentCreationStep] = useState(1);
 
   const [myProjectAddress, setMyProjectAddress] = useState<string | undefined>()
   const [browseProjectAddress, setBrowseProjectAddress] = useState<string | undefined>()
@@ -152,6 +167,11 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
     setBackingAmountOnBackedProjectPage("")
   }, [isPaymentOnBackedProjectPage])
 
+  useEffect(() => {
+    if (isCreate) return
+    setCurrentCreationStep(1)
+  }, [isCreate])
+
   const handleLogin = useCallback(
     (connectorId: string) => {
       login(connectorId, activate)
@@ -160,6 +180,10 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
   )
 
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
+
+  const toggleIsCreate = () => {
+    setIsCreate((prevValue) => !prevValue)
+  }
 
   const handleBackingAmountOnMyProjectPageChanged = useCallback((value: string) => {
     if ((value !== "" && value.match("^[0-5](\\.[0-9]{0,18})?$") == null)) return
@@ -183,6 +207,9 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
         account,
         accountBalance: accountBalance?.toSignificant(6),
         onPresentConnectModal,
+
+        isCreate,
+        currentCreationStep,
 
         kickstarterFactory,
         kickstarterAccount,
@@ -210,6 +237,9 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
         backingAmountOnMyProjectPage,
         backingAmountOnBrowseProjectPage,
         backingAmountOnBackedProjectPage,
+
+        toggleIsCreate,
+        handleCurrentCreationStepChanged: setCurrentCreationStep,
 
         handleMyProjectChanged: setMyProjectAddress,
         handleBrowseProjectChanged: setBrowseProjectAddress,

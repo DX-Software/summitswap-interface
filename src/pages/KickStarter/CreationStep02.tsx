@@ -1,12 +1,12 @@
 import { Button, Flex, Text, TextArea } from "@koda-finance/summitswap-uikit"
 import CopyButton from "components/CopyButton"
+import { useKickstarterContext } from "contexts/kickstarter"
 import React, { useCallback } from "react"
 import styled from "styled-components"
 import FundingInput from "./FundingInput"
 import { Project } from "./types"
 
 type Props = {
-  setCurrentCreationStep: (step: number) => void
   projectCreation: Project
   handleOnProjectCreationChanged: (newUpdate: { [key: string]: number }) => void
 }
@@ -51,7 +51,8 @@ const ButtonWrapper = styled(Flex)`
   }
 `
 
-function CreationStep02({setCurrentCreationStep, projectCreation, handleOnProjectCreationChanged}: Props) {
+function CreationStep02({ projectCreation, handleOnProjectCreationChanged }: Props) {
+  const { handleCurrentCreationStepChanged } = useKickstarterContext()
 
   const handleProjectGoalsChanged = (value: string) => {
     console.log("handleProjectGoalsChanged", value)
@@ -103,13 +104,13 @@ function CreationStep02({setCurrentCreationStep, projectCreation, handleOnProjec
       <ButtonWrapper>
         <Button
           variant="secondary"
-          onClick={() => setCurrentCreationStep(1)}
+          onClick={() => handleCurrentCreationStepChanged(1)}
         >
           Previous Step
         </Button>
         <Button
           variant="primary"
-          onClick={() => setCurrentCreationStep(3)}
+          onClick={() => handleCurrentCreationStepChanged(3)}
         >
           Create New Project
         </Button>

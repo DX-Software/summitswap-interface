@@ -1,5 +1,6 @@
 import { BinanceIcon, Button, Flex, Heading, Text } from '@koda-finance/summitswap-uikit'
 import CopyButton from 'components/CopyButton'
+import { useKickstarterContext } from 'contexts/kickstarter'
 import React from 'react'
 import styled from 'styled-components'
 import { Project } from './types'
@@ -70,14 +71,14 @@ const ButtonWrapper = styled(Flex)`
 `
 
 type Props = {
-  setCurrentCreationStep: (step: number) => void
   projectCreation: Project
 }
 
 function CreationStep03({
-  setCurrentCreationStep,
   projectCreation,
 }: Props) {
+
+  const { handleCurrentCreationStepChanged } = useKickstarterContext()
 
   return (
     <Flex flexDirection="column">
@@ -167,7 +168,7 @@ function CreationStep03({
           </Flex>
         </EstimationWrapper>
         <ButtonWrapper>
-          <Button variant="secondary" onClick={() => setCurrentCreationStep(1)}>
+          <Button variant="secondary" onClick={() => handleCurrentCreationStepChanged(1)}>
             Re-edit Project
           </Button>
           <Button variant="primary">

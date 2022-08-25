@@ -44,7 +44,7 @@ function FundingInput({ label, type, value, description, onChange }: Props) {
           <BinanceIcon />
           <Text fontWeight="bold">BNB</Text>
         </InputCurrency>
-        <StyledInput type={type} step={0.001} value={value} onChange={handleOnChange} />
+        <StyledInput type={type} value={value} onChange={handleOnChange} />
       </InputWrapper>
       {description && <Text color="textDisabled" fontSize="12px" marginTop="8px">{description}</Text>}
     </Flex>

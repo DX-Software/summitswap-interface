@@ -5,6 +5,7 @@ import {
   Breadcrumbs,
   Heading,
 } from '@koda-finance/summitswap-uikit'
+import { useKickstarterContext } from 'contexts/kickstarter'
 import React from 'react'
 import styled from 'styled-components'
 import CreationStep01 from './CreationStep01'
@@ -13,9 +14,6 @@ import CreationStep03 from './CreationStep03'
 import { Project } from './types'
 
 type Props = {
-  toggleCreate: () => void
-  currentCreationStep: number
-  setCurrentCreationStep: (step: number) => void
   projectCreation: Project
   handleOnProjectCreationChanged: (newUpdate: { [key: string]: number }) => void
 }
@@ -26,18 +24,15 @@ const Divider = styled.div`
 `
 
 function CreateProject({
-  toggleCreate,
-  currentCreationStep,
   projectCreation,
-  setCurrentCreationStep,
   handleOnProjectCreationChanged,
 }: Props) {
-
+  const { toggleIsCreate, currentCreationStep } = useKickstarterContext()
   return (
     <Flex flexDirection="column">
       <Flex borderBottom="1px solid" borderBottomColor="inputColor" paddingBottom="12px" marginBottom="32px">
         <Breadcrumbs>
-          <Text color="primaryDark" style={{ cursor: 'pointer' }} onClick={toggleCreate}>
+          <Text color="primaryDark" style={{ cursor: 'pointer' }} onClick={toggleIsCreate}>
             My Project
           </Text>
           <Text color="borderColor" style={{ fontWeight: 700 }}>
@@ -45,7 +40,7 @@ function CreateProject({
           </Text>
         </Breadcrumbs>
       </Flex>
-      <Flex style={{ columnGap: '8px', cursor: 'pointer' }} marginBottom="32px" onClick={toggleCreate}>
+      <Flex style={{ columnGap: '8px', cursor: 'pointer' }} marginBottom="32px" onClick={toggleIsCreate}>
         <ArrowBackIcon color="linkColor" />
         <Text color="linkColor" style={{ textDecoration: "underline" }}>back to My Projects</Text>
       </Flex>
@@ -58,21 +53,18 @@ function CreateProject({
       <Divider style={{ marginBottom: '24px' }} />
       {currentCreationStep === 1 && (
         <CreationStep01
-          setCurrentCreationStep={setCurrentCreationStep}
           projectCreation={projectCreation}
           handleOnProjectCreationChanged={handleOnProjectCreationChanged}
         />
       )}
       {currentCreationStep === 2 && (
         <CreationStep02
-          setCurrentCreationStep={setCurrentCreationStep}
           projectCreation={projectCreation}
           handleOnProjectCreationChanged={handleOnProjectCreationChanged}
         />
       )}
       {currentCreationStep === 3 && (
         <CreationStep03
-          setCurrentCreationStep={setCurrentCreationStep}
           projectCreation={projectCreation}
         />
       )}
