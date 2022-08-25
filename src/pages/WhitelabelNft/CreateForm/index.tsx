@@ -47,7 +47,6 @@ export default function CreateWhitelabelNftForm() {
       symbol: '',
       whitelistMintPrice: '0',
       publicMintPrice: '0',
-      signer: '',
       phase: Phase.Pause,
     },
     onSubmit: async (values, { setSubmitting, setErrors }) => {
@@ -103,14 +102,6 @@ export default function CreateWhitelabelNftForm() {
           <Input
             name="publicMintPrice"
             placeholder="Public Mint Price"
-            onChange={formik.handleChange}
-            style={{ marginBottom: 12 }}
-            as={Field}
-          />
-          <Text>Signer</Text>
-          <Input
-            name="signer"
-            placeholder="Signer Address"
             onChange={formik.handleChange}
             style={{ marginBottom: 12 }}
             as={Field}

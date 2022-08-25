@@ -3,7 +3,6 @@ type WhitelabelFormValues = {
   symbol: string
   whitelistMintPrice: string
   publicMintPrice: string
-  signer: string
   phase: number
 }
 
