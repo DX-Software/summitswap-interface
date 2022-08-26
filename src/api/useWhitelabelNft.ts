@@ -1,3 +1,4 @@
+import { WhitelabelUploadParameter, WhitelabelUploadResult } from 'pages/WhitelabelNft/types'
 import { useMutation } from 'react-query'
 import httpClient from './http'
 
