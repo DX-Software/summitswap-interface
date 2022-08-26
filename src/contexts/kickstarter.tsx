@@ -79,8 +79,8 @@ const initialProjectCreation = {
   title: '',
   creator: '',
   description: '',
-  goals: 0,
-  minimumBacking: 0,
+  goals: '0',
+  minimumBacking: '0',
 }
 
 const KickstarterContext = createContext<KickstarterContextProps>({
@@ -204,17 +204,17 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
   }, [projectCreation])
 
   const handleBackingAmountOnMyProjectPageChanged = useCallback((value: string) => {
-    if ((value !== "" && value.match("^[0-5](\\.[0-9]{0,18})?$") == null)) return
+    if ((value !== "" && value.match("^[0-9]{0,9}(\\.[0-9]{0,18})?$") == null)) return
     setBackingAmountOnMyProjectPage(value)
   }, [])
 
   const handleBackingAmountOnBrowseProjectPageChanged = useCallback((value: string) => {
-    if ((value !== "" && value.match("^[0-5](\\.[0-9]{0,18})?$") == null)) return
+    if ((value !== "" && value.match("^[0-9]{0,9}(\\.[0-9]{0,18})?$") == null)) return
     setBackingAmountOnBrowseProjectPage(value)
   }, [])
 
   const handleBackingAmountOnBackedProjectPageChanged = useCallback((value: string) => {
-    if ((value !== "" && value.match("^[0-5](\\.[0-9]{0,18})?$") == null)) return
+    if ((value !== "" && value.match("^[0-9]{0,9}(\\.[0-9]{0,18})?$") == null)) return
     setBackingAmountOnBackedProjectPage(value)
   }, [])
 
