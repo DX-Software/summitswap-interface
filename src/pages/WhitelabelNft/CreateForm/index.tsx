@@ -5,6 +5,7 @@ import { Phase } from 'constants/whitelabel'
 import { Field, FormikProps, FormikProvider, useFormik } from 'formik'
 import { useWhitelabelFactoryContract } from 'hooks/useContract'
 import React, { useCallback, useState } from 'react'
+import { WhitelabelFormValues, WhitelabelNftTokenInfo } from '../types'
 import DragAndDrop from './DragAndDrop'
 
 // const NftCardPreview = ({ nftMetadata }: { nftMetadata: NftMetadata }) => {

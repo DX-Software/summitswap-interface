@@ -1,37 +1,40 @@
-import { Button, Flex, useWalletModal } from '@koda-finance/summitswap-uikit'
-import { useWeb3React } from '@web3-react/core'
-import React, { useCallback } from 'react'
-import login from 'utils/login'
-import { TranslateString } from 'utils/translateTextHelpers'
+import { Box, ButtonMenu, ButtonMenuItem } from '@koda-finance/summitswap-uikit'
+import { WhitelabelNftProvider } from 'contexts/whitelabelNft'
+import React, { useState } from 'react'
 import CreateWhitelabelNftForm from './CreateForm'
+import { NavItem, Tabs } from './types'
 
-export default function WhitelabelNft() {
-  const { account, activate, deactivate } = useWeb3React()
+function WhitelabelNft() {
+  const [buttonIndex, setButtonIndex] = useState(0)
 
-  const handleLogin = useCallback(
-    (connectorId: string) => {
-      login(connectorId, activate)
+  const navItems: NavItem[] = [
+    {
+      label: 'My Whitelabel NFT',
+      code: Tabs.MY_WHITELABEL_NFT,
+      component: <></>,
     },
-    [activate]
-  )
-
-  const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
-
-  if (!account) {
-    return (
-      <>
-        <Flex mb={3} mt={40} justifyContent="center">
-          <Button style={{ fontFamily: 'Poppins' }} onClick={onPresentConnectModal}>
-            {TranslateString(292, 'CONNECT WALLET')}
-          </Button>
-        </Flex>
-      </>
-    )
-  }
+    {
+      label: 'My Whitelabel NFT',
+      code: Tabs.MY_WHITELABEL_NFT,
+      component: <CreateWhitelabelNftForm />,
+    },
+  ]
 
   return (
-    <div className="main-content">
-      <CreateWhitelabelNftForm />
-    </div>
+    <WhitelabelNftProvider>
+      <Box marginTop="30px">
+        <ButtonMenu activeIndex={buttonIndex} onItemClick={(index) => setButtonIndex(index)}>
+          {navItems.map((item) => (
+            <ButtonMenuItem key={item.code}>{item.label}</ButtonMenuItem>
+          ))}
+        </ButtonMenu>
+      </Box>
+      <div className="main-content">
+        {navItems[buttonIndex]?.component}
+        {/* <CreateWhitelabelNftForm /> */}
+      </div>
+    </WhitelabelNftProvider>
   )
 }
+
+export default React.memo(WhitelabelNft)
