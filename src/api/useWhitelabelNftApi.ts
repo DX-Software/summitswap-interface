@@ -5,7 +5,7 @@ import httpClient from './http'
 const URL = 'whitelabel-nft'
 
 // eslint-disable-next-line import/prefer-default-export
-export function useWhitelabelNftUpload() {
+export function useWhitelabelNftApiUpload() {
   return useMutation(async (data: WhitelabelUploadParameter) => {
     const formData = new FormData()
     formData.append('walletAddress', data.walletAddress)

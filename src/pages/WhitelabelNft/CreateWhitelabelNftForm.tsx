@@ -1,6 +1,6 @@
 import { Button, Flex, Input, Text } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
-import { useWhitelabelNftUpload } from 'api/useWhitelabelNft'
+import { useWhitelabelNftApiUpload } from 'api/useWhitelabelNftApi'
 import { Phase } from 'constants/whitelabel'
 import { Field, FormikProps, FormikProvider, useFormik } from 'formik'
 import { useWhitelabelFactoryContract } from 'hooks/useContract'
@@ -24,7 +24,7 @@ export default function CreateWhitelabelNftForm() {
   const [nftImages, setNftImages] = useState<File[]>([])
   const [spreadsheet, setSpreadsheet] = useState<File>()
 
-  const whitelabelNftUpload = useWhitelabelNftUpload()
+  const whitelabelNftApiUpload = useWhitelabelNftApiUpload()
   const whitelabelFactoryContract = useWhitelabelFactoryContract()
   const { account } = useWeb3React()
 
@@ -51,7 +51,7 @@ export default function CreateWhitelabelNftForm() {
       phase: Phase.Pause,
     },
     onSubmit: async (values, { setSubmitting, setErrors }) => {
-      const result = await whitelabelNftUpload.mutateAsync({
+      const result = await whitelabelNftApiUpload.mutateAsync({
         walletAddress: account!,
         spreadsheet: spreadsheet!,
         nftImages,
