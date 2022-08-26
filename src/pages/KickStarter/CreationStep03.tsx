@@ -1,8 +1,11 @@
-import { BinanceIcon, Button, Flex, Heading, Text } from '@koda-finance/summitswap-uikit'
+import { BinanceIcon, Button, Flex, Heading, Skeleton, Text } from '@koda-finance/summitswap-uikit'
+import AccountIcon from 'components/AccountIcon'
 import CopyButton from 'components/CopyButton'
 import { useKickstarterContext } from 'contexts/kickstarter'
+import { format } from 'date-fns'
 import React from 'react'
 import styled from 'styled-components'
+import { shortenAddress } from 'utils'
 import { Project } from './types'
 
 const ImageAndDescriptionWrapper = styled(Flex)`
@@ -71,7 +74,7 @@ const ButtonWrapper = styled(Flex)`
 `
 
 function CreationStep03() {
-  const { projectCreation, handleCurrentCreationStepChanged } = useKickstarterContext()
+  const { account, accountBalance, projectCreation, handleCurrentCreationStepChanged } = useKickstarterContext()
 
   return (
     <Flex flexDirection="column">
@@ -82,21 +85,17 @@ function CreationStep03() {
           <Text color="textSubtle" marginBottom="4px">
             Project Title
           </Text>
-          <Text>Summit Swap #1 Project</Text>
+          <Text>{projectCreation.title}</Text>
           <br />
           <Text color="textSubtle" marginBottom="4px">
             Project Creator
           </Text>
-          <Text>SUMMITSWAP</Text>
+          <Text>{projectCreation.creator}</Text>
           <br />
           <Text color="textSubtle" marginBottom="4px">
             Project Description
           </Text>
-          <Text>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            Non nibh a, commodo aliquam nullam pharetra viverra.
-            Etiam odio aliquam quis lacus, justo, aliquam molestie suspendisse tempus.
-          </Text>
+          <Text>{projectCreation.projectDescription}</Text>
           <br />
           <CriteriaWrapper>
             <Flex flexDirection="column" marginRight="auto">
@@ -122,42 +121,46 @@ function CreationStep03() {
       </ImageAndDescriptionWrapper>
       <Heading size="lg" color="menuItemActiveBackground" marginY="16px">Fund &amp; Reward System</Heading>
       <Flex flexDirection="column">
-        <Text marginBottom="8px">Funding Account</Text>
-        <AccountWrapper marginBottom="24px">
-          <ImgAccount />
-          <Flex flexDirection="column" marginRight="auto">
-            <Text color="textSubtle" fontSize="12px">METAMASK</Text>
-            <Text fontWeight="bold" marginBottom="4px">Account 1A</Text>
-            <Flex style={{ columnGap: "4px" }} position="relative">
-              <Text fontSize="12px">0x465...bA7</Text>
-              <CopyButton
-                color="success"
-                text="Copied"
-                tooltipMessage="Copied"
-                tooltipTop={-40}
-                tooltipRight={-25}
-                width="16px"
-              />
-            </Flex>
-          </Flex>
-        </AccountWrapper>
+        {account && (
+          <>
+            <Text marginBottom="8px">Funding Account</Text>
+            <AccountWrapper marginBottom="24px" alignItems="center">
+              <AccountIcon account={account} size={32} />
+              <Flex flexDirection="column" marginRight="auto">
+                <Flex style={{ columnGap: "8px" }} position="relative">
+                  <Text fontSize="16px">{shortenAddress(account)}</Text>
+                  <CopyButton
+                    color="success"
+                    text={account}
+                    tooltipMessage="Copied"
+                    tooltipTop={-40}
+                    tooltipRight={-25}
+                    width="16px"
+                  />
+                </Flex>
+                {!accountBalance ? (
+                  <Skeleton width={100} height={28} />
+                ) : (
+                  <Text fontWeight="bold" color="primaryDark">{accountBalance} BNB</Text>
+                )}
+              </Flex>
+            </AccountWrapper>
+          </>
+        )}
         <Text color="textSubtle" marginBottom="4px">Reward Description</Text>
-        <Text marginBottom="24px">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non nibh a, commodo aliquam nullam pharetra viverra.
-          Etiam odio aliquam quis lacus, justo, aliquam molestie suspendisse tempus.
-        </Text>
+        <Text marginBottom="24px">{projectCreation.rewardDescription}</Text>
         <EstimationWrapper>
           <Flex flexDirection="column" marginRight="auto">
             <Text color="textSubtle" marginBottom="4px">
               Project Due Date
             </Text>
-            <Text>Tuesday, July 26th 2022</Text>
+            <Text>{format(new Date(projectCreation.projectDueDate), 'LLLL do, yyyy')}</Text>
           </Flex>
           <Flex flexDirection="column" marginRight="auto">
             <Text color="textSubtle" marginBottom="4px">
               Reward Distribution
             </Text>
-            <Text>Tuesday, July 26th 2022</Text>
+            <Text>{format(new Date(projectCreation.rewardDistribution), 'LLLL do, yyyy')}</Text>
           </Flex>
         </EstimationWrapper>
         <ButtonWrapper>
