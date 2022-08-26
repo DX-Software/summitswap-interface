@@ -1,7 +1,7 @@
 import { Box, ButtonMenu, ButtonMenuItem } from '@koda-finance/summitswap-uikit'
 import { WhitelabelNftProvider } from 'contexts/whitelabelNft'
 import React, { useState } from 'react'
-import CreateWhitelabelNftForm from './CreateForm'
+import CreateWhitelabelNftForm from './CreateWhitelabelNftForm'
 import { NavItem, Tabs } from './types'
 
 function WhitelabelNft() {
