@@ -53,7 +53,7 @@ function CreationStep01() {
     return !!(
       projectCreation.title &&
       projectCreation.creator &&
-      projectCreation.description &&
+      projectCreation.projectDescription &&
       projectCreation.goals &&
       Number(projectCreation.goals) > 0 &&
       projectCreation.minimumBacking &&
@@ -62,7 +62,7 @@ function CreationStep01() {
   }, [
     projectCreation.title,
     projectCreation.creator,
-    projectCreation.description,
+    projectCreation.projectDescription,
     projectCreation.goals,
     projectCreation.minimumBacking
   ])
@@ -75,8 +75,8 @@ function CreationStep01() {
     handleOnProjectCreationChanged({ creator: event.target.value })
   }, [handleOnProjectCreationChanged])
 
-  const handleOnDescriptionChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    handleOnProjectCreationChanged({ description: event.target.value })
+  const handleOnProjectDescriptionChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    handleOnProjectCreationChanged({ projectDescription: event.target.value })
   }, [handleOnProjectCreationChanged])
 
   const handleProjectGoalsChanged = useCallback((value: string) => {
@@ -116,8 +116,8 @@ function CreationStep01() {
           <Text color="textSubtle" marginBottom="4px">
             Project Description
           </Text>
-          <TextArea placeholder="Write something about your project" onChange={handleOnDescriptionChange}>
-            {projectCreation.description}
+          <TextArea placeholder="Write something about your project" onChange={handleOnProjectDescriptionChange}>
+            {projectCreation.projectDescription}
           </TextArea>
         </InputWrapper>
       </ImageAndDescriptionWrapper>

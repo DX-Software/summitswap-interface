@@ -78,9 +78,12 @@ type KickstarterContextProps = {
 const initialProjectCreation = {
   title: '',
   creator: '',
-  description: '',
+  projectDescription: '',
+  rewardDescription: '',
   goals: '0',
   minimumBacking: '0',
+  projectDueDate: '',
+  rewardDistribution: '',
 }
 
 const KickstarterContext = createContext<KickstarterContextProps>({

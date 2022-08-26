@@ -1,17 +1,12 @@
-import { Button, Flex, Text, TextArea } from "@koda-finance/summitswap-uikit"
+import { Button, Flex, Skeleton, Text, TextArea } from "@koda-finance/summitswap-uikit"
+import AccountIcon from "components/AccountIcon"
 import CopyButton from "components/CopyButton"
 import { useKickstarterContext } from "contexts/kickstarter"
-import React, { useCallback } from "react"
+import React, { useCallback, useMemo } from "react"
 import styled from "styled-components"
+import { shortenAddress } from "utils"
 import FundingInput from "./FundingInput"
 import { Project } from "./types"
-
-const ImgAccount = styled.div`
-  width: 72px;
-  height: 72px;
-  background: gray;
-  border-radius: 50%;
-`
 
 const AccountWrapper = styled(Flex)`
   background-color: ${({ theme }) => theme.colors.inputColor};
@@ -47,53 +42,84 @@ const ButtonWrapper = styled(Flex)`
 `
 
 function CreationStep02() {
-  const { projectCreation, handleOnProjectCreationChanged, handleCurrentCreationStepChanged } = useKickstarterContext()
+  const {
+    account,
+    accountBalance,
+    projectCreation,
+    handleOnProjectCreationChanged,
+    handleCurrentCreationStepChanged
+  } = useKickstarterContext()
 
-  const handleProjectGoalsChanged = (value: string) => {
-    console.log("handleProjectGoalsChanged", value)
+  const hasValidInput = useMemo<boolean>(() => {
+    return !!(
+      projectCreation.rewardDescription &&
+      projectCreation.rewardDistribution &&
+      projectCreation.projectDueDate
+    )
+  }, [
+    projectCreation.rewardDescription,
+    projectCreation.rewardDistribution,
+    projectCreation.projectDueDate
+  ])
+
+  const handleProjectDueDateChange = (value: string) => {
+    handleOnProjectCreationChanged({ projectDueDate: value })
   }
 
-  const handleMinimumBackingChanged = (value: string) => {
-    console.log("handleMinimumBackingChanged", value)
+  const handleRewardDistributionChange = (value: string) => {
+    handleOnProjectCreationChanged({ rewardDistribution: value })
   }
+
+  const handleOnRewardDescriptionChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    handleOnProjectCreationChanged({ rewardDescription: event.target.value })
+  }, [handleOnProjectCreationChanged])
 
   return (
     <Flex flexDirection="column">
-      <Text marginBottom="8px">Funding Account</Text>
-      <AccountWrapper marginBottom="24px">
-        <ImgAccount />
-        <Flex flexDirection="column" marginRight="auto">
-          <Text color="textSubtle" fontSize="12px">METAMASK</Text>
-          <Text fontWeight="bold" marginBottom="4px">Account 1A</Text>
-          <Flex style={{ columnGap: "4px" }} position="relative">
-            <Text fontSize="12px">0x465...bA7</Text>
-            <CopyButton
-              color="success"
-              text="Copied"
-              tooltipMessage="Copied"
-              tooltipTop={-40}
-              tooltipRight={-25}
-              width="16px"
-            />
-          </Flex>
-        </Flex>
-      </AccountWrapper>
+      {account && (
+        <>
+          <Text marginBottom="8px">Funding Account</Text>
+          <AccountWrapper marginBottom="24px" alignItems="center">
+            <AccountIcon account={account} size={32} />
+            <Flex flexDirection="column" marginRight="auto">
+              <Flex style={{ columnGap: "8px" }} position="relative">
+                <Text fontSize="16px">{shortenAddress(account)}</Text>
+                <CopyButton
+                  color="success"
+                  text={account}
+                  tooltipMessage="Copied"
+                  tooltipTop={-40}
+                  tooltipRight={-25}
+                  width="16px"
+                />
+              </Flex>
+              {!accountBalance ? (
+                <Skeleton width={100} height={28} />
+              ) : (
+                <Text fontWeight="bold" color="primaryDark">{accountBalance} BNB</Text>
+              )}
+            </Flex>
+          </AccountWrapper>
+        </>
+      )}
       <Text color="textSubtle" marginBottom="4px">Project Reward</Text>
-      <TextArea placeholder="Describe the reward for this project" />
+      <TextArea placeholder="Describe the reward for this project" onChange={handleOnRewardDescriptionChange}>
+        {projectCreation.rewardDescription}
+      </TextArea>
       <EstimationWrapper>
         <FundingInput
           label="Project Due Date"
           type="datetime-local"
-          value={projectCreation.goals.toString()}
+          value={projectCreation.projectDueDate}
           description="NB: Due date should be minimum a week after the project is created"
-          onChange={handleProjectGoalsChanged}
+          onChange={handleProjectDueDateChange}
         />
         <FundingInput
           label="Reward Distribution"
           type="datetime-local"
-          value={projectCreation.minimumBacking.toString()}
-          description="NB: Enter the estimate date for the reward distribution"
-          onChange={handleMinimumBackingChanged}
+          value={projectCreation.rewardDistribution}
+          description="NB: Enter the estimate date for the reward distribution. Reward distribution date should be equal or greater than project due date"
+          onChange={handleRewardDistributionChange}
         />
       </EstimationWrapper>
       <ButtonWrapper>
@@ -106,6 +132,7 @@ function CreationStep02() {
         <Button
           variant="primary"
           onClick={() => handleCurrentCreationStepChanged(3)}
+          disabled={!hasValidInput}
         >
           Create New Project
         </Button>

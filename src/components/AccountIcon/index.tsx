@@ -8,6 +8,8 @@ type Props = {
 }
 
 const StyledIdenticon = styled.div`
+  height: fit-content;
+  line-height: 0;
   border-radius: 50%;
   background-color: black;
 `;

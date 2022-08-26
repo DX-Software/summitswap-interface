@@ -19,9 +19,12 @@ export type NavItem = {
 export type Project = {
   title: string;
   creator: string;
-  description: string;
+  projectDescription: string;
+  rewardDescription: string;
   goals: string;
   minimumBacking: string;
+  projectDueDate: string;
+  rewardDistribution: string;
 }
 
 export type Donator = {
