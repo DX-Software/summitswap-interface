@@ -36,42 +36,40 @@
         "type": "address"
       },
       {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "symbol",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "maxSupply",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "whitelistMintPrice",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "publicMintPrice",
-            "type": "uint256"
-          },
-          {
-            "internalType": "enum Phase",
-            "name": "phase",
-            "type": "uint8"
-          }
-        ],
         "indexed": false,
-        "internalType": "struct TokenInfo",
-        "name": "tokenInfo",
-        "type": "tuple"
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "symbol",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "maxSupply",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "whitelistMintPrice",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "publicMintPrice",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum Phase",
+        "name": "phase",
+        "type": "uint8"
       },
       {
         "indexed": false,

@@ -23,7 +23,7 @@ import STAKING_ABI from '../constants/abis/kodaStaking.json'
 import ROUTER_ABI from '../constants/abis/summitswap-router.json'
 import PRESALE_FACOTRY_ABI from '../constants/abis/summit-factory-presale.json'
 import PRESALE_ABI from '../constants/abis/summit-custom-presale.json'
-import WHITELABEL_FACTORY_ABI from '../constants/abis/summitWhitelabelNft.json'
+import WHITELABEL_FACTORY_ABI from '../constants/abis/summitWhitelabelNftFactory.json'
 
 // returns null on errors
 function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {
