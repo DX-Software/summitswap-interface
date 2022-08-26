@@ -57,6 +57,7 @@ export default function AppHeader() {
         {location.pathname.search('/staking') !== -1 && 'Staking'}
         {location.pathname === '/create-token' && 'Create Token'}
         {location.pathname === '/presale' && 'Create Presale'}
+        {location.pathname === '/whitelabel-nft' && 'Whitelabel NFT'}
         {location.pathname.search('/info') !== -1 && 'SummitSwap Info & Analytics'}
       </StyledBox>
       <TopLogo src={TopLogoIcon} alt="" />
