@@ -6,7 +6,10 @@ import { format } from 'date-fns'
 import React from 'react'
 import styled from 'styled-components'
 import { shortenAddress } from 'utils'
-import { Project } from './types'
+
+type Props = {
+  handleCreateProject: () => void
+}
 
 const ImageAndDescriptionWrapper = styled(Flex)`
   column-gap: 32px;
@@ -73,7 +76,7 @@ const ButtonWrapper = styled(Flex)`
   }
 `
 
-function CreationStep03() {
+function CreationStep03({ handleCreateProject }: Props) {
   const { account, accountBalance, projectCreation, handleCurrentCreationStepChanged } = useKickstarterContext()
 
   return (
@@ -167,7 +170,7 @@ function CreationStep03() {
           <Button variant="secondary" onClick={() => handleCurrentCreationStepChanged(1)}>
             Re-edit Project
           </Button>
-          <Button variant="primary">
+          <Button variant="primary" onClick={handleCreateProject}>
             Create New Project
           </Button>
         </ButtonWrapper>

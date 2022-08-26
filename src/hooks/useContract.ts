@@ -24,6 +24,7 @@ import ROUTER_ABI from '../constants/abis/summitswap-router.json'
 import PRESALE_FACOTRY_ABI from '../constants/abis/summit-factory-presale.json'
 import PRESALE_ABI from '../constants/abis/summit-custom-presale.json'
 import SUMMIT_KICKSTARTER_ABI from '../constants/abis/summitKickstarter.json'
+import SUMMIT_KICKSTARTER_FACTORY_ABI from '../constants/abis/summitKickstarterFactory.json'
 
 // returns null on errors
 function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {
@@ -54,6 +55,10 @@ export function useFactoryContract(withSignerIfPossible?: boolean): Contract | n
 
 export function useLockerContract(withSignerIfPossible?: boolean): Contract | null {
   return useContract(LOCKER_ADDRESS, LOCKER_ABI, withSignerIfPossible)
+}
+
+export function useKickstarterFactoryContract(withSignerIfPossible?: boolean): Contract | null {
+  return useContract(KICKSTARTER_FACTORY_ADDRESS, SUMMIT_KICKSTARTER_FACTORY_ABI, withSignerIfPossible)
 }
 
 export function useKickstarterContract(kickstarterAddress: string, withSignerIfPossible?: boolean): Contract | null {

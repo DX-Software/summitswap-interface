@@ -1,3 +1,4 @@
+import { TransactionResponse } from '@ethersproject/providers'
 import {
   ArrowBackIcon,
   Flex,
@@ -5,8 +6,12 @@ import {
   Breadcrumbs,
   Heading,
 } from '@koda-finance/summitswap-uikit'
+import TransactionConfirmationModal, { TransactionErrorContent } from 'components/TransactionConfirmationModal'
 import { useKickstarterContext } from 'contexts/kickstarter'
-import React from 'react'
+import { parseUnits } from 'ethers/lib/utils'
+import { useKickstarterFactoryContract } from 'hooks/useContract'
+import React, { useCallback, useState } from 'react'
+import { useTransactionAdder } from 'state/transactions/hooks'
 import styled from 'styled-components'
 import CreationStep01 from './CreationStep01'
 import CreationStep02 from './CreationStep02'
@@ -18,7 +23,81 @@ const Divider = styled.div`
 `
 
 function CreateProject() {
-  const { toggleIsCreate, currentCreationStep } = useKickstarterContext()
+  const { account, toggleIsCreate, currentCreationStep, projectCreation } = useKickstarterContext()
+  const addTransaction = useTransactionAdder()
+  const kickstarterFactoryContract = useKickstarterFactoryContract()
+
+  const [isOpen, setIsOpen] = useState(false)
+  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
+  const [hash, setHash] = useState<string | undefined>()
+  const [pendingText, setPendingText] = useState<string>('')
+  const [errorMessage, setErrorMessage] = useState<string | undefined>()
+
+  const onDismiss = () => {
+    setHash(undefined)
+    setPendingText('')
+    setErrorMessage('')
+    setAttemptingTxn(false)
+    setIsOpen(false)
+  }
+
+  const transactionSubmitted = useCallback(
+    (response: TransactionResponse, summary: string) => {
+      setIsOpen(true)
+      setAttemptingTxn(false)
+      setHash(response.hash)
+      addTransaction(response, {
+        summary,
+      })
+    },
+    [addTransaction]
+  )
+
+  const transactionFailed = useCallback((messFromError: string) => {
+    setIsOpen(true)
+    setAttemptingTxn(false)
+    setHash(undefined)
+    setErrorMessage(messFromError)
+  }, [])
+
+  const handleCreateProject = useCallback(async () => {
+    try {
+      if (!kickstarterFactoryContract || !account) {
+        return
+      }
+      const serviceFee = await kickstarterFactoryContract.serviceFee()
+      const receipt = await kickstarterFactoryContract.createProject(
+        projectCreation.title,
+        projectCreation.creator,
+        projectCreation.projectDescription,
+        projectCreation.rewardDescription,
+        parseUnits(projectCreation.minimumBacking, 18),
+        parseUnits(projectCreation.goals, 18),
+        Math.floor(new Date(projectCreation.rewardDistribution).getTime() / 1000),
+        Math.floor(Date.now() / 1000),
+        Math.floor(new Date(projectCreation.projectDueDate).getTime() / 1000),
+        { value: serviceFee.toString() }
+      )
+      transactionSubmitted(receipt, 'The kickstarter has been submitted successfully')
+    } catch (err) {
+      const callError = err as any
+      const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message
+      transactionFailed(callErrorMessage)
+    }
+  }, [
+    kickstarterFactoryContract,
+    projectCreation.title,
+    projectCreation.creator,
+    projectCreation.projectDescription,
+    projectCreation.rewardDescription,
+    projectCreation.minimumBacking,
+    projectCreation.goals,
+    projectCreation.rewardDistribution,
+    projectCreation.projectDueDate,
+    account,
+    transactionFailed,
+    transactionSubmitted
+  ])
 
   return (
     <Flex flexDirection="column">
@@ -45,7 +124,17 @@ function CreateProject() {
       <Divider style={{ marginBottom: '24px' }} />
       {currentCreationStep === 1 && <CreationStep01 />}
       {currentCreationStep === 2 && <CreationStep02 />}
-      {currentCreationStep === 3 && <CreationStep03 />}
+      {currentCreationStep === 3 && <CreationStep03 handleCreateProject={handleCreateProject} />}
+      <TransactionConfirmationModal
+        isOpen={isOpen}
+        onDismiss={onDismiss}
+        attemptingTxn={attemptingTxn}
+        hash={hash}
+        pendingText={pendingText}
+        content={() =>
+          errorMessage ? <TransactionErrorContent onDismiss={onDismiss} message={errorMessage || ''} /> : null
+        }
+      />
     </Flex>
   )
 }
