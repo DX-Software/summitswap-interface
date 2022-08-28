@@ -1,10 +1,20 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { Box, Button, Flex, Text, ClockIcon, CalendarIcon, VestingIcon, Radio } from '@koda-finance/summitswap-uikit'
+import {
+  Box,
+  Button,
+  Flex,
+  Text,
+  ClockIcon,
+  Select,
+  CalendarIcon,
+  VestingIcon,
+  Radio,
+} from '@koda-finance/summitswap-uikit'
 import { FormikProps } from 'formik'
 import { RowFixed } from 'components/Row'
-import { RADIO_VALUES } from 'constants/presale'
+import { RADIO_VALUES, DAY_OPTIONS, HOUR_OPTIONS } from 'constants/presale'
 import { ItemIconCard, IconBox, GridContainer, GridItem1, GridItem2 } from './GridComponents'
 import StyledInput, { StyledInputWrapper } from './StyledInput'
 import ButtonsWrapper from './ButtonsWrapper'
@@ -24,8 +34,19 @@ const PlaceholderDiv = styled.div`
   @media (max-width: 1263px) {
     height: 190px;
   }
-  @media (max-width: 550px) {
+  @media (max-width: 570px) {
     height: 280px;
+  }
+`
+
+const StyledSelect = styled(Select)`
+  > select {
+    margin: 4px 0;
+    width: 150px;
+    height: 44px;
+    @media (max-width: 550px) {
+      width: 100%;
+    }
   }
 `
 
@@ -250,13 +271,23 @@ const CreationStep04 = ({ formik, changeStepNumber }: Props) => {
                     <Text small marginTop="8px">
                       Interval Day
                     </Text>
-                    <StyledInput forTime placeholder="Ex: 100" type="number" />
+                    <StyledSelect
+                      options={DAY_OPTIONS}
+                      id={FieldNames.claimIntervalDay}
+                      onChange={(e: any) => formik.setFieldValue(FieldNames.claimIntervalDay, e.target.value)}
+                      selected={`${formik.values.claimIntervalDay}`}
+                    />
                   </StyledInputWrapper>
                   <StyledInputWrapper forDate marginRight="16px">
                     <Text small marginTop="8px">
                       Interval Time (UTC)
                     </Text>
-                    <StyledInput forTime placeholder="Ex: 100" type="number" />
+                    <StyledSelect
+                      options={HOUR_OPTIONS}
+                      id={FieldNames.claimIntervalHour}
+                      onChange={(e: any) => formik.setFieldValue(FieldNames.claimIntervalHour, e.target.value)}
+                      selected={`${formik.values.claimIntervalHour}`}
+                    />
                   </StyledInputWrapper>
                 </Flex>
                 <Caption marginLeft="16px" color="textDisabled">
