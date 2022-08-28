@@ -92,7 +92,7 @@ const PresaleDetails = ({ presaleAddress }: Props) => {
           </MouseoverTooltip>
         </RowFixed>
       </Flex>
-      {!presaleInfo?.isVestingEnabled && (
+      {presaleInfo?.isVestingEnabled && (
         <Flex marginTop="8px" justifyContent="start">
           <VestingPlaceholder />
           <Box marginLeft="16px">
