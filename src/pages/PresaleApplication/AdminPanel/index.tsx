@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react'
-import styled, { useTheme } from 'styled-components'
+import React, { useEffect, useState, useCallback } from 'react'
+import styled from 'styled-components'
 import { Pagination } from '@mui/material'
 import { useFactoryPresaleContract } from 'hooks/useContract'
 import { RowFixed } from 'components/Row'
@@ -15,6 +15,7 @@ import {
   ChevronRightIcon,
 } from '@koda-finance/summitswap-uikit'
 import HeadingCotainer, { StyledText } from './HeadingContainer'
+import { usePaginationStyles } from '../Presale/Shared'
 import PresaleDetail from './PresaleDetails'
 import PresaleSettings from './PresaleSettings'
 import PresaleSummary from '../PresaleSummary'
@@ -60,6 +61,11 @@ const PaginationWrapper = styled.div`
   position: fixed;
   right: 1;
 `
+const TableCard = styled(Box)`
+  background: ${({ theme }) => theme.colors.dropdownBackground};
+  padding: 12px 18px;
+  border-radius: 8px;
+`
 
 const AdminPanel = () => {
   const [tabIndex, setTabIndex] = useState(0)
@@ -70,30 +76,7 @@ const AdminPanel = () => {
   const [selectedPresale, setSelectedPresale] = useState('')
   const [isEditMode, setEditMode] = useState(false)
 
-  const theme = useTheme()
-  const paginationStyle = useMemo(
-    () => ({
-      '& .MuiPaginationItem-root': {
-        color: theme.colors.sidebarActiveColor,
-        background: theme.colors.inputColor,
-      },
-      '& .MuiPaginationItem-ellipsis': {
-        background: 'none',
-      },
-      '& .Mui-selected': {
-        color: theme.colors.sidebarColor,
-        background: `${theme.colors.primary} !important`,
-        fontWeight: '700',
-      },
-      '& .Mui-disabled': {
-        background: darkColors.textDisabled,
-        color: theme.colors.textSubtle,
-        opacity: '1 !important',
-      },
-    }),
-    [theme.colors]
-  )
-
+  const paginationStyle = usePaginationStyles()
   const factoryContract = useFactoryPresaleContract(PRESALE_FACTORY_ADDRESS)
 
   useEffect(() => {
@@ -127,27 +110,29 @@ const AdminPanel = () => {
       case 0:
         return (
           <>
-            <HeadingCotainer />
-            <Divider bottomOnly />
-            {getSlicedAddress(pendingPresales, pagePendingPresales).map((address) => (
-              <Box key={address}>
-                <PresaleDetail selectPresaleHandler={selectPresaleHandler} presaleAddress={address} />
-                <Divider />
-              </Box>
-            ))}
+            <TableCard marginTop="24px">
+              <HeadingCotainer />
+              <Divider bottomOnly />
+              {getSlicedAddress(pendingPresales, pagePendingPresales).map((address) => (
+                <Box key={address}>
+                  <PresaleDetail selectPresaleHandler={selectPresaleHandler} presaleAddress={address} />
+                </Box>
+              ))}
+            </TableCard>
           </>
         )
       case 1:
         return (
           <>
-            <HeadingCotainer />
-            <Divider bottomOnly />
-            {getSlicedAddress(approvedPresales, pagePendingPresales).map((address) => (
-              <Box key={address}>
-                <PresaleDetail selectPresaleHandler={selectPresaleHandler} presaleAddress={address} />
-                <Divider />
-              </Box>
-            ))}
+            <TableCard marginTop="24px">
+              <HeadingCotainer />
+              <Divider bottomOnly />
+              {getSlicedAddress(approvedPresales, pagePendingPresales).map((address) => (
+                <Box key={address}>
+                  <PresaleDetail selectPresaleHandler={selectPresaleHandler} presaleAddress={address} />
+                </Box>
+              ))}
+            </TableCard>
           </>
         )
       case 2:
