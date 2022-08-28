@@ -24,11 +24,14 @@ export const FEE_EMERGENCY_WITHDRAW = 10 // 2%
 export const FEE_DECIMALS = 9
 
 export const PRESALE_CARDS_PER_PAGE = 6
+export const ADDRESS_PER_PAGE = 5
 export const WHITELIST_ADDRESSES_PER_PAGE = 10
 export const PRESALES_PER_PAGE_ADMIN_PANEL = 10
 
-export const WITHDRAW_BNB = 'withdrawBNB'
-export const EMERGENCY_WITHDRAW_BNB = 'emergencyWithdrawBNB'
+export const WITHDRAW_PAYMENT = 'withdrawPaymentToken'
+export const EMERGENCY_WITHDRAW_PAYMENT = 'emergencyWithdrawPaymentToken'
+
+export const JOIN_IDS_WITH = '.|*|.'
 
 export const RADIO_VALUES = {
   WHITELIST_ENABLED: true,
@@ -74,3 +77,18 @@ export const HOUR_OPTIONS = [...Array(24).keys()].map((i) => ({
   label: `${i}`,
   value: `${i}`,
 }))
+
+export const CONTACT_METHOD_OPTIONS = [
+  {
+    label: 'Telegram',
+    value: 'Telegram',
+  },
+  {
+    label: 'Discord',
+    value: 'Discord',
+  },
+  {
+    label: 'Email',
+    value: 'Email',
+  },
+]
