@@ -61,13 +61,12 @@ export const validatePresaleDetails = (values: PresaleDetails) => {
   }
 
   const date1 = new Date()
-  const dateUtc = new Date(Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate()))
 
   if (!values.startPresaleDate) {
     errors.startPresaleDate = 'Start Presale Date is Required'
   } else if (values.startPresaleDate) {
     const date2 = new Date(values.startPresaleDate)
-    const diff = differenceInDays(date2, dateUtc)
+    const diff = differenceInDays(date2, date1)
     if (diff < 0) {
       errors.startPresaleDate = 'Start Presale date >= current date'
     } else if (diff === 0) {
@@ -88,7 +87,7 @@ export const validatePresaleDetails = (values: PresaleDetails) => {
             Date.UTC(date3.getFullYear(), date3.getMonth(), date3.getDate(), Number(hours2), Number(mins2))
           )
           if (fullDate >= fullDate2) {
-            errors.startPresaleDate = 'Start time < End time'
+            errors.startPresaleDate = 'End time > Start time'
           }
         }
       }
@@ -99,7 +98,7 @@ export const validatePresaleDetails = (values: PresaleDetails) => {
     errors.endPresaleDate = 'End Presale Date is Required'
   } else if (values.endPresaleDate) {
     const date2 = new Date(values.endPresaleDate)
-    const diff = differenceInDays(date2, dateUtc)
+    const diff = differenceInDays(date2, date1)
     if (diff < 0) {
       errors.endPresaleDate = 'End Presale date >= current date'
     } else if (diff === 0) {
@@ -142,26 +141,6 @@ export const validatePresaleDetails = (values: PresaleDetails) => {
     } else if (!Number.isInteger(values.maxClaimPercentage)) {
       errors.maxClaimPercentage = 'maxClaimPercentage should be an Integer'
     }
-
-    if (!values.claimIntervalDay) {
-      errors.claimIntervalDay = 'Required*'
-    } else if (values.claimIntervalDay <= 0) {
-      errors.claimIntervalDay = 'claimIntervalDay should be a positive number'
-    } else if (values.claimIntervalDay > 31) {
-      errors.claimIntervalDay = 'claimIntervalDay should be between 1 & 31'
-    } else if (!Number.isInteger(values.claimIntervalDay)) {
-      errors.claimIntervalDay = 'claimIntervalDay should be an Integer'
-    }
-
-    if (!values.claimIntervalHour) {
-      errors.claimIntervalHour = 'Required*'
-    } else if (values.claimIntervalHour < 0) {
-      errors.claimIntervalHour = 'claimIntervalHour should be a positive number'
-    } else if (values.claimIntervalHour > 23) {
-      errors.claimIntervalHour = 'claimIntervalHour should be between 0 & 23'
-    } else if (!Number.isInteger(values.claimIntervalHour)) {
-      errors.claimIntervalHour = 'claimIntervalHour should be an Integer'
-    }
   }
 
   return errors
@@ -182,6 +161,12 @@ export const validateProjectDetails = (values: ProjectDetails) => {
     errors.telegramId = 'Required*'
   } else if (!checkUrl(values.telegramId)) {
     errors.telegramId = 'Not a valid Url'
+  }
+
+  if (!values.websiteUrl) {
+    errors.websiteUrl = 'Required*'
+  } else if (!checkUrl(values.websiteUrl)) {
+    errors.websiteUrl = 'Not a valid Url'
   }
 
   if (!values.logoUrl) {
