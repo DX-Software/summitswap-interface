@@ -54,6 +54,9 @@ export enum FieldNames {
   presaleInfo = 'presaleInfo',
   feeInfo = 'feeInfo',
   ProjectDetails = 'ProjectDetails',
+  description = 'description',
+  websiteUrl = 'websiteUrl',
+  contactMethod = 'contactMethod'
 }
 
 export interface ProjectDetails {
@@ -65,6 +68,9 @@ export interface ProjectDetails {
   [FieldNames.discordId]?: string
   [FieldNames.twitterId]?: string
   [FieldNames.email]?: string
+  [FieldNames.description]?: string
+  [FieldNames.websiteUrl]?: string
+  [FieldNames.contactMethod]?: string
   [FieldNames.logoHeight]?: number
   [FieldNames.logoWidth]?: number
 }
@@ -183,6 +189,10 @@ export enum LoadingButtonTypes {
   Finalize,
   CancelPool,
   WithdrawCancelledTokens,
+  ApproveCurrency,
+  BuyTokens,
+  AddWhitelist,
+  RemoveWhitelist
 }
 
 export interface LoadingForButton {
