@@ -3,11 +3,12 @@ import styled from 'styled-components'
 import { format, addMinutes } from 'date-fns'
 import { BigNumber } from 'ethers'
 import { formatUnits } from 'ethers/lib/utils'
-import { Box } from '@koda-finance/summitswap-uikit'
 import { usePresaleContract } from 'hooks/useContract'
 import { useToken } from 'hooks/Tokens'
-import { fetchPresaleInfo } from 'utils/presale'
-import { PresaleInfo } from '../types'
+import { TOKEN_CHOICES } from 'constants/presale'
+import { NULL_ADDRESS } from 'constants/index'
+import { fetchPresaleInfo, fetchFeeInfo, fetchProjectDetails } from 'utils/presale'
+import { PresaleInfo, FeeInfo, ProjectDetails } from '../types'
 import { Grid, StyledText } from './HeadingContainer'
 
 interface Props {
@@ -26,14 +27,24 @@ const ResponsiveGrid = styled(Grid)`
 
 const PresaleDetails = ({ presaleAddress, selectPresaleHandler }: Props) => {
   const [presaleInfo, setPresaleInfo] = useState<PresaleInfo>()
-  const presaleContract = usePresaleContract(presaleAddress)
+  const [projectDetails, setProjectDetails] = useState<ProjectDetails>()
+  const [presaleFeeInfo, setPresaleFeeInfo] = useState<FeeInfo>()
+  const [currency, setCurrency] = useState('BNB')
 
-  const token = useToken(presaleInfo?.presaleToken)
+  const presaleContract = usePresaleContract(presaleAddress)
+  const paymentToken = useToken(
+    presaleFeeInfo?.paymentToken !== NULL_ADDRESS ? presaleFeeInfo?.paymentToken : undefined
+  )
 
   useEffect(() => {
     async function fetchData() {
       const preInfo = await fetchPresaleInfo(presaleContract)
+      const feeInfo = await fetchFeeInfo(presaleContract)
+      const projDetails = await fetchProjectDetails(presaleContract)
+
       setPresaleInfo({ ...preInfo })
+      setPresaleFeeInfo({ ...feeInfo })
+      setProjectDetails({ ...projDetails })
     }
     if (presaleContract) {
       fetchData()
@@ -45,23 +56,31 @@ const PresaleDetails = ({ presaleAddress, selectPresaleHandler }: Props) => {
     return format(addMinutes(date_, date_.getTimezoneOffset()), "yyyy.MM.dd HH:mm ('UTC')")
   }, [])
 
+  useEffect(() => {
+    if (presaleFeeInfo) {
+      const currentCurrency = Object.keys(TOKEN_CHOICES).find(
+        (key) => TOKEN_CHOICES[key] === presaleFeeInfo?.paymentToken
+      )
+      setCurrency(currentCurrency as string)
+    }
+  }, [presaleFeeInfo])
+
   return (
     <ResponsiveGrid>
-      <StyledText>{token?.name}</StyledText>
-      <Box />
-      <StyledText>{token?.symbol}</StyledText>
-      <Box />
+      <StyledText>{projectDetails?.projectName}</StyledText>
+      <StyledText>{currency}</StyledText>
       <StyledText>{formatUnits(presaleInfo?.presaleRate || 0)}</StyledText>
-      <Box />
       <StyledText>
-        {formatUnits(presaleInfo?.softcap || 0)}/{formatUnits(presaleInfo?.hardcap || 0)}
+        {formatUnits(presaleInfo?.softcap || 0, paymentToken?.decimals)} /{' '}
+        {formatUnits(presaleInfo?.hardcap || 0, paymentToken?.decimals)}
       </StyledText>
-      <Box />
       <StyledText>{presaleInfo?.refundType ? 'Burn' : 'Refund'}</StyledText>
-      <Box />
       <StyledText>{presaleInfo?.startPresaleTime ? formatDate(presaleInfo.startPresaleTime) : ''}</StyledText>
-      <Box />
-      <StyledText>{presaleInfo?.endPresaleTime ? formatDate(presaleInfo.endPresaleTime) : ''}</StyledText>
+      {presaleInfo?.isApproved ? (
+        <StyledText color="primary">Approved</StyledText>
+      ) : (
+        <StyledText color="info">Need Approval</StyledText>
+      )}
       <StyledText
         style={{ cursor: 'pointer' }}
         color="linkColor"
