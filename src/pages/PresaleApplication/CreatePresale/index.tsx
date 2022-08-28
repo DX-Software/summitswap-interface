@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { useFormik, FormikProps } from 'formik'
 import { Token } from '@koda-finance/summitswap-sdk'
 import { useFactoryPresaleContract, useTokenContract } from 'hooks/useContract'
-import { Flex, Box, Radio, Text } from '@koda-finance/summitswap-uikit'
+import { Box, Text } from '@koda-finance/summitswap-uikit'
 import {
   RADIO_VALUES,
   TOKEN_CHOICES,
@@ -15,7 +15,9 @@ import {
   FEE_PAYMENT_TOKEN,
   FEE_PRESALE_TOKEN,
   FEE_EMERGENCY_WITHDRAW,
+  JOIN_IDS_WITH,
 } from 'constants/presale'
+import { useToken } from 'hooks/Tokens'
 import { ROUTER_ADDRESS, PANCAKESWAP_ROUTER_V2_ADDRESS } from '../../../constants'
 import steps from './steps-data'
 import CreationStep01 from './CreationStep01'
@@ -27,42 +29,11 @@ import CreationStep06, { Divider, getUtcDate } from './CreationStep06'
 import { validatePresaleDetails, validateProjectDetails } from './formValidations'
 import { PresaleDetails, ProjectDetails, FieldNames } from '../types'
 
-const StepsWrapper = styled(Box)`
-  width: 522px;
-  text-align: center;
-`
 const ContentWrapper = styled(Box)`
   width: 90%;
   max-width: 950px;
 `
 
-const StepLine = styled.div`
-  position: relative;
-  top: 18px;
-  background: #3c3742;
-  border-radius: 9px;
-  width: 100%;
-  height: 4px;
-`
-
-const StyledRadio = styled(Radio)<{ completed: boolean }>`
-  cursor: auto;
-  background-color: ${({ completed, theme }) => (completed ? theme.colors.success : theme.colors.inputColor)};
-  &:hover:not(:disabled):not(:checked) {
-    box-shadow: none;
-  }
-  &:focus {
-    box-shadow: none;
-  }
-  &:after {
-    background-color: ${({ completed, theme }) => (completed ? theme.colors.success : theme.colors.inputColor)};
-  }
-  &:checked {
-    &:after {
-      background-color: ${({ theme }) => theme.colors.inputColor};
-    }
-  }
-`
 const CreatePresale = () => {
   const { account, library } = useWeb3React()
 
@@ -86,6 +57,8 @@ const CreatePresale = () => {
   }, [account, tokenContract])
 
   const changeStepNumber = useCallback((num: number) => setStepNumber(num), [])
+
+  const paymentToken = useToken(currency !== 'BNB' ? TOKEN_CHOICES[currency] : undefined)
 
   const formikPresale: FormikProps<PresaleDetails> = useFormik({
     initialValues: {
@@ -136,6 +109,11 @@ const CreatePresale = () => {
       }
 
       setIsLoading(true)
+
+      const combinedSocialIds = [values.websiteUrl, values.discordId, values.twitterId, values.telegramId].join(
+        JOIN_IDS_WITH
+      )
+
       try {
         const receipt = await factoryContract.createPresale(
           [
@@ -144,9 +122,9 @@ const CreatePresale = () => {
             values.contactName,
             values.contactPosition,
             values.email,
-            values.telegramId,
-            values.discordId,
-            values.twitterId,
+            values.contactMethod,
+            values.description,
+            combinedSocialIds,
           ],
           {
             presaleToken: selectedToken.address,
@@ -156,10 +134,10 @@ const CreatePresale = () => {
             presalePrice: parseUnits((values.presaleRate || 0).toString(), 18),
             listingPrice: parseUnits((values.listingRate || 0).toString(), 18),
             liquidityLockTime: (values.liquidyLockTimeInMins || 0) * 60,
-            minBuy: parseUnits((values.minBuy || 0).toString(), 18),
-            maxBuy: parseUnits((values.maxBuy || 0).toString(), 18),
-            softCap: parseUnits((values.softcap || 0).toString(), 18),
-            hardCap: parseUnits((values.hardcap || 0).toString(), 18),
+            minBuy: parseUnits((values.minBuy || 0).toString(), paymentToken?.decimals),
+            maxBuy: parseUnits((values.maxBuy || 0).toString(), paymentToken?.decimals),
+            softCap: parseUnits((values.softcap || 0).toString(), paymentToken?.decimals),
+            hardCap: parseUnits((values.hardcap || 0).toString(), paymentToken?.decimals),
             liquidityPercentage: BigNumber.from(values.liquidity)
               .mul(10 ** FEE_DECIMALS)
               .div(100),
@@ -284,32 +262,16 @@ const CreatePresale = () => {
   }
 
   return (
-    <>
-      <StepsWrapper>
-        <Text color="primary" small>
-          {steps[stepNumber].name}
-        </Text>
-        <Text marginTop="8px" fontSize="24px" fontWeight={700}>
-          {steps[stepNumber].title}
-        </Text>
-        <Text marginTop="8px" color="textSubtle">
-          {steps[stepNumber].subTitle}
-        </Text>
-        <Box marginY="35px">
-          <StepLine />
-          <Flex justifyContent="space-between">
-            <StyledRadio completed={stepNumber > 0} checked={stepNumber === 0} onClick={() => setStepNumber(0)} />
-            <StyledRadio completed={stepNumber > 1} checked={stepNumber === 1} onClick={() => setStepNumber(1)} />
-            <StyledRadio completed={stepNumber > 2} checked={stepNumber === 2} onClick={() => setStepNumber(2)} />
-            <StyledRadio completed={stepNumber > 3} checked={stepNumber === 3} onClick={() => setStepNumber(3)} />
-            <StyledRadio completed={stepNumber > 4} checked={stepNumber === 4} onClick={() => setStepNumber(4)} />
-            <StyledRadio completed={stepNumber > 5} checked={stepNumber === 5} onClick={() => setStepNumber(5)} />
-          </Flex>
-        </Box>
-      </StepsWrapper>
+    <ContentWrapper>
+      <Text color="textSubtle" small>
+        {`${steps[stepNumber].name} of 06 - ${steps[stepNumber].title}`}
+      </Text>
+      <Text marginBottom="4px" style={{ lineHeight: '40px' }} fontSize="40px" fontWeight={700}>
+        Create New Presale
+      </Text>
       <Divider />
-      <ContentWrapper>{showStep()}</ContentWrapper>
-    </>
+      {showStep()}
+    </ContentWrapper>
   )
 }
 
