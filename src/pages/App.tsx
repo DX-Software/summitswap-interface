@@ -37,6 +37,7 @@ import DepositPage from './Staking/DepositPage'
 import WithdrawPage from './Staking/WithdrawPage'
 import ClaimPage from './Staking/ClaimPage'
 import PresaleApplication from './PresaleApplication'
+import LaunchPad from './PresaleApplication/LaunchPad'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -183,6 +184,7 @@ export default function App() {
                     <Route exact path="/staking/withdraw" component={WithdrawPage} />
                     <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
                     <Route exact path="/presaleApplication" component={PresaleApplication} />
+                    <Route exact path="/launchpad" component={LaunchPad} />
 
                     {/* Redirection: These old routes are still used in the code base */}
                     <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
