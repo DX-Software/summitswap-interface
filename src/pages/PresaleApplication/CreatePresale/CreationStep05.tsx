@@ -11,7 +11,9 @@ import {
   SocialGroupIcon,
   Select,
   darkColors,
+  TextArea,
 } from '@koda-finance/summitswap-uikit'
+import { CONTACT_METHOD_OPTIONS } from 'constants/presale'
 import { ItemIconCard, IconBox, GridContainer, GridItem1, GridItem2 } from './GridComponents'
 import StyledInput, { StyledInputWrapper } from './StyledInput'
 import ButtonsWrapper from './ButtonsWrapper'
@@ -40,6 +42,33 @@ const StyledSelect = styled(Select)`
     @media (max-width: 480px) {
       width: 100%;
     }
+  }
+`
+
+const StyledTextArea = styled(TextArea)`
+  padding: 10px 16px;
+  font-size: 16px;
+  @media (max-width: 1296px) {
+    width: 400px;
+  }
+  @media (max-width: 620px) {
+    width: 300px;
+  }
+  @media (max-width: 480px) {
+    width: 100%;
+  }
+`
+
+const WebsiteURlInput = styled(StyledInput)`
+  width: 100%;
+  @media (max-width: 1296px) {
+    width: 400px;
+  }
+  @media (max-width: 620px) {
+    width: 300px;
+  }
+  @media (max-width: 480px) {
+    width: 100%;
   }
 `
 
@@ -183,6 +212,17 @@ const CreationStep05 = ({ formikPresale, formikProject, changeStepNumber }: Prop
               </Caption>
             </StyledInputWrapper>
           </Flex>
+          <StyledInputWrapper>
+            <Text marginBottom="4px" small>
+              Project Description
+            </Text>
+            <StyledTextArea
+              name={FieldNames.description}
+              id={FieldNames.description}
+              onChange={formikProject.handleChange}
+              placeholder="Describe your presale project"
+            />
+          </StyledInputWrapper>
           <Flex flexWrap="wrap">
             <StyledInputWrapper marginRight="16px">
               <Text small marginTop="8px">
@@ -208,12 +248,9 @@ const CreationStep05 = ({ formikPresale, formikProject, changeStepNumber }: Prop
                 Chosen Contact Method
               </Text>
               <StyledSelect
-                options={[
-                  {
-                    label: 'Telegram',
-                    value: 'telegram',
-                  },
-                ]}
+                id={FieldNames.contactMethod}
+                options={CONTACT_METHOD_OPTIONS}
+                onChange={(e: any) => formikProject.setFieldValue(FieldNames.contactMethod, e.target.value)}
               />
             </StyledInputWrapper>
           </Flex>
@@ -233,6 +270,25 @@ const CreationStep05 = ({ formikPresale, formikProject, changeStepNumber }: Prop
           </Text>
         </GridItem1>
         <GridItem2>
+          <StyledInputWrapper marginRight="16px">
+            <Text small marginTop="8px">
+              Website URL
+            </Text>
+            <WebsiteURlInput
+              placeholder="Ex: https://www.summitswap.com/"
+              value={formikProject.values.websiteUrl}
+              onChange={formikProject.handleChange}
+              onBlur={formikProject.handleBlur}
+              name={FieldNames.websiteUrl}
+              id={FieldNames.websiteUrl}
+              isWarning={formikProject.touched.websiteUrl && !!formikProject.errors.websiteUrl}
+            />
+            <Caption color="failure">
+              {formikProject.touched.websiteUrl && formikProject.errors.websiteUrl
+                ? formikProject.errors.websiteUrl
+                : ''}
+            </Caption>
+          </StyledInputWrapper>
           <Flex flexWrap="wrap">
             <StyledInputWrapper marginRight="16px">
               <Text small marginTop="8px">

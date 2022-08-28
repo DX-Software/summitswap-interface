@@ -339,6 +339,10 @@ const CreationStep06 = ({
             <StyledText>{formikProject.values.projectName}</StyledText>
           </ContainerInformation>
           <ContainerInformation marginTop="4px">
+            <StyledText>Project Details</StyledText>
+            <StyledText>{formikProject.values.description || '-'}</StyledText>
+          </ContainerInformation>
+          <ContainerInformation marginTop="4px">
             <StyledText>Contact Name</StyledText>
             <StyledText>{formikProject.values.contactName}</StyledText>
           </ContainerInformation>
@@ -348,13 +352,17 @@ const CreationStep06 = ({
           </ContainerInformation>
           <ContainerInformation marginTop="4px">
             <StyledText>Contact Method</StyledText>
-            <StyledText>Telegram</StyledText>
+            <StyledText>{formikProject.values.contactMethod || ''}</StyledText>
           </ContainerInformation>
         </Box>
         <Box marginTop="16px">
           <StyledText bold color="primaryDark">
             Project Presale Details
           </StyledText>
+          <ContainerInformation marginTop="4px">
+            <StyledText>Website URL</StyledText>
+            <StyledText color="linkColor">{formikProject.values.websiteUrl || ''}</StyledText>
+          </ContainerInformation>
           <ContainerInformation marginTop="4px">
             <StyledText>Telegram ID</StyledText>
             <StyledText>{formikProject.values.telegramId || '-'}</StyledText>
