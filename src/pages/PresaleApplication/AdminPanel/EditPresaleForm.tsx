@@ -14,11 +14,20 @@ import {
   Radio,
   Input,
   Select,
+  TextArea,
 } from '@koda-finance/summitswap-uikit'
 import { useTokenContract } from 'hooks/useContract'
 import { useToken } from 'hooks/Tokens'
 import { RowFixed } from 'components/Row'
-import { DAY_OPTIONS, HOUR_OPTIONS, FEE_DECIMALS, RADIO_VALUES, TOKEN_CHOICES, ROUTER_OPTIONS } from 'constants/presale'
+import {
+  DAY_OPTIONS,
+  HOUR_OPTIONS,
+  FEE_DECIMALS,
+  RADIO_VALUES,
+  CONTACT_METHOD_OPTIONS,
+  TOKEN_CHOICES,
+  ROUTER_OPTIONS,
+} from 'constants/presale'
 import { GridItem2 } from '../CreatePresale/GridComponents'
 import { AdminForm, FieldNames } from '../types'
 import { Caption } from '../Texts'
@@ -41,7 +50,6 @@ interface Props {
 
 const Divider = styled.div`
   width: 100%;
-  max-width: 950px;
   height: 0px;
   border-bottom: 1px solid ${({ theme }) => theme.colors.inputColor};
 `
@@ -101,37 +109,9 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
 
   return (
     <form onSubmit={formik.handleSubmit}>
-      <ResponsiveFlex justifyContent="space-between" flexWrap="wrap">
-        <HeadingPresaleDetails marginTop="30px" size="xl" marginRight="20px">
-          Presale Details
-        </HeadingPresaleDetails>
-        <RowFixed>
-          <Button
-            scale="sm"
-            marginTop="30px"
-            marginRight="8px"
-            variant="awesome"
-            width="fit-content"
-            type="submit"
-            startIcon={!isLoading && <CheckmarkCircleIcon color="currentColor" />}
-            endIcon={isLoading && <AutoRenewIcon spin color="currentColor" />}
-            disabled={isLoading || !formik.isValid}
-          >
-            Change & Approve
-          </Button>
-          <Button
-            scale="sm"
-            type="button"
-            marginTop="30px"
-            variant="tertiary"
-            width="fit-content"
-            startIcon={<EditIcon color="currentColor" />}
-            onClick={() => cancelEditButtonHandler(false)}
-          >
-            Cancel Edit
-          </Button>
-        </RowFixed>
-      </ResponsiveFlex>
+      <HeadingPresaleDetails marginTop="30px" size="xl" marginRight="20px">
+        Presale Details
+      </HeadingPresaleDetails>
       <SectionHeading marginTop="16px" color="success">
         Token Information
       </SectionHeading>
@@ -657,6 +637,18 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
               {formik.touched.projectName && formik.errors.projectName ? formik.errors.projectName : ''}
             </Caption>
           </Box>
+          <Box width="100%">
+            <StyledText marginBottom="4px" small>
+              Project Details
+            </StyledText>
+            <TextArea
+              value={formik.values.description}
+              onChange={formik.handleChange}
+              name={FieldNames.description}
+              id={FieldNames.description}
+              isWarning={formik.touched.description && !!formik.errors.description}
+            />
+          </Box>
           <Box width="100%" marginTop="8px">
             <StyledText marginBottom="4px" small>
               Contact Name
@@ -696,12 +688,10 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
               Chosen Contact Method
             </StyledText>
             <Select
-              options={[
-                {
-                  label: 'Telegram',
-                  value: 'telegram',
-                },
-              ]}
+              id={FieldNames.contactMethod}
+              selected={formik.values.contactMethod}
+              onChange={(e: any) => formik.setFieldValue(FieldNames.contactMethod, e.target.value)}
+              options={CONTACT_METHOD_OPTIONS}
               scale="sm"
             />
           </Box>
@@ -710,6 +700,23 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
           <StyledText bold color="primaryDark">
             Contact Information
           </StyledText>
+          <Box width="100%" marginTop="8px">
+            <StyledText marginBottom="4px" small>
+              Website Url
+            </StyledText>
+            <Input
+              scale="sm"
+              value={formik.values.websiteUrl}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              name={FieldNames.websiteUrl}
+              id={FieldNames.websiteUrl}
+              isWarning={formik.touched.websiteUrl && !!formik.errors.websiteUrl}
+            />
+            <Caption color="failure">
+              {formik.touched.websiteUrl && formik.errors.websiteUrl ? formik.errors.websiteUrl : ''}
+            </Caption>
+          </Box>
           <Box width="100%" marginTop="8px">
             <StyledText marginBottom="4px" small>
               Telegram ID
@@ -830,7 +837,11 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
           </StyledText>
           <Box width="100%" marginTop="8px">
             <StyledText marginBottom="4px" small>
-              Withdrawal Fee (%)
+              Emergency Withdraw fee is how much BNB will be given to summitswap when the user want to suddenly withdraw
+              all of their funds
+            </StyledText>
+            <StyledText marginTop="8px" marginBottom="4px" small>
+              Enter Fee Percentage (%)
             </StyledText>
             <Input
               scale="sm"
@@ -842,14 +853,49 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
               type="number"
               isWarning={formik.touched.emergencyWithdrawFee && !!formik.errors.emergencyWithdrawFee}
             />
-            <Caption color="failure">
-              {formik.touched.emergencyWithdrawFee && formik.errors.emergencyWithdrawFee
-                ? formik.errors.emergencyWithdrawFee
-                : ''}
-            </Caption>
+            {formik.touched.emergencyWithdrawFee && formik.errors.emergencyWithdrawFee ? (
+              <Caption color="failure">{formik.errors.emergencyWithdrawFee}</Caption>
+            ) : (
+              <Caption color="textDisabled">
+                If someone has joined the presale for
+                <Caption bold color="primary">
+                  &nbsp;10 BNB&nbsp;
+                </Caption>
+                and wanted to withdraw back their money, they have to pay
+                <Caption bold color="primary">
+                  &nbsp; 0.5 BNB (5%)&nbsp;
+                </Caption>
+                for the emergency withdraw fee
+              </Caption>
+            )}
           </Box>
         </ColumnWrapper>
       </Flex>
+      <Divider />
+      <RowFixed>
+        <Button
+          marginTop="30px"
+          marginRight="8px"
+          variant="awesome"
+          width="fit-content"
+          type="submit"
+          startIcon={!isLoading && <CheckmarkCircleIcon color="currentColor" />}
+          endIcon={isLoading && <AutoRenewIcon spin color="currentColor" />}
+          disabled={isLoading || !formik.isValid}
+        >
+          Change & Approve
+        </Button>
+        <Button
+          type="button"
+          marginTop="30px"
+          variant="secondary"
+          width="fit-content"
+          startIcon={<EditIcon color="currentColor" />}
+          onClick={() => cancelEditButtonHandler(false)}
+        >
+          Cancel Edit
+        </Button>
+      </RowFixed>
     </form>
   )
 }

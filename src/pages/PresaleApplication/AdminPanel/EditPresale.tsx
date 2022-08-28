@@ -4,14 +4,15 @@ import { BigNumber } from 'ethers'
 import { useFormik, FormikProps } from 'formik'
 import { useWeb3React } from '@web3-react/core'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
+import { useToken } from 'hooks/Tokens'
 import { usePresaleContract, useFactoryPresaleContract } from 'hooks/useContract'
 import { fetchPresaleInfo, fetchFeeInfo, fetchProjectDetails } from 'utils/presale'
-import { FEE_DECIMALS, PRESALE_FACTORY_ADDRESS } from 'constants/presale'
+import { FEE_DECIMALS, PRESALE_FACTORY_ADDRESS, JOIN_IDS_WITH } from 'constants/presale'
+import { NULL_ADDRESS } from 'constants/index'
 import { getUtcDate } from '../CreatePresale/CreationStep06'
 import { PresaleInfo, ProjectDetails, FeeInfo, FieldNames, AdminForm as IAdminForm } from '../types'
 import PresaleStatus from './PresaleStatus'
 import validations from './formValidation'
-
 import EditPresaleForm from './EditPresaleForm'
 
 interface Props {
@@ -29,6 +30,9 @@ const EditPresale = ({ presaleAddress, handleEditButtonHandler }: Props) => {
 
   const factoryContract = useFactoryPresaleContract(PRESALE_FACTORY_ADDRESS)
   const presaleContract = usePresaleContract(presaleAddress)
+  const paymentToken = useToken(
+    presaleFeeInfo?.paymentToken !== NULL_ADDRESS ? presaleFeeInfo?.paymentToken : undefined
+  )
 
   useEffect(() => {
     async function fetchData() {
@@ -57,6 +61,10 @@ const EditPresale = ({ presaleAddress, handleEditButtonHandler }: Props) => {
       if (!presaleContract || !factoryContract || !presaleInfo || presaleInfo?.isApproved || !account) {
         return
       }
+      const combinedSocialIds = [values.websiteUrl, values.discordId, values.twitterId, values.telegramId].join(
+        JOIN_IDS_WITH
+      )
+
       try {
         setIsLoading(true)
         const receipt = await factoryContract.updatePresaleAndApprove(
@@ -68,9 +76,9 @@ const EditPresale = ({ presaleAddress, handleEditButtonHandler }: Props) => {
             presalePrice: presaleInfo.presaleRate,
             listingPrice: presaleInfo.listingRate,
             liquidityLockTime: (values.liquidyLockTimeInMins || 0) * 60,
-            minBuy: parseUnits((values.minBuy || 0).toString(), 18),
-            maxBuy: parseUnits((values.maxBuy || 0).toString(), 18),
-            softCap: parseUnits((values.softcap || 0).toString(), 18),
+            minBuy: parseUnits((values.minBuy || 0).toString(), paymentToken?.decimals),
+            maxBuy: parseUnits((values.maxBuy || 0).toString(), paymentToken?.decimals),
+            softCap: parseUnits((values.softcap || 0).toString(), paymentToken?.decimals),
             hardCap: presaleInfo.hardcap,
             liquidityPercentage: presaleInfo.liquidity,
             startPresaleTime: getUtcDate(values.startPresaleDate || '', values.startPresaleTime || '').getTime() / 1000,
@@ -113,9 +121,9 @@ const EditPresale = ({ presaleAddress, handleEditButtonHandler }: Props) => {
             values.contactName,
             values.contactPosition,
             values.email,
-            values.telegramId,
-            values.discordId,
-            values.twitterId,
+            values.contactMethod,
+            values.description,
+            combinedSocialIds,
           ],
           presaleAddress
         )
@@ -134,9 +142,9 @@ const EditPresale = ({ presaleAddress, handleEditButtonHandler }: Props) => {
     if (presaleContract && presaleInfo && projectDetails && presaleFeeInfo && !formik.values.presaleInfo) {
       formik.setValues({
         [FieldNames.isWhitelistEnabled]: presaleInfo.isWhitelistEnabled,
-        [FieldNames.softcap]: Number(formatUnits(presaleInfo.softcap, 18)),
-        [FieldNames.minBuy]: Number(formatUnits(presaleInfo.minBuy, 18)),
-        [FieldNames.maxBuy]: Number(formatUnits(presaleInfo.maxBuy, 18)),
+        [FieldNames.softcap]: Number(formatUnits(presaleInfo.softcap, paymentToken?.decimals)),
+        [FieldNames.minBuy]: Number(formatUnits(presaleInfo.minBuy, paymentToken?.decimals)),
+        [FieldNames.maxBuy]: Number(formatUnits(presaleInfo.maxBuy, paymentToken?.decimals)),
         [FieldNames.refundType]: presaleInfo.refundType,
         [FieldNames.listingChoice]: presaleInfo.listingChoice,
         [FieldNames.startPresaleDate]: new Date(presaleInfo.startPresaleTime.mul(1000).toNumber())
@@ -177,7 +185,7 @@ const EditPresale = ({ presaleAddress, handleEditButtonHandler }: Props) => {
         [FieldNames.presaleInfo]: { ...presaleInfo },
       } as IAdminForm)
     }
-  }, [presaleContract, projectDetails, presaleInfo, presaleFeeInfo, formik])
+  }, [presaleContract, projectDetails, presaleInfo, presaleFeeInfo, formik, paymentToken])
 
   return (
     <>
