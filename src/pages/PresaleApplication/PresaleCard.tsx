@@ -10,6 +10,7 @@ import { useToken } from 'hooks/Tokens'
 import { RowBetween } from 'components/Row'
 import { fetchPresaleInfo, fetchFeeInfo, fetchProjectDetails, checkSalePhase } from 'utils/presale'
 import { FEE_DECIMALS, TOKEN_CHOICES } from 'constants/presale'
+import { NULL_ADDRESS } from 'constants/index'
 import { PresaleInfo, ProjectDetails, FeeInfo, PresalePhases } from './types'
 import ProgressWrapper from './ProgressWrapper'
 import PresaleTags from './PresaleTags'
@@ -160,6 +161,7 @@ const PresaleCard = ({ presaleAddress, viewPresaleHandler }: Props) => {
   const { account } = useWeb3React()
 
   const [currency, setCurrency] = useState('BNB')
+  const [isAccountWhitelisted, setIsAccountWhitelisted] = useState(false)
   const [presaleInfo, setPresaleInfo] = useState<PresaleInfo>()
   const [presaleFeeInfo, setPresaleFeeInfo] = useState<FeeInfo>()
   const [claimableTokens, setClaimableTokens] = useState<BigNumber>()
@@ -167,6 +169,16 @@ const PresaleCard = ({ presaleAddress, viewPresaleHandler }: Props) => {
 
   const presaleContract = usePresaleContract(presaleAddress)
   const presaleToken = useToken(presaleInfo?.presaleToken)
+  const paymentToken = useToken(
+    presaleFeeInfo?.paymentToken !== NULL_ADDRESS ? presaleFeeInfo?.paymentToken : undefined
+  )
+
+  useEffect(() => {
+    async function checkIfAccountWhitelisted() {
+      setIsAccountWhitelisted((await presaleContract?.getWhitelist()).includes(account))
+    }
+    if (account && presaleContract) checkIfAccountWhitelisted()
+  }, [account, presaleContract])
 
   useEffect(() => {
     async function fetchClaimableTokens() {
@@ -200,7 +212,7 @@ const PresaleCard = ({ presaleAddress, viewPresaleHandler }: Props) => {
 
   return (
     <StyledCard marginX="4px">
-      <PresaleTags presaleInfo={presaleInfo} />
+      <PresaleTags isAccountWhitelisted={isAccountWhitelisted} presaleInfo={presaleInfo} />
       <StyledText fontSize="12px" marginTop="8px" color="textSubtle">
         {presaleToken?.name || ''}
       </StyledText>
@@ -208,7 +220,7 @@ const PresaleCard = ({ presaleAddress, viewPresaleHandler }: Props) => {
         {projectDetails?.projectName}
       </StyledText>
       <Flex marginTop="8px">
-        <StyledImage src={projectDetails?.logoUrl || ''} />
+        {projectDetails ? <StyledImage src={projectDetails.logoUrl} /> : <Box height="48px" />}
         <Flex marginLeft="8px" flexDirection="column" justifyContent="space-between">
           <StyledText bold color="textSubtle">
             {presaleToken?.symbol}
@@ -223,18 +235,19 @@ const PresaleCard = ({ presaleAddress, viewPresaleHandler }: Props) => {
           Soft / Hard
         </StyledText>
         <StyledText bold fontSize="20px">
-          {`${formatUnits(presaleInfo?.softcap || 0)} ${currency} - ${formatUnits(
-            presaleInfo?.hardcap || 0
+          {`${formatUnits(presaleInfo?.softcap || 0, paymentToken?.decimals)} ${currency} - ${formatUnits(
+            presaleInfo?.hardcap || 0,
+            paymentToken?.decimals
           )} ${currency}`}
         </StyledText>
       </Flex>
       <Box marginTop="8px">
         <RowBetween>
           <StyledText fontSize="12px" color="textSubtle">
-            {`${formatUnits(presaleInfo?.softcap || 0)} ${currency}`}
+            {`${formatUnits(presaleInfo?.softcap || 0, paymentToken?.decimals)} ${currency}`}
           </StyledText>
           <StyledText fontSize="12px" color="textSubtle">
-            {`${formatUnits(presaleInfo?.hardcap || 0)} ${currency}`}
+            {`${formatUnits(presaleInfo?.hardcap || 0, paymentToken?.decimals)} ${currency}`}
           </StyledText>
         </RowBetween>
         <ProgressWrapper>
@@ -255,7 +268,7 @@ const PresaleCard = ({ presaleAddress, viewPresaleHandler }: Props) => {
               <StyledText style={{ display: 'inline-block' }} fontSize="12px" bold color="linkColor">
                 {`${presaleInfo?.totalBought.mul(100).div(presaleInfo.hardcap).toNumber()}%`}
               </StyledText>
-              &nbsp;reached ({`${formatUnits(presaleInfo?.totalBought || 0)} ${currency}`})
+              &nbsp;reached ({`${formatUnits(presaleInfo?.totalBought || 0,  paymentToken?.decimals)} ${currency}`})
             </StyledText>
           )}
         </StyledText>
