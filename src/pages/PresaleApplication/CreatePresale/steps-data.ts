@@ -1,45 +1,27 @@
 const steps = [
   {
-    name: 'Step 1',
+    name: 'Step 01',
     title: 'Token Verification',
-    subTitle:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean in viverra ornare adipiscing adipiscing praesent.',
-      
   },
   {
-    name: 'Step 2',
+    name: 'Step 02',
     title: 'Create Token Presale (1)',
-    subTitle:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean in viverra ornare adipiscing adipiscing praesent.',
-
   },
   {
-    name: 'Step 3',
+    name: 'Step 03',
     title: 'Create Token Presale (2)',
-    subTitle:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean in viverra ornare adipiscing adipiscing praesent.',
-
   },
   {
-    name: 'Step 4',
+    name: 'Step 04',
     title: 'Presale Date & Time',
-    subTitle:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean in viverra ornare adipiscing adipiscing praesent.',
-
   },
   {
-    name: 'Step 5',
+    name: 'Step 05',
     title: 'Additional Informations',
-    subTitle:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean in viverra ornare adipiscing adipiscing praesent.',
-
   },
   {
-    name: 'Final Step',
+    name: 'Step 06',
     title: 'Presale Summary',
-    subTitle:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean in viverra ornare adipiscing adipiscing praesent.',
-
   },
 ]
 
