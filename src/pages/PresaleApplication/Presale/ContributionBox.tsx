@@ -1,17 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { BigNumber } from 'ethers'
 import styled from 'styled-components'
 import { formatUnits } from 'ethers/lib/utils'
-import { useWeb3React } from '@web3-react/core'
-import { Box, Flex } from '@koda-finance/summitswap-uikit'
-import { usePresaleContract } from 'hooks/useContract'
+import { AutoRenewIcon, Button, Box, Flex } from '@koda-finance/summitswap-uikit'
+import { checkSalePhase } from 'utils/presale'
 import { StyledText } from './Shared'
+import { PresalePhases, PresaleInfo, LoadingForButton, LoadingButtonTypes } from '../types'
 
 interface Props {
-  presaleAddress: string
+  presaleInfo: PresaleInfo | undefined
+  paymentDecimals: number
   currency: string
+  boughtAmount: BigNumber
   tokenSymbol: string | undefined
-  presaleRate: BigNumber | undefined
+  isMainLoading: boolean
+  isLoadingButton: LoadingForButton
+  openWithdrawModal?: () => void
 }
 
 const ContributionCard = styled(Box)`
@@ -21,34 +25,71 @@ const ContributionCard = styled(Box)`
   margin-bottom: 16px;
 `
 
-const ContributionBox = ({ presaleAddress, currency, tokenSymbol, presaleRate }: Props) => {
-  const { account } = useWeb3React()
-  const [contributionAmount, setContributionAmount] = useState(BigNumber.from('0'))
-
-  const presaleContract = usePresaleContract(presaleAddress)
+const ContributionBox = ({
+  boughtAmount,
+  currency,
+  tokenSymbol,
+  presaleInfo,
+  isMainLoading,
+  paymentDecimals,
+  isLoadingButton,
+  openWithdrawModal,
+}: Props) => {
+  const [presalePhase, setPresalePhase] = useState<string>(PresalePhases.PresalePhase)
+  const [currentTime, setCurrentTime] = useState(new Date())
 
   useEffect(() => {
-    async function fetchContribution() {
-      setContributionAmount(await presaleContract?.bought(account))
+    if (presaleInfo) {
+      const presalePhase_ = checkSalePhase(presaleInfo)
+      const timer = setTimeout(() => {
+        if (presalePhase === PresalePhases.PresalePhase) {
+          setCurrentTime(new Date())
+          if (presalePhase_ !== presalePhase) setPresalePhase(presalePhase_)
+        }
+      }, 1000)
+      return () => clearTimeout(timer)
     }
-    if (presaleContract && account) fetchContribution()
-  }, [presaleContract, account])
+    return undefined
+  }, [presaleInfo, presalePhase, currentTime])
 
-  return contributionAmount.gte(0) ? (
+  return boughtAmount.gt(0) ? (
     <ContributionCard>
       <StyledText fontSize="14px" marginBottom="2px" bold>
         You have contributed to this presale
       </StyledText>
       <Flex justifyContent="space-between">
         <StyledText fontSize="12px">Total Contribution</StyledText>
-        <StyledText fontSize="12px">{`${formatUnits(contributionAmount)} ${currency}`}</StyledText>
+        <StyledText fontSize="12px">{`${formatUnits(boughtAmount, paymentDecimals)} ${currency}`}</StyledText>
       </Flex>
       <Flex justifyContent="space-between">
         <StyledText fontSize="12px">Token Conversion</StyledText>
         <StyledText fontSize="12px">
-          {`${formatUnits(contributionAmount.mul(presaleRate || 0), 36)} ${tokenSymbol}`}
+          {`${formatUnits(boughtAmount.mul(presaleInfo?.presaleRate || 0), 18 + paymentDecimals)} ${tokenSymbol}`}
         </StyledText>
       </Flex>
+      {presalePhase === PresalePhases.PresalePhase && !presaleInfo?.hardcap.eq(presaleInfo.totalBought) && (
+        <>
+          <Button
+            onClick={openWithdrawModal}
+            disabled={isMainLoading || isLoadingButton.isClicked}
+            endIcon={
+              isLoadingButton.isClicked &&
+              isLoadingButton.type === LoadingButtonTypes.EmergencyWithdraw && (
+                <AutoRenewIcon spin color="currentColor" />
+              )
+            }
+            marginTop="8px"
+            scale="sm"
+            width="100%"
+            variant="tertiary"
+          >
+            Withdraw My Contribution
+          </Button>
+          <StyledText fontSize="10px" marginTop="2px" color="warning">
+            {isLoadingButton.error}
+          </StyledText>
+        </>
+      )}
     </ContributionCard>
   ) : (
     <></>
