@@ -38,6 +38,24 @@ function useContract(address: string | undefined, ABI: any, withSignerIfPossible
   }, [address, ABI, library, withSignerIfPossible, account])
 }
 
+function useContracts(addresses: string[] | undefined, ABI: any, withSignerIfPossible = true): (Contract | null)[] {
+  const { library, account } = useActiveWeb3React()
+  return useMemo(() => {
+    if (!addresses){
+      return [null]
+    }
+    return addresses?.map(address => {
+    if (!address || !ABI || !library) return null
+    try {
+      return getContract(address, ABI, library, withSignerIfPossible && account ? account : undefined)
+    } catch (error) {
+      console.error('Failed to get contract', error)
+      return null
+    }
+  })
+  }, [addresses, ABI, library, withSignerIfPossible, account])
+}
+
 export function useStakingContract(withSignerIfPossible?: boolean): Contract | null {
   return useContract(STAKING_ADDRESS, STAKING_ABI, withSignerIfPossible)
 }
@@ -115,4 +133,8 @@ export function useFactoryPresaleContract(factoryAddress: string): Contract | nu
 
 export function usePresaleContract(presaleAddress: string): Contract | null {
   return useContract(presaleAddress, PRESALE_ABI)
+}
+
+export function usePresaleContracts(presaleAddresses: string[]): (Contract | null)[] {
+  return useContracts(presaleAddresses, PRESALE_ABI)
 }
