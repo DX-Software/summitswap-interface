@@ -69,7 +69,7 @@ const MyPresales = ({ setHomeButtonIndex }: Props) => {
   const { account } = useWeb3React()
 
   const [tabIndex, setTabIndex] = useState(1)
-  const [selectedPresale, setSelectedPresale] = useState('0x740DA51a151085802458caa993054042ac77C47b')
+  const [selectedPresale, setSelectedPresale] = useState('')
   const [accountPresales, setAccountPresales] = useState<string[]>([])
   const [pendingPresales, setPendingPresales] = useState<string[]>([])
   const [approvedPresales, setApprovedPresales] = useState<string[]>([])
