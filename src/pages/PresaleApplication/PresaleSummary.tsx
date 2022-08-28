@@ -15,6 +15,7 @@ import { useTokenContract, usePresaleContract, useFactoryPresaleContract } from 
 import { useToken } from 'hooks/Tokens'
 import { fetchPresaleInfo, fetchFeeInfo, fetchProjectDetails } from 'utils/presale'
 import { FEE_DECIMALS, RADIO_VALUES, TOKEN_CHOICES, PRESALE_FACTORY_ADDRESS } from 'constants/presale'
+import { NULL_ADDRESS } from 'constants/index'
 import { GridItem2 } from './CreatePresale/GridComponents'
 import { PresaleInfo, ProjectDetails, FeeInfo } from './types'
 import PresaleStatus from './AdminPanel/PresaleStatus'
@@ -64,6 +65,9 @@ const PresaleSummary = ({ presaleAddress, handleEditButtonHandler }: Props) => {
   const [currency, setCurrency] = useState('BNB')
 
   const presaleToken = useToken(presaleInfo?.presaleToken)
+  const paymentToken = useToken(
+    presaleFeeInfo?.paymentToken !== NULL_ADDRESS ? presaleFeeInfo?.paymentToken : undefined
+  )
   const tokenContract = useTokenContract(presaleInfo?.presaleToken, true)
   const presaleContract = usePresaleContract(presaleAddress)
   const factoryContract = useFactoryPresaleContract(PRESALE_FACTORY_ADDRESS)
@@ -101,10 +105,12 @@ const PresaleSummary = ({ presaleAddress, handleEditButtonHandler }: Props) => {
   }, [tokenContract, presaleToken])
 
   useEffect(() => {
-    const currentCurrency = Object.keys(TOKEN_CHOICES).find(
-      (key) => TOKEN_CHOICES[key] === presaleFeeInfo?.paymentToken
-    )
-    setCurrency(currentCurrency as string)
+    if (presaleFeeInfo) {
+      const currentCurrency = Object.keys(TOKEN_CHOICES).find(
+        (key) => TOKEN_CHOICES[key] === presaleFeeInfo?.paymentToken
+      )
+      setCurrency(currentCurrency as string)
+    }
   }, [presaleFeeInfo])
 
   const selectRouterText = () => {
@@ -209,11 +215,11 @@ const PresaleSummary = ({ presaleAddress, handleEditButtonHandler }: Props) => {
             </StyledText>
             <GridContainer marginTop="4px">
               <StyledText>Softcap</StyledText>
-              <StyledText>{`${formatUnits(presaleInfo?.softcap || 0)} ${currency}`}</StyledText>
+              <StyledText>{`${formatUnits(presaleInfo?.softcap || 0, paymentToken?.decimals)} ${currency}`}</StyledText>
             </GridContainer>
             <GridContainer marginTop="4px">
               <StyledText>Hardcap</StyledText>
-              <StyledText>{`${formatUnits(presaleInfo?.hardcap || 0)} ${currency}`}</StyledText>
+              <StyledText>{`${formatUnits(presaleInfo?.hardcap || 0, paymentToken?.decimals)} ${currency}`}</StyledText>
             </GridContainer>
           </Box>
           <Box marginTop="16px">
@@ -222,11 +228,11 @@ const PresaleSummary = ({ presaleAddress, handleEditButtonHandler }: Props) => {
             </StyledText>
             <GridContainer marginTop="4px">
               <StyledText>Minimum Buy</StyledText>
-              <StyledText>{`${formatUnits(presaleInfo?.minBuy || 0)} ${currency}`}</StyledText>
+              <StyledText>{`${formatUnits(presaleInfo?.minBuy || 0, paymentToken?.decimals)} ${currency}`}</StyledText>
             </GridContainer>
             <GridContainer marginTop="4px">
               <StyledText>Maximum Buy</StyledText>
-              <StyledText>{`${formatUnits(presaleInfo?.maxBuy || 0)} ${currency}`}</StyledText>
+              <StyledText>{`${formatUnits(presaleInfo?.maxBuy || 0, paymentToken?.decimals)} ${currency}`}</StyledText>
             </GridContainer>
             <GridContainer marginTop="4px">
               <StyledText>Refund System </StyledText>
@@ -317,6 +323,12 @@ const PresaleSummary = ({ presaleAddress, handleEditButtonHandler }: Props) => {
             <StyledText>Project Name</StyledText>
             <StyledText>{projectDetails?.projectName}</StyledText>
           </ContainerInformation>
+          {projectDetails?.description && (
+            <ContainerInformation marginTop="4px">
+              <StyledText>Project Details</StyledText>
+              <StyledText>{projectDetails.description}</StyledText>
+            </ContainerInformation>
+          )}
           <ContainerInformation marginTop="4px">
             <StyledText>Contact Name</StyledText>
             <StyledText>{projectDetails?.contactName}</StyledText>
@@ -327,13 +339,17 @@ const PresaleSummary = ({ presaleAddress, handleEditButtonHandler }: Props) => {
           </ContainerInformation>
           <ContainerInformation marginTop="4px">
             <StyledText>Contact Method</StyledText>
-            <StyledText>Telegram</StyledText>
+            <StyledText>{projectDetails?.contactMethod}</StyledText>
           </ContainerInformation>
         </Box>
         <Box marginTop="16px">
           <StyledText bold color="primaryDark">
             Project Presale Details
           </StyledText>
+          <ContainerInformation marginTop="4px">
+            <StyledText>Website URL</StyledText>
+            <StyledText color="linkColor">{projectDetails?.websiteUrl || '-'}</StyledText>
+          </ContainerInformation>
           <ContainerInformation marginTop="4px">
             <StyledText>Telegram ID</StyledText>
             <StyledText>{projectDetails?.telegramId || '-'}</StyledText>
