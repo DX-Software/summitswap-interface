@@ -3,9 +3,9 @@ import { formatUnits } from 'ethers/lib/utils'
 import { Box, Flex, darkColors } from '@koda-finance/summitswap-uikit'
 import { useTokenContract, usePresaleContract } from 'hooks/useContract'
 import { useToken } from 'hooks/Tokens'
-
 import { fetchPresaleInfo, fetchFeeInfo } from 'utils/presale'
 import { FEE_DECIMALS } from 'constants/presale'
+import { NULL_ADDRESS } from 'constants/index'
 import { PresaleInfo, FeeInfo } from '../types'
 import { DetailText, StyledText, Divider, DetailTextValue } from './Shared'
 
@@ -21,6 +21,9 @@ const TokenDetails = ({ presaleAddress }: Props) => {
   const presaleToken = useToken(presaleInfo?.presaleToken)
   const tokenContract = useTokenContract(presaleInfo?.presaleToken, true)
   const presaleContract = usePresaleContract(presaleAddress)
+  const paymentToken = useToken(
+    presaleFeeInfo?.paymentToken !== NULL_ADDRESS ? presaleFeeInfo?.paymentToken : undefined
+  )
 
   useEffect(() => {
     async function fetchData() {
@@ -46,8 +49,8 @@ const TokenDetails = ({ presaleAddress }: Props) => {
   }, [tokenContract, presaleToken])
 
   const tokensForPresale: string = useMemo(
-    () => formatUnits(presaleInfo?.presaleRate.mul(presaleInfo?.hardcap) || 0, 36),
-    [presaleInfo?.hardcap, presaleInfo?.presaleRate]
+    () => formatUnits(presaleInfo?.presaleRate.mul(presaleInfo?.hardcap) || 0, 18 + (paymentToken?.decimals || 18)),
+    [presaleInfo?.hardcap, presaleInfo?.presaleRate, paymentToken]
   )
 
   const tokenForLiquidity: string = useMemo(() => {
@@ -58,10 +61,13 @@ const TokenDetails = ({ presaleAddress }: Props) => {
         .div(10 ** FEE_DECIMALS)
         .mul(presaleInfo.presaleRate)
 
-      return formatUnits(presaleInfo.listingRate.mul(liquidityTokensBnb).sub(feePresaleToken), 36)
+      return formatUnits(
+        presaleInfo.listingRate.mul(liquidityTokensBnb).sub(feePresaleToken),
+        18 + (paymentToken?.decimals || 18)
+      )
     }
     return ''
-  }, [presaleInfo, presaleFeeInfo])
+  }, [presaleInfo, presaleFeeInfo, paymentToken])
 
   return (
     <Box>
