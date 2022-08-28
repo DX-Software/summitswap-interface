@@ -5,11 +5,12 @@ import { PresaleInfo } from '../types'
 import { DetailText, StyledText, Divider, DetailTextValue } from './Shared'
 
 interface Props {
+  paymentDecimals: number
   presaleInfo: PresaleInfo | undefined
   currency: string
 }
 
-const GoalSystem = ({ presaleInfo, currency }: Props) => {
+const GoalSystem = ({ presaleInfo, currency, paymentDecimals }: Props) => {
   return (
     <Box>
       <StyledText marginBottom="2px" bold color={darkColors.primaryDark}>
@@ -18,11 +19,11 @@ const GoalSystem = ({ presaleInfo, currency }: Props) => {
       <Divider />
       <Flex marginTop="4px" justifyContent="space-between">
         <DetailText>Softcap</DetailText>
-        <DetailTextValue>{`${formatUnits(presaleInfo?.softcap || 0)} ${currency}`}</DetailTextValue>
+        <DetailTextValue>{`${formatUnits(presaleInfo?.softcap || 0, paymentDecimals)} ${currency}`}</DetailTextValue>
       </Flex>
       <Flex marginTop="4px" justifyContent="space-between">
         <DetailText>Hardcap</DetailText>
-        <DetailTextValue>{`${formatUnits(presaleInfo?.hardcap || 0)} ${currency}`}</DetailTextValue>
+        <DetailTextValue>{`${formatUnits(presaleInfo?.hardcap || 0, paymentDecimals)} ${currency}`}</DetailTextValue>
       </Flex>
     </Box>
   )
