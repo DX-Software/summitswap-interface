@@ -1,5 +1,6 @@
-import styled from 'styled-components'
-import { Box, Text } from '@koda-finance/summitswap-uikit'
+import React, { useMemo } from 'react'
+import styled, { useTheme } from 'styled-components'
+import { Box, Text, darkColors } from '@koda-finance/summitswap-uikit'
 
 export const Divider = styled(Box)<{ infoDivider?: boolean }>`
   width: 100%;
@@ -36,3 +37,30 @@ export const DetailTextValue = styled(Text)`
     font-size: ${({ fontSize }) => `calc(${fontSize} - 4px)` || '14px'};
   }
 `
+
+export const usePaginationStyles = () => {
+  const theme = useTheme()
+  const paginationStyle = useMemo(
+    () => ({
+      '& .MuiPaginationItem-root': {
+        color: theme.colors.sidebarActiveColor,
+        background: theme.colors.inputColor,
+      },
+      '& .MuiPaginationItem-ellipsis': {
+        background: 'none',
+      },
+      '& .Mui-selected': {
+        color: theme.colors.sidebarColor,
+        background: `${theme.colors.primary} !important`,
+        fontWeight: '700',
+      },
+      '& .Mui-disabled': {
+        background: darkColors.textDisabled,
+        color: theme.colors.textSubtle,
+        opacity: '1 !important',
+      },
+    }),
+    [theme.colors]
+  )
+  return paginationStyle
+}
