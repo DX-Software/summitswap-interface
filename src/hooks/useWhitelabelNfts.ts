@@ -1,25 +1,14 @@
 import BigNumber from 'bignumber.js'
+import { PER_PAGE } from 'constants/whitelabel'
 import { gql } from 'graphql-request'
+import { WhitelabelNftGraphql } from 'pages/WhitelabelNft/types'
 import { useEffect, useState } from 'react'
+import { useQuery } from 'react-query'
 import { whitelabelNftClient } from 'utils/graphql'
 
-export type WhitelabelNft = {
-  id: string
-  owner: {
-    id: string
-  }
-  name: string
-  symbol: string
-  maxSupply: number
-  whitelistMintPrice: BigNumber
-  publicMintPrice: BigNumber
-  phase: number
-  createdAt: number
-}
-
 const WHITELABEL_NFT = gql`
-  query whitelabelNfts {
-    whitelabelNfts {
+  query whitelabelNfts($first: Int!, $skip: Int!) {
+    whitelabelNfts(first: $first, skip: $skip, orderBy: createdAt, orderDirection: desc) {
       id
       owner {
         id
@@ -35,7 +24,10 @@ const WHITELABEL_NFT = gql`
   }
 `
 
-const fetchWhitelabelNfts = async (): Promise<{ data?: WhitelabelNft[]; error: boolean }> => {
+const fetchWhitelabelNfts = async (
+  page: number,
+  perPage: number
+): Promise<{ data?: WhitelabelNftGraphql[]; error: boolean }> => {
   try {
     type Result = {
       id: string
@@ -54,10 +46,13 @@ const fetchWhitelabelNfts = async (): Promise<{ data?: WhitelabelNft[]; error: b
     const data: Result[] = (
       await whitelabelNftClient.request<{
         whitelabelNfts: Result[]
-      }>(WHITELABEL_NFT)
+      }>(WHITELABEL_NFT, {
+        first: perPage,
+        skip: (page - 1) * perPage,
+      })
     ).whitelabelNfts
 
-    const whitelabelNfts: WhitelabelNft[] = data.map((item) => {
+    const whitelabelNfts: WhitelabelNftGraphql[] = data.map((item) => {
       return {
         id: item.id,
         owner: item.owner,
@@ -80,24 +75,11 @@ const fetchWhitelabelNfts = async (): Promise<{ data?: WhitelabelNft[]; error: b
   }
 }
 
-const useWhitelabelNft = (address?: string | null): WhitelabelNft[] | undefined => {
-  const [whitelabelNfts, setWhitelabelNfts] = useState<WhitelabelNft[]>()
-  const [isError, setIsError] = useState(false)
-
-  useEffect(() => {
-    const fetch = async () => {
-      const { error: fetchError, data } = await fetchWhitelabelNfts()
-      if (fetchError) {
-        setIsError(true)
-      }
-      setWhitelabelNfts(data)
-    }
-    if (!isError) {
-      fetch()
-    }
-  }, [address, isError])
-
-  return whitelabelNfts
+const useWhitelabelNfts = (page = 1, perPage = PER_PAGE) => {
+  return useQuery('useWhitelabelNfts', async () => {
+    const response = await fetchWhitelabelNfts(page, perPage)
+    return response.data as WhitelabelNftGraphql[];
+  })
 }
 
-export default useWhitelabelNft
+export default useWhitelabelNfts

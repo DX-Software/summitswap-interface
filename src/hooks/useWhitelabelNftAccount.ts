@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { gql } from 'graphql-request'
-import { useEffect, useState } from 'react'
+import { useQuery } from 'react-query'
 import { whitelabelNftClient } from 'utils/graphql'
 
 export type WhitelabelNftAccount = {
@@ -44,25 +44,11 @@ const fetchWhitelabelNftAccount = async (
   }
 }
 
-const useWhitelabelNftAccount = (address?: string | null): WhitelabelNftAccount | undefined => {
-  const [whitelabelNftAccount, setwhitelabelNftAccount] = useState<WhitelabelNftAccount>()
-  const [isError, setIsError] = useState(false)
-
-  useEffect(() => {
-    const fetch = async () => {
-      const { error: fetchError, data } = await fetchWhitelabelNftAccount(address)
-      if (fetchError) {
-        setIsError(true)
-      } else if (data) {
-        setwhitelabelNftAccount(data)
-      }
-    }
-    if (!isError) {
-      fetch()
-    }
-  }, [address, isError])
-
-  return whitelabelNftAccount
+const useWhitelabelNftAccount = (address?: string | null) => {
+  return useQuery('useWhitelabelNftAccount', async () => {
+    const response = await fetchWhitelabelNftAccount(address)
+    return response.data as WhitelabelNftAccount
+  })
 }
 
 export default useWhitelabelNftAccount
