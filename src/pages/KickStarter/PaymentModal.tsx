@@ -21,11 +21,15 @@ const ContentWrapper = styled(Flex)`
   padding: 24px;
 `
 
-const Banner = styled.div`
+const Banner = styled.div<{ image: string }>`
   width: 63px;
   height: 63px;
   border-radius: 8px;
-  background: gray;
+  background: ${(props) => `url(${props.image})`};
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-blend-mode: overlay;
 `
 
 const Name = styled(Text)`
@@ -56,7 +60,7 @@ function PaymentModal({ account, accountBalance, totalPayment, kickstarter, onDi
     <Modal title="Payment Process" bodyPadding="0" onDismiss={onDismiss}>
       <ContentWrapper>
         <Flex marginBottom="16px" style={{ columnGap: "8px" }}>
-          <Banner />
+          <Banner image={kickstarter.imageUrl} />
           <Flex flexDirection="column">
             <Name color="textSubtle" marginBottom="4px">{kickstarter.creator}</Name>
             <Title style={{ maxWidth: "320px" }}>{kickstarter.title}</Title>

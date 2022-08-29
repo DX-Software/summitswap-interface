@@ -45,25 +45,36 @@ const ImageAndDescriptionWrapper = styled(Flex)`
   }
 `
 
-const DesktopBanner = styled(Flex)`
+const DesktopBanner = styled(Flex)<{ image: string }>`
   width: 240px;
   height: 230px;
   border-radius: 8px;
-  background-color: gray;
   flex-shrink: 0;
+
+  background: ${(props) => `url(${props.image})`};
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-blend-mode: overlay;
 
   @media (max-width: 768px) {
     display: none;
   }
 `
 
-const MobileBanner = styled(Flex)`
+const MobileBanner = styled(Flex)<{ image: string }>`
   width: 100%;
   height: 230px;
   border-radius: 8px;
-  background-color: gray;
   flex-shrink: 0;
   display: none;
+
+  background: ${(props) => `url(${props.image})`};
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-blend-mode: overlay;
+
   @media (max-width: 768px) {
     display: block;
   }
@@ -238,7 +249,9 @@ function ProjectDetails({
         <Text color="linkColor" style={{ textDecoration: "underline" }}>back to Browse Projects</Text>
       </Flex>
       <ImageAndDescriptionWrapper>
-        <DesktopBanner />
+        {kickstarter && (
+          <DesktopBanner image={kickstarter.imageUrl} />
+        )}
         <Flex flexDirection="column">
           <Flex style={{ columnGap: "8px" }} marginBottom="8px">
             {currentBackedAmount && (
@@ -253,7 +266,9 @@ function ProjectDetails({
               {kickstarter.title}
             </Text>
           )}
-          <MobileBanner marginBottom="24px" />
+          {kickstarter && (
+            <MobileBanner image={kickstarter.imageUrl} marginBottom="24px" />
+          )}
           <Flex style={{ columnGap: "8px" }}>
             <BinanceIcon width="20px" />
             {!kickstarter ? (

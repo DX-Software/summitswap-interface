@@ -15,11 +15,15 @@ type Props = {
   handleBackedAmountChanged: (value: string) => void,
 }
 
-const Banner = styled.div`
-  background: gray;
+const Banner = styled.div<{ image: string }>`
   width: 60px;
   height: 60px;
   border-radius: 8px;
+  background: ${(props) => `url(${props.image})`};
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-blend-mode: overlay;
 `
 
 const Name = styled(Text)`
@@ -71,7 +75,7 @@ function MobilePayment({ showPayment, totalPayment, kickstarter, handleBackedAmo
         Back Project
       </Heading>
       <Flex style={{ columnGap: "16px" }}>
-        <Banner />
+        <Banner image={kickstarter.imageUrl} />
         <Flex flexDirection="column">
           <Name>{kickstarter.creator}</Name>
           <Title>{kickstarter.title}</Title>

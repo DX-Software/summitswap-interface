@@ -19,14 +19,19 @@ const Wrapper = styled(Flex)`
   cursor: pointer;
 `
 
-const Banner = styled(Flex)`
+const Banner = styled(Flex)<{ image: string }>`
   position: relative;
   width: 84px;
   height: 84px;
-  background: gray;
   border-radius: 8px;
   flex-shrink: 0;
   padding: 4px;
+
+  background: ${(props) => `url(${props.image})`};
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-blend-mode: overlay;
 `
 
 const Name = styled(Text)`
@@ -60,7 +65,7 @@ function ProjectCardMobile({ kickstarter, showStatus, onClick }: Props) {
 
   return (
     <Wrapper onClick={onClick}>
-      <Banner>
+      <Banner image={kickstarter.imageUrl}>
       {showStatus && (
         <StatusLabel status={status} style={{ fontSize: "10px", marginLeft: "auto" }}>
           {status.replace(/_/g, ' ')}
