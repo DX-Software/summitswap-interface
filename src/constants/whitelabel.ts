@@ -5,3 +5,5 @@ export enum Phase {
   Whitelist,
   Public,
 }
+
+export const PER_PAGE = 12;
