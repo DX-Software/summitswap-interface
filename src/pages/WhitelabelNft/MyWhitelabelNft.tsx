@@ -1,18 +1,19 @@
 import { AddIcon, Button, Flex, Heading } from '@koda-finance/summitswap-uikit'
+import { PER_PAGE } from 'constants/whitelabel'
 import { useWhitelabelNftContext } from 'contexts/whitelabelNft'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import ConnectWalletSection from './shared/ConnectWalletSection'
 
 function MyWhitelabelNft() {
   const { t } = useTranslation()
 
-  const { account, isCreate, toggleIsCreate } = useWhitelabelNftContext()
+  const { account, isCreate, whitelabelNftAccount, toggleIsCreate } = useWhitelabelNftContext()
 
-  // const maxPage = useMemo(() => {
-  //   const totalItems = kickstarterAccount?.totalKickstarter.toNumber() || 1
-  //   return Math.ceil(totalItems / PER_PAGE)
-  // }, [kickstarterAccount?.totalKickstarter])
+  const maxPage = useMemo(() => {
+    const totalItems = whitelabelNftAccount?.totalWhitelabelNft.toNumber() || 1
+    return Math.ceil(totalItems / PER_PAGE)
+  }, [whitelabelNftAccount?.totalWhitelabelNft])
 
   if (!account) {
     return <ConnectWalletSection />
