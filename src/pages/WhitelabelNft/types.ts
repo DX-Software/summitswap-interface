@@ -2,9 +2,16 @@ export enum Tabs {
   BROWSE_COLLECTION = 'browse_collection',
 }
 
+export enum CollectionTab {
+  ALL_COLLECTION = 'all_collection',
+  PUBLIC_PHASE = 'public_phase',
+  WHITELIST_PHASE = 'whitelist_phase',
+  PAUSED_PHASE = 'paused_phase',
+}
+
 export type NavItem = {
   label: string
-  code: Tabs
+  code: Tabs | CollectionTab
   component: React.ReactNode
 }
 
@@ -29,4 +36,10 @@ export type WhitelabelUploadParameter = {
 export type WhitelabelUploadResult = {
   rootCid: string
   totalNft: number
+}
+
+export type WhitelabelNftCardProp = {
+  collectionName: string
+  maxSupply: number
+  phase: 'PAUSED' | 'WHITELIST' | 'PUBLIC'
 }
