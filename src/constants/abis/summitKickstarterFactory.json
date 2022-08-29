@@ -59,6 +59,12 @@
       {
         "indexed": false,
         "internalType": "string",
+        "name": "_imageUrl",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
         "name": "_projectDescription",
         "type": "string"
       },
@@ -118,6 +124,11 @@
       {
         "internalType": "string",
         "name": "_creator",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_imageUrl",
         "type": "string"
       },
       {

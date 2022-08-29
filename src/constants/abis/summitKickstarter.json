@@ -18,6 +18,11 @@
       },
       {
         "internalType": "string",
+        "name": "_imageUrl",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
         "name": "_projectDescription",
         "type": "string"
       },
@@ -125,6 +130,19 @@
       {
         "indexed": false,
         "internalType": "string",
+        "name": "newImageUrl",
+        "type": "string"
+      }
+    ],
+    "name": "ImageUrlUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
         "name": "newTitle",
         "type": "string"
       },
@@ -132,6 +150,12 @@
         "indexed": false,
         "internalType": "string",
         "name": "newCreator",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "newImageUrl",
         "type": "string"
       },
       {
@@ -310,6 +334,11 @@
       },
       {
         "internalType": "string",
+        "name": "_imageUrl",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
         "name": "_projectDescription",
         "type": "string"
       },
@@ -472,6 +501,19 @@
   },
   {
     "inputs": [],
+    "name": "imageUrl",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "minContribution",
     "outputs": [
       {
@@ -590,6 +632,19 @@
       }
     ],
     "name": "setHasDistributedRewards",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_imageUrl",
+        "type": "string"
+      }
+    ],
+    "name": "setImageUrl",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
