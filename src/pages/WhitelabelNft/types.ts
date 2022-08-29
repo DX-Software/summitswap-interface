@@ -1,5 +1,5 @@
 export enum Tabs {
-  MY_WHITELABEL_NFT = 'my_whitelabel_nft',
+  BROWSE_COLLECTION = 'browse_collection',
 }
 
 export type NavItem = {
