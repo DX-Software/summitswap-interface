@@ -6,7 +6,9 @@ import {
   Breadcrumbs,
   Heading,
 } from '@koda-finance/summitswap-uikit'
+import axios from 'axios'
 import TransactionConfirmationModal, { TransactionErrorContent } from 'components/TransactionConfirmationModal'
+import { BACKEND_API, UPLOAD_IMAGE_API } from 'constants/backend'
 import { useKickstarterContext } from 'contexts/kickstarter'
 import { parseUnits } from 'ethers/lib/utils'
 import { useKickstarterFactoryContract } from 'hooks/useContract'
@@ -60,15 +62,32 @@ function CreateProject() {
     setErrorMessage(messFromError)
   }, [])
 
+  const handleUploadImage = useCallback(async (file: File) => {
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const res = await axios.post(`${BACKEND_API}/${UPLOAD_IMAGE_API}`, formData, config)
+    return res.data.rootCid
+  }, [])
+
   const handleCreateProject = useCallback(async () => {
     try {
       if (!kickstarterFactoryContract || !account) {
         return
       }
+      const rootCid: string = await handleUploadImage(projectCreation.image!)
+
       const serviceFee = await kickstarterFactoryContract.serviceFee()
       const receipt = await kickstarterFactoryContract.createProject(
         projectCreation.title,
         projectCreation.creator,
+        `https://ipfs.io/ipfs/${rootCid}/${projectCreation.image!.name}`,
         projectCreation.projectDescription,
         projectCreation.rewardDescription,
         parseUnits(projectCreation.minimumBacking, 18),
@@ -86,6 +105,7 @@ function CreateProject() {
     }
   }, [
     kickstarterFactoryContract,
+    projectCreation.image,
     projectCreation.title,
     projectCreation.creator,
     projectCreation.projectDescription,
@@ -96,7 +116,8 @@ function CreateProject() {
     projectCreation.projectDueDate,
     account,
     transactionFailed,
-    transactionSubmitted
+    transactionSubmitted,
+    handleUploadImage,
   ])
 
   return (

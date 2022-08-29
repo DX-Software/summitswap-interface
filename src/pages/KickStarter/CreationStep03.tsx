@@ -20,21 +20,11 @@ const ImageAndDescriptionWrapper = styled(Flex)`
   }
 `
 
-const Banner = styled(Flex)`
+const ImageWrapper = styled(Flex)`
   width: 270px;
-  height: 230px;
   border-radius: 8px;
-  background-color: gray;
-  @media (max-width: 576px) {
-    width: 100%;
-  }
-`
-
-const ImgAccount = styled.div`
-  width: 72px;
-  height: 72px;
-  background: gray;
-  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
 `
 
 const AccountWrapper = styled(Flex)`
@@ -83,7 +73,11 @@ function CreationStep03({ handleCreateProject }: Props) {
     <Flex flexDirection="column">
       <Heading size="lg" color="menuItemActiveBackground" marginBottom="24px">Project Details</Heading>
       <ImageAndDescriptionWrapper marginBottom="16px">
-        <Banner />
+        {projectCreation.image && (
+          <ImageWrapper>
+            <img src={URL.createObjectURL(projectCreation.image)} alt="Kickstarter" style={{ width: "100%" }} />
+          </ImageWrapper>
+        )}
         <Flex flexDirection="column" flex={1}>
           <Text color="textSubtle" marginBottom="4px">
             Project Title
@@ -157,13 +151,13 @@ function CreationStep03({ handleCreateProject }: Props) {
             <Text color="textSubtle" marginBottom="4px">
               Project Due Date
             </Text>
-            <Text>{format(new Date(projectCreation.projectDueDate), 'LLLL do, yyyy')}</Text>
+            <Text>{format(new Date(projectCreation.projectDueDate), 'LLLL do, yyyy HH:MM')}</Text>
           </Flex>
           <Flex flexDirection="column" marginRight="auto">
             <Text color="textSubtle" marginBottom="4px">
               Reward Distribution
             </Text>
-            <Text>{format(new Date(projectCreation.rewardDistribution), 'LLLL do, yyyy')}</Text>
+            <Text>{format(new Date(projectCreation.rewardDistribution), 'LLLL do, yyyy HH:MM')}</Text>
           </Flex>
         </EstimationWrapper>
         <ButtonWrapper>

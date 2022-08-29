@@ -19,6 +19,8 @@ export type NavItem = {
 export type Project = {
   title: string;
   creator: string;
+  image?: File;
+  imageUrl?: string;
   projectDescription: string;
   rewardDescription: string;
   goals: string;

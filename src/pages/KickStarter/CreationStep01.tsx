@@ -1,6 +1,6 @@
 import { ArrowForwardIcon, Button, Flex, ImageAddIcon, Input, Text, TextArea } from '@koda-finance/summitswap-uikit'
 import { useKickstarterContext } from 'contexts/kickstarter'
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo, useRef } from 'react'
 import styled from 'styled-components'
 import FundingInput from './FundingInput'
 import { Project } from './types'
@@ -15,6 +15,13 @@ const ImageAndDescriptionWrapper = styled(Flex)`
 `
 
 const ImageWrapper = styled(Flex)`
+  width: 270px;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+`
+
+const ImagePlaceholderWrapper = styled(Flex)`
   width: 270px;
   height: 230px;
   border: 3px dashed ${({ theme }) => theme.colors.menuItemActiveBackground};
@@ -48,9 +55,11 @@ const ButtonNext = styled(Button)`
 
 function CreationStep01() {
   const { projectCreation, handleOnProjectCreationChanged, handleCurrentCreationStepChanged } = useKickstarterContext()
+  const inputFileElement = useRef<HTMLInputElement>(null)
 
   const hasValidInput = useMemo<boolean>(() => {
     return !!(
+      projectCreation.image &&
       projectCreation.title &&
       projectCreation.creator &&
       projectCreation.projectDescription &&
@@ -60,6 +69,7 @@ function CreationStep01() {
       Number(projectCreation.minimumBacking) > 0
     )
   }, [
+    projectCreation.image,
     projectCreation.title,
     projectCreation.creator,
     projectCreation.projectDescription,
@@ -89,15 +99,42 @@ function CreationStep01() {
     handleOnProjectCreationChanged({ minimumBacking: value })
   }, [handleOnProjectCreationChanged])
 
+  const handleChooseImage = () => {
+    inputFileElement.current?.click()
+  }
+
+  const handleImageSelected = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files) return
+    handleOnProjectCreationChanged({ image: event.target.files[0] })
+  }
+
   return (
     <Flex flexDirection="column">
       <ImageAndDescriptionWrapper marginBottom="16px">
-        <ImageWrapper flexDirection="column" alignItems="center" justifyContent="center">
-          <ImageAddIcon width={60} marginBottom="8px" color="menuItemActiveBackground" />
-          <Text color="menuItemActiveBackground" style={{ maxWidth: '150px' }} textAlign="center">
-            Upload Your Project Picture
-          </Text>
-        </ImageWrapper>
+        {projectCreation.image ? (
+          <ImageWrapper onClick={handleChooseImage}>
+            <img src={URL.createObjectURL(projectCreation.image)} alt="Kickstarter" />
+          </ImageWrapper>
+        ): (
+          <ImagePlaceholderWrapper
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            style={{ cursor: "pointer" }}
+            onClick={handleChooseImage}>
+            <ImageAddIcon width={60} marginBottom="8px" color="menuItemActiveBackground" />
+            <Text color="menuItemActiveBackground" style={{ maxWidth: '150px' }} textAlign="center">
+              Upload Your Project Picture
+            </Text>
+          </ImagePlaceholderWrapper>
+        )}
+        <input
+          ref={inputFileElement}
+          type="file"
+          accept="image/png, image/jpeg"
+          onChange={handleImageSelected}
+          style={{ display: "none" }}
+        />
         <InputWrapper flexDirection="column">
           <Text color="textSubtle" marginBottom="4px">
             Project Title
