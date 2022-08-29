@@ -1,3 +1,5 @@
+import BigNumber from 'bignumber.js'
+
 export enum Tabs {
   BROWSE_COLLECTION = 'browse_collection',
 }
@@ -42,4 +44,18 @@ export type WhitelabelNftCardProp = {
   collectionName: string
   maxSupply: number
   phase: 'PAUSED' | 'WHITELIST' | 'PUBLIC'
+}
+
+export type WhitelabelNftGraphql = {
+  id: string
+  owner: {
+    id: string
+  }
+  name: string
+  symbol: string
+  maxSupply: number
+  whitelistMintPrice: BigNumber
+  publicMintPrice: BigNumber
+  phase: number
+  createdAt: number
 }
