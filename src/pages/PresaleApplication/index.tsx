@@ -56,7 +56,7 @@ export default function PresaleApplication() {
         </ButtonMenu>
       </Box>
       {accountIsAdmin && buttonIndex === 0 && <AdminPanel />}
-      {buttonIndex === 1 && <CreatePresale />}
+      {buttonIndex === 1 && <CreatePresale setHomeButtonIndex={setButtonIndex} />}
       {buttonIndex === 2 && <MyPresales setHomeButtonIndex={setButtonIndex} />}
     </>
   ) : (

@@ -56,6 +56,8 @@ const Divider = styled.div`
   border-radius: 2px;
 `
 interface Props {
+  canMakeNewPresale: boolean
+  lastTokenPresales: string
   selectedToken: Token | undefined
   changeStepNumber: (num: number) => void
   currency: string
@@ -64,6 +66,8 @@ interface Props {
   formik: FormikProps<PresaleDetails>
 }
 const CreationStep01 = ({
+  lastTokenPresales,
+  canMakeNewPresale,
   selectedToken,
   changeStepNumber,
   currency,
@@ -182,68 +186,81 @@ const CreationStep01 = ({
         </Caption>
       )}
       <Divider />
-      <Box>
-        <Text marginBottom="8px" fontWeight={700}>
-          Choose Currency
-        </Text>
-        <Flex width="180px" flexWrap="wrap" justifyContent="space-between" onChange={handleCurrencyChange}>
-          {Object.keys(TOKEN_CHOICES)
-            .filter((key) => key !== 'KODA')
-            .map((key) => (
-              <label key={key} htmlFor={key}>
-                <RowFixed marginBottom="5px">
-                  <Radio
-                    scale="sm"
-                    name={FieldNames.paymentToken}
-                    value={TOKEN_CHOICES[key]}
-                    id={key}
-                    checked={currency === key}
-                  />
-                  <Text marginLeft="5px">{key}</Text>
+      {canMakeNewPresale ? (
+        <>
+          <Box>
+            <Text marginBottom="8px" fontWeight={700}>
+              Choose Currency
+            </Text>
+            <Flex width="180px" flexWrap="wrap" justifyContent="space-between" onChange={handleCurrencyChange}>
+              {Object.keys(TOKEN_CHOICES)
+                .filter((key) => key !== 'KODA')
+                .map((key) => (
+                  <label key={key} htmlFor={key}>
+                    <RowFixed marginBottom="5px">
+                      <Radio
+                        scale="sm"
+                        name={FieldNames.paymentToken}
+                        value={TOKEN_CHOICES[key]}
+                        id={key}
+                        checked={currency === key}
+                      />
+                      <Text marginLeft="5px">{key}</Text>
+                    </RowFixed>
+                  </label>
+                ))}
+            </Flex>
+          </Box>
+          <Caption small color="textSubtle" marginBottom="20px">
+            Participant will pay with&nbsp;
+            <Caption small color="primary" fontWeight={700}>
+              {currency}&nbsp;
+            </Caption>
+            for your token
+          </Caption>
+          <Flex flexDirection="column" alignItems="center" justifyContent="center">
+            {isFactoryApproved ? (
+              <>
+                <Button
+                  size="md"
+                  width="95%"
+                  marginBottom="8px"
+                  endIcon={<ArrowForwardIcon color="currentColor" />}
+                  onClick={() => changeStepNumber(1)}
+                >
+                  Continue
+                </Button>
+                <RowFixed>
+                  <Caption color="linkColor">
+                    <CheckmarkIcon color="linkColor" height="9px" />
+                    &nbsp;Token Approved
+                  </Caption>
                 </RowFixed>
-              </label>
-            ))}
-        </Flex>
-      </Box>
-      <Caption small color="textSubtle" marginBottom="20px">
-        Participant will pay with&nbsp;
-        <Caption small color="primary" fontWeight={700}>
-          {currency}&nbsp;
-        </Caption>
-        for your token
-      </Caption>
-      <Flex flexDirection="column" alignItems="center" justifyContent="center">
-        {isFactoryApproved ? (
-          <>
-            <Button
-              size="md"
-              width="95%"
-              marginBottom="8px"
-              endIcon={<ArrowForwardIcon color="currentColor" />}
-              onClick={() => changeStepNumber(1)}
-            >
-              Continue
-            </Button>
-            <RowFixed>
-              <Caption color="linkColor">
-                <CheckmarkIcon color="linkColor" height="9px" />
-                &nbsp;Token Approved
-              </Caption>
-            </RowFixed>
-          </>
-        ) : (
-          <Button
-            variant="tertiary"
-            size="md"
-            width="95%"
-            disabled={!selectedToken || isLoading || isFactoryApproved}
-            onClick={onApproveTokenHandler}
-            endIcon={isLoading && !isFactoryApproved && <AutoRenewIcon spin color="currentColor" />}
-          >
-            Approve Token
-          </Button>
-        )}
-      </Flex>
+              </>
+            ) : (
+              <Button
+                variant="tertiary"
+                size="md"
+                width="95%"
+                disabled={!selectedToken || isLoading || isFactoryApproved}
+                onClick={onApproveTokenHandler}
+                endIcon={isLoading && !isFactoryApproved && <AutoRenewIcon spin color="currentColor" />}
+              >
+                Approve Token
+              </Button>
+            )}
+          </Flex>
+        </>
+      ) : (
+        <>
+          <Text marginBottom="8px" fontWeight={700}>
+            Presale Already Exist At
+          </Text>
+          <Text color="linkColor" small marginBottom="8px">
+            {lastTokenPresales}
+          </Text>
+        </>
+      )}
     </Wrapper>
   )
 }
