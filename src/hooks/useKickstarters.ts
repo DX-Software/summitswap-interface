@@ -26,6 +26,7 @@ export type Kickstarter = {
   }
   title: string
   creator: string
+  imageUrl: string
   projectDescription: string
   rewardDescription: string
   minContribution: BigNumber
@@ -47,6 +48,7 @@ const KICKSTARTERS = gql`
       }
       title
       creator
+      imageUrl
       projectDescription
       rewardDescription
       minContribution
@@ -70,6 +72,7 @@ const KICKSTARTERS_BY_TEXT = gql`
       }
       title
       creator
+      imageUrl
       projectDescription
       rewardDescription
       minContribution
@@ -95,6 +98,7 @@ const fetchKickstarters = async (searchText: string, orderBy: string, orderDirec
       },
       title: string,
       creator: string,
+      imageUrl: string,
       projectDescription: string,
       rewardDescription: string,
       minContribution: string,
@@ -139,6 +143,7 @@ const fetchKickstarters = async (searchText: string, orderBy: string, orderDirec
         owner: item.owner,
         title: item.title,
         creator: item.creator,
+        imageUrl: item.imageUrl,
         projectDescription: item.projectDescription,
         rewardDescription: item.rewardDescription,
         minContribution: new BigNumber(item.minContribution),
