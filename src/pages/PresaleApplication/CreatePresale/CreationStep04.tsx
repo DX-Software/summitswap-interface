@@ -265,7 +265,21 @@ const CreationStep04 = ({ formik, changeStepNumber }: Props) => {
                     <Text small marginTop="8px">
                       Vesting Claim Percentage (%)
                     </Text>
-                    <StyledInput placeholder="Ex: 100" type="number" />
+                    <StyledInput
+                      placeholder="Ex: 20%"
+                      type="number"
+                      value={formik.values.maxClaimPercentage}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      name={FieldNames.maxClaimPercentage}
+                      id={FieldNames.maxClaimPercentage}
+                      isWarning={formik.touched.maxClaimPercentage && !!formik.errors.maxClaimPercentage}
+                    />
+                    <Caption color="failure">
+                      {formik.touched.maxClaimPercentage && formik.errors.maxClaimPercentage
+                        ? formik.errors.maxClaimPercentage
+                        : ''}
+                    </Caption>
                   </StyledInputWrapper>
                   <StyledInputWrapper forDate marginRight="16px">
                     <Text small marginTop="8px">
@@ -311,7 +325,7 @@ const CreationStep04 = ({ formik, changeStepNumber }: Props) => {
         </GridItem2>
       </GridContainer>
       <ButtonsWrapper>
-        <Button variant="secondary" onClick={() => changeStepNumber(1)}>
+        <Button variant="secondary" onClick={() => changeStepNumber(2)}>
           Previous Step
         </Button>
         {formik.errors.tokenAmount ? (
