@@ -382,7 +382,7 @@ const CreationStep06 = ({
         </Box>
       </Box>
       <ButtonsWrapper>
-        <Button variant="secondary" onClick={() => changeStepNumber(1)}>
+        <Button variant="secondary" onClick={() => changeStepNumber(4)}>
           Previous Step
         </Button>
         {formikPresale.errors.tokenAmount ? (

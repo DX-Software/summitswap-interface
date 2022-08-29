@@ -380,7 +380,7 @@ const CreationStep05 = ({ formikPresale, formikProject, changeStepNumber }: Prop
       </GridContainer>
 
       <ButtonsWrapper>
-        <Button variant="secondary" onClick={() => changeStepNumber(1)}>
+        <Button variant="secondary" onClick={() => changeStepNumber(3)}>
           Previous Step
         </Button>
         {formikPresale.errors.tokenAmount ? (
