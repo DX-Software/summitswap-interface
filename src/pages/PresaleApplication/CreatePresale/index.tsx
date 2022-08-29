@@ -5,7 +5,7 @@ import { useWeb3React } from '@web3-react/core'
 import styled from 'styled-components'
 import { useFormik, FormikProps } from 'formik'
 import { Token } from '@koda-finance/summitswap-sdk'
-import { useFactoryPresaleContract, useTokenContract } from 'hooks/useContract'
+import { useFactoryPresaleContract, usePresaleContract, useTokenContract } from 'hooks/useContract'
 import { Box, Text } from '@koda-finance/summitswap-uikit'
 import {
   RADIO_VALUES,
@@ -18,6 +18,7 @@ import {
   JOIN_IDS_WITH,
 } from 'constants/presale'
 import { useToken } from 'hooks/Tokens'
+import { fetchPresaleInfo } from 'utils/presale'
 import { ROUTER_ADDRESS, PANCAKESWAP_ROUTER_V2_ADDRESS } from '../../../constants'
 import steps from './steps-data'
 import CreationStep01 from './CreationStep01'
@@ -33,19 +34,23 @@ const ContentWrapper = styled(Box)`
   width: 90%;
   max-width: 950px;
 `
-
-const CreatePresale = () => {
+interface Props {
+  setHomeButtonIndex: React.Dispatch<React.SetStateAction<number>>
+}
+const CreatePresale = ({ setHomeButtonIndex }: Props) => {
   const { account, library } = useWeb3React()
 
   const [isLoading, setIsLoading] = useState(false)
-  const [presaleAddress, setPresaleAddress] = useState('')
   const [stepNumber, setStepNumber] = useState(0)
   const [currency, setCurrency] = useState('BNB')
+  const [lastTokenPresales, setLastTokenPresales] = useState('')
+  const [canMakeNewPresale, setCanMakeNewPresale] = useState(true)
   const [selectedToken, setSelectedToken] = useState<Token>()
   const [accountBalance, setAccountBalance] = useState<BigNumber>()
 
   const tokenContract = useTokenContract(selectedToken?.address, true)
   const factoryContract = useFactoryPresaleContract(PRESALE_FACTORY_ADDRESS)
+  const lastTokenPresaleContract = usePresaleContract(lastTokenPresales)
 
   useEffect(() => {
     async function fetchBalance() {
@@ -55,6 +60,31 @@ const CreatePresale = () => {
       fetchBalance()
     }
   }, [account, tokenContract])
+
+  useEffect(() => {
+    async function checkIsLastPresaleCancelled() {
+      const info = await fetchPresaleInfo(lastTokenPresaleContract)
+      if (info.isPresaleCancelled) {
+        setCanMakeNewPresale(true)
+      } else {
+        setCanMakeNewPresale(false)
+      }
+    }
+    if (lastTokenPresaleContract) checkIsLastPresaleCancelled()
+  }, [lastTokenPresaleContract])
+
+  useEffect(() => {
+    async function checkIfPresaleExists() {
+      const addresses: string[] = await factoryContract?.getTokenPresales(selectedToken?.address)
+      if (addresses.length > 0) {
+        setLastTokenPresales(addresses[addresses.length - 1])
+      } else {
+        setLastTokenPresales('')
+        setCanMakeNewPresale(true)
+      }
+    }
+    if (factoryContract && selectedToken) checkIfPresaleExists()
+  }, [selectedToken, factoryContract])
 
   const changeStepNumber = useCallback((num: number) => setStepNumber(num), [])
 
@@ -81,8 +111,8 @@ const CreatePresale = () => {
       [FieldNames.paymentToken]: TOKEN_CHOICES.BNB,
       [FieldNames.listingToken]: TOKEN_CHOICES.KODA,
       [FieldNames.maxClaimPercentage]: undefined,
-      [FieldNames.claimIntervalDay]: undefined,
-      [FieldNames.claimIntervalHour]: undefined,
+      [FieldNames.claimIntervalDay]: 15,
+      [FieldNames.claimIntervalHour]: 0,
       [FieldNames.isVestingEnabled]: RADIO_VALUES.VESTING_DISABLED,
     } as PresaleDetails,
     validate: validatePresaleDetails,
@@ -93,6 +123,7 @@ const CreatePresale = () => {
   const formikProject: FormikProps<ProjectDetails> = useFormik({
     initialValues: {
       [FieldNames.projectName]: '',
+      [FieldNames.contactMethod]: 'Telegram',
       [FieldNames.logoUrl]: '',
       [FieldNames.contactName]: '',
       [FieldNames.contactPosition]: '',
@@ -100,6 +131,7 @@ const CreatePresale = () => {
       [FieldNames.discordId]: '',
       [FieldNames.twitterId]: '',
       [FieldNames.email]: '',
+      [FieldNames.description]: '',
     } as ProjectDetails,
     validate: validateProjectDetails,
     onSubmit: async (valuesProject: ProjectDetails) => {
@@ -183,8 +215,8 @@ const CreatePresale = () => {
 
         const tokenPresales: string[] = await factoryContract.getTokenPresales(selectedToken.address)
         setIsLoading(false)
-        setPresaleAddress(tokenPresales[tokenPresales.length - 1])
-        window.location.href = `/#/presale?address=${tokenPresales[tokenPresales.length - 1]}`
+        window.location.href = `/#/presaleApplication?address=${tokenPresales[tokenPresales.length - 1]}`
+        setHomeButtonIndex(2)
       } catch (err) {
         setIsLoading(false)
         console.error(err)
@@ -221,6 +253,8 @@ const CreatePresale = () => {
       case 0:
         return (
           <CreationStep01
+            lastTokenPresales={lastTokenPresales}
+            canMakeNewPresale={canMakeNewPresale}
             formik={formikPresale}
             selectedToken={selectedToken}
             currency={currency}
