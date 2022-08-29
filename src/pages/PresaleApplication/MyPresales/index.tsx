@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import styled from 'styled-components'
+import { isAddress } from 'utils'
 import { useWeb3React } from '@web3-react/core'
+import { useLocation } from 'react-router-dom'
 import { useFactoryPresaleContract } from 'hooks/useContract'
 import { PRESALE_FACTORY_ADDRESS } from 'constants/presale'
 import {
@@ -68,13 +70,26 @@ interface Props {
 const MyPresales = ({ setHomeButtonIndex }: Props) => {
   const { account } = useWeb3React()
 
-  const [tabIndex, setTabIndex] = useState(1)
+  const [tabIndex, setTabIndex] = useState(0)
   const [selectedPresale, setSelectedPresale] = useState('')
   const [accountPresales, setAccountPresales] = useState<string[]>([])
   const [pendingPresales, setPendingPresales] = useState<string[]>([])
   const [approvedPresales, setApprovedPresales] = useState<string[]>([])
 
   const factoryContract = useFactoryPresaleContract(PRESALE_FACTORY_ADDRESS)
+  const location = useLocation()
+
+  useEffect(() => {
+    const presaleAddressUrl = new URLSearchParams(location.search).get('address')
+    if (
+      isAddress(presaleAddressUrl || '') &&
+      (pendingPresales.includes(presaleAddressUrl || '') || approvedPresales.includes(presaleAddressUrl || ''))
+    ) {
+      setSelectedPresale(presaleAddressUrl || '')
+    } else {
+      setSelectedPresale('')
+    }
+  }, [location, approvedPresales, pendingPresales])
 
   useEffect(() => {
     async function fetchPresales() {
@@ -164,11 +179,9 @@ const MyPresales = ({ setHomeButtonIndex }: Props) => {
             {tabIndex === 1 &&
               (accountApprovedPresales.length ? (
                 <ResonsiveFlex marginTop="16px" flexWrap="wrap">
-                  {Array(2)
-                    .fill(accountApprovedPresales[0])
-                    .map((address) => (
-                      <PresaleCard viewPresaleHandler={viewPresaleHandler} presaleAddress={address} />
-                    ))}
+                  {accountApprovedPresales.map((address) => (
+                    <PresaleCard viewPresaleHandler={viewPresaleHandler} presaleAddress={address} />
+                  ))}
                 </ResonsiveFlex>
               ) : (
                 <Text marginTop="24px" color={darkColors.textDisabled}>
