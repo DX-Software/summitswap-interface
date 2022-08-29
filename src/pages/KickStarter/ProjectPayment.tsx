@@ -24,24 +24,35 @@ type Props = {
   handleBackedAmountChanged: (value: string) => void
 }
 
-const MobileBanner = styled(Flex)`
-  background: gray;
+const MobileBanner = styled(Flex)<{ image: string}>`
   width: 100%;
   height: 120px;
   border-radius: 8px;
   display: none;
+
+  background: ${(props) => `url(${props.image})`};
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-blend-mode: overlay;
 
   @media (max-width: 900px) {
     display: block;
   }
 `
 
-const DesktopBanner = styled.div`
+const DesktopBanner = styled.div<{ image: string }>`
   background: gray;
   width: 120px;
   height: 120px;
   border-radius: 8px;
   flex-shrink: 0;
+
+  background: ${(props) => `url(${props.image})`};
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-blend-mode: overlay;
 
   @media (max-width: 900px) {
     display: none;
@@ -196,9 +207,9 @@ function ProjectPayment({ backedAmount, handleBackedAmountChanged, kickstarter, 
           <Heading size="lg" marginBottom="8px">
             Back Project
           </Heading>
-          <MobileBanner marginBottom="16px" />
+          <MobileBanner image={kickstarter.imageUrl} marginBottom="16px" />
           <Flex style={{ columnGap: "16px" }}>
-            <DesktopBanner />
+            <DesktopBanner image={kickstarter.imageUrl} />
             <Flex flexDirection="column">
               <Name>{kickstarter.creator}</Name>
               <Title>{kickstarter.title}</Title>
