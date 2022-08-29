@@ -30,10 +30,17 @@ const Card = styled(Flex)`
   cursor: pointer;
 `
 
-const Banner = styled(Flex)`
+const Banner = styled(Flex)<{image: string}>`
   height: 115px;
-  background: gray;
   padding: 12px;
+  background:
+
+    ${(props) => `url(${props.image})`},
+    rgba(0, 18, 29, 0.4);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-blend-mode: overlay;
 `
 
 function ProjectCard({ kickstarter, onClick }: Props) {
@@ -48,7 +55,7 @@ function ProjectCard({ kickstarter, onClick }: Props) {
   }, [kickstarter.projectGoals, kickstarter.totalContribution])
   return (
     <Card flexDirection="column" onClick={onClick}>
-      <Banner flexDirection="column">
+      <Banner flexDirection="column" image={kickstarter.imageUrl}>
         <StatusLabel status={status} style={{ marginLeft: "auto" }}>
           {status !== Statuses.END_SOON
             ? status

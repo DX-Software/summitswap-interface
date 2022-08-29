@@ -73,7 +73,7 @@ function CreateProject() {
     formData.append("image", file);
 
     const res = await axios.post(`${BACKEND_API}/${UPLOAD_IMAGE_API}`, formData, config)
-    return res.data.rootCid
+    return res.data.url
   }, [])
 
   const handleCreateProject = useCallback(async () => {
@@ -81,13 +81,13 @@ function CreateProject() {
       if (!kickstarterFactoryContract || !account) {
         return
       }
-      const rootCid: string = await handleUploadImage(projectCreation.image!)
+      const url: string = await handleUploadImage(projectCreation.image!)
 
       const serviceFee = await kickstarterFactoryContract.serviceFee()
       const receipt = await kickstarterFactoryContract.createProject(
         projectCreation.title,
         projectCreation.creator,
-        `https://ipfs.io/ipfs/${rootCid}/${projectCreation.image!.name}`,
+        url,
         projectCreation.projectDescription,
         projectCreation.rewardDescription,
         parseUnits(projectCreation.minimumBacking, 18),
