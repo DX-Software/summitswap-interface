@@ -1,8 +1,10 @@
 import { ETHER } from "@koda-finance/summitswap-sdk"
 import { useWalletModal } from "@koda-finance/summitswap-uikit"
 import { useWeb3React } from "@web3-react/core"
+import BigNumber from "bignumber.js"
 import { KICKSTARTER_FACTORY_ADDRESS } from "constants/kickstarter"
 import useBackedKickstarters, { BackedKickstarter } from "hooks/useBackedKickstarters"
+import useBackedKickstarterByAccount from "hooks/useBackKickstarterByAccount"
 import useDebounce from "hooks/useDebounce"
 import useKickstarter from "hooks/useKickstarter"
 import useKickstarterAccount, { KickstarterAccount } from "hooks/useKickstarterAccount"
@@ -51,6 +53,10 @@ type KickstarterContextProps = {
   backingAmountOnMyProjectPage: string
   backingAmountOnBrowseProjectPage: string
   backingAmountOnBackedProjectPage: string
+
+  currentBackedAmountOnMyProjectPage?: BigNumber
+  currentBackedAmountOnBrowseProjectPage?: BigNumber
+  currentBackedAmountOnBackedProjectPage?: BigNumber
 
   toggleIsCreate: () => void
   handleCurrentCreationStepChanged: (value: number) => void
@@ -159,6 +165,10 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
   const [backingAmountOnBrowseProjectPage, setBackingAmountOnBrowseProjectPage] = useState("")
   const [backingAmountOnBackedProjectPage, setBackingAmountOnBackedProjectPage] = useState("")
 
+  const contributionOnMyProjectPage = useBackedKickstarterByAccount(myProjectAddress, account)
+  const contributionOnBrowseProjectPage = useBackedKickstarterByAccount(browseProjectAddress, account)
+  const contributionOnBackedProjectPage = useBackedKickstarterByAccount(backedProjectAddress, account)
+
   const searchValue = useDebounce(searchKickstarter || "", 600)
   const almostEndedKickstarters = useKickstartersByTime(currentTimestamp, currentTimestamp + ONE_WEEK_IN_SECONDS, 3)
   const kickstarterFactory = useKickstarterFactory(KICKSTARTER_FACTORY_ADDRESS)
@@ -259,6 +269,10 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
         backingAmountOnMyProjectPage,
         backingAmountOnBrowseProjectPage,
         backingAmountOnBackedProjectPage,
+
+        currentBackedAmountOnMyProjectPage: contributionOnMyProjectPage?.amount,
+        currentBackedAmountOnBrowseProjectPage: contributionOnBrowseProjectPage?.amount,
+        currentBackedAmountOnBackedProjectPage: contributionOnBackedProjectPage?.amount,
 
         toggleIsCreate,
         handleCurrentCreationStepChanged: setCurrentCreationStep,

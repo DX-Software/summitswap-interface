@@ -27,6 +27,7 @@ function MyProject() {
     isCreate,
 
     kickstarterOnMyProject,
+    currentBackedAmountOnMyProjectPage,
     backingAmountOnMyProjectPage,
 
     toggleIsCreate,
@@ -60,6 +61,7 @@ function MyProject() {
         kickstarter={kickstarterOnMyProject}
         isPayment={isPaymentOnMyProjectPage}
         toggleIsPayment={() => handleIsPaymentOnMyProjectPage(!isPaymentOnMyProjectPage)}
+        currentBackedAmount={currentBackedAmountOnMyProjectPage?.toString() || ""}
         backedAmount={backingAmountOnMyProjectPage}
         handleBackedAmountChanged={handleBackingAmountOnMyProjectPageChanged}
         onBack={() => handleMyProjectChanged(undefined)}

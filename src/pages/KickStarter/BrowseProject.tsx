@@ -23,6 +23,7 @@ function BrowseProject() {
     browseProjectPage,
     isPaymentOnBrowseProjectPage,
     kickstarterOnBrowseProject,
+    currentBackedAmountOnBrowseProjectPage,
     backingAmountOnBrowseProjectPage,
     handleBrowseProjectChanged,
     handleKickstarterOrderDirectionChanged,
@@ -54,6 +55,7 @@ function BrowseProject() {
         kickstarter={kickstarterOnBrowseProject}
         isPayment={isPaymentOnBrowseProjectPage}
         toggleIsPayment={() => handleIsPaymentOnBrowseProjectPage(!isPaymentOnBrowseProjectPage)}
+        currentBackedAmount={currentBackedAmountOnBrowseProjectPage?.toString() || ""}
         backedAmount={backingAmountOnBrowseProjectPage}
         handleBackedAmountChanged={handleBackingAmountOnBrowseProjectPageChanged}
         onBack={() => handleBrowseProjectChanged(undefined)}

@@ -24,6 +24,7 @@ type Props = {
   kickstarter?: Kickstarter
   isPayment: boolean
   toggleIsPayment: () => void
+  currentBackedAmount: string
   backedAmount: string
   handleBackedAmountChanged: (value: string) => void
   onBack: () => void
@@ -131,7 +132,15 @@ const StyledCornerIllustration = styled.img`
   height: 100%;
 `
 
-function ProjectDetails({ kickstarter, backedAmount, handleBackedAmountChanged, isPayment, toggleIsPayment, onBack }: Props) {
+function ProjectDetails({
+  kickstarter,
+  currentBackedAmount,
+  backedAmount,
+  handleBackedAmountChanged,
+  isPayment,
+  toggleIsPayment,
+  onBack
+}: Props) {
   const { account } = useKickstarterContext()
   const generalTabs: Tab[] = [
     {
@@ -179,8 +188,6 @@ function ProjectDetails({ kickstarter, backedAmount, handleBackedAmountChanged, 
       amount: 0.21,
     },
   ])
-  const [hasBackedProject, setHasBackedProject] = useState(true)
-  const [totalBackedAmount, setTotalBackedAmount] = useState(1000)
   const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
 
   const displayTooltip = () => {
@@ -234,7 +241,7 @@ function ProjectDetails({ kickstarter, backedAmount, handleBackedAmountChanged, 
         <DesktopBanner />
         <Flex flexDirection="column">
           <Flex style={{ columnGap: "8px" }} marginBottom="8px">
-            {hasBackedProject && (
+            {currentBackedAmount && (
               <Label variant="default"><b>backed</b></Label>
             )}
             <Label variant="failure"><b>7 days left</b></Label>
@@ -270,11 +277,11 @@ function ProjectDetails({ kickstarter, backedAmount, handleBackedAmountChanged, 
             <Dot />
             <Text>0 backers</Text>
           </Flex>
-          {hasBackedProject && (
+          {currentBackedAmount && (
             <BackedAmountWrapper flexDirection="column" marginBottom="16px">
               <StyledCornerIllustration src={ImgCornerIllustration} />
               <Text fontWeight="bold" marginBottom="4px">You have backed this project</Text>
-              <Text>Backed amount&nbsp;&nbsp;&nbsp;&nbsp;{totalBackedAmount} BNB</Text>
+              <Text>Backed amount&nbsp;&nbsp;&nbsp;&nbsp;{currentBackedAmount} BNB</Text>
             </BackedAmountWrapper>
           )}
           <Flex style={{ columnGap: "8px" }} alignItems="center">
@@ -425,7 +432,7 @@ function ProjectDetails({ kickstarter, backedAmount, handleBackedAmountChanged, 
               {!kickstarter?.hasDistributedRewards && "Not"} Distributed
             </Text>
             <br />
-            {hasBackedProject && (
+            {currentBackedAmount && (
               <>
                 <Text color="warning" fontWeight="bold" marginBottom="4px">Have you received the reward for this project?</Text>
                 <Text fontSize="12px">
