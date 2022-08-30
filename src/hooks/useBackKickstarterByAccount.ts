@@ -23,13 +23,23 @@ const BACKED_KICKSTARTER = gql`
       }
       kickstarter {
         id
+        owner {
+          id
+        }
         title
         creator
         imageUrl
+        projectDescription
+        rewardDescription
+        minContribution
+        totalContributor
         totalContribution
         projectGoals
+        rewardDistributionTimestamp
+        hasDistributedRewards
         startTimestamp
         endTimestamp
+        createdAt
       }
     }
   }
@@ -56,6 +66,7 @@ const fetchBackedKickstarterByAccount = async (address: string, account: string)
           projectDescription: string,
           rewardDescription: string,
           minContribution: string,
+          totalContributor: string,
           totalContribution: string,
           projectGoals: string,
           rewardDistributionTimestamp: string,
@@ -68,6 +79,9 @@ const fetchBackedKickstarterByAccount = async (address: string, account: string)
     }>(BACKED_KICKSTARTER, {
       id: `${address.toLowerCase()}-${account.toLowerCase()}`,
     })
+    console.log("data", data)
+    if (!data.backedKickstarter) return { data: undefined, error: false }
+
     const contribution: BackedKickstarter = {
       id: data.backedKickstarter.id,
       amount: new BigNumber(data.backedKickstarter.amount),
@@ -83,6 +97,7 @@ const fetchBackedKickstarterByAccount = async (address: string, account: string)
         projectDescription: data.backedKickstarter.kickstarter.projectDescription,
         rewardDescription: data.backedKickstarter.kickstarter.rewardDescription,
         minContribution: new BigNumber(data.backedKickstarter.kickstarter.minContribution),
+        totalContributor: Number(data.backedKickstarter.kickstarter.totalContributor),
         totalContribution: new BigNumber(data.backedKickstarter.kickstarter.totalContribution),
         projectGoals: new BigNumber(data.backedKickstarter.kickstarter.projectGoals),
         rewardDistributionTimestamp: Number(data.backedKickstarter.kickstarter.rewardDistributionTimestamp),
@@ -94,7 +109,7 @@ const fetchBackedKickstarterByAccount = async (address: string, account: string)
     }
     return { data: contribution, error: false }
   } catch (error) {
-    console.error(`Failed to fetch backed kickstarters for address ${address}`, error)
+    console.error(`Failed to fetch backed kickstarters by account for address ${address}`, error)
     return {
       error: true,
     }
@@ -110,9 +125,8 @@ const useBackedKickstarterByAccount = (address?: string | null, account?: string
       const { error: fetchError, data } = await fetchBackedKickstarterByAccount(address || "", account || "")
       if (fetchError) {
         setIsError(true)
-      } else if (data) {
-        setBackedProject(data)
       }
+      setBackedProject(data)
     }
     if (!isError) {
       fetch()

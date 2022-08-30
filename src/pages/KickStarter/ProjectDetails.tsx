@@ -7,13 +7,15 @@ import { format } from "date-fns"
 import { BackedKickstarter } from "hooks/useBackKickstartersByAddress"
 import { Kickstarter } from "hooks/useKickstarter"
 import ImgCornerIllustration from "img/corner-illustration.svg"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import styled from "styled-components"
 import copyText from "utils/copyText"
 import DonatorCard from "./DonatorCard"
 import ProgressBox from "./ProgressBox"
 import ProjectPayment from "./ProjectPayment"
-import { getDayRemaining } from "./utility"
+import { getDayRemaining, getKickstarterStatus } from "./utility"
+import StatusLabel from "./shared/StatusLabel"
+import { Statuses } from "./types"
 
 enum TabCode {
   PROJECT_DETAILS = "PROJECT_DETAILS",
@@ -156,6 +158,13 @@ function ProjectDetails({
   onBack
 }: Props) {
   const { account } = useKickstarterContext()
+  const status = useMemo(() => {
+    if (!kickstarter) return ""
+    return getKickstarterStatus(kickstarter.endTimestamp)
+  }, [kickstarter])
+
+  const dayRemaining = getDayRemaining(kickstarter?.endTimestamp || 0)
+
   const generalTabs: Tab[] = [
     {
       code: TabCode.PROJECT_DETAILS,
@@ -250,7 +259,14 @@ function ProjectDetails({
             {currentBackedAmount && (
               <Label variant="default"><b>backed</b></Label>
             )}
-            <Label variant="failure"><b>7 days left</b></Label>
+            {status && (
+              <StatusLabel status={status}>
+                {status !== Statuses.END_SOON
+                  ? status
+                  : `${dayRemaining} day${dayRemaining > 1 ? "s" : ""} left`
+                }
+              </StatusLabel>
+            )}
           </Flex>
           {!kickstarter ? (
             <Skeleton height={36} marginBottom="24px" />
@@ -280,10 +296,12 @@ function ProjectDetails({
             {!kickstarter ? (
               <Skeleton width={45} />
             ) : (
-              <Text fontWeight="bold">{getDayRemaining(kickstarter.endTimestamp)} days left</Text>
+              <>
+                <Text fontWeight="bold">{getDayRemaining(kickstarter.endTimestamp)} days left</Text>
+                <Dot />
+                <Text>{kickstarter.totalContributor} backers</Text>
+              </>
             )}
-            <Dot />
-            <Text>0 backers</Text>
           </Flex>
           {currentBackedAmount && (
             <BackedAmountWrapper flexDirection="column" marginBottom="16px">
@@ -293,9 +311,10 @@ function ProjectDetails({
             </BackedAmountWrapper>
           )}
           <Flex style={{ columnGap: "8px" }} alignItems="center">
-            {!kickstarter ? (
+            {!kickstarter && (
               <Skeleton width={162} height={38} />
-            ) : (
+            )}
+            {kickstarter && status !== Statuses.COMPLETED && (
               <Button onClick={toggleIsPayment}>Back this project</Button>
             )}
             {!kickstarter ? (

@@ -21,13 +21,23 @@ const BACKED_KICKSTARTERS = gql`
       amount
       kickstarter {
         id
+        owner {
+          id
+        }
         title
         creator
         imageUrl
+        projectDescription
+        rewardDescription
+        minContribution
+        totalContributor
         totalContribution
         projectGoals
+        rewardDistributionTimestamp
+        hasDistributedRewards
         startTimestamp
         endTimestamp
+        createdAt
       }
     }
   }
@@ -51,6 +61,7 @@ const fetchBackedKickstarters = async (address: string | null, page: number, per
           projectDescription: string,
           rewardDescription: string,
           minContribution: string,
+          totalContributor: string,
           totalContribution: string,
           projectGoals: string,
           rewardDistributionTimestamp: string,
@@ -78,6 +89,7 @@ const fetchBackedKickstarters = async (address: string | null, page: number, per
           projectDescription: contribution.kickstarter.projectDescription,
           rewardDescription: contribution.kickstarter.rewardDescription,
           minContribution: new BigNumber(contribution.kickstarter.minContribution),
+          totalContributor: Number(contribution.kickstarter.totalContributor),
           totalContribution: new BigNumber(contribution.kickstarter.totalContribution),
           projectGoals: new BigNumber(contribution.kickstarter.projectGoals),
           rewardDistributionTimestamp: Number(contribution.kickstarter.rewardDistributionTimestamp),

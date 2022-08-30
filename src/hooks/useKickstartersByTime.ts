@@ -15,6 +15,7 @@ export type Kickstarter = {
   projectDescription: string
   rewardDescription: string
   minContribution: BigNumber
+  totalContributor: number
   totalContribution: BigNumber
   projectGoals: BigNumber
   rewardDistributionTimestamp: number
@@ -40,6 +41,7 @@ const KICKSTARTERS = gql`
       projectDescription
       rewardDescription
       minContribution
+      totalContributor
       totalContribution
       projectGoals
       rewardDistributionTimestamp
@@ -65,6 +67,7 @@ const fetchKickstarters = async (startTimestamp: number, endTimestamp: number, p
         projectDescription: string,
         rewardDescription: string,
         minContribution: string,
+        totalContributor: string,
         totalContribution: string,
         projectGoals: string,
         rewardDistributionTimestamp: string,
@@ -89,6 +92,7 @@ const fetchKickstarters = async (startTimestamp: number, endTimestamp: number, p
         projectDescription: item.projectDescription,
         rewardDescription: item.rewardDescription,
         minContribution: new BigNumber(item.minContribution),
+        totalContributor: Number(item.totalContributor),
         totalContribution: new BigNumber(item.totalContribution),
         projectGoals: new BigNumber(item.projectGoals),
         rewardDistributionTimestamp: Number(item.rewardDistributionTimestamp),
