@@ -218,12 +218,11 @@ const CreationStep01 = ({
             </Caption>
             for your token
           </Caption>
-          <Flex flexDirection="column" alignItems="center" justifyContent="center">
+          <Flex flexDirection="column" alignItems="start" justifyContent="center">
             {isFactoryApproved ? (
               <>
                 <Button
                   size="md"
-                  width="95%"
                   marginBottom="8px"
                   endIcon={<ArrowForwardIcon color="currentColor" />}
                   onClick={() => changeStepNumber(1)}
@@ -241,7 +240,6 @@ const CreationStep01 = ({
               <Button
                 variant="tertiary"
                 size="md"
-                width="95%"
                 disabled={!selectedToken || isLoading || isFactoryApproved}
                 onClick={onApproveTokenHandler}
                 endIcon={isLoading && !isFactoryApproved && <AutoRenewIcon spin color="currentColor" />}
