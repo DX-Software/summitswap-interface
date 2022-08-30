@@ -2,7 +2,6 @@ import BigNumber from 'bignumber.js'
 import { PER_PAGE } from 'constants/whitelabel'
 import { gql } from 'graphql-request'
 import { WhitelabelNftGraphql } from 'pages/WhitelabelNft/types'
-import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { whitelabelNftClient } from 'utils/graphql'
 
@@ -78,7 +77,7 @@ const fetchWhitelabelNfts = async (
 const useWhitelabelNfts = (page = 1, perPage = PER_PAGE) => {
   return useQuery('useWhitelabelNfts', async () => {
     const response = await fetchWhitelabelNfts(page, perPage)
-    return response.data as WhitelabelNftGraphql[];
+    return response.data as WhitelabelNftGraphql[]
   })
 }
 
