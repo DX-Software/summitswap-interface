@@ -8,7 +8,7 @@ import {
   Flex,
   Box,
   Text,
-  TabPresale,
+  NavTab,
   darkColors,
   Breadcrumbs,
   ArrowBackIcon,
@@ -185,13 +185,13 @@ const AdminPanel = () => {
           </>
         ) : (
           <>
-            <TabPresale activeIndex={tabIndex} onItemClick={handleChangeTabIndex}>
+            <NavTab activeIndex={tabIndex} onItemClick={handleChangeTabIndex}>
               <StyledText>
                 {sectionTexts[0]} ({pendingPresales.length})
               </StyledText>
               <StyledText>{sectionTexts[1]}</StyledText>
               <StyledText>Presale Settings</StyledText>
-            </TabPresale>
+            </NavTab>
             <Divider bottomOnly />
             {chooseSection()}
           </>

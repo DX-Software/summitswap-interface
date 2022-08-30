@@ -12,7 +12,7 @@ import {
   Flex,
   Box,
   Text,
-  TabPresale,
+  NavTab,
   SearchIcon,
   FilterIcon,
   ButtonMenu,
@@ -333,12 +333,12 @@ const LaunchPad = () => {
           ) : (
             <>
               <Heading>{headingTexts[buttonIndex]}</Heading>
-              <TabPresale activeIndex={tabIndex} onItemClick={handleChangeTabIndex}>
+              <NavTab activeIndex={tabIndex} onItemClick={handleChangeTabIndex}>
                 <StyledText>All Presales</StyledText>
                 <StyledText>Live Now</StyledText>
                 <StyledText>Coming Soon</StyledText>
                 <StyledText>Finished</StyledText>
-              </TabPresale>
+              </NavTab>
               <Divider />
 
               <Flex justifyContent="space-between" marginTop="16px">

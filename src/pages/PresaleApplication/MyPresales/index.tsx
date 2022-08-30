@@ -13,7 +13,7 @@ import {
   Box,
   Button,
   Text,
-  TabPresale,
+  NavTab,
   AddIcon,
   darkColors,
 } from '@koda-finance/summitswap-uikit'
@@ -158,10 +158,10 @@ const MyPresales = ({ setHomeButtonIndex }: Props) => {
         ) : (
           <>
             <Heading>My Presales</Heading>
-            <TabPresale activeIndex={tabIndex} onItemClick={handleChangeTabIndex}>
+            <NavTab activeIndex={tabIndex} onItemClick={handleChangeTabIndex}>
               <StyledText>{sectionTexts[0]}</StyledText>
               <StyledText>{sectionTexts[1]}</StyledText>
-            </TabPresale>
+            </NavTab>
             <Divider />
             {tabIndex === 0 &&
               (accountPendingPresales.length ? (
