@@ -28,10 +28,3 @@ export type Project = {
   projectDueDate: string;
   rewardDistribution: string;
 }
-
-export type Donator = {
-  name: string;
-  email: string;
-  walletAddress: string;
-  amount: number;
-}

@@ -3,6 +3,7 @@ import { Grid } from "@mui/material"
 import Tooltip from "components/Tooltip"
 import { useKickstarterContext } from "contexts/kickstarter"
 import { format } from "date-fns"
+import { BackedKickstarter } from "hooks/useBackKickstartersByAddress"
 import { Kickstarter } from "hooks/useKickstarter"
 import ImgCornerIllustration from "img/corner-illustration.svg"
 import React, { useEffect, useState } from "react"
@@ -11,7 +12,6 @@ import copyText from "utils/copyText"
 import DonatorCard from "./DonatorCard"
 import ProgressBox from "./ProgressBox"
 import ProjectPayment from "./ProjectPayment"
-import { Donator } from "./types"
 import { getDayRemaining } from "./utility"
 
 enum TabCode {
@@ -26,6 +26,7 @@ type Props = {
   toggleIsPayment: () => void
   currentBackedAmount: string
   backedAmount: string
+  contributors?: BackedKickstarter[]
   handleBackedAmountChanged: (value: string) => void
   onBack: () => void
 }
@@ -147,6 +148,7 @@ function ProjectDetails({
   kickstarter,
   currentBackedAmount,
   backedAmount,
+  contributors,
   handleBackedAmountChanged,
   isPayment,
   toggleIsPayment,
@@ -173,32 +175,6 @@ function ProjectDetails({
   ] : generalTabs
 
   const [selectedTab, setSelectedTab] = useState(tabs[0].code)
-  const [donators, setDonators] = useState<Donator[]>([
-    {
-      name: "John Doe",
-      email: "johndoe@email.com",
-      walletAddress: "0x1234567890123456789012345678901234567890",
-      amount: 100,
-    },
-    {
-      name: "Samuel Doe",
-      email: "samueldoe@email.com",
-      walletAddress: "0x1234567890123456789012345678901234567890",
-      amount: 0.01,
-    },
-    {
-      name: "Ann Doe",
-      email: "anndoe@email.com",
-      walletAddress: "0x1234567890123456789012345678901234567890",
-      amount: 0.21,
-    },
-    {
-      name: "Jimmy Doe",
-      email: "jimmydoe@email.com",
-      walletAddress: "0x1234567890123456789012345678901234567890",
-      amount: 0.21,
-    },
-  ])
   const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
 
   const displayTooltip = () => {
@@ -460,15 +436,15 @@ function ProjectDetails({
         )}
         {selectedTab === TabCode.DONATORS && (
           <>
-            {donators.length === 0 && (
+            {!contributors || contributors.length === 0 && (
               <Text color="textDisabled" marginTop="16px">There are no backer for this project. Share your project to everyone now.</Text>
             )}
-            {donators.map((donator, index) => (
+            {contributors && contributors.map((contributor, index) => (
               <DonatorCard
-                key={donator.walletAddress}
-                donator={donator}
+                key={contributor.id}
+                backedKickstarter={contributor}
                 isFirstItem={index === 0}
-                isLastItem={index === donators.length - 1}
+                isLastItem={index === contributors.length - 1}
               />
             ))}
           </>

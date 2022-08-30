@@ -1,10 +1,10 @@
 import { BinanceIcon, Flex, Text } from "@koda-finance/summitswap-uikit"
+import { BackedKickstarter } from "hooks/useBackKickstartersByAddress"
 import React from "react"
 import styled from "styled-components"
-import { Donator } from "./types"
 
 type Props = {
-  donator: Donator
+  backedKickstarter: BackedKickstarter
   isFirstItem: boolean
   isLastItem: boolean
 }
@@ -16,7 +16,7 @@ const Wrapper = styled(Flex)`
   }
 `;
 
-function DonatorCard({ donator, isFirstItem, isLastItem }: Props) {
+function DonatorCard({ backedKickstarter, isFirstItem, isLastItem }: Props) {
   return (
     <Wrapper
       justifyContent="space-between"
@@ -25,13 +25,11 @@ function DonatorCard({ donator, isFirstItem, isLastItem }: Props) {
       borderBottom={`${isLastItem ? 0 : 1}px solid`}
       borderBottomColor="inputColor">
       <Flex flexDirection="column">
-          <Text fontWeight="bold" marginBottom="4px">{donator.name}</Text>
-          <Text fontSize="14px" marginBottom="4px" color="menuItemActiveBackground">{donator.email}</Text>
-          <Text fontSize="14px" color="textSubtle">{donator.walletAddress}</Text>
+        <Text fontSize="14px" color="textSubtle">{backedKickstarter.contributor.id}</Text>
       </Flex>
       <Flex alignItems="center" style={{ columnGap: "8px"  }}>
         <BinanceIcon />
-        <Text fontSize="24px" fontWeight="bold">{donator.amount}</Text>
+        <Text fontSize="24px" fontWeight="bold">{backedKickstarter.amount.toString()}</Text>
       </Flex>
     </Wrapper>
   )

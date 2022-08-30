@@ -28,6 +28,7 @@ function BackedProject({ goToBrowseTab }: Props) {
     isPaymentOnBackedProjectPage,
     currentBackedAmountOnMyProjectPage,
     backingAmountOnBackedProjectPage,
+    contributorsOnBackedProject,
     handleBackedProjectChanged,
     handleBackedProjectPageChanged,
     handleIsPaymentOnBackedProjectPage,
@@ -52,6 +53,7 @@ function BackedProject({ goToBrowseTab }: Props) {
         currentBackedAmount={currentBackedAmountOnMyProjectPage?.toString() || ""}
         backedAmount={backingAmountOnBackedProjectPage}
         handleBackedAmountChanged={handleBackingAmountOnBackedProjectPageChanged}
+        contributors={contributorsOnBackedProject}
         onBack={() => handleBackedProjectChanged(undefined)}
       />
     )

@@ -25,6 +25,7 @@ function BrowseProject() {
     kickstarterOnBrowseProject,
     currentBackedAmountOnBrowseProjectPage,
     backingAmountOnBrowseProjectPage,
+    contributorsOnBrowseProject,
     handleBrowseProjectChanged,
     handleKickstarterOrderDirectionChanged,
     handleSearchKickstarterChanged,
@@ -58,6 +59,7 @@ function BrowseProject() {
         currentBackedAmount={currentBackedAmountOnBrowseProjectPage?.toString() || ""}
         backedAmount={backingAmountOnBrowseProjectPage}
         handleBackedAmountChanged={handleBackingAmountOnBrowseProjectPageChanged}
+        contributors={contributorsOnBrowseProject}
         onBack={() => handleBrowseProjectChanged(undefined)}
       />
     )

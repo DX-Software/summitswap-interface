@@ -5,6 +5,7 @@ import BigNumber from "bignumber.js"
 import { KICKSTARTER_FACTORY_ADDRESS } from "constants/kickstarter"
 import useBackedKickstarters, { BackedKickstarter } from "hooks/useBackedKickstarters"
 import useBackedKickstarterByAccount from "hooks/useBackKickstarterByAccount"
+import useBackedKickstartersByAddress, { BackedKickstarter as BackedKickstarterByAddress } from "hooks/useBackKickstartersByAddress"
 import useDebounce from "hooks/useDebounce"
 import useKickstarter from "hooks/useKickstarter"
 import useKickstarterAccount, { KickstarterAccount } from "hooks/useKickstarterAccount"
@@ -57,6 +58,10 @@ type KickstarterContextProps = {
   currentBackedAmountOnMyProjectPage?: BigNumber
   currentBackedAmountOnBrowseProjectPage?: BigNumber
   currentBackedAmountOnBackedProjectPage?: BigNumber
+
+  contributorsOnMyProject?: BackedKickstarterByAddress[]
+  contributorsOnBrowseProject?: BackedKickstarterByAddress[]
+  contributorsOnBackedProject?: BackedKickstarterByAddress[]
 
   toggleIsCreate: () => void
   handleCurrentCreationStepChanged: (value: number) => void
@@ -181,6 +186,10 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
   const kickstarterOnBrowseProject = useKickstarter(browseProjectAddress)
   const kickstarterOnBackedProject = useKickstarter(backedProjectAddress)
 
+  const contributorsOnMyProject = useBackedKickstartersByAddress(myProjectAddress)
+  const contributorsOnBrowseProject = useBackedKickstartersByAddress(browseProjectAddress)
+  const contributorsOnBackedProject = useBackedKickstartersByAddress(backedProjectAddress)
+
   useEffect(() => {
     setBackingAmountOnMyProjectPage("")
   }, [isPaymentOnMyProjectPage])
@@ -273,6 +282,10 @@ export function KickstarterProvider({ children }: { children: React.ReactNode })
         currentBackedAmountOnMyProjectPage: contributionOnMyProjectPage?.amount,
         currentBackedAmountOnBrowseProjectPage: contributionOnBrowseProjectPage?.amount,
         currentBackedAmountOnBackedProjectPage: contributionOnBackedProjectPage?.amount,
+
+        contributorsOnMyProject,
+        contributorsOnBrowseProject,
+        contributorsOnBackedProject,
 
         toggleIsCreate,
         handleCurrentCreationStepChanged: setCurrentCreationStep,

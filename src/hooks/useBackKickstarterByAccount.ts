@@ -6,6 +6,9 @@ import { Kickstarter } from './useKickstarters';
 
 export type BackedKickstarter = {
   id: string
+  contributor: {
+    id: string
+  }
   amount: BigNumber
   kickstarter: Kickstarter
 }
@@ -15,6 +18,9 @@ const BACKED_KICKSTARTER = gql`
     backedKickstarter(id: $id) {
       id
       amount
+      contributor {
+        id
+      }
       kickstarter {
         id
         title
@@ -36,6 +42,9 @@ const fetchBackedKickstarterByAccount = async (address: string, account: string)
       backedKickstarter: {
         id: string
         amount: string
+        contributor: {
+          id: string
+        },
         kickstarter: {
           id: string,
           owner: {
@@ -62,6 +71,9 @@ const fetchBackedKickstarterByAccount = async (address: string, account: string)
     const contribution: BackedKickstarter = {
       id: data.backedKickstarter.id,
       amount: new BigNumber(data.backedKickstarter.amount),
+      contributor: {
+        id: data.backedKickstarter.contributor.id,
+      },
       kickstarter: {
         id: data.backedKickstarter.id,
         owner: data.backedKickstarter.kickstarter.owner,
