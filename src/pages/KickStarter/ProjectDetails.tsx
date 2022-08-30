@@ -1,5 +1,6 @@
 import { ArrowBackIcon, BinanceIcon, Breadcrumbs, Button, FacebookIcon, FileIcon, Flex, Progress, ShareIcon, Skeleton, Tag, Text, TwitterIcon } from "@koda-finance/summitswap-uikit"
 import { Grid } from "@mui/material"
+import { CSVLink } from "react-csv"
 import Tooltip from "components/Tooltip"
 import { useKickstarterContext } from "contexts/kickstarter"
 import { format } from "date-fns"
@@ -203,6 +204,22 @@ function ProjectDetails({
       />
     )
   }
+
+  const headers = [
+    { label: "Number", key: "number"},
+    { label: "Wallet", key: "wallet" },
+    { label: "Currency", key: "currency" },
+    { label: "Amount", key: "amount" },
+  ]
+
+  const data = !contributors ? [] : contributors.map((contributor, index) => (
+    {
+      number: index + 1,
+      wallet: contributor.contributor.id,
+      currency: "BNB",
+      amount: contributor.amount.toString(),
+    }
+  ))
 
   const currentPageLink = encodeURIComponent(`${window.location.href}?kickstarter=${kickstarter?.id}`)
 
@@ -451,7 +468,14 @@ function ProjectDetails({
         )}
       </TabContent>
       {account?.toLowerCase() === kickstarter?.owner.id && (
-        <Button variant="primary" marginRight="auto" startIcon={<FileIcon color="text" />}>
+        <Button
+          variant="primary"
+          marginRight="auto"
+          startIcon={<FileIcon color="text" />}
+          as={CSVLink}
+          data={data}
+          headers={headers}
+          filename={`kickstarter-${kickstarter?.id}.csv`}>
           Download Donator List
         </Button>
       )}
