@@ -1,5 +1,4 @@
 import { Box, ButtonMenu, ButtonMenuItem } from '@koda-finance/summitswap-uikit'
-import { WhitelabelNftProvider } from 'contexts/whitelabelNft'
 import React, { useState } from 'react'
 import BrowseCollection from './BrowseCollection'
 import { NavItem, Tabs } from './types'
@@ -16,7 +15,7 @@ function WhitelabelNft() {
   ]
 
   return (
-    <WhitelabelNftProvider>
+    <>
       <Box marginTop="30px">
         <ButtonMenu activeIndex={buttonIndex} onItemClick={(index) => setButtonIndex(index)}>
           {navItems.map((item) => (
@@ -25,7 +24,7 @@ function WhitelabelNft() {
         </ButtonMenu>
       </Box>
       <div className="main-content">{navItems[buttonIndex].component}</div>
-    </WhitelabelNftProvider>
+    </>
   )
 }
 

@@ -1,19 +1,19 @@
 import { AddIcon, Button, Flex, Heading } from '@koda-finance/summitswap-uikit'
-import { PER_PAGE } from 'constants/whitelabel'
-import { useWhitelabelNftContext } from 'contexts/whitelabelNft'
-import React, { useMemo } from 'react'
+import { useWeb3React } from '@web3-react/core'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
 import ConnectWalletSection from './shared/ConnectWalletSection'
 
 function MyWhitelabelNft() {
   const { t } = useTranslation()
 
-  const { account, isCreate, whitelabelNftAccount, toggleIsCreate } = useWhitelabelNftContext()
+  const { account } = useWeb3React()
+  // const whitelabelNftAccount = useWhitelabelNftAccount();
 
-  const maxPage = useMemo(() => {
-    const totalItems = whitelabelNftAccount?.totalWhitelabelNft.toNumber() || 1
-    return Math.ceil(totalItems / PER_PAGE)
-  }, [whitelabelNftAccount?.totalWhitelabelNft])
+  // const maxPage = useMemo(() => {
+  //   const totalItems = whitelabelNftAccount?.data?.totalWhitelabelNft.toNumber() || 1
+  //   return Math.ceil(totalItems / PER_PAGE)
+  // }, [whitelabelNftAccount?.data?.totalWhitelabelNft])
 
   if (!account) {
     return <ConnectWalletSection />
@@ -48,7 +48,7 @@ function MyWhitelabelNft() {
           scale="sm"
           startIcon={<AddIcon width="12px" color="text" />}
           style={{ fontFamily: 'Poppins' }}
-          onClick={toggleIsCreate}
+          // onClick={toggleIsCreate}
         >
           Create New Project
         </Button>
