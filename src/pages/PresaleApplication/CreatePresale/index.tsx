@@ -274,7 +274,12 @@ const CreatePresale = ({ setHomeButtonIndex }: Props) => {
         )
       case 2:
         return (
-          <CreationStep03 selectedToken={selectedToken} formik={formikPresale} changeStepNumber={changeStepNumber} />
+          <CreationStep03
+            selectedToken={selectedToken}
+            currency={currency}
+            formik={formikPresale}
+            changeStepNumber={changeStepNumber}
+          />
         )
       case 3:
         return <CreationStep04 formik={formikPresale} changeStepNumber={changeStepNumber} />

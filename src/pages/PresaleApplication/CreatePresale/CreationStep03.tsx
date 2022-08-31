@@ -23,6 +23,7 @@ import { Caption, Heading } from '../Texts'
 import { PresaleDetails, FieldNames } from '../types'
 
 interface Props {
+  currency: string
   selectedToken: Token | undefined
   formik: FormikProps<PresaleDetails>
   changeStepNumber: (num: number) => void
@@ -35,7 +36,7 @@ const BoxPairIcon = styled(Box)`
   }
 `
 
-const CreationStep03 = ({ selectedToken, formik, changeStepNumber }: Props) => {
+const CreationStep03 = ({ currency, selectedToken, formik, changeStepNumber }: Props) => {
   const [isStepValid, setIsStepValid] = useState(false)
   useEffect(() => {
     if (!formik.errors.liquidity && !formik.errors.listingRate && !formik.errors.tokenAmount) {
@@ -228,7 +229,9 @@ const CreationStep03 = ({ selectedToken, formik, changeStepNumber }: Props) => {
               <Caption color={formik.touched.listingRate && !!formik.errors.listingRate ? 'failure' : 'textDisabled'}>
                 {formik.touched.listingRate && formik.errors.listingRate
                   ? formik.errors.listingRate
-                  : ' If I spend 1 BNB on Summitswap how many tokens will I receive? (1 BNB = 0 CTK)'}
+                  : `If I spend 1 ${currency} on Summitswap, how many tokens will I receive? (1 ${currency} = ${
+                      formik.values.listingRate || '0'
+                    } ${selectedToken?.symbol})`}
               </Caption>
             </StyledInputWrapper>
           </Flex>
