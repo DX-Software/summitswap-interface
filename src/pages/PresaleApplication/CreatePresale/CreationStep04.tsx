@@ -307,15 +307,19 @@ const CreationStep04 = ({ formik, changeStepNumber }: Props) => {
                 <Caption marginLeft="16px" color="textDisabled">
                   Every
                   <Caption bold small color="primary">
-                    &nbsp;10%&nbsp;
+                    &nbsp;{formik.values.maxClaimPercentage || '20'}%&nbsp;
                   </Caption>
                   of the total claimable token will be available for redeem on
                   <Caption bold small color="primary">
-                    &nbsp;day 1&nbsp;
+                    &nbsp;day {formik.values.claimIntervalDay}&nbsp;
                   </Caption>
                   at
                   <Caption bold small color="primary">
-                    &nbsp;07:00 UTC&nbsp;
+                    &nbsp;
+                    {Number(formik.values.claimIntervalHour) < 10
+                      ? `0${formik.values.claimIntervalHour}`
+                      : formik.values.claimIntervalHour}
+                    :00 UTC&nbsp;
                   </Caption>
                   of the following month
                 </Caption>
