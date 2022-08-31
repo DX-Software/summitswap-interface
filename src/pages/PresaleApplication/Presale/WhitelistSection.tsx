@@ -16,11 +16,12 @@ import {
 } from '@koda-finance/summitswap-uikit'
 import { usePresaleContract } from 'hooks/useContract'
 import { RowFixed } from 'components/Row'
-import { RADIO_VALUES, ADDRESS_PER_PAGE } from 'constants/presale'
+import { RADIO_VALUES, ADDRESS_PER_PAGE, HEADERS_WHITELIST } from 'constants/presale'
 import { PresaleInfo, FieldNames, FieldProps, LoadingForButton, LoadingButtonTypes } from '../types'
 import { StyledText, usePaginationStyles } from './Shared'
 import RemoveWhitelistModal from './RemoveWhitelistModal'
 import AddWhitelistModal from './AddWhitelistModal'
+import ViewAddressesModal from './ViewAddressesModal'
 
 interface Props {
   presaleAddress: string
@@ -48,15 +49,18 @@ const AddressBox = styled(Flex)`
 `
 
 const WhitelistRadio = styled(Radio)`
+  flex-shrink: 0;
   height: 18px;
   width: 18px;
   &:after {
+    flex-shrink: 0;
     left: 4.5px;
     top: 4.5px;
     height: 9px;
     width: 9px;
   }
 `
+
 
 const WhitelistSection = ({
   setIsMainLoading,
@@ -144,6 +148,25 @@ const WhitelistSection = ({
       selectedNumber={selectedAddresses.length}
       onDismiss={closeRemoveWhitelistHandler}
       removeWhitelistHandler={removeWhitelistHandler}
+    />
+  )
+
+  const data = selectedAddresses.map((address, index) => ({
+    number: index + 1,
+    wallet: address,
+  }))
+
+  const closeWhitelistAddressesModalHandler = () => {
+    closeWhitelistAddressesModal()
+  }
+
+  const [openWhitelistAddressesModal, closeWhitelistAddressesModal] = useModal(
+    <ViewAddressesModal
+      title="Presale Whitelist"
+      headers={HEADERS_WHITELIST}
+      data={data}
+      addresses={selectedAddresses}
+      onDismiss={closeWhitelistAddressesModalHandler}
     />
   )
 
@@ -324,8 +347,7 @@ const WhitelistSection = ({
             Whitelist Participants ({whitelistAddresses.length})
           </StyledText>
         </Flex>
-        {isAccountOwner &&
-          whitelistAddresses.length > 0 &&
+        {whitelistAddresses.length > 0 &&
           (selectedAddresses.length ? (
             <StyledText
               marginLeft="6px"
@@ -335,13 +357,22 @@ const WhitelistSection = ({
             >
               Cancel Selection
             </StyledText>
-          ) : (
+          ) : isAccountOwner ? (
             <RowFixed style={{ cursor: 'pointer' }} onClick={() => setSelectedAddresses([...whitelistAddresses])}>
               <TrashIcon color="failure" width="12px" />
               <StyledText marginLeft="6px" color="failure" fontSize="14px">
                 Remove All
               </StyledText>
             </RowFixed>
+          ) : (
+            <StyledText
+              marginLeft="6px"
+              fontSize="14px"
+              style={{ cursor: 'pointer' }}
+              onClick={() => setSelectedAddresses([...whitelistAddresses])}
+            >
+              Select All
+            </StyledText>
           ))}
       </Flex>
       {whitelistAddresses.length === 0 ? (
@@ -352,58 +383,59 @@ const WhitelistSection = ({
         <Box marginTop="8px">
           {slicedAddresses.map((address) => (
             <AddressBox key={address} justifyContent="space-between">
-              <Flex>
-                {isAccountOwner && (
-                  <WhitelistRadio
-                    checked={selectedAddresses.includes(address)}
-                    onClick={() => selectAddressHandler(address)}
-                  />
-                )}
+              <Flex alignContent="center" alignItems="center">
+                <WhitelistRadio
+                  checked={selectedAddresses.includes(address)}
+                  onClick={() => selectAddressHandler(address)}
+                />
                 <StyledText fontSize="14px" marginLeft="16px" color="textSubtle">
                   {address}
                 </StyledText>
               </Flex>
-              {isAccountOwner && (
-                <Box style={{ cursor: 'pointer' }} onClick={() => selectAddressHandler(address)}>
-                  <CloseIcon color="sidebarColor" />
-                </Box>
-              )}
+              <Box style={{ cursor: 'pointer' }} onClick={() => selectAddressHandler(address)}>
+                <CloseIcon color="sidebarColor" />
+              </Box>
             </AddressBox>
           ))}
           {selectedAddresses.length > 0 && (
             <Flex marginTop="8px" justifyContent="end">
-              <Box>
-                <Button
-                  onClick={openRemoveWhitelistModal}
-                  startIcon={
-                    !(isLoadingButton.isClicked && isLoadingButton.type === LoadingButtonTypes.RemoveWhitelist) && (
-                      <TrashIcon width="14px" color="currentColor" />
-                    )
-                  }
-                  endIcon={
-                    isLoadingButton.isClicked &&
-                    isLoadingButton.type === LoadingButtonTypes.RemoveWhitelist && (
-                      <AutoRenewIcon spin color="currentColor" />
-                    )
-                  }
-                  disabled={
-                    isLoadingButton.isClicked ||
-                    (isLoadingButton.isClicked && isLoadingButton.type === LoadingButtonTypes.RemoveWhitelist) ||
-                    isMainLoading
-                  }
-                  variant="danger"
-                  scale="sm"
-                  marginRight="8px"
-                >
-                  Remove{' '}
-                  {whitelistAddresses.length === selectedAddresses.length ? 'All' : `(${selectedAddresses.length})`}
-                </Button>
-                {isLoadingButton.type === LoadingButtonTypes.RemoveWhitelist && isLoadingButton.error && (
-                  <StyledText color="failure" marginTop="4px" fontSize="10px">
-                    {isLoadingButton.error}
-                  </StyledText>
-                )}
-              </Box>
+              <Button onClick={openWhitelistAddressesModal} variant="tertiary" scale="sm" marginRight="8px">
+                View Selected {`(${selectedAddresses.length})`}
+              </Button>
+              {isAccountOwner && (
+                <Box>
+                  <Button
+                    onClick={openRemoveWhitelistModal}
+                    startIcon={
+                      !(isLoadingButton.isClicked && isLoadingButton.type === LoadingButtonTypes.RemoveWhitelist) && (
+                        <TrashIcon width="14px" color="currentColor" />
+                      )
+                    }
+                    endIcon={
+                      isLoadingButton.isClicked &&
+                      isLoadingButton.type === LoadingButtonTypes.RemoveWhitelist && (
+                        <AutoRenewIcon spin color="currentColor" />
+                      )
+                    }
+                    disabled={
+                      isLoadingButton.isClicked ||
+                      (isLoadingButton.isClicked && isLoadingButton.type === LoadingButtonTypes.RemoveWhitelist) ||
+                      isMainLoading
+                    }
+                    variant="danger"
+                    scale="sm"
+                    marginRight="8px"
+                  >
+                    Remove
+                    {whitelistAddresses.length === selectedAddresses.length ? 'All' : `(${selectedAddresses.length})`}
+                  </Button>
+                  {isLoadingButton.type === LoadingButtonTypes.RemoveWhitelist && isLoadingButton.error && (
+                    <StyledText color="failure" marginTop="4px" fontSize="10px">
+                      {isLoadingButton.error}
+                    </StyledText>
+                  )}
+                </Box>
+              )}
             </Flex>
           )}
           <Box height="24px" />

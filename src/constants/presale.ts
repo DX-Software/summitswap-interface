@@ -92,3 +92,8 @@ export const CONTACT_METHOD_OPTIONS = [
     value: 'Email',
   },
 ]
+
+export const HEADERS_WHITELIST = [
+  { label: 'Number', key: 'number' },
+  { label: 'Wallet', key: 'wallet' },
+]
