@@ -69,6 +69,8 @@ const CreationStep04 = ({ formik, changeStepNumber }: Props) => {
       } else {
         setIsStepValid(false)
       }
+    } else {
+      setIsStepValid(false)
     }
   }, [formik])
 

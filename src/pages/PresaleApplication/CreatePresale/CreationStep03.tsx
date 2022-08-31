@@ -41,6 +41,8 @@ const CreationStep03 = ({ currency, selectedToken, formik, changeStepNumber }: P
   useEffect(() => {
     if (!formik.errors.liquidity && !formik.errors.listingRate && !formik.errors.tokenAmount) {
       setIsStepValid(true)
+    } else {
+      setIsStepValid(false)
     }
   }, [formik])
 

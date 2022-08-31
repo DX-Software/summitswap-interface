@@ -107,18 +107,10 @@ const CreationStep05 = ({ formikPresale, formikProject, changeStepNumber }: Prop
   }, [logoDimensions, formikProject.values])
 
   useEffect(() => {
-    if (
-      !formikProject.errors.projectName &&
-      !formikProject.errors.logoUrl &&
-      !formikProject.errors.contactName &&
-      !formikProject.errors.contactPosition &&
-      !formikProject.errors.telegramId &&
-      !formikProject.errors.twitterId &&
-      !formikProject.errors.email &&
-      !formikProject.errors.telegramId &&
-      formikProject.touched.projectName
-    ) {
+    if (formikProject.isValid && formikProject.touched.projectName) {
       setIsStepValid(true)
+    } else {
+      setIsStepValid(false)
     }
   }, [formikProject])
 

@@ -41,6 +41,8 @@ const CreationStep02 = ({ formik, changeStepNumber, currency, selectedToken }: P
       formik.touched.presaleRate
     ) {
       setIsStepValid(true)
+    } else {
+      setIsStepValid(false)
     }
   }, [formik])
 
