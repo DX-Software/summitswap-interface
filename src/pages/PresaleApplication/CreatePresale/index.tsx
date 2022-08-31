@@ -41,7 +41,7 @@ const CreatePresale = ({ setHomeButtonIndex }: Props) => {
   const { account, library } = useWeb3React()
 
   const [isLoading, setIsLoading] = useState(false)
-  const [stepNumber, setStepNumber] = useState(3)
+  const [stepNumber, setStepNumber] = useState(0)
   const [currency, setCurrency] = useState('BNB')
   const [lastTokenPresales, setLastTokenPresales] = useState('')
   const [canMakeNewPresale, setCanMakeNewPresale] = useState(true)

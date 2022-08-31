@@ -89,6 +89,13 @@ const CreationStep05 = ({ formikPresale, formikProject, changeStepNumber }: Prop
     })
   }
 
+  const onImageError = () => {
+    setLogoDimensions({
+      height: 0,
+      width: 0,
+    })
+  }
+
   useEffect(() => {
     if (
       formikProject.values.logoHeight !== logoDimensions.height &&
@@ -150,11 +157,12 @@ const CreationStep05 = ({ formikPresale, formikProject, changeStepNumber }: Prop
             alt=""
             style={{ display: 'hidden' }}
             onLoad={handleOnLogoLoad}
+            onError={onImageError}
           />
           <Caption color={formikProject.touched.logoUrl && !!formikProject.errors.logoUrl ? 'failure' : 'textDisabled'}>
             {formikProject.touched.logoUrl && formikProject.errors.logoUrl
               ? formikProject.errors.logoUrl
-              : 'Image should be 100x100, and URL must be hosted and shoul end with a supported image extension png, jpg, jpeg or gif.'}
+              : 'The logo should be 100x100, and the URL must be hosted'}
           </Caption>
         </GridItem2>
       </GridContainer>
