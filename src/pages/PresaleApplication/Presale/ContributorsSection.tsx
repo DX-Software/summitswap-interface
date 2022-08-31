@@ -1,36 +1,34 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useEffect, useState } from 'react'
-import styled from 'styled-components'
+import React, { useEffect, useState, useMemo } from 'react'
 import { Pagination } from '@mui/material'
-import { Box, Flex } from '@koda-finance/summitswap-uikit'
+import { formatUnits } from 'ethers/lib/utils'
+import { Box, Button, Flex, useModal } from '@koda-finance/summitswap-uikit'
 import { usePresaleContract } from 'hooks/useContract'
-import { ADDRESS_PER_PAGE } from 'constants/presale'
+import { ADDRESS_PER_PAGE, HEADERS_CONTRIBUTORS } from 'constants/presale'
 import { PresaleInfo } from '../types'
 import { StyledText, usePaginationStyles } from './Shared'
+import { AddressBox, WhitelistRadio, PlaceHolderParticipants } from './WhitelistSection'
+import ViewAddressesModal from './ViewAddressesModal'
 
 interface Props {
   presaleAddress: string
+  currency: string
   presaleInfo: PresaleInfo | undefined
+  paymentTokenDecimals: number | undefined
 }
 
-const PlaceHolderParticipants = styled.div`
-  width: 4px;
-  height: 24px;
-  background: ${({ theme }) => theme.colors.primaryDark};
-  margin-right: 8px;
-`
-
-const AddressBox = styled(Flex)`
-  align-items: center;
-  padding: 8px 8px 8px 12px;
-  height: 45px;
-  background: ${({ theme }) => theme.colors.inputColor};
-  margin-bottom: 8px;
-`
-
-const WhitelistSection = ({ presaleAddress, presaleInfo }: Props) => {
+const ContributorsSection = ({ presaleAddress, currency, presaleInfo, paymentTokenDecimals }: Props) => {
+  const [selectedAddresses, setSelectedAddresses] = useState<string[]>([])
   const [contributorsPage, setContributorsPage] = useState(1)
   const [contributors, setContributors] = useState<string[]>([])
+  const [filteredData, setFilteredData] = useState<
+    {
+      currency: string
+      wallet: string
+      amount: string
+      number: number
+    }[]
+  >()
 
   const presaleContract = usePresaleContract(presaleAddress)
 
@@ -43,6 +41,54 @@ const WhitelistSection = ({ presaleAddress, presaleInfo }: Props) => {
 
   const paginationStyles = usePaginationStyles()
 
+  const selectAddressHandler = (address: string) => {
+    if (selectedAddresses.includes(address)) {
+      setSelectedAddresses((prevAddresses) => prevAddresses.filter((add) => add !== address))
+    } else {
+      setSelectedAddresses((prevAddresses) => [...prevAddresses, address])
+    }
+  }
+  const contributorsData = useMemo(async () => {
+    if (contributors && presaleContract) {
+      return Promise.all(
+        contributors.map(async (contributor) => {
+          return {
+            currency,
+            wallet: contributor,
+            amount: formatUnits(await presaleContract.bought(contributor), paymentTokenDecimals),
+          }
+        })
+      )
+    }
+    return []
+  }, [contributors, presaleContract, currency, paymentTokenDecimals])
+
+  const closeContributorsModalHandler = () => {
+    closeContributorsModal()
+  }
+
+  useEffect(() => {
+    async function filterData() {
+      const allData = await contributorsData
+      setFilteredData(
+        allData
+          .filter((data) => selectedAddresses.includes(data.wallet))
+          .map((data, index) => ({ ...data, number: index + 1 }))
+      )
+    }
+    filterData()
+  }, [contributorsData, selectedAddresses])
+
+  const [openContributorsModal, closeContributorsModal] = useModal(
+    <ViewAddressesModal
+      title="Presale Whitelist"
+      headers={HEADERS_CONTRIBUTORS}
+      data={filteredData}
+      onDismiss={closeContributorsModalHandler}
+      isContributorsModal
+    />
+  )
+
   const startIndex = contributorsPage * ADDRESS_PER_PAGE - ADDRESS_PER_PAGE
   const endIndex =
     startIndex + ADDRESS_PER_PAGE > contributors.length ? contributors.length : startIndex + ADDRESS_PER_PAGE
@@ -50,22 +96,55 @@ const WhitelistSection = ({ presaleAddress, presaleInfo }: Props) => {
 
   return (
     <Box>
-      <Flex marginTop="16px">
-        <PlaceHolderParticipants />
-        <StyledText fontWeight={700} color="primaryDark">
-          Contributors ({contributors.length})
-        </StyledText>
+      <Flex marginTop="16px" justifyContent="space-between">
+        <Flex>
+          <PlaceHolderParticipants />
+          <StyledText fontWeight={700} color="primaryDark">
+            Contributors ({contributors.length})
+          </StyledText>
+        </Flex>
+        {selectedAddresses.length ? (
+          <StyledText
+            marginLeft="6px"
+            fontSize="14px"
+            style={{ cursor: 'pointer' }}
+            onClick={() => setSelectedAddresses([])}
+          >
+            Cancel Selection
+          </StyledText>
+        ) : (
+          <StyledText
+            marginLeft="6px"
+            fontSize="14px"
+            style={{ cursor: 'pointer' }}
+            onClick={() => setSelectedAddresses([...contributors])}
+          >
+            Select All
+          </StyledText>
+        )}
       </Flex>
-
       <Box marginTop="8px">
         {slicedAddresses.map((address) => (
           <AddressBox key={address} justifyContent="space-between">
-            <StyledText fontSize="14px" marginLeft="16px" color="textSubtle">
-              {address}
-            </StyledText>
+            <Flex alignContent="center" alignItems="center">
+              <WhitelistRadio
+                checked={selectedAddresses.includes(address)}
+                onClick={() => selectAddressHandler(address)}
+              />
+              <StyledText fontSize="14px" marginLeft="16px" color="textSubtle">
+                {address}
+              </StyledText>
+            </Flex>
           </AddressBox>
         ))}
-        <Box height="24px" />
+        {selectedAddresses.length > 0 && (
+          <Flex marginTop="8px" justifyContent="end">
+            <Button onClick={openContributorsModal} variant="tertiary" scale="sm" marginRight="8px">
+              View Selected {`(${selectedAddresses.length})`}
+            </Button>
+          </Flex>
+        )}
+        <Box height="16px" />
         {contributors.length > 0 && (
           <Pagination
             variant="outlined"
@@ -81,4 +160,4 @@ const WhitelistSection = ({ presaleAddress, presaleInfo }: Props) => {
   )
 }
 
-export default WhitelistSection
+export default ContributorsSection

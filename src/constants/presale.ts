@@ -97,3 +97,10 @@ export const HEADERS_WHITELIST = [
   { label: 'Number', key: 'number' },
   { label: 'Wallet', key: 'wallet' },
 ]
+
+export const HEADERS_CONTRIBUTORS = [
+  { label: 'Number', key: 'number' },
+  { label: 'Wallet', key: 'wallet' },
+  { label: 'Currency', key: 'currency' },
+  { label: 'Amount', key: 'amount' },
+]

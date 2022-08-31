@@ -490,7 +490,14 @@ const Presale = ({ presaleAddress }: Props) => {
             setWhitelistAddresses={setWhitelistAddresses}
           />
         )}
-        {isViewContributors && <ContributorsSection presaleInfo={presaleInfo} presaleAddress={presaleAddress} />}
+        {isViewContributors && (
+          <ContributorsSection
+            paymentTokenDecimals={paymentToken?.decimals}
+            currency={currency}
+            presaleInfo={presaleInfo}
+            presaleAddress={presaleAddress}
+          />
+        )}
       </ResponsiveBox1>
       <ResponsiveBox2>
         {selectSection()}

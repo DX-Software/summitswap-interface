@@ -35,14 +35,14 @@ interface Props {
   setWhitelistAddresses: React.Dispatch<React.SetStateAction<string[]>>
 }
 
-const PlaceHolderParticipants = styled.div`
+export const PlaceHolderParticipants = styled.div`
   width: 4px;
   height: 24px;
   background: ${({ theme }) => theme.colors.primaryDark};
   margin-right: 8px;
 `
 
-const AddressBox = styled(Flex)`
+export const AddressBox = styled(Flex)`
   align-items: center;
   padding: 8px 8px 8px 12px;
   height: 45px;
@@ -50,7 +50,7 @@ const AddressBox = styled(Flex)`
   margin-bottom: 8px;
 `
 
-const WhitelistRadio = styled(Radio)`
+export const WhitelistRadio = styled(Radio)`
   flex-shrink: 0;
   height: 18px;
   width: 18px;
@@ -167,7 +167,6 @@ const WhitelistSection = ({
       title="Presale Whitelist"
       headers={HEADERS_WHITELIST}
       data={data}
-      addresses={selectedAddresses}
       onDismiss={closeWhitelistAddressesModalHandler}
     />
   )
