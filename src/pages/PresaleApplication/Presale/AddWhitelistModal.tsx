@@ -1,5 +1,7 @@
 import React from 'react'
+import styled from 'styled-components'
 import {
+  FileIcon,
   AutoRenewIcon,
   AddIcon,
   Button,
@@ -12,10 +14,37 @@ import { isAddress } from 'ethers/lib/utils'
 import { FieldProps, LoadingButtonTypes, LoadingForButton } from '../types'
 import { StyledText } from './Shared'
 
+export const InputCSV = styled.input.attrs({ type: 'file' })`
+  display: none;
+`
+
+export const LabelCSV = styled.label`
+  align-items: center;
+  border: 0;
+  border-radius: 16px;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 16px;
+  font-weight: 600;
+  justify-content: center;
+  letter-spacing: 0.03em;
+  line-height: 1;
+  outline: 0;
+  transition: 0.3s;
+  border: ${({ theme }) => `2px solid ${theme.colors.primary}`};
+  background: none;
+  color: ${({ theme }) => `${theme.colors.primary}`};
+  min-height: 32px;
+  max-height: 32px;
+  padding: 0 18px;
+  margin-top: 16px;
+`
+
 interface Props {
   isMainLoading: boolean
   newWhitelist: FieldProps
   isLoadingButton: LoadingForButton
+  setCsvFileData: React.Dispatch<React.SetStateAction<any>>
   setNewWhitelist: React.Dispatch<React.SetStateAction<FieldProps>>
   closeModalHandler: (_: any, reason: any) => void
   addWhitelistHandler: (addresses: string) => void
@@ -38,6 +67,7 @@ const AddWhitelistModal = ({
   isMainLoading,
   closeModalHandler,
   addWhitelistHandler,
+  setCsvFileData,
 }: Props) => {
   const newWhitelistChangeHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     let error = ''
@@ -90,6 +120,18 @@ const AddWhitelistModal = ({
         >
           Add New Whitelist
         </Button>
+        <LabelCSV htmlFor="whitelist-uploader">
+          <FileIcon marginRight="6px" width="16px" color="currentColor" />
+          <InputCSV
+            id="whitelist-uploader"
+            onChange={(e) => setCsvFileData(e.target.files?.length ? e.target.files[0] : null)}
+            onClick={(e: any) => {
+              e.target.value = null
+            }}
+            accept=".csv"
+          />
+          Import Whitelist
+        </LabelCSV>
       </SummitModal>
     </MaterialBox>
   )

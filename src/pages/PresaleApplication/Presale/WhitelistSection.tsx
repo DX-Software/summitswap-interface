@@ -13,14 +13,16 @@ import {
   AddIcon,
   TrashIcon,
   CloseIcon,
+  FileIcon,
 } from '@koda-finance/summitswap-uikit'
+import { isAddress } from 'utils'
 import { usePresaleContract } from 'hooks/useContract'
 import { RowFixed } from 'components/Row'
 import { RADIO_VALUES, ADDRESS_PER_PAGE, HEADERS_WHITELIST } from 'constants/presale'
 import { PresaleInfo, FieldNames, FieldProps, LoadingForButton, LoadingButtonTypes } from '../types'
 import { StyledText, usePaginationStyles } from './Shared'
 import RemoveWhitelistModal from './RemoveWhitelistModal'
-import AddWhitelistModal from './AddWhitelistModal'
+import AddWhitelistModal, { InputCSV, LabelCSV } from './AddWhitelistModal'
 import ViewAddressesModal from './ViewAddressesModal'
 
 interface Props {
@@ -61,7 +63,6 @@ const WhitelistRadio = styled(Radio)`
   }
 `
 
-
 const WhitelistSection = ({
   setIsMainLoading,
   presaleAddress,
@@ -76,6 +77,7 @@ const WhitelistSection = ({
   const [selectedAddresses, setSelectedAddresses] = useState<string[]>([])
   const [isAccountOwner, setIsAccountOwner] = useState(false)
   const [whitelistPage, setWhitelistPage] = useState(1)
+  const [csvFileData, setCsvFileData] = useState<any>()
   const [isLoadingButton, setIsLoadingButton] = useState<LoadingForButton>({
     type: LoadingButtonTypes.NotSelected,
     error: '',
@@ -175,6 +177,7 @@ const WhitelistSection = ({
       setIsWhitelistModalOpen(false)
       setNewWhitelist((prevState) => (isMainLoading ? { ...prevState } : { error: '', value: '' }))
     }
+    setCsvFileData(null)
   }
 
   const addWhitelistHandler = async () => {
@@ -236,6 +239,32 @@ const WhitelistSection = ({
     }
   }
 
+  useEffect(() => {
+    if (csvFileData) {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const result = e.target?.result as string
+        const rows = result.slice(result.indexOf('\n') + 1).split('\n')
+        let error = ''
+        const value = rows
+          .map((row) => {
+            const add = row.split(',')[1].slice(1, -1)
+            if (!isAddress(add)) {
+              error = 'Not Valid addresses'
+            }
+            return add
+          })
+          .join(',')
+        setNewWhitelist({
+          value,
+          error,
+        })
+        setIsWhitelistModalOpen(true)
+      }
+      reader.readAsText(csvFileData)
+    }
+  }, [csvFileData])
+
   const paginationStyles = usePaginationStyles()
 
   const startIndex = whitelistPage * ADDRESS_PER_PAGE - ADDRESS_PER_PAGE
@@ -257,6 +286,7 @@ const WhitelistSection = ({
               setNewWhitelist={setNewWhitelist}
               addWhitelistHandler={addWhitelistHandler}
               closeModalHandler={closAddwhitelistModalHandler}
+              setCsvFileData={setCsvFileData}
             />
           </Modal>
 
@@ -317,17 +347,18 @@ const WhitelistSection = ({
               </StyledText>
             )}
           </Box>
-          <Flex flexWrap="wrap" justifyContent="space-between" alignItems="center">
-            <StyledText marginTop="24px" fontSize="20px" fontWeight={700}>
-              Whitelist Customization
-            </StyledText>
+          <StyledText marginTop="24px" fontSize="20px" fontWeight={700}>
+            Whitelist Customization
+          </StyledText>
+          <Flex flexWrap="wrap">
             <Box>
               <Button
                 onClick={() => setIsWhitelistModalOpen(true)}
-                marginTop="24px"
+                marginTop="16px"
                 startIcon={<AddIcon width="15px" color="currentColor" />}
                 variant="awesome"
                 scale="sm"
+                marginRight="16px"
               >
                 Add New Whitelist
               </Button>
@@ -337,6 +368,18 @@ const WhitelistSection = ({
                 </StyledText>
               )}
             </Box>
+            <LabelCSV htmlFor="whitelist-uploader">
+              <FileIcon marginRight="4px" width="18px" color="currentColor" />
+              <InputCSV
+                id="whitelist-uploader"
+                onChange={(e) => setCsvFileData(e.target.files?.length ? e.target.files[0] : null)}
+                onClick={(e: any) => {
+                  e.target.value = null
+                }}
+                accept=".csv"
+              />
+              Import Whitelist
+            </LabelCSV>
           </Flex>
         </>
       )}
