@@ -301,6 +301,11 @@ const CreationStep05 = ({ formikPresale, formikProject, changeStepNumber }: Prop
             <StyledInputWrapper marginRight="16px">
               <Text small marginTop="8px">
                 Telegram ID
+                {formikProject.values.contactMethod !== CONTACT_METHOD_OPTIONS[0].value && (
+                  <Text style={{ display: 'inline' }} small color={darkColors.borderColor}>
+                    &nbsp;(optional)
+                  </Text>
+                )}
               </Text>
               <StyledInput
                 placeholder="Ex: https://telegram.me..."
@@ -320,9 +325,11 @@ const CreationStep05 = ({ formikPresale, formikProject, changeStepNumber }: Prop
             <StyledInputWrapper>
               <Text small marginTop="8px">
                 Discord ID
-                <Text style={{ display: 'inline' }} small color={darkColors.borderColor}>
-                  &nbsp;(optional)
-                </Text>
+                {formikProject.values.contactMethod !== CONTACT_METHOD_OPTIONS[1].value && (
+                  <Text style={{ display: 'inline' }} small color={darkColors.borderColor}>
+                    &nbsp;(optional)
+                  </Text>
+                )}
               </Text>
               <StyledInput
                 placeholder="Ex: https://discord.me..."
@@ -344,9 +351,11 @@ const CreationStep05 = ({ formikPresale, formikProject, changeStepNumber }: Prop
             <StyledInputWrapper marginRight="16px">
               <Text small marginTop="8px">
                 E-mail address
-                <Text style={{ display: 'inline' }} small color={darkColors.borderColor}>
-                  &nbsp;(optional)
-                </Text>
+                {formikProject.values.contactMethod !== CONTACT_METHOD_OPTIONS[2].value && (
+                  <Text style={{ display: 'inline' }} small color={darkColors.borderColor}>
+                    &nbsp;(optional)
+                  </Text>
+                )}
               </Text>
               <StyledInput
                 placeholder="e.g. summitswap@domain.com"

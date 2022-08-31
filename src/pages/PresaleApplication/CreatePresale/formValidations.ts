@@ -1,6 +1,7 @@
 import { differenceInDays } from 'date-fns'
 import checkUrl from 'utils/checkUrl'
 import checkEmail from 'utils/checkEmail'
+import { CONTACT_METHOD_OPTIONS } from 'constants/presale'
 import { PresaleDetails, PresaleDetailsErrors, ProjectDetails } from '../types'
 
 export const validatePresaleDetails = (values: PresaleDetails) => {
@@ -157,9 +158,9 @@ export const validateProjectDetails = (values: ProjectDetails) => {
     errors.twitterId = 'Not a valid Url'
   }
 
-  if (!values.telegramId) {
+  if (!values.telegramId && values.contactMethod === CONTACT_METHOD_OPTIONS[0].value) {
     errors.telegramId = 'Required*'
-  } else if (!checkUrl(values.telegramId)) {
+  } else if (values.telegramId && !checkUrl(values.telegramId || '')) {
     errors.telegramId = 'Not a valid Url'
   }
 
@@ -177,12 +178,16 @@ export const validateProjectDetails = (values: ProjectDetails) => {
     errors.logoUrl = 'Enter valid logo Url'
   }
 
-  if (values.discordId && !checkUrl(values.discordId)) {
+  if (!values.discordId && values.contactMethod === CONTACT_METHOD_OPTIONS[1].value) {
+    errors.discordId = 'Required*'
+  } else if (values.discordId && !checkUrl(values.discordId || '')) {
     errors.discordId = 'Not a valid Url'
   }
 
-  if (values.email && !checkEmail(values.email)) {
-    errors.email = 'Not a valid Email'
+  if (!values.email && values.contactMethod === CONTACT_METHOD_OPTIONS[2].value) {
+    errors.email = 'Required*'
+  } else if (values.email && !checkEmail(values.email || '')) {
+    errors.email = 'Not a valid Url'
   }
 
   if (!values.contactName) {
