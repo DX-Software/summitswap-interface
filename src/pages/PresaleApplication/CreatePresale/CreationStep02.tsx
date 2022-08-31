@@ -91,12 +91,13 @@ const CreationStep02 = ({ formik, changeStepNumber, currency }: Props) => {
           <Box marginTop="16px" onChange={formik.handleChange}>
             <RowFixed marginBottom="8px">
               <Radio
+                id="whitelist-enable"
                 scale="sm"
                 name={FieldNames.isWhitelistEnabled}
                 value={`${RADIO_VALUES.WHITELIST_ENABLED}`}
                 checked={`${formik.values.isWhitelistEnabled}` === `${RADIO_VALUES.WHITELIST_ENABLED}`}
               />
-              <label htmlFor="enable">
+              <label htmlFor="whitelist-enable">
                 <Text
                   marginLeft="8px"
                   color={
@@ -110,11 +111,12 @@ const CreationStep02 = ({ formik, changeStepNumber, currency }: Props) => {
             <RowFixed>
               <Radio
                 scale="sm"
+                id="whitelist-disable"
                 name={FieldNames.isWhitelistEnabled}
                 value={`${RADIO_VALUES.WHITELIST_DISABLED}`}
                 checked={`${formik.values.isWhitelistEnabled}` === `${RADIO_VALUES.WHITELIST_DISABLED}`}
               />
-              <label htmlFor="disable">
+              <label htmlFor="whitelist-disable">
                 <Text
                   marginLeft="8px"
                   color={
