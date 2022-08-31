@@ -22,17 +22,17 @@ const validateAdminForm = (values: AdminForm) => {
   if (!values.minBuy) {
     errors.minBuy = 'Required*'
   } else if (values.minBuy <= 0) {
-    errors.minBuy = 'Min(BNB) should be a positive number'
+    errors.minBuy = 'Min buy should be a positive number'
   } else if (values.minBuy >= (values.maxBuy || 0)) {
-    errors.minBuy = 'Min(BNB) <= Max(BNB)'
+    errors.minBuy = 'Min buy <= Max buy'
   }
 
   if (!values.maxBuy) {
     errors.maxBuy = 'Required*'
   } else if (values.maxBuy <= 0) {
-    errors.maxBuy = 'Max(Bnb) should be a positive number'
+    errors.maxBuy = 'Max buy should be a positive number'
   } else if (values.maxBuy > Number(formatUnits(values.presaleInfo?.hardcap || 0, 18))) {
-    errors.maxBuy = 'Max(Bnb) <= hardcap'
+    errors.maxBuy = 'Max buy <= hardcap'
   }
 
   if (!values.startPresaleTime) {
