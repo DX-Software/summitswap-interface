@@ -11,6 +11,7 @@ import {
   ChecklistIcon,
   HandCoinIcon,
 } from '@koda-finance/summitswap-uikit'
+import { Token } from '@koda-finance/summitswap-sdk'
 import { FormikProps } from 'formik'
 import { RowFixed } from 'components/Row'
 import { RADIO_VALUES } from 'constants/presale'
@@ -21,12 +22,13 @@ import { Caption, Heading } from '../Texts'
 import { PresaleDetails, FieldNames } from '../types'
 
 interface Props {
+  selectedToken: Token | undefined
   formik: FormikProps<PresaleDetails>
   changeStepNumber: (num: number) => void
   currency: string
 }
 
-const CreationStep02 = ({ formik, changeStepNumber, currency }: Props) => {
+const CreationStep02 = ({ formik, changeStepNumber, currency, selectedToken }: Props) => {
   const [isStepValid, setIsStepValid] = useState(false)
 
   useEffect(() => {
@@ -73,7 +75,7 @@ const CreationStep02 = ({ formik, changeStepNumber, currency }: Props) => {
           <Caption color={formik.touched.presaleRate && !!formik.errors.presaleRate ? 'failure' : 'textDisabled'}>
             {formik.touched.presaleRate && formik.errors.presaleRate
               ? formik.errors.presaleRate
-              : 'If I spend 1 BNB, how many CTK tokens will I receive?'}
+              : `If I spend 1 ${currency}, how many ${selectedToken?.symbol} tokens will I receive?`}
           </Caption>
         </GridItem2>
       </GridContainer>
