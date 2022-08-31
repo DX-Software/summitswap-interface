@@ -286,7 +286,11 @@ const PresaleSummary = ({ presaleAddress, handleEditButtonHandler }: Props) => {
                 </GridContainer>
                 <GridContainer marginTop="4px">
                   <StyledText>Interval Time (UTC)</StyledText>
-                  <StyledText>{`${presaleInfo?.claimIntervalHour} UTC`}</StyledText>
+                  <StyledText>{`${
+                    Number(presaleInfo?.claimIntervalHour) < 10
+                      ? `0${presaleInfo?.claimIntervalHour}`
+                      : presaleInfo?.claimIntervalHour
+                  }:00 UTC`}</StyledText>
                 </GridContainer>
               </>
             )}

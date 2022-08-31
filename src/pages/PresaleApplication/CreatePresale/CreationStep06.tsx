@@ -286,7 +286,11 @@ const CreationStep06 = ({
                 </GridContainer>
                 <GridContainer marginTop="4px">
                   <StyledText>Interval Time (UTC)</StyledText>
-                  <StyledText>{`${formikPresale.values.claimIntervalHour} UTC`}</StyledText>
+                  <StyledText>{`${
+                    Number(formikPresale.values.claimIntervalHour) < 10
+                      ? `0${formikPresale.values.claimIntervalHour}`
+                      : formikPresale.values.claimIntervalHour
+                  }:00 UTC`}</StyledText>
                 </GridContainer>
               </>
             )}
