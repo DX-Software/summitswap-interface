@@ -219,43 +219,51 @@ const CreationStep04 = ({ formik, changeStepNumber }: Props) => {
               <Box>
                 <Radio
                   scale="sm"
+                  id={`${FieldNames.isVestingEnabled}-${RADIO_VALUES.VESTING_ENABLED}`}
                   name={FieldNames.isVestingEnabled}
                   value={`${RADIO_VALUES.VESTING_ENABLED}`}
                   checked={`${formik.values.isVestingEnabled}` === `${RADIO_VALUES.VESTING_ENABLED}`}
                 />
               </Box>
-              <label htmlFor="vestingEnabled">
-                <Text
-                  color={`${formik.values.isVestingEnabled}` === `${RADIO_VALUES.VESTING_ENABLED}` ? 'linkColor' : ''}
-                  marginLeft="8px"
-                >
-                  Enabled
-                </Text>
+              <Box>
+                <label htmlFor={`${FieldNames.isVestingEnabled}-${RADIO_VALUES.VESTING_ENABLED}`}>
+                  <Text
+                    color={`${formik.values.isVestingEnabled}` === `${RADIO_VALUES.VESTING_ENABLED}` ? 'linkColor' : ''}
+                    marginLeft="8px"
+                  >
+                    Enabled
+                  </Text>
+                </label>
                 <Caption marginLeft="8px" color="textDisabled" style={{ maxWidth: '300px' }}>
                   Once presale end, users will be able to claim their token gradually
                 </Caption>
-              </label>
+              </Box>
             </RowFixed>
             <RowFixed marginRight="70px" marginBottom="8px">
               <Box>
                 <Radio
                   scale="sm"
+                  id={`${FieldNames.isVestingEnabled}-${RADIO_VALUES.VESTING_DISABLED}`}
                   name={FieldNames.isVestingEnabled}
                   value={`${RADIO_VALUES.VESTING_DISABLED}`}
                   checked={`${formik.values.isVestingEnabled}` === `${RADIO_VALUES.VESTING_DISABLED}`}
                 />
               </Box>
-              <label htmlFor="vestingDisabled">
-                <Text
-                  color={`${formik.values.isVestingEnabled}` === `${RADIO_VALUES.VESTING_DISABLED}` ? 'linkColor' : ''}
-                  marginLeft="8px"
-                >
-                  Disabled
-                </Text>
+              <Box>
+                <label htmlFor={`${FieldNames.isVestingEnabled}-${RADIO_VALUES.VESTING_DISABLED}`}>
+                  <Text
+                    color={
+                      `${formik.values.isVestingEnabled}` === `${RADIO_VALUES.VESTING_DISABLED}` ? 'linkColor' : ''
+                    }
+                    marginLeft="8px"
+                  >
+                    Disabled
+                  </Text>
+                </label>
                 <Caption marginLeft="8px" color="textDisabled" style={{ maxWidth: '300px' }}>
                   Once presale end, users are able to claim all of the their tokens at once
                 </Caption>
-              </label>
+              </Box>
             </RowFixed>
           </Flex>
           {`${formik.values.isVestingEnabled}` === `${RADIO_VALUES.VESTING_ENABLED}` && (
