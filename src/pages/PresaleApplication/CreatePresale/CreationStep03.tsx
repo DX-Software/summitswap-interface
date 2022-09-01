@@ -222,7 +222,7 @@ const CreationStep03 = ({ currency, selectedToken, formik, changeStepNumber }: P
               <Caption color={formik.touched.liquidity && !!formik.errors.liquidity ? 'failure' : 'textDisabled'}>
                 {formik.touched.liquidity && formik.errors.liquidity
                   ? formik.errors.liquidity
-                  : 'Enter the percentage of raised funds that should be allocated to Liquidity on Summitswap (Min 25%, Max 100%)'}
+                  : 'Enter the percentage of raised funds that should be allocated to Liquidity on Chosen Router (Min 25%, Max 100%)'}
               </Caption>
             </StyledInputWrapper>
             <StyledInputWrapper>
@@ -242,7 +242,7 @@ const CreationStep03 = ({ currency, selectedToken, formik, changeStepNumber }: P
               <Caption color={formik.touched.listingRate && !!formik.errors.listingRate ? 'failure' : 'textDisabled'}>
                 {formik.touched.listingRate && formik.errors.listingRate
                   ? formik.errors.listingRate
-                  : `If I spend 1 ${currency} on Summitswap, how many tokens will I receive? (1 ${currency} = ${
+                  : `If I spend 1 ${currency} on Chosen Router, how many tokens will I receive? (1 ${currency} = ${
                       formik.values.listingRate || '0'
                     } ${selectedToken?.symbol})`}
               </Caption>
