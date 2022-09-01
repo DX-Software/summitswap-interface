@@ -104,3 +104,18 @@ export const HEADERS_CONTRIBUTORS = [
   { label: 'Currency', key: 'currency' },
   { label: 'Amount', key: 'amount' },
 ]
+
+export const ALL_PRESALE_OPTION = {
+  value: 'All Presales',
+  label: 'Default (All)',
+}
+
+export const PUBLIC_ONLY_OPTION = {
+  value: 'Public',
+  label: 'Public Only',
+}
+
+export const WHITELIST_ONLY = {
+  value: 'Whitelist',
+  label: 'Whitelist Only',
+}

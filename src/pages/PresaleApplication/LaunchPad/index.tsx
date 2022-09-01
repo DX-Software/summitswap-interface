@@ -4,7 +4,13 @@ import styled from 'styled-components'
 import { Pagination } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { useFactoryPresaleContract, usePresaleContracts } from 'hooks/useContract'
-import { PRESALE_FACTORY_ADDRESS, PRESALES_PER_PAGE_ADMIN_PANEL } from 'constants/presale'
+import {
+  PRESALE_FACTORY_ADDRESS,
+  PRESALES_PER_PAGE_ADMIN_PANEL,
+  ALL_PRESALE_OPTION,
+  WHITELIST_ONLY,
+  PUBLIC_ONLY_OPTION,
+} from 'constants/presale'
 import {
   ArrowBackIcon,
   Breadcrumbs,
@@ -69,21 +75,6 @@ const ResonsiveFlex = styled(Flex)`
     justify-content: center;
   }
 `
-
-const ALL_PRESALE_OPTION = {
-  value: 'All Presales',
-  label: 'Default (All)',
-}
-
-const PUBLIC_ONLY_OPTION = {
-  value: 'Public',
-  label: 'Public Only',
-}
-
-const WHITELIST_ONLY = {
-  value: 'Whitelist',
-  label: 'Whitelist Only',
-}
 
 const SelectWrapper = styled(Box)`
   width: 100%;
