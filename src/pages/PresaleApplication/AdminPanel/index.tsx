@@ -127,7 +127,7 @@ const AdminPanel = () => {
             <TableCard marginTop="24px">
               <HeadingCotainer />
               <Divider bottomOnly />
-              {getSlicedAddress(approvedPresales, pagePendingPresales).map((address) => (
+              {getSlicedAddress(approvedPresales, pageApprovedPresales).map((address) => (
                 <Box key={address}>
                   <PresaleDetail selectPresaleHandler={selectPresaleHandler} presaleAddress={address} />
                 </Box>
