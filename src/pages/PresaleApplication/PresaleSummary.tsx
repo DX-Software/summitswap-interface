@@ -359,15 +359,15 @@ const PresaleSummary = ({ presaleAddress, handleEditButtonHandler }: Props) => {
             <StyledText>{projectDetails?.telegramId || '-'}</StyledText>
           </ContainerInformation>
           <ContainerInformation marginTop="4px">
-            <StyledText>Discord ID (optional)</StyledText>
+            <StyledText>Discord ID</StyledText>
             <StyledText>{projectDetails?.discordId || '-'}</StyledText>
           </ContainerInformation>
           <ContainerInformation marginTop="4px">
-            <StyledText>Twitter ID (optional)</StyledText>
+            <StyledText>Twitter ID</StyledText>
             <StyledText>{projectDetails?.twitterId || '-'}</StyledText>
           </ContainerInformation>
           <ContainerInformation marginTop="4px">
-            <StyledText>E-mail (optional)</StyledText>
+            <StyledText>E-mail</StyledText>
             <StyledText>{projectDetails?.email || '-'}</StyledText>
           </ContainerInformation>
         </Box>
