@@ -64,7 +64,7 @@ const StyledText = styled(Text)`
 `
 
 const ResonsiveFlex = styled(Flex)`
-  justify-content: space-between;
+  justify-content: space-evenly;
   @media (max-width: 680px) {
     justify-content: center;
   }
@@ -115,6 +115,11 @@ const SearchInput = styled(Input)`
   &:focus:not(:disabled) {
     box-shadow: 0 0;
   }
+`
+
+const PaginationWrapper = styled.div`
+  position: fixed;
+  right: 1;
 `
 const LaunchPad = () => {
   const { account } = useWeb3React()
@@ -380,26 +385,28 @@ const LaunchPad = () => {
         {!selectedPresale && (
           <ResonsiveFlex>
             <Box />
-            {buttonIndex === 0 && (
-              <Pagination
-                variant="outlined"
-                shape="rounded"
-                sx={paginationStyles}
-                count={filteredAddresses.length ? 1 : Math.ceil(showAddresses.length / PRESALES_PER_PAGE_ADMIN_PANEL)}
-                page={browsePage}
-                onChange={(_, value: number) => setBrowsePage(value)}
-              />
-            )}
-            {buttonIndex === 1 && (
-              <Pagination
-                variant="outlined"
-                shape="rounded"
-                sx={paginationStyles}
-                count={filteredAddresses.length ? 1 : Math.ceil(showAddresses.length / PRESALES_PER_PAGE_ADMIN_PANEL)}
-                page={contributionPage}
-                onChange={(_, value: number) => setContributionPage(value)}
-              />
-            )}
+            <PaginationWrapper>
+              {buttonIndex === 0 && (
+                <Pagination
+                  variant="outlined"
+                  shape="rounded"
+                  sx={paginationStyles}
+                  count={filteredAddresses.length ? 1 : Math.ceil(showAddresses.length / PRESALES_PER_PAGE_ADMIN_PANEL)}
+                  page={browsePage}
+                  onChange={(_, value: number) => setBrowsePage(value)}
+                />
+              )}
+              {buttonIndex === 1 && (
+                <Pagination
+                  variant="outlined"
+                  shape="rounded"
+                  sx={paginationStyles}
+                  count={filteredAddresses.length ? 1 : Math.ceil(showAddresses.length / PRESALES_PER_PAGE_ADMIN_PANEL)}
+                  page={contributionPage}
+                  onChange={(_, value: number) => setContributionPage(value)}
+                />
+              )}
+            </PaginationWrapper>
           </ResonsiveFlex>
         )}
       </ContentWrapper>

@@ -57,7 +57,7 @@ const StyledText = styled(Text)`
 `
 
 const ResonsiveFlex = styled(Flex)`
-  justify-content: space-between;
+  justify-content: space-evenly;
   @media (max-width: 680px) {
     justify-content: center;
   }
@@ -165,7 +165,7 @@ const MyPresales = ({ setHomeButtonIndex }: Props) => {
             <Divider />
             {tabIndex === 0 &&
               (accountPendingPresales.length ? (
-                <ResonsiveFlex marginTop="16px">
+                <ResonsiveFlex marginTop="16px" flexWrap="wrap">
                   {accountPendingPresales.map((address) => (
                     <PresaleCard viewPresaleHandler={viewPresaleHandler} presaleAddress={address} />
                   ))}
