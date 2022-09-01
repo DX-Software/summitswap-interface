@@ -306,7 +306,7 @@ const CreationStep04 = ({ formik, changeStepNumber }: Props) => {
                     />
                   </StyledInputWrapper>
                 </Flex>
-                <Caption marginLeft="16px" color="textDisabled">
+                <Caption marginLeft="16px" color="textDisabled" style={{ maxWidth: '100%' }}>
                   Every
                   <Caption bold small color="primary">
                     &nbsp;{formik.values.maxClaimPercentage || '20'}%&nbsp;
