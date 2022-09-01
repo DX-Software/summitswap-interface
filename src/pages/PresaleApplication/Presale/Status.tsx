@@ -24,16 +24,6 @@ const Card = styled(Box)`
   border-radius: 8px;
 `
 
-const TimeBox = styled(Box)<{ isPresalePhase: boolean }>`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 48px;
-  height: 36px;
-  border-radius: 4px;
-  background: ${({ theme, isPresalePhase }) => (isPresalePhase ? theme.colors.failure : theme.colors.primary)};
-`
-
 const Status = ({ presaleAddress, presaleInfo }: Props) => {
   const [presalePhase, setPresalePhase] = useState<string>(PresalePhases.PresaleNotStarted)
   const [presaleFeeInfo, setPresaleFeeInfo] = useState<FeeInfo>()
