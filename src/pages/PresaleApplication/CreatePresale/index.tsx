@@ -61,8 +61,6 @@ const CreatePresale = ({ setHomeButtonIndex }: Props) => {
     }
   }, [account, tokenContract])
 
-  // useEffect(() =>)
-
   useEffect(() => {
     async function checkIsLastPresaleCancelled() {
       const info = await fetchPresaleInfo(lastTokenPresaleContract)

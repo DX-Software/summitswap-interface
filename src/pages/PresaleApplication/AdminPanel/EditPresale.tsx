@@ -189,7 +189,7 @@ const EditPresale = ({ presaleAddress, handleEditButtonHandler }: Props) => {
 
   return (
     <>
-      <PresaleStatus isPresaleEdit presaleInfo={presaleInfo} presaleAddress={presaleAddress} />
+      <PresaleStatus presaleInfo={presaleInfo} presaleAddress={presaleAddress} />
       <EditPresaleForm isLoading={isLoading} formik={formik} cancelEditButtonHandler={handleEditButtonHandler} />
     </>
   )

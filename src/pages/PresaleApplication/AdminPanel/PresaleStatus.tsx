@@ -40,27 +40,17 @@ const CopyButtonWrapper = styled(Box)`
 interface Props {
   presaleInfo: PresaleInfo | undefined
   presaleAddress: string
-  isPresaleEdit?: boolean
 }
 
-const PresaleStatus = ({ presaleInfo, presaleAddress, isPresaleEdit = false }: Props) => {
-  const getColor = () => {
-    if (isPresaleEdit) {
-      return 'warning'
-    }
-    if (presaleInfo?.isApproved) {
-      return 'primary'
-    }
-    return 'info'
-  }
+const PresaleStatus = ({ presaleInfo, presaleAddress }: Props) => {
   return (
     <StatusBox>
       <ResonsiveFlex flexWrap="wrap">
         <TextStatusBox color="textSubtle" style={{ width: '160px' }}>
           Presale Status
         </TextStatusBox>
-        <TextStatusBox color={getColor()}>
-          <TextStatusBox bold color={getColor()} style={{ display: 'inline' }}>
+        <TextStatusBox color={presaleInfo?.isApproved ? 'primary' : 'info'}>
+          <TextStatusBox bold color={presaleInfo?.isApproved ? 'primary' : 'info'} style={{ display: 'inline' }}>
             {presaleInfo?.isApproved ? <CheckmarkIcon color="primary" width="15px" /> : 'O'}
           </TextStatusBox>
           &nbsp;{presaleInfo?.isApproved ? 'Approved' : 'Waiting for Approval'}

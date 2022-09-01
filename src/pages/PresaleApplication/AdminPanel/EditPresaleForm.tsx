@@ -97,6 +97,9 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
   const presaleToken = useToken(presaleInfo?.presaleToken)
   const tokenContract = useTokenContract(presaleToken?.address, true)
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => () => cancelEditButtonHandler(false), [])
+
   useEffect(() => {
     if (formik.values.paymentToken) {
       const currentCurrency = Object.keys(TOKEN_CHOICES).find(
