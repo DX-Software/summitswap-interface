@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { BigNumber } from 'ethers'
 import { useWeb3React } from '@web3-react/core'
 import { Button, Box, darkColors } from '@koda-finance/summitswap-uikit'
-import { usePresaleContract, useTokenContract } from 'hooks/useContract'
+import { usePresaleContract } from 'hooks/useContract'
 import { useToken } from 'hooks/Tokens'
 import { fetchPresaleInfo, fetchFeeInfo } from 'utils/presale'
 import { NULL_ADDRESS } from 'constants/index'
@@ -29,7 +29,7 @@ const Card = styled(Box)`
 `
 
 const PresaleCancelled = ({ presaleAddress, isMainLoading, setIsMainLoading }: Props) => {
-  const { account, library } = useWeb3React()
+  const { account } = useWeb3React()
 
   const [isLoadingButton, setIsLoadingButton] = useState<LoadingForButton>({
     type: LoadingButtonTypes.NotSelected,
@@ -39,7 +39,6 @@ const PresaleCancelled = ({ presaleAddress, isMainLoading, setIsMainLoading }: P
   const [boughtAmount, setBoughtAmount] = useState(BigNumber.from('0'))
   const [presaleInfo, setPresaleInfo] = useState<PresaleInfo>()
   const [presaleFeeInfo, setPresaleFeeInfo] = useState<FeeInfo>()
-  const [contributors, setContributors] = useState<string[]>([])
   const [currency, setCurrency] = useState('BNB')
 
   const presaleContract = usePresaleContract(presaleAddress)
@@ -67,13 +66,6 @@ const PresaleCancelled = ({ presaleAddress, isMainLoading, setIsMainLoading }: P
       fetchData()
     }
   }, [presaleContract])
-
-  useEffect(() => {
-    async function fetchContributors() {
-      setContributors(await presaleContract?.getContributors())
-    }
-    if (presaleContract) fetchContributors()
-  }, [presaleContract, boughtAmount])
 
   useEffect(() => {
     async function fetchBoughtAmount() {
