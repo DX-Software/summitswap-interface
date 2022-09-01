@@ -123,11 +123,11 @@ export const validatePresaleDetails = (values: PresaleDetails) => {
     errors.liquidyLockTimeInMins = 'Liquidity Lock time >= 5mins'
   }
 
-  if (values.hardcap && values.presaleRate && values.listingRate && values.liquidity && values.accountBalance) {
+  if (values.hardcap && values.presaleRate && values.listingRate && values.liquidity) {
     const presaleTokenAmount = values.presaleRate * values.hardcap
     const tokensForLiquidity = (values.liquidity / 100) * values.hardcap * values.listingRate
     const tokenAmount = presaleTokenAmount + tokensForLiquidity
-    if (tokenAmount > values.accountBalance) {
+    if (tokenAmount > (values.accountBalance || 0)) {
       errors.tokenAmount = 'Token Amounts Exceeds Balance'
     }
   }

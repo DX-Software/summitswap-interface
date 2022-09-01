@@ -59,7 +59,7 @@ const ClaimTokens = ({ presaleAddress, isMainLoading, setIsMainLoading }: Props)
       }, 3000)
     }
   }, [isLoadingButton])
-  console.log(totalTokens.toString(), 'tooot')
+
   useEffect(() => {
     async function fetchTokenAmounts() {
       setAvailableToClaim(await presaleContract?.getAvailableTokenToClaim(account))

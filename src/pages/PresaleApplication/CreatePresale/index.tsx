@@ -46,7 +46,7 @@ const CreatePresale = ({ setHomeButtonIndex }: Props) => {
   const [lastTokenPresales, setLastTokenPresales] = useState('')
   const [canMakeNewPresale, setCanMakeNewPresale] = useState(true)
   const [selectedToken, setSelectedToken] = useState<Token>()
-  const [accountBalance, setAccountBalance] = useState<BigNumber>()
+  const [accountBalance, setAccountBalance] = useState<BigNumber>(BigNumber.from(0))
 
   const tokenContract = useTokenContract(selectedToken?.address, true)
   const factoryContract = useFactoryPresaleContract(PRESALE_FACTORY_ADDRESS)
@@ -60,6 +60,8 @@ const CreatePresale = ({ setHomeButtonIndex }: Props) => {
       fetchBalance()
     }
   }, [account, tokenContract])
+
+  // useEffect(() =>)
 
   useEffect(() => {
     async function checkIsLastPresaleCancelled() {
@@ -225,8 +227,11 @@ const CreatePresale = ({ setHomeButtonIndex }: Props) => {
   })
 
   useEffect(() => {
-    if (accountBalance && selectedToken) {
-      formikPresale.values.accountBalance = Number(formatUnits(accountBalance, selectedToken.decimals))
+    if (selectedToken) {
+      formikPresale.setFieldValue(
+        FieldNames.accountBalance,
+        Number(formatUnits(accountBalance, selectedToken.decimals))
+      )
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountBalance, selectedToken])
