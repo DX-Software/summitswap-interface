@@ -154,7 +154,7 @@ const CreationStep05 = ({ formikPresale, formikProject, changeStepNumber }: Prop
           <Caption color={formikProject.touched.logoUrl && !!formikProject.errors.logoUrl ? 'failure' : 'textDisabled'}>
             {formikProject.touched.logoUrl && formikProject.errors.logoUrl
               ? formikProject.errors.logoUrl
-              : 'The logo should be 100x100, and the URL must be hosted'}
+              : 'The recommended logo size is 100x100'}
           </Caption>
         </GridItem2>
       </GridContainer>
