@@ -149,13 +149,13 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
               {Object.keys(TOKEN_CHOICES)
                 .filter((key) => key !== 'KODA')
                 .map((key) => (
-                  <label key={key} htmlFor={key}>
+                  <label key={`${FieldNames.paymentToken}-${key}`} htmlFor={`${FieldNames.paymentToken}-${key}`}>
                     <RowFixed marginBottom="5px">
                       <Radio
+                        id={`${FieldNames.paymentToken}-${key}`}
                         scale="sm"
                         name={FieldNames.paymentToken}
                         value={TOKEN_CHOICES[key]}
-                        id={key}
                         checked={formik.values?.paymentToken === TOKEN_CHOICES[key]}
                       />
                       <StyledText marginLeft="5px">{key}</StyledText>
@@ -189,12 +189,13 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
               <RowFixed onChange={formik.handleChange}>
                 <RowFixed marginRight="40px">
                   <Radio
+                    id={`${FieldNames.isWhitelistEnabled}-${RADIO_VALUES.WHITELIST_DISABLED}`}
                     scale="sm"
                     name={FieldNames.isWhitelistEnabled}
                     value={`${RADIO_VALUES.WHITELIST_DISABLED}`}
                     checked={`${formik.values.isWhitelistEnabled}` === `${RADIO_VALUES.WHITELIST_DISABLED}`}
                   />
-                  <label htmlFor="disable">
+                  <label htmlFor={`${FieldNames.isWhitelistEnabled}-${RADIO_VALUES.WHITELIST_DISABLED}`}>
                     <StyledText
                       marginLeft="8px"
                       color={
@@ -209,12 +210,13 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
                 </RowFixed>
                 <RowFixed>
                   <Radio
+                    id={`${FieldNames.isWhitelistEnabled}-${RADIO_VALUES.WHITELIST_ENABLED}`}
                     scale="sm"
                     name={FieldNames.isWhitelistEnabled}
                     value={`${RADIO_VALUES.WHITELIST_ENABLED}`}
                     checked={`${formik.values.isWhitelistEnabled}` === `${RADIO_VALUES.WHITELIST_ENABLED}`}
                   />
-                  <label htmlFor="disable">
+                  <label htmlFor={`${FieldNames.isWhitelistEnabled}-${RADIO_VALUES.WHITELIST_ENABLED}`}>
                     <StyledText
                       marginLeft="8px"
                       color={
@@ -311,11 +313,12 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
                 <RowFixed marginRight="40px">
                   <Radio
                     scale="sm"
+                    id={`${FieldNames.refundType}-${RADIO_VALUES.REFUND_TYPE_REFUND}`}
                     name={FieldNames.refundType}
                     value={RADIO_VALUES.REFUND_TYPE_REFUND}
                     checked={Number(formik.values.refundType) === RADIO_VALUES.REFUND_TYPE_REFUND}
                   />
-                  <label htmlFor="disable">
+                  <label htmlFor={`${FieldNames.refundType}-${RADIO_VALUES.REFUND_TYPE_REFUND}`}>
                     <StyledText
                       marginLeft="8px"
                       color={`${formik.values.refundType}` === `${RADIO_VALUES.REFUND_TYPE_REFUND}` ? 'linkColor' : ''}
@@ -327,11 +330,12 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
                 <RowFixed>
                   <Radio
                     scale="sm"
+                    id={`${FieldNames.refundType}-${RADIO_VALUES.REFUND_TYPE_BURN}`}
                     name={FieldNames.refundType}
                     value={RADIO_VALUES.REFUND_TYPE_BURN}
                     checked={Number(formik.values.refundType) === RADIO_VALUES.REFUND_TYPE_BURN}
                   />
-                  <label htmlFor="disable">
+                  <label htmlFor={`${FieldNames.refundType}-${RADIO_VALUES.REFUND_TYPE_BURN}`}>
                     <StyledText
                       marginLeft="8px"
                       color={`${formik.values.refundType}` === `${RADIO_VALUES.REFUND_TYPE_BURN}` ? 'linkColor' : ''}
@@ -396,12 +400,13 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
                       <Box>
                         <Radio
                           scale="sm"
+                          id={`${FieldNames.listingToken}-${key}`}
                           name={FieldNames.listingToken}
                           value={TOKEN_CHOICES[key]}
                           checked={formik.values.listingToken === TOKEN_CHOICES[key]}
                         />
                       </Box>
-                      <label htmlFor={key}>
+                      <label htmlFor={`${FieldNames.listingToken}-${key}`}>
                         <StyledText
                           color={formik.values.listingToken === TOKEN_CHOICES[key] ? 'linkColor' : ''}
                           marginLeft="8px"
@@ -423,11 +428,12 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
               <RowFixed marginRight="40px">
                 <Radio
                   scale="sm"
+                  id={`${FieldNames.isVestingEnabled}-${RADIO_VALUES.VESTING_DISABLED}`}
                   name={FieldNames.isVestingEnabled}
                   value={`${RADIO_VALUES.VESTING_DISABLED}`}
                   checked={`${formik.values.isVestingEnabled}` === `${RADIO_VALUES.VESTING_DISABLED}`}
                 />
-                <label htmlFor="disable">
+                <label htmlFor={`${FieldNames.isVestingEnabled}-${RADIO_VALUES.VESTING_DISABLED}`}>
                   <StyledText
                     marginLeft="8px"
                     color={
@@ -441,11 +447,12 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
               <RowFixed>
                 <Radio
                   scale="sm"
+                  id={`${FieldNames.isVestingEnabled}-${RADIO_VALUES.VESTING_ENABLED}`}
                   name={FieldNames.isVestingEnabled}
                   value={`${RADIO_VALUES.VESTING_ENABLED}`}
                   checked={`${formik.values.isVestingEnabled}` === `${RADIO_VALUES.VESTING_ENABLED}`}
                 />
-                <label htmlFor="disable">
+                <label htmlFor={`${FieldNames.isVestingEnabled}-${RADIO_VALUES.VESTING_ENABLED}`}>
                   <StyledText
                     marginLeft="8px"
                     color={`${formik.values.isVestingEnabled}` === `${RADIO_VALUES.VESTING_ENABLED}` ? 'linkColor' : ''}
@@ -720,6 +727,11 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
           <Box width="100%" marginTop="8px">
             <StyledText marginBottom="4px" small>
               Telegram ID
+              {formik.values.contactMethod !== CONTACT_METHOD_OPTIONS[0].value && (
+                <StyledText style={{ display: 'inline' }} small>
+                  &nbsp;(optional)
+                </StyledText>
+              )}
             </StyledText>
             <Input
               scale="sm"
@@ -736,7 +748,12 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
           </Box>
           <Box width="100%" marginTop="8px">
             <StyledText marginBottom="4px" small>
-              Discord ID (optional)
+              Discord ID
+              {formik.values.contactMethod !== CONTACT_METHOD_OPTIONS[1].value && (
+                <StyledText style={{ display: 'inline' }} small>
+                  &nbsp;(optional)
+                </StyledText>
+              )}
             </StyledText>
             <Input
               scale="sm"
@@ -753,7 +770,12 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
           </Box>
           <Box width="100%" marginTop="8px">
             <StyledText marginBottom="4px" small>
-              E-mail Address (optional)
+              E-mail Address
+              {formik.values.contactMethod !== CONTACT_METHOD_OPTIONS[2].value && (
+                <StyledText style={{ display: 'inline' }} small>
+                  &nbsp;(optional)
+                </StyledText>
+              )}
             </StyledText>
             <Input
               scale="sm"

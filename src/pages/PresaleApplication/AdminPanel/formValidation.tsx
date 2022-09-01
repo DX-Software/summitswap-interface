@@ -3,7 +3,7 @@ import checkEmail from 'utils/checkEmail'
 import { differenceInDays } from 'date-fns'
 import { formatUnits } from 'ethers/lib/utils'
 import { BigNumber } from 'ethers'
-import { FEE_DECIMALS } from 'constants/presale'
+import { FEE_DECIMALS, CONTACT_METHOD_OPTIONS } from 'constants/presale'
 import { AdminForm, AdminFormErrors } from '../types'
 
 const validateAdminForm = (values: AdminForm) => {
@@ -138,18 +138,22 @@ const validateAdminForm = (values: AdminForm) => {
     errors.twitterId = 'Not a valid Url'
   }
 
-  if (!values.telegramId) {
+  if (!values.telegramId && values.contactMethod === CONTACT_METHOD_OPTIONS[0].value) {
     errors.telegramId = 'Required*'
-  } else if (!checkUrl(values.telegramId)) {
+  } else if (values.telegramId && !checkUrl(values.telegramId || '')) {
     errors.telegramId = 'Not a valid Url'
   }
 
-  if (values.discordId && !checkUrl(values.discordId)) {
+  if (!values.discordId && values.contactMethod === CONTACT_METHOD_OPTIONS[1].value) {
+    errors.discordId = 'Required*'
+  } else if (values.discordId && !checkUrl(values.discordId || '')) {
     errors.discordId = 'Not a valid Url'
   }
 
-  if (values.email && !checkEmail(values.email)) {
-    errors.email = 'Not a valid Email'
+  if (!values.email && values.contactMethod === CONTACT_METHOD_OPTIONS[2].value) {
+    errors.email = 'Required*'
+  } else if (values.email && !checkEmail(values.email || '')) {
+    errors.email = 'Not a valid Url'
   }
 
   if (!values.contactName) {
