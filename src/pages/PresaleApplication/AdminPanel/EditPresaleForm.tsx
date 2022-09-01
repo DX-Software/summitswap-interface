@@ -91,10 +91,20 @@ const DateTimeWrapper = styled(Box)<{ onlyTime?: boolean }>`
 
 const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) => {
   const [tokenTotalSupply, setTokenTotalSupply] = useState<string>()
+  const [currency, setCurrency] = useState('BNB')
 
   const { presaleInfo } = formik.values
   const presaleToken = useToken(presaleInfo?.presaleToken)
   const tokenContract = useTokenContract(presaleToken?.address, true)
+
+  useEffect(() => {
+    if (formik.values.paymentToken) {
+      const currentCurrency = Object.keys(TOKEN_CHOICES).find(
+        (key) => TOKEN_CHOICES[key] === formik.values.paymentToken
+      )
+      setCurrency(currentCurrency as string)
+    }
+  }, [formik.values.paymentToken])
 
   useEffect(() => {
     async function fetchTotalSupply() {
@@ -814,11 +824,18 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
       <Flex justifyContent="space-between" flexWrap="wrap" marginTop="16px">
         <ColumnWrapper width="48%" marginBottom="25px">
           <StyledText bold color="primaryDark">
-            Presale Finalising Fee
+            Payment Token Fee
           </StyledText>
           <Box width="100%" marginTop="8px">
             <StyledText marginBottom="4px" small>
-              Payment Token (%)
+              Payment token fee is how much
+              <StyledText fontWeight={700} style={{ display: 'inline' }} small>
+                &nbsp;{currency}&nbsp;
+              </StyledText>
+              will be given to summitswap as fee when presale is finalised
+            </StyledText>
+            <StyledText marginTop="8px" marginBottom="4px" small>
+              Enter Fee Percentage (%)
             </StyledText>
             <Input
               scale="sm"
@@ -830,37 +847,33 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
               type="number"
               isWarning={formik.touched.feePaymentToken && !!formik.errors.feePaymentToken}
             />
-            <Caption color="failure">
-              {formik.touched.feePaymentToken && formik.errors.feePaymentToken ? formik.errors.feePaymentToken : ''}
-            </Caption>
+            {formik.touched.feePaymentToken && formik.errors.feePaymentToken ? (
+              <Caption color="failure">{formik.errors.feePaymentToken}</Caption>
+            ) : (
+              <Caption style={{ maxWidth: '100%' }} color="textDisabled">
+                If the presale has collected total of
+                <Caption color="primary" fontWeight={700}>
+                  &nbsp;100 {currency}
+                </Caption>
+                , they will have to pay
+                <Caption color="primary" fontWeight={700}>
+                  &nbsp;{formik.values.feePaymentToken || '5'} {currency} ({formik.values.feePaymentToken || '5'}%)
+                  &nbsp;
+                </Caption>
+                for the payment token fee
+              </Caption>
+            )}
           </Box>
-          <Box width="100%" marginTop="8px">
-            <StyledText marginBottom="4px" small>
-              Presale Token (%)
-            </StyledText>
-            <Input
-              scale="sm"
-              value={formik.values.feePresaleToken}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              name={FieldNames.feePresaleToken}
-              id={FieldNames.feePresaleToken}
-              type="number"
-              isWarning={formik.touched.feePresaleToken && !!formik.errors.feePresaleToken}
-            />
-            <Caption color="failure">
-              {formik.touched.feePresaleToken && formik.errors.feePresaleToken ? formik.errors.feePresaleToken : ''}
-            </Caption>
-          </Box>
-        </ColumnWrapper>
-        <ColumnWrapper width="48%" marginBottom="25px">
-          <StyledText bold color="primaryDark">
+          <StyledText marginTop="24px" bold color="primaryDark">
             Emergency Withdraw Fee
           </StyledText>
           <Box width="100%" marginTop="8px">
             <StyledText marginBottom="4px" small>
-              Emergency Withdraw fee is how much BNB will be given to summitswap when the user want to suddenly withdraw
-              all of their funds
+              Emergency Withdraw fee is how much
+              <StyledText fontWeight={700} style={{ display: 'inline' }} small>
+                &nbsp;{currency}&nbsp;
+              </StyledText>
+              will be given to summitswap when the user want to suddenly withdraw all of their funds
             </StyledText>
             <StyledText marginTop="8px" marginBottom="4px" small>
               Enter Fee Percentage (%)
@@ -878,16 +891,60 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
             {formik.touched.emergencyWithdrawFee && formik.errors.emergencyWithdrawFee ? (
               <Caption color="failure">{formik.errors.emergencyWithdrawFee}</Caption>
             ) : (
-              <Caption color="textDisabled">
+              <Caption style={{ maxWidth: '100%' }} color="textDisabled">
                 If someone has joined the presale for
                 <Caption bold color="primary">
-                  &nbsp;10 BNB&nbsp;
+                  &nbsp;10 {currency}&nbsp;
                 </Caption>
                 and wanted to withdraw back their money, they have to pay
                 <Caption bold color="primary">
-                  &nbsp; 0.5 BNB (5%)&nbsp;
+                  &nbsp; {Number(formik.values.emergencyWithdrawFee) / 10 || '0.5'} {currency} (
+                  {formik.values.emergencyWithdrawFee || 5}%)&nbsp;
                 </Caption>
                 for the emergency withdraw fee
+              </Caption>
+            )}
+          </Box>
+        </ColumnWrapper>
+        <ColumnWrapper width="48%" marginBottom="25px">
+          <StyledText bold color="primaryDark">
+            Payment Token Fee
+          </StyledText>
+          <Box width="100%" marginTop="8px">
+            <StyledText marginBottom="4px" small>
+              Presale token fee is how much
+              <StyledText fontWeight={700} style={{ display: 'inline' }} small>
+                &nbsp;{presaleToken?.symbol}&nbsp;
+              </StyledText>
+              will be given to summitswap as fee when presale is finalised
+            </StyledText>
+            <StyledText marginTop="8px" marginBottom="4px" small>
+              Enter Fee Percentage (%)
+            </StyledText>
+            <Input
+              scale="sm"
+              value={formik.values.feePresaleToken}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              name={FieldNames.feePresaleToken}
+              id={FieldNames.feePresaleToken}
+              type="number"
+              isWarning={formik.touched.feePresaleToken && !!formik.errors.feePresaleToken}
+            />
+            {formik.touched.feePresaleToken && formik.errors.feePresaleToken ? (
+              <Caption color="failure">{formik.errors.feePresaleToken}</Caption>
+            ) : (
+              <Caption style={{ maxWidth: '100%' }} color="textDisabled">
+                If the presale has collected total of
+                <Caption color="primary" fontWeight={700}>
+                  &nbsp;100 {presaleToken?.symbol}
+                </Caption>
+                , they will have to pay
+                <Caption color="primary" fontWeight={700}>
+                  &nbsp;{formik.values.feePresaleToken || '5'} {presaleToken?.symbol} (
+                  {formik.values.feePresaleToken || '5'}%) &nbsp;
+                </Caption>
+                for the payment token fee
               </Caption>
             )}
           </Box>
