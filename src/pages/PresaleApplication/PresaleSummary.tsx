@@ -10,9 +10,11 @@ import {
   EditIcon,
   Flex,
   Heading,
+  InfoIcon,
 } from '@koda-finance/summitswap-uikit'
 import { useTokenContract, usePresaleContract, useFactoryPresaleContract } from 'hooks/useContract'
 import { useToken } from 'hooks/Tokens'
+import { MouseoverTooltip } from 'components/Tooltip'
 import { fetchPresaleInfo, fetchFeeInfo, fetchProjectDetails } from 'utils/presale'
 import { FEE_DECIMALS, RADIO_VALUES, TOKEN_CHOICES, PRESALE_FACTORY_ADDRESS } from 'constants/presale'
 import { NULL_ADDRESS } from 'constants/index'
@@ -378,30 +380,44 @@ const PresaleSummary = ({ presaleAddress, handleEditButtonHandler }: Props) => {
           <SectionHeading marginTop="24px" color="success">
             Fee Information
           </SectionHeading>
-          <Flex flexWrap="wrap" justifyContent="space-between" marginBottom="25px">
-            <Box marginTop="16px" marginRight="20px">
-              <StyledText bold color="primaryDark">
-                Presale Finalising Fee
-              </StyledText>
-              <ContainerInformation marginTop="4px">
-                <StyledText>Payment Token</StyledText>
-                <StyledText>{`${presaleFeeInfo?.feePaymentToken.mul(100).div(10 ** FEE_DECIMALS)}%`}</StyledText>
-              </ContainerInformation>
-              <ContainerInformation marginTop="4px">
-                <StyledText>Presale Token</StyledText>
-                <StyledText>{`${presaleFeeInfo?.feePresaleToken.mul(100).div(10 ** FEE_DECIMALS)}%`}</StyledText>
-              </ContainerInformation>
-            </Box>
-            <Box marginTop="16px" marginRight="100px">
-              <StyledText bold color="primaryDark">
-                Emergency Withdraw Fee
-              </StyledText>
-              <ContainerInformation marginTop="4px">
-                <StyledText>Withdrawal Fee</StyledText>
-                <StyledText>{`${presaleFeeInfo?.emergencyWithdrawFee.mul(100).div(10 ** FEE_DECIMALS)}%`}</StyledText>
-              </ContainerInformation>
-            </Box>
-          </Flex>
+          <Box marginTop="16px" marginRight="20px" marginBottom="25px">
+            <ContainerInformation marginTop="4px">
+              <Flex alignItems="baseline" justifyContent="start">
+                <StyledText marginRight="4px">Payment Token Fee</StyledText>
+                <MouseoverTooltip
+                  size="11px"
+                  text={`Payment token fee is how much ${currency} will be given to summitswap as fee when presale is finalised`}
+                >
+                  <InfoIcon width="13px" color="linkColor" />
+                </MouseoverTooltip>
+              </Flex>
+              <StyledText>{`${presaleFeeInfo?.feePaymentToken.mul(100).div(10 ** FEE_DECIMALS)}%`}</StyledText>
+            </ContainerInformation>
+            <ContainerInformation marginTop="4px">
+              <Flex alignItems="baseline" justifyContent="start">
+                <StyledText marginRight="4px">Presale Token Fee</StyledText>
+                <MouseoverTooltip
+                  size="11px"
+                  text={`Presale token fee is how much ${presaleToken?.symbol} will be given to summitswap as fee when presale is finalised`}
+                >
+                  <InfoIcon width="13px" color="linkColor" />
+                </MouseoverTooltip>
+              </Flex>
+              <StyledText>{`${presaleFeeInfo?.feePresaleToken.mul(100).div(10 ** FEE_DECIMALS)}%`}</StyledText>
+            </ContainerInformation>
+            <ContainerInformation marginTop="4px">
+              <Flex alignItems="baseline" justifyContent="start">
+                <StyledText marginRight="4px">Emergency Withdraw Fee</StyledText>
+                <MouseoverTooltip
+                  size="11px"
+                  text={`Emergency Withdraw fee is how much ${currency} will be given to summitswap when the user want to suddenly withdraw all of their funds`}
+                >
+                  <InfoIcon width="13px" color="linkColor" />
+                </MouseoverTooltip>
+              </Flex>
+              <StyledText>{`${presaleFeeInfo?.emergencyWithdrawFee.mul(100).div(10 ** FEE_DECIMALS)}%`}</StyledText>
+            </ContainerInformation>
+          </Box>
           {!presaleInfo?.isApproved && (
             <>
               <Divider />

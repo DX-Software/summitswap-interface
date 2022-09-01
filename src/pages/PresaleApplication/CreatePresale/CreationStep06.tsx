@@ -36,7 +36,7 @@ export const ContainerToken = styled(GridContainer)`
 `
 
 export const ContainerInformation = styled(GridContainer)`
-  grid-template-columns: 170px auto;
+  grid-template-columns: 230px auto;
   @media (max-width: 600px) {
     grid-template-columns: 150px auto;
   }
