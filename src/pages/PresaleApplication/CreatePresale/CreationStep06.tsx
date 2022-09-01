@@ -372,15 +372,15 @@ const CreationStep06 = ({
             <StyledText>{formikProject.values.telegramId || '-'}</StyledText>
           </ContainerInformation>
           <ContainerInformation marginTop="4px">
-            <StyledText>Discord ID (optional)</StyledText>
+            <StyledText>Discord ID</StyledText>
             <StyledText>{formikProject.values.discordId || '-'}</StyledText>
           </ContainerInformation>
           <ContainerInformation marginTop="4px">
-            <StyledText>Twitter ID (optional)</StyledText>
+            <StyledText>Twitter ID</StyledText>
             <StyledText>{formikProject.values.twitterId || '-'}</StyledText>
           </ContainerInformation>
           <ContainerInformation marginTop="4px">
-            <StyledText>E-mail (optional)</StyledText>
+            <StyledText>E-mail</StyledText>
             <StyledText>{formikProject.values.email || '-'}</StyledText>
           </ContainerInformation>
         </Box>
