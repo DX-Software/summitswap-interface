@@ -116,7 +116,7 @@ const MyPresales = ({ setHomeButtonIndex }: Props) => {
       {!selectedPresale && (
         <Flex justifyContent="end">
           <Button
-            onClick={() => setHomeButtonIndex(1)}
+            onClick={() => setHomeButtonIndex(0)}
             startIcon={<AddIcon color="currentColor" width="14px" />}
             scale="sm"
           >

@@ -20,7 +20,7 @@ import MyPresales from './MyPresales'
 
 export default function PresaleApplication() {
   const { account, activate, deactivate } = useWeb3React()
-  const [buttonIndex, setButtonIndex] = useState(1)
+  const [buttonIndex, setButtonIndex] = useState(0)
   const [accountIsAdmin, setAccountIsAdmin] = useState(false)
 
   const factoryContract = useFactoryPresaleContract(PRESALE_FACTORY_ADDRESS)
@@ -35,7 +35,7 @@ export default function PresaleApplication() {
   }, [account, factoryContract])
 
   useEffect(() => {
-    if (buttonIndex === 0 && !accountIsAdmin) setButtonIndex(1)
+    if (buttonIndex === 1 && !accountIsAdmin) setButtonIndex(0)
   }, [accountIsAdmin, buttonIndex])
 
   const handleLogin = useCallback(
@@ -50,13 +50,13 @@ export default function PresaleApplication() {
     <>
       <Box marginY="24px">
         <ButtonMenu activeIndex={buttonIndex} onItemClick={(index) => setButtonIndex(index)}>
-          {accountIsAdmin ? <ButtonMenuItem>Admin Panel</ButtonMenuItem> : <></>}
           <ButtonMenuItem>Create Presale</ButtonMenuItem>
+          {accountIsAdmin ? <ButtonMenuItem>Admin Panel</ButtonMenuItem> : <></>}
           <ButtonMenuItem>My Presales</ButtonMenuItem>
         </ButtonMenu>
       </Box>
-      {accountIsAdmin && buttonIndex === 0 && <AdminPanel />}
-      {buttonIndex === 1 && <CreatePresale setHomeButtonIndex={setButtonIndex} />}
+      {buttonIndex === 0 && <CreatePresale setHomeButtonIndex={setButtonIndex} />}
+      {accountIsAdmin && buttonIndex === 1 && <AdminPanel />}
       {buttonIndex === 2 && <MyPresales setHomeButtonIndex={setButtonIndex} />}
     </>
   ) : (
