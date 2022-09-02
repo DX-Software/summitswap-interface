@@ -11,8 +11,8 @@ import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
 import { LOCKER_ADDRESS, REFERRAL_ADDRESS } from '../constants'
 import { TokenType, TOKEN_CREATOR_ADDRESS } from '../constants/createToken'
-import CREATE_STANDARD_TOKEN_ABI from '../constants/abis/createStandardToken.json';
-import CREATE_LIQUIDITY_TOKEN_ABI from '../constants/abis/createLiquidityToken.json';
+import CREATE_STANDARD_TOKEN_ABI from '../constants/abis/createStandardToken.json'
+import CREATE_LIQUIDITY_TOKEN_ABI from '../constants/abis/createLiquidityToken.json'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import WETH_ABI from '../constants/abis/weth.json'
 import REFERRAL_ABI from '../constants/abis/summitReferral.json'
@@ -41,18 +41,18 @@ function useContract(address: string | undefined, ABI: any, withSignerIfPossible
 function useContracts(addresses: string[] | undefined, ABI: any, withSignerIfPossible = true): (Contract | null)[] {
   const { library, account } = useActiveWeb3React()
   return useMemo(() => {
-    if (!addresses){
+    if (!addresses) {
       return [null]
     }
-    return addresses?.map(address => {
-    if (!address || !ABI || !library) return null
-    try {
-      return getContract(address, ABI, library, withSignerIfPossible && account ? account : undefined)
-    } catch (error) {
-      console.error('Failed to get contract', error)
-      return null
-    }
-  })
+    return addresses?.map((address) => {
+      if (!address || !ABI || !library) return null
+      try {
+        return getContract(address, ABI, library, withSignerIfPossible && account ? account : undefined)
+      } catch (error) {
+        console.error('Failed to get contract', error)
+        return null
+      }
+    })
   }, [addresses, ABI, library, withSignerIfPossible, account])
 }
 
@@ -116,7 +116,7 @@ export function useRouterContract(routerAddress: string): Contract | null {
 
 export function useTokenCreatorContract(tokenType: TokenType): Contract | null {
   let createTokenAbi
-  switch(tokenType) {
+  switch (tokenType) {
     case TokenType.Standard:
       createTokenAbi = CREATE_STANDARD_TOKEN_ABI
       break
@@ -128,7 +128,7 @@ export function useTokenCreatorContract(tokenType: TokenType): Contract | null {
 }
 
 export function useFactoryPresaleContract(factoryAddress: string): Contract | null {
-  return useContract(factoryAddress,PRESALE_FACOTRY_ABI)
+  return useContract(factoryAddress, PRESALE_FACOTRY_ABI)
 }
 
 export function usePresaleContract(presaleAddress: string): Contract | null {
