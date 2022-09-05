@@ -8,6 +8,7 @@ export enum Tabs {
   MY_PROJECT = "my_project",
   BROWSE_PROJECT = "browse_project",
   BACKED_PROJECT = "backed_project",
+  ADMIN_PANEL = "admin_panel",
 }
 
 export type NavItem = {

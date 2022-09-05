@@ -3,6 +3,7 @@ import { KickstarterProvider } from 'contexts/kickstarter'
 import React, { useCallback, useState } from 'react'
 import BackedProject from './BackedProject'
 import BrowseProject from './BrowseProject'
+import AdminPanel from "./AdminPanel"
 import MyProject from './MyProject'
 import { NavItem, Tabs } from './types'
 
@@ -25,6 +26,11 @@ function KickStarter() {
       label: 'Backed Project',
       code: Tabs.BACKED_PROJECT,
       component: <BackedProject goToBrowseTab={() => setButtonIndex(1)} />,
+    },
+    {
+      label: 'Admin Panel',
+      code: Tabs.ADMIN_PANEL,
+      component: <AdminPanel />,
     },
   ]
 
