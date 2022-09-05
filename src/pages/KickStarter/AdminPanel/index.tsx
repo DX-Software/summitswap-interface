@@ -3,6 +3,7 @@ import { useWeb3React } from '@web3-react/core'
 import React, { useState } from 'react'
 import ConnectWalletSection from '../shared/ConnectWalletSection'
 import { AdminTabs, NavItem } from '../types'
+import ApprovalHistory from './ApprovalHistory'
 import ProjectSettings from './ProjectSettings'
 import WaitingForApproval from './WaitingForApproval'
 
@@ -19,7 +20,7 @@ function AdminPanel() {
     {
       label: 'Approval History',
       code: AdminTabs.APPROVAL_HISTORY,
-      component: <div>1</div>,
+      component: <ApprovalHistory />,
     },
     {
       label: 'Project Settings',

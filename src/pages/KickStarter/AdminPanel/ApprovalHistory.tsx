@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { Kickstarter, OrderDirection, OrderKickstarterBy } from 'types/kickstarter'
 import KickstarterTable from '../shared/KickstarterTable'
 
-function WaitingForApproval() {
+function ApprovalHistory() {
   const [sortField, setSortField] = useState(OrderKickstarterBy.TITLE)
   const [sortDirection, setSortDirection] = useState(OrderDirection.ASC)
   const [page, setPage] = useState(1)
@@ -41,4 +41,4 @@ function WaitingForApproval() {
   )
 }
 
-export default WaitingForApproval
+export default ApprovalHistory
