@@ -76,7 +76,10 @@ export const getDayRemaining = (endTimestamp: number): number => {
 
 export const getKickstarterStatus = (endTimestamp: number): KickstarterProgressStatus => {
   const currentTimestamp = Math.floor(Date.now() / 1000)
+  const dayRemaining = getDayRemaining(endTimestamp)
+
   if (currentTimestamp > endTimestamp) return KickstarterProgressStatus.COMPLETED
+  if (dayRemaining <= 7) return KickstarterProgressStatus.END_SOON
   return KickstarterProgressStatus.ONGOING
 }
 
