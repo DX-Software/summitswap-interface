@@ -10,7 +10,7 @@ export type KickstarterFactory = {
 
 export type Kickstarter = {
   id: string
-  owner?: Account
+  owner?: KickstarterAccount
   title?: string
   creator?: string
   imageUrl?: string
@@ -21,7 +21,6 @@ export type Kickstarter = {
   totalContributor?: BigNumber
   projectGoals?: BigNumber
   rewardDistributionTimestamp?: BigNumber
-  hasDistributedRewards?: boolean
   startTimestamp?: BigNumber
   endTimestamp?: BigNumber
   createdAt?: BigNumber
@@ -29,13 +28,13 @@ export type Kickstarter = {
 
 export type BackedKickstarter = {
   id: string
-  contributor?: Account
+  contributor?: KickstarterAccount
   kickstarter?: Kickstarter
   amount?: BigNumber
   lastUpdated?: BigNumber
 }
 
-export type Account = {
+export type KickstarterAccount = {
   id: string
   totalKickstarter?: BigNumber
   totalBackedKickstarter?: BigNumber
@@ -43,10 +42,10 @@ export type Account = {
   totalContribution?: BigNumber
 }
 
-export type Contribution = {
+export type KickstarterContribution = {
   id: string
   kickstarter?: Kickstarter
-  contributor?: Account
+  contributor?: KickstarterAccount
   amount?: BigNumber
   createdAt?: BigNumber
 }
