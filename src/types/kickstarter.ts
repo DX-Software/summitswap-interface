@@ -1,5 +1,20 @@
 import BigNumber from "bignumber.js"
 
+export enum OrderDirection {
+  ASC = "asc",
+  DESC = "desc",
+}
+
+export enum OrderKickstarterBy {
+  TITLE = "title",
+  CREATOR = "creator",
+  TOTAL_CONTRIBUTION = "totalContribution",
+  PROJECT_GOALS = "projectGoals",
+  START_TIMESTAMP = "startTimestamp",
+  END_TIMESTAMP = "endTimestamp",
+  CREATED_AT = "createdAt",
+}
+
 export type KickstarterFactory = {
   id: string
   totalKickstarter?: BigNumber

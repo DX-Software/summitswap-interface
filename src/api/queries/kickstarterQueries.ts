@@ -46,9 +46,9 @@ export const KICKSTARTER_ACCOUNT_BY_ID = gql`
   }
 `
 
-export const KICKSTARTER_BY_ACCOUNT_ID = gql`
-  query kickstarters($first: Int!, $skip: Int!, $owner: Bytes!) {
-    kickstarters(first: $first, skip: $skip, orderBy: createdAt, orderDirection: desc, where: { owner: $owner }) {
+export const KICKSTARTERS_BY_ACCOUNT_ID = gql`
+  query kickstarters($first: Int!, $skip: Int!, $address: Bytes!) {
+    kickstarters(first: $first, skip: $skip, orderBy: createdAt, orderDirection: desc, where: { owner: $address }) {
       id
       owner {
         id
@@ -119,9 +119,9 @@ export const KICKSTARTERS_SEARCH = gql`
   }
 `
 
-export const KICKSTARTERS_END_TIME_BETWEEN = gql`
-  query kickstarters($first: Int!, $startTimestamp: BigInt!, $endTimestamp: BigInt!) {
-    kickstarters(first: $first, where: { endTimestamp_gte: $startTimestamp, endTimestamp_lte: $endTimestamp }) {
+export const KICKSTARTERS_BY_END_TIME_BETWEEN = gql`
+  query kickstarters($first: Int!, $skip: Int!$startTimestamp: BigInt!, $endTimestamp: BigInt!) {
+    kickstarters(first: $first, skip: $skip, where: { endTimestamp_gte: $startTimestamp, endTimestamp_lte: $endTimestamp }) {
       id
       owner {
         id
@@ -144,7 +144,7 @@ export const KICKSTARTERS_END_TIME_BETWEEN = gql`
   }
 `
 
-export const BACKED_KICKSTARTERS = gql`
+export const BACKED_KICKSTARTERS_BY_CONTRIBUTOR_ID = gql`
   query backedKickstarters($address: Bytes!, $first: Int!, $skip: Int!) {
     backedKickstarters(
       first: $first
@@ -179,7 +179,7 @@ export const BACKED_KICKSTARTERS = gql`
   }
 `
 
-export const BACKED_KICKSTARTERS_BY_ID = gql`
+export const BACKED_KICKSTARTER_BY_ID = gql`
   query backedKickstarter($id: Bytes!) {
     backedKickstarter(id: $id) {
       id

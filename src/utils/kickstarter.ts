@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { BackedKickstarter, Kickstarter, KickstarterAccount, KickstarterContribution, KickstarterFactory } from "types/kickstarter";
 
-export function convertToKickstarterFactory(data?: { [key: string]: any }): KickstarterFactory | undefined {
+export function convertToKickstarterFactory(data?: { [key: string]: any } | null): KickstarterFactory | undefined {
   if (!data) return undefined
   return {
     id: data.id || "",
@@ -12,7 +12,7 @@ export function convertToKickstarterFactory(data?: { [key: string]: any }): Kick
   }
 }
 
-export function convertToKickstarter(data?: { [key: string]: any }): Kickstarter | undefined {
+export function convertToKickstarter(data?: { [key: string]: any } | null): Kickstarter | undefined {
   if (!data) return undefined
   return {
     id: data.id || "",
@@ -33,7 +33,7 @@ export function convertToKickstarter(data?: { [key: string]: any }): Kickstarter
   }
 }
 
-export function convertToBackedKickstarter(data?: { [key: string]: any }): BackedKickstarter | undefined {
+export function convertToBackedKickstarter(data?: { [key: string]: any } | null): BackedKickstarter | undefined {
   if (!data) return undefined
   return {
     id: data.id || "",
@@ -44,7 +44,7 @@ export function convertToBackedKickstarter(data?: { [key: string]: any }): Backe
   }
 }
 
-export function convertToKickstarterAccount(data?: { [key: string]: any }): KickstarterAccount | undefined {
+export function convertToKickstarterAccount(data?: { [key: string]: any } | null): KickstarterAccount | undefined {
   if (!data) return undefined
   return {
     id: data.id || "",
@@ -55,7 +55,7 @@ export function convertToKickstarterAccount(data?: { [key: string]: any }): Kick
   }
 }
 
-export function convertToKickstarterContribution(data?: { [key: string]: any }): KickstarterContribution | undefined {
+export function convertToKickstarterContribution(data?: { [key: string]: any } | null): KickstarterContribution | undefined {
   if (!data) return undefined
   return {
     id: data.id || "",
