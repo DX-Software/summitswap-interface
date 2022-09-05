@@ -110,7 +110,8 @@ function CreateProject() {
     library,
     toggleIsCreate,
     transactionFailed,
-    transactionSubmitted
+    transactionSubmitted,
+    uploadImageApi
   ])
 
   return (

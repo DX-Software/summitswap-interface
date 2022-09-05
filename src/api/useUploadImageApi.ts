@@ -7,15 +7,13 @@ type UploadImageResult = {
   url: string
 }
 
-const URL = 'upload-image'
-
 // eslint-disable-next-line import/prefer-default-export
 export function useUploadImageApi() {
   return useMutation(async (file: File) => {
     const formData = new FormData()
     formData.append("image", file)
 
-    const res = await httpClient.post(`${URL}/upload`, formData)
+    const res = await httpClient.post("upload-image", formData)
 
     return res.data as UploadImageResult
   })
