@@ -9,7 +9,7 @@ import {
 import { useWeb3React } from '@web3-react/core'
 import axios from 'axios'
 import TransactionConfirmationModal, { TransactionErrorContent } from 'components/TransactionConfirmationModal'
-import { BACKEND_API, UPLOAD_IMAGE_API } from 'constants/backend'
+import { BACKEND_API } from 'constants/index'
 import { useKickstarterContext } from 'contexts/kickstarter'
 import { parseUnits } from 'ethers/lib/utils'
 import { useKickstarterFactoryContract } from 'hooks/useContract'
@@ -74,7 +74,7 @@ function CreateProject() {
     const formData = new FormData();
     formData.append("image", file);
 
-    const res = await axios.post(`${BACKEND_API}/${UPLOAD_IMAGE_API}`, formData, config)
+    const res = await axios.post(`${BACKEND_API}/upload-image`, formData, config)
     return res.data.url
   }, [])
 
