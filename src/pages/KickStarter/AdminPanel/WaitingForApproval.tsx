@@ -2,11 +2,13 @@ import BigNumber from 'bignumber.js'
 import React, { useState } from 'react'
 import { Kickstarter, OrderDirection, OrderKickstarterBy } from 'types/kickstarter'
 import KickstarterTable from '../shared/KickstarterTable'
+import ProjectDetails from './ProjectDetails'
 
 function WaitingForApproval() {
   const [sortField, setSortField] = useState(OrderKickstarterBy.TITLE)
   const [sortDirection, setSortDirection] = useState(OrderDirection.ASC)
   const [page, setPage] = useState(1)
+  const [showKickstarterId, setShowKickstarterId] = useState<string>()
 
   const maxPage = 10
 
@@ -27,6 +29,14 @@ function WaitingForApproval() {
     },
   ]
 
+  if (showKickstarterId) {
+    return (
+      <ProjectDetails
+        kickstarterId={showKickstarterId}
+      />
+    )
+  }
+
   return (
     <KickstarterTable
       kickstarters={kickstarters}
@@ -37,6 +47,7 @@ function WaitingForApproval() {
       handlePageChanged={setPage}
       handleSortFieldChanged={setSortField}
       handleSortDirectionChanged={setSortDirection}
+      handleShowKickstarter={setShowKickstarterId}
     />
   )
 }

@@ -15,6 +15,7 @@ type Props = {
   handlePageChanged: (value: number) => void
   handleSortFieldChanged: (value: OrderKickstarterBy) => void
   handleSortDirectionChanged: (value: OrderDirection) => void
+  handleShowKickstarter: (kickstarterId: string) => void
 }
 
 type DataRowProps = {
@@ -54,7 +55,7 @@ const ResponsiveGrid = styled.div`
     }
   }
 `
-const LinkWrapper = styled(Link)`
+const LinkWrapper = styled.div`
   text-decoration: none;
   :hover {
     cursor: pointer;
@@ -62,9 +63,9 @@ const LinkWrapper = styled(Link)`
   }
 `
 
-const DataRow: React.FC<{ kickstarter: Kickstarter }> = ({ kickstarter }) => {
+const DataRow: React.FC<{ kickstarter: Kickstarter, handleShowKickstarter: (kickstarterId: string) => void }> = ({ kickstarter, handleShowKickstarter }) => {
   return (
-    <LinkWrapper to="/#">
+    <LinkWrapper onClick={() => handleShowKickstarter(kickstarter.id)}>
       <ResponsiveGrid>
         <Text fontWeight={400}>{kickstarter.title}</Text>
         <Text fontWeight={400}>{kickstarter.projectGoals?.toString()}</Text>
@@ -86,6 +87,7 @@ function KickstarterTable({
   handlePageChanged,
   handleSortFieldChanged,
   handleSortDirectionChanged,
+  handleShowKickstarter,
 }: Props) {
   const { t } = useTranslation()
 
@@ -165,7 +167,7 @@ function KickstarterTable({
       {kickstarters.map((kickstarter) => {
         return (
           <React.Fragment key={kickstarter.id}>
-            <DataRow kickstarter={kickstarter} />
+            <DataRow kickstarter={kickstarter} handleShowKickstarter={handleShowKickstarter} />
             <Break />
           </React.Fragment>
         )
@@ -178,7 +180,7 @@ function KickstarterTable({
         >
           <ArrowBackIcon color={currentPage === 1 ? 'textDisabled' : 'primary'} />
         </Arrow>
-        <Text>{t('Page {{ page }} of {{ maxPage }}', { currentPage, maxPage })}</Text>
+        <Text>{t('Page {{ currentPage }} of {{ maxPage }}', { currentPage, maxPage })}</Text>
         <Arrow
           onClick={() => {
             handlePageChanged(currentPage === maxPage ? currentPage : currentPage + 1)
