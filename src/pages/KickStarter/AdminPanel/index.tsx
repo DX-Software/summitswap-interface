@@ -1,18 +1,50 @@
-import { useWeb3React } from "@web3-react/core"
-import React from "react"
-import ConnectWalletSection from "../shared/ConnectWalletSection"
+import { Flex, Heading, NavTab, Text } from '@koda-finance/summitswap-uikit'
+import { useWeb3React } from '@web3-react/core'
+import React, { useState } from 'react'
+import ConnectWalletSection from '../shared/ConnectWalletSection'
+import { AdminTabs, NavItem } from '../types'
+import ProjectSettings from './ProjectSettings'
 
 function AdminPanel() {
   const { account } = useWeb3React()
+  const [activeTabIndex, setActiveTabIndex] = useState(0)
+
+  const navItems: NavItem[] = [
+    {
+      label: 'Waiting for Approval',
+      code: AdminTabs.WAITING_FOR_APPROVAL,
+      component: <div>0</div>,
+    },
+    {
+      label: 'Approval History',
+      code: AdminTabs.APPROVAL_HISTORY,
+      component: <div>1</div>,
+    },
+    {
+      label: 'Project Settings',
+      code: AdminTabs.PROJECT_SETTINGS,
+      component: <ProjectSettings />,
+    },
+  ]
 
   if (!account) {
     return <ConnectWalletSection />
   }
 
   return (
-    <div>This is Admin Panel</div>
+    <Flex flexDirection="column">
+      <Heading size="xl" marginBottom="24px">
+        Admin Panel
+      </Heading>
+      <NavTab mb="32px" style={{ background: 'red' }} activeIndex={activeTabIndex} onItemClick={setActiveTabIndex}>
+        {navItems.map((navItem) => (
+          <Text key={navItem.code}>{navItem.label}</Text>
+        ))}
+      </NavTab>
+      <br />
+      {navItems[activeTabIndex]?.component}
+    </Flex>
   )
 }
 
 export default AdminPanel
-

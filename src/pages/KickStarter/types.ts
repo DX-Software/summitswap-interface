@@ -11,9 +11,15 @@ export enum Tabs {
   ADMIN_PANEL = "admin_panel",
 }
 
+export enum AdminTabs {
+  WAITING_FOR_APPROVAL = "waiting_for_approval",
+  APPROVAL_HISTORY = "approval_history",
+  PROJECT_SETTINGS = "project_settings",
+}
+
 export type NavItem = {
   label: string
-  code: Tabs
+  code: Tabs | AdminTabs
   component: React.ReactNode
 }
 
