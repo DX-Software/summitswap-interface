@@ -1,6 +1,6 @@
 import { PER_PAGE } from 'constants/kickstarter'
 import { useQuery } from 'react-query'
-import { OrderDirection, OrderKickstarterBy } from 'types/kickstarter'
+import { Kickstarter, OrderDirection, OrderKickstarterBy } from 'types/kickstarter'
 import { kickstarterClient } from 'utils/graphql'
 import {
   convertToBackedKickstarter,
@@ -120,14 +120,14 @@ export function useKickstarterByEndTimeBetween(
 }
 
 export function useBackedKickstartersByContributionId(contributorId: string, page = 1, perPage = PER_PAGE) {
-  return useQuery('useBackedKickstartersByContributionId', async () => {
+  return useQuery(['useBackedKickstartersByContributionId', page], async () => {
     const data = await kickstarterClient.request(BACKED_KICKSTARTERS_BY_CONTRIBUTOR_ID, {
       address: contributorId.toLowerCase(),
       first: perPage,
       skip: (page - 1) * perPage,
     })
-    const backedKickstarters = data.backedKickstarters.map((backedKickstarter) =>
-      convertToBackedKickstarter(backedKickstarter)
+    const backedKickstarters: Kickstarter[] = data.backedKickstarters.map((backedKickstarter) =>
+      convertToKickstarter(backedKickstarter.kickstarter)
     )
     return backedKickstarters
   })

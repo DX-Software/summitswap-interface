@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next'
 import ProjectCard from './ProjectCard'
 import ProjectCardMobile from './ProjectCardMobile'
 import ProjectDetails from './ProjectDetails'
-import ProductLoadingSection from './shared/ProductLoadingSection'
+import KickstartersLoadingSection from './shared/KickstartersLoadingSection'
 
 function BrowseProject() {
   const { t } = useTranslation()
@@ -73,7 +73,7 @@ function BrowseProject() {
           <Heading size='lg' marginBottom="24px">End Soon Project</Heading>
           <Grid container spacing={2} marginBottom={almostEndedKickstarters && almostEndedKickstarters.length === 0 ? "0px" : "60px"}>
             {!almostEndedKickstarters && (
-              <ProductLoadingSection />
+              <KickstartersLoadingSection />
             )}
             {almostEndedKickstarters && almostEndedKickstarters.map((kickstarter) => (
               <Grid item xs={12} sm={6} lg={4} key={kickstarter.id}>
@@ -110,7 +110,7 @@ function BrowseProject() {
       </Flex>
       <Grid container spacing={2}>
         {!kickstarters && (
-          <ProductLoadingSection />
+          <KickstartersLoadingSection />
         )}
         {kickstarters && kickstarters.length === 0 && (
           <Grid item xs={12} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", paddingTop: "48px" }}>

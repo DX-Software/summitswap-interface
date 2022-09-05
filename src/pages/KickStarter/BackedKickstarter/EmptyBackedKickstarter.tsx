@@ -1,11 +1,7 @@
 import { ArrowForwardIcon, Button, Flex, Heading } from "@koda-finance/summitswap-uikit";
 import React from "react"
 
-type Props = {
-  goToBrowseTab: () => void
-}
-
-function EmptyKickstarterSection({ goToBrowseTab }: Props) {
+function EmptyBackedKickstarter() {
   return (
     <Flex mb={3} flexDirection="column" alignItems="center" justifyContent="center" height={300} style={{ width: "100%" }}>
       <Heading size="lg" color="primaryDark" style={{ fontWeight: 400, lineHeight: "36px" }} marginBottom={38} textAlign="center">
@@ -15,7 +11,7 @@ function EmptyKickstarterSection({ goToBrowseTab }: Props) {
         variant="tertiary"
         endIcon={<ArrowForwardIcon />}
         style={{ fontFamily: 'Poppins' }}
-        onClick={goToBrowseTab}
+        onClick={() => console.log("TODO:")}
       >
         Browse Kickstarters
       </Button>
@@ -23,4 +19,4 @@ function EmptyKickstarterSection({ goToBrowseTab }: Props) {
   )
 }
 
-export default EmptyKickstarterSection;
+export default EmptyBackedKickstarter;
