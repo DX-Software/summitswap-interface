@@ -8,6 +8,8 @@ export enum OrderDirection {
 export enum OrderKickstarterBy {
   TITLE = "title",
   CREATOR = "creator",
+  STATUS = "status",
+  MIN_CONTRIBUTION = "minContribution",
   TOTAL_CONTRIBUTION = "totalContribution",
   PROJECT_GOALS = "projectGoals",
   START_TIMESTAMP = "startTimestamp",

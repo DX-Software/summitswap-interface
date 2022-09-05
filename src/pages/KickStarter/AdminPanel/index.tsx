@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import ConnectWalletSection from '../shared/ConnectWalletSection'
 import { AdminTabs, NavItem } from '../types'
 import ProjectSettings from './ProjectSettings'
+import WaitingForApproval from './WaitingForApproval'
 
 function AdminPanel() {
   const { account } = useWeb3React()
@@ -13,7 +14,7 @@ function AdminPanel() {
     {
       label: 'Waiting for Approval',
       code: AdminTabs.WAITING_FOR_APPROVAL,
-      component: <div>0</div>,
+      component: <WaitingForApproval />,
     },
     {
       label: 'Approval History',
