@@ -454,11 +454,6 @@ function ProjectDetails({
               </Text>
             )}
             <br />
-            <Text color="textSubtle" marginBottom="4px">Reward Status</Text>
-            <Text>
-              {!kickstarter?.hasDistributedRewards && "Not"} Distributed
-            </Text>
-            <br />
             {currentBackedAmount && (
               <>
                 <Text color="warning" fontWeight="bold" marginBottom="4px">Have you received the reward for this project?</Text>

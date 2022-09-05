@@ -63,7 +63,6 @@ export const KICKSTARTERS_BY_ACCOUNT_ID = gql`
       totalContribution
       projectGoals
       rewardDistributionTimestamp
-      hasDistributedRewards
       startTimestamp
       endTimestamp
       createdAt
@@ -87,7 +86,6 @@ export const KICKSTARTERS = gql`
     totalContribution
     projectGoals
     rewardDistributionTimestamp
-    hasDistributedRewards
     startTimestamp
     endTimestamp
     createdAt
@@ -111,7 +109,6 @@ export const KICKSTARTERS_SEARCH = gql`
       totalContribution
       projectGoals
       rewardDistributionTimestamp
-      hasDistributedRewards
       startTimestamp
       endTimestamp
       createdAt
@@ -136,7 +133,6 @@ export const KICKSTARTERS_BY_END_TIME_BETWEEN = gql`
       totalContribution
       projectGoals
       rewardDistributionTimestamp
-      hasDistributedRewards
       startTimestamp
       endTimestamp
       createdAt
@@ -170,7 +166,6 @@ export const BACKED_KICKSTARTERS_BY_CONTRIBUTOR_ID = gql`
         totalContribution
         projectGoals
         rewardDistributionTimestamp
-        hasDistributedRewards
         startTimestamp
         endTimestamp
         createdAt
@@ -202,7 +197,6 @@ export const BACKED_KICKSTARTER_BY_ID = gql`
         totalContribution
         projectGoals
         rewardDistributionTimestamp
-        hasDistributedRewards
         startTimestamp
         endTimestamp
         createdAt
@@ -240,7 +234,6 @@ export const BACKED_KICKSTARTERS_BY_KICKSTARTER_ADDRESS = gql`
         totalContribution
         projectGoals
         rewardDistributionTimestamp
-        hasDistributedRewards
         startTimestamp
         endTimestamp
         createdAt
