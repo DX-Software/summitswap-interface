@@ -1,6 +1,5 @@
 import { ArrowBackIcon, BinanceIcon, Breadcrumbs, Button, FacebookIcon, FileIcon, Flex, Progress, ShareIcon, Skeleton, Tag, Text, TwitterIcon } from "@koda-finance/summitswap-uikit"
 import { Grid } from "@mui/material"
-import { CSVLink } from "react-csv"
 import Tooltip from "components/Tooltip"
 import { useKickstarterContext } from "contexts/kickstarter"
 import { format } from "date-fns"
@@ -8,14 +7,15 @@ import { BackedKickstarter } from "hooks/useBackKickstartersByAddress"
 import { Kickstarter } from "hooks/useKickstarter"
 import ImgCornerIllustration from "img/corner-illustration.svg"
 import React, { useEffect, useMemo, useState } from "react"
+import { CSVLink } from "react-csv"
 import styled from "styled-components"
+import { KickstarterProgressStatus } from "types/kickstarter"
 import copyText from "utils/copyText"
+import { getDayRemaining, getKickstarterStatus, getKickstarterStatusLabel } from "utils/kickstarter"
 import DonatorCard from "./DonatorCard"
 import ProgressBox from "./ProgressBox"
 import ProjectPayment from "./ProjectPayment"
-import { getDayRemaining, getKickstarterStatus } from "./utility"
 import StatusLabel from "./shared/StatusLabel"
-import { Statuses } from "./types"
 
 enum TabCode {
   PROJECT_DETAILS = "PROJECT_DETAILS",
@@ -261,10 +261,7 @@ function ProjectDetails({
             )}
             {status && (
               <StatusLabel status={status}>
-                {status !== Statuses.END_SOON
-                  ? status
-                  : `${dayRemaining} day${dayRemaining > 1 ? "s" : ""} left`
-                }
+                {getKickstarterStatusLabel(kickstarter?.endTimestamp || 0)}
               </StatusLabel>
             )}
           </Flex>
@@ -297,7 +294,7 @@ function ProjectDetails({
               <Skeleton width={45} />
             ) : (
               <>
-                <Text fontWeight="bold">{getDayRemaining(kickstarter.endTimestamp)} days left</Text>
+                <Text fontWeight="bold">{getKickstarterStatusLabel(kickstarter?.endTimestamp || 0, true)}</Text>
                 <Dot />
                 <Text>{kickstarter.totalContributor} backers</Text>
               </>
@@ -314,7 +311,7 @@ function ProjectDetails({
             {!kickstarter && (
               <Skeleton width={162} height={38} />
             )}
-            {kickstarter && status !== Statuses.COMPLETED && (
+            {kickstarter && status !== KickstarterProgressStatus.COMPLETED && (
               <Button onClick={toggleIsPayment}>Back this project</Button>
             )}
             {!kickstarter ? (

@@ -3,10 +3,9 @@ import BigNumber from "bignumber.js"
 import { Kickstarter } from "hooks/useKickstarters"
 import React, { useMemo } from "react"
 import styled from "styled-components"
+import { getKickstarterStatus, getKickstarterStatusLabel } from "utils/kickstarter"
 import ProgressBox from "./ProgressBox"
 import StatusLabel from "./shared/StatusLabel"
-import { Statuses } from "./types"
-import { getDayRemaining, getKickstarterStatus } from "./utility"
 
 type Props = {
   kickstarter: Kickstarter
@@ -45,7 +44,6 @@ const Banner = styled(Flex)<{image: string}>`
 
 function ProjectCard({ kickstarter, onClick }: Props) {
   const status = useMemo(() => getKickstarterStatus(kickstarter.endTimestamp), [kickstarter.endTimestamp])
-  const dayRemaining = getDayRemaining(kickstarter.endTimestamp)
 
   const fundedPercentage = useMemo(() => {
     if (kickstarter.totalContribution.toString() === "0") {
@@ -57,10 +55,7 @@ function ProjectCard({ kickstarter, onClick }: Props) {
     <Card flexDirection="column" onClick={onClick}>
       <Banner flexDirection="column" image={kickstarter.imageUrl}>
         <StatusLabel status={status} style={{ marginLeft: "auto" }}>
-          {status !== Statuses.END_SOON
-            ? status
-            : `${dayRemaining} day${dayRemaining > 1 ? "s" : ""} left`
-          }
+        {getKickstarterStatusLabel(kickstarter.endTimestamp)}
         </StatusLabel>
       </Banner>
       <Flex flexDirection="column" paddingTop="16px" paddingBottom="24px" paddingX="20px">

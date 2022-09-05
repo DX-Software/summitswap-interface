@@ -1,11 +1,10 @@
 import { BinanceIcon, Flex, Progress, Text } from "@koda-finance/summitswap-uikit"
-import BigNumber from "bignumber.js"
 import { Kickstarter } from "hooks/useKickstarters"
 import React, { useMemo } from "react"
 import styled from "styled-components"
+import { getKickstarterStatus } from "utils/kickstarter"
 import ProgressBox from "./ProgressBox"
 import StatusLabel from "./shared/StatusLabel"
-import { getDayRemaining, getKickstarterStatus } from "./utility"
 
 type Props = {
   kickstarter: Kickstarter

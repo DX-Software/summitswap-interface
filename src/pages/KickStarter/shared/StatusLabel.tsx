@@ -1,17 +1,17 @@
 import React from "react"
 import { Text } from "@koda-finance/summitswap-uikit"
 import styled from "styled-components"
-import { Statuses } from "../types"
+import { KickstarterProgressStatus } from "types/kickstarter"
 
-const StatusLabel = styled(Text)<{ status: Statuses }>`
+const StatusLabel = styled(Text)<{ status: KickstarterProgressStatus }>`
   height: fit-content;
   font-size: 12px;
   font-weight: bold;
   padding: 4px 12px;
   border-radius: 20px;
   background: ${({ status, theme }) => {
-    if (status === Statuses.COMPLETED) return theme.colors.dropdownBackground
-    if (status === Statuses.ONGOING) return theme.colors.primary
+    if (status === KickstarterProgressStatus.COMPLETED) return theme.colors.dropdownBackground
+    if (status === KickstarterProgressStatus.ONGOING) return theme.colors.primary
     return theme.colors.failure
 
   }};

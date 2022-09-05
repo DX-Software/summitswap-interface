@@ -83,12 +83,10 @@ export const getKickstarterStatus = (endTimestamp: number): KickstarterProgressS
   return KickstarterProgressStatus.ONGOING
 }
 
-export const getKickstarterStatusLabel = (endTimestamp: number) => {
+export const getKickstarterStatusLabel = (endTimestamp: number, showInDays = false) => {
   const dayRemaining = getDayRemaining(endTimestamp)
   const kickstarterStatus = getKickstarterStatus(endTimestamp)
+  if (showInDays || dayRemaining <= 7) return `${dayRemaining} day${dayRemaining > 1 ? "s" : ""} left`
   if (kickstarterStatus === KickstarterProgressStatus.COMPLETED) return "Completed"
-  if (dayRemaining <= 7) {
-    return `${dayRemaining} day${dayRemaining > 1 ? "s" : ""} left`
-  }
   return "Ongoing"
 }
