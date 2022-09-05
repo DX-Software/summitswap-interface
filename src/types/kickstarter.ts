@@ -1,5 +1,17 @@
 import BigNumber from "bignumber.js"
 
+export enum KickstarterProgressStatus {
+  ONGOING = "ongoing",
+  END_SOON = "end_soon",
+  COMPLETED = "completed",
+}
+
+export enum KickstarterApprovalStatus {
+  WAITING_FOR_APPROVAL = "waiting_for_approval",
+  APPROVED = "approved",
+  REJECTED = "rejected",
+}
+
 export enum OrderDirection {
   ASC = "asc",
   DESC = "desc",
