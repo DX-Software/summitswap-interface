@@ -7,6 +7,7 @@ type Props = {
   label: string;
   type?: string;
   value: string;
+  isFunding?: boolean;
   description?: string;
   onChange: (value: string) => void;
 }
@@ -30,7 +31,7 @@ const InputCurrency = styled(Flex)`
   column-gap: 8px;
 `
 
-function FundingInput({ label, type, value, description, onChange }: Props) {
+function FundingInput({ label, type, value, description, onChange, isFunding }: Props) {
 
   const handleOnChange = (e) => {
     onChange(e.target.value)
@@ -39,13 +40,20 @@ function FundingInput({ label, type, value, description, onChange }: Props) {
   return (
     <Flex flexDirection="column" flex={1}>
       <Text color="textSubtle" marginBottom="4px">{label}</Text>
-      <InputWrapper>
-        <InputCurrency alignItems="center">
-          <BinanceIcon />
-          <Text fontWeight="bold">BNB</Text>
-        </InputCurrency>
-        <StyledInput type={type} value={value} onChange={handleOnChange} />
-      </InputWrapper>
+      {isFunding && (
+        <InputWrapper>
+          <InputCurrency alignItems="center">
+            <BinanceIcon />
+            <Text fontWeight="bold">BNB</Text>
+          </InputCurrency>
+          <StyledInput type={type} value={value} onChange={handleOnChange} />
+        </InputWrapper>
+      )}
+      {!isFunding && (
+        <InputWrapper style={{ borderRadius: "16px!important" }}>
+          <StyledInput style={{ borderRadius: "16px" }} type={type} value={value} onChange={handleOnChange} />
+        </InputWrapper>
+      )}
       {description && <Text color="textDisabled" fontSize="12px" marginTop="8px">{description}</Text>}
     </Flex>
   )
@@ -56,4 +64,5 @@ export default FundingInput;
 FundingInput.defaultProps = {
   type: "text",
   description: undefined,
+  isFunding: true,
 }

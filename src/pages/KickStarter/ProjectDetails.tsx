@@ -288,7 +288,7 @@ function ProjectDetails({
               </Text>
             )}
           </Flex>
-          <Text color="textSubtle" marginBottom="16px">backed of 10 BNB goal</Text>
+          <Text color="textSubtle" marginBottom="16px">backed of {kickstarter?.projectGoals.toString() || 0} BNB goal</Text>
           <ProgressBox maxWidth="400px" marginBottom="8px">
             <Progress primaryStep={30} />
           </ProgressBox>

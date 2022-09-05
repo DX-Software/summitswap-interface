@@ -6,6 +6,7 @@ import {
   Breadcrumbs,
   Heading,
 } from '@koda-finance/summitswap-uikit'
+import { useWeb3React } from '@web3-react/core'
 import axios from 'axios'
 import TransactionConfirmationModal, { TransactionErrorContent } from 'components/TransactionConfirmationModal'
 import { BACKEND_API, UPLOAD_IMAGE_API } from 'constants/backend'
@@ -25,6 +26,7 @@ const Divider = styled.div`
 `
 
 function CreateProject() {
+  const { library } = useWeb3React()
   const { account, toggleIsCreate, currentCreationStep, projectCreation } = useKickstarterContext()
   const addTransaction = useTransactionAdder()
   const kickstarterFactoryContract = useKickstarterFactoryContract()
@@ -98,6 +100,9 @@ function CreateProject() {
         { value: serviceFee.toString() }
       )
       transactionSubmitted(receipt, 'The kickstarter has been submitted successfully')
+      await library.waitForTransaction(receipt.hash)
+      toggleIsCreate();
+
     } catch (err) {
       const callError = err as any
       const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message
@@ -115,6 +120,8 @@ function CreateProject() {
     projectCreation.rewardDistribution,
     projectCreation.projectDueDate,
     account,
+    library,
+    toggleIsCreate,
     transactionFailed,
     transactionSubmitted,
     handleUploadImage,

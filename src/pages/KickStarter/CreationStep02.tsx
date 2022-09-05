@@ -113,6 +113,7 @@ function CreationStep02() {
           value={projectCreation.projectDueDate}
           description="NB: Due date should be minimum a week after the project is created"
           onChange={handleProjectDueDateChange}
+          isFunding={false}
         />
         <FundingInput
           label="Reward Distribution"
@@ -120,6 +121,7 @@ function CreationStep02() {
           value={projectCreation.rewardDistribution}
           description="NB: Enter the estimate date for the reward distribution. Reward distribution date should be equal or greater than project due date"
           onChange={handleRewardDistributionChange}
+          isFunding={false}
         />
       </EstimationWrapper>
       <ButtonWrapper>
