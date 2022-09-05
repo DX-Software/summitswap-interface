@@ -7,9 +7,8 @@ import {
   Heading,
 } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
-import axios from 'axios'
+import { useUploadImageApi } from 'api/useUploadImageApi'
 import TransactionConfirmationModal, { TransactionErrorContent } from 'components/TransactionConfirmationModal'
-import { BACKEND_API } from 'constants/index'
 import { useKickstarterContext } from 'contexts/kickstarter'
 import { parseUnits } from 'ethers/lib/utils'
 import { useKickstarterFactoryContract } from 'hooks/useContract'
@@ -36,6 +35,8 @@ function CreateProject() {
   const [hash, setHash] = useState<string | undefined>()
   const [pendingText, setPendingText] = useState<string>('')
   const [errorMessage, setErrorMessage] = useState<string | undefined>()
+
+  const uploadImageApi = useUploadImageApi()
 
   const onDismiss = () => {
     setHash(undefined)
@@ -64,32 +65,18 @@ function CreateProject() {
     setErrorMessage(messFromError)
   }, [])
 
-  const handleUploadImage = useCallback(async (file: File) => {
-    const config = {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    }
-
-    const formData = new FormData();
-    formData.append("image", file);
-
-    const res = await axios.post(`${BACKEND_API}/upload-image`, formData, config)
-    return res.data.url
-  }, [])
-
   const handleCreateProject = useCallback(async () => {
     try {
       if (!kickstarterFactoryContract || !account) {
         return
       }
-      const url: string = await handleUploadImage(projectCreation.image!)
+      const uploadImageResult = await uploadImageApi.mutateAsync(projectCreation.image!)
 
       const serviceFee = await kickstarterFactoryContract.serviceFee()
       const receipt = await kickstarterFactoryContract.createProject(
         projectCreation.title,
         projectCreation.creator,
-        url,
+        uploadImageResult.url,
         projectCreation.projectDescription,
         projectCreation.rewardDescription,
         parseUnits(projectCreation.minimumBacking, 18),
@@ -123,8 +110,7 @@ function CreateProject() {
     library,
     toggleIsCreate,
     transactionFailed,
-    transactionSubmitted,
-    handleUploadImage,
+    transactionSubmitted
   ])
 
   return (
