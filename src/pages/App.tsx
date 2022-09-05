@@ -76,7 +76,13 @@ const Marginer = styled.div`
   margin-top: 5rem;
 `
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+})
 
 export default function App() {
   const { account, deactivate, activate, error } = useWeb3React()
