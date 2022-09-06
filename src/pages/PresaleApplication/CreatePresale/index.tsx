@@ -214,7 +214,7 @@ const CreatePresale = ({ setHomeButtonIndex }: Props) => {
 
         const tokenPresales: string[] = await factoryContract.getTokenPresales(selectedToken.address)
         setIsLoading(false)
-        window.location.href = `/#/presaleApplication?address=${tokenPresales[tokenPresales.length - 1]}`
+        window.location.href = `/#/presale-application?address=${tokenPresales[tokenPresales.length - 1]}`
         setHomeButtonIndex(2)
       } catch (err) {
         setIsLoading(false)

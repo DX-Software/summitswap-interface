@@ -42,7 +42,7 @@ const config: MenuEntry[] = [
     label: 'Presale-App',
     // icon: 'CoinBagIcon',
     icon: 'InfoIcon',
-    href: '/presaleApplication',
+    href: '/presale-application',
   },
   // {
   //  label: 'Create Token',
