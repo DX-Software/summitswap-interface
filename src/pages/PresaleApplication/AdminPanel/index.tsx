@@ -95,6 +95,10 @@ const AdminPanel = () => {
   const changePendingPageHandler = (_: React.ChangeEvent<unknown>, value: number) => setPagePendingPresales(value)
   const changeApprovedPageHandler = (_: React.ChangeEvent<unknown>, value: number) => setPageApprovedPresales(value)
   const selectPresaleHandler = (presaleAddress: string) => setSelectedPresale(presaleAddress)
+  const onApproveHandler = (presaleAddress: string) => {
+    setPendingPresales((addresses) => addresses.filter((add) => add !== presaleAddress))
+    setApprovedPresales((addresses) => [presaleAddress, ...addresses])
+  }
 
   const getSlicedAddress = useCallback((addresses: string[], pageNum: number) => {
     const startIndex = pageNum * PRESALES_PER_PAGE_ADMIN_PANEL - PRESALES_PER_PAGE_ADMIN_PANEL
@@ -177,9 +181,17 @@ const AdminPanel = () => {
               </Text>
             </RowFixed>
             {isEditMode ? (
-              <EditPresale presaleAddress={selectedPresale} handleEditButtonHandler={handleEditButtonHandler} />
+              <EditPresale
+                presaleAddress={selectedPresale}
+                onApproveHandler={onApproveHandler}
+                handleEditButtonHandler={handleEditButtonHandler}
+              />
             ) : (
-              <PresaleSummary presaleAddress={selectedPresale} handleEditButtonHandler={handleEditButtonHandler} />
+              <PresaleSummary
+                onApproveHandler={onApproveHandler}
+                presaleAddress={selectedPresale}
+                handleEditButtonHandler={handleEditButtonHandler}
+              />
             )}
           </>
         ) : (

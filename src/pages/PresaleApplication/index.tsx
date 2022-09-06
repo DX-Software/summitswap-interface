@@ -25,13 +25,13 @@ export default function PresaleApplication() {
   const factoryContract = useFactoryPresaleContract()
 
   useEffect(() => {
-    async function checkAccountIsAdmin() {
+    async function checkAccountIsAdminOrOwner() {
       setAccountIsAdminOrOwner(
         (await factoryContract?.isAdmin(account)) || (await factoryContract?.owner()) === account
       )
     }
     if (account && factoryContract) {
-      checkAccountIsAdmin()
+      checkAccountIsAdminOrOwner()
     }
   }, [account, factoryContract])
 

@@ -16,10 +16,11 @@ import EditPresaleForm from './EditPresaleForm'
 
 interface Props {
   presaleAddress: string
+  onApproveHandler: (presaleAddress: string) => void
   handleEditButtonHandler: (isEdit: boolean) => void
 }
 
-const EditPresale = ({ presaleAddress, handleEditButtonHandler }: Props) => {
+const EditPresale = ({ presaleAddress, onApproveHandler, handleEditButtonHandler }: Props) => {
   const { account, library } = useWeb3React()
 
   const [isLoading, setIsLoading] = useState(false)
@@ -130,6 +131,7 @@ const EditPresale = ({ presaleAddress, handleEditButtonHandler }: Props) => {
         setIsLoading(false)
         setPresaleInfo((preInfo) => preInfo && { ...preInfo, isApproved: true })
         handleEditButtonHandler(false)
+        onApproveHandler(presaleAddress)
       } catch (err) {
         console.error(err)
         setIsLoading(false)

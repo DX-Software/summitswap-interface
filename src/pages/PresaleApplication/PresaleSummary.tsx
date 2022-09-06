@@ -35,6 +35,7 @@ import {
 
 interface Props {
   presaleAddress: string
+  onApproveHandler?: (presaleAddress: string) => void
   handleEditButtonHandler?: (isEdit: boolean) => void
 }
 
@@ -55,11 +56,11 @@ const HeadingPresaleDetails = styled(Heading)`
   }
 `
 
-const PresaleSummary = ({ presaleAddress, handleEditButtonHandler }: Props) => {
+const PresaleSummary = ({ presaleAddress, handleEditButtonHandler, onApproveHandler }: Props) => {
   const { account, library } = useWeb3React()
 
   const [isLoading, setIsLoading] = useState(false)
-  const [accountIsAdmin, setAccountIsAdmin] = useState(false)
+  const [accountIsAdminOrOwner, setAccountIsAdminOrOwner] = useState(false)
   const [tokenTotalSupply, setTokenTotalSupply] = useState<string>()
   const [presaleInfo, setPresaleInfo] = useState<PresaleInfo>()
   const [presaleFeeInfo, setPresaleFeeInfo] = useState<FeeInfo>()
@@ -89,10 +90,12 @@ const PresaleSummary = ({ presaleAddress, handleEditButtonHandler }: Props) => {
   }, [presaleContract])
 
   useEffect(() => {
-    async function checkAccountIsAdmin() {
-      setAccountIsAdmin(await factoryContract?.isAdmin(account))
+    async function checkIsAdminOrOwner() {
+      setAccountIsAdminOrOwner(
+        (await factoryContract?.isAdmin(account)) || (await factoryContract?.owner()) === account
+      )
     }
-    if (factoryContract && account) checkAccountIsAdmin()
+    if (factoryContract && account) checkIsAdminOrOwner()
   }, [factoryContract, account])
 
   useEffect(() => {
@@ -139,6 +142,7 @@ const PresaleSummary = ({ presaleAddress, handleEditButtonHandler }: Props) => {
       await library.waitForTransaction(receipt.hash)
       setIsLoading(false)
       setPresaleInfo((preInfo) => preInfo && { ...preInfo, isApproved: true })
+      if (onApproveHandler) onApproveHandler(presaleAddress)
     } catch (err) {
       console.error(err)
       setIsLoading(false)
@@ -374,7 +378,7 @@ const PresaleSummary = ({ presaleAddress, handleEditButtonHandler }: Props) => {
           </ContainerInformation>
         </Box>
       </Box>
-      {accountIsAdmin && (
+      {accountIsAdminOrOwner && (
         <>
           <Divider />
           <SectionHeading marginTop="24px" color="success">
