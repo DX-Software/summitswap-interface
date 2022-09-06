@@ -19,7 +19,8 @@ import {
 import ChooseToken from 'components/ChooseToken'
 import { useTokenContract } from 'hooks/useContract'
 import { RowFixed } from 'components/Row'
-import { TOKEN_CHOICES, PRESALE_FACTORY_ADDRESS, MAX_APPROVE_VALUE } from 'constants/presale'
+import { MAX_UINT256 } from 'constants/index'
+import { TOKEN_CHOICES, PRESALE_FACTORY_ADDRESS } from 'constants/presale'
 import { Caption } from '../Texts'
 import { PresaleDetails, FieldNames } from '../types'
 
@@ -97,7 +98,7 @@ const CreationStep01 = ({
   useEffect(() => {
     async function checkTokenIsApproved() {
       const aprrovedAmount: BigNumber = await tokenContract?.allowance(account, PRESALE_FACTORY_ADDRESS)
-      if (aprrovedAmount.eq(BigNumber.from(MAX_APPROVE_VALUE))) {
+      if (aprrovedAmount.eq(BigNumber.from(MAX_UINT256))) {
         setIsFactoryApproved(true)
       } else {
         setIsFactoryApproved(false)
@@ -114,7 +115,7 @@ const CreationStep01 = ({
     }
     try {
       setIsLoading(true)
-      const receipt = await tokenContract?.approve(PRESALE_FACTORY_ADDRESS, MAX_APPROVE_VALUE)
+      const receipt = await tokenContract?.approve(PRESALE_FACTORY_ADDRESS, MAX_UINT256)
       await library.waitForTransaction(receipt.hash)
       setIsLoading(false)
       setIsFactoryApproved(true)

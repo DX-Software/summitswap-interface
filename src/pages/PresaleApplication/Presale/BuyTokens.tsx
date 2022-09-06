@@ -21,8 +21,8 @@ import { useETHBalances } from 'state/wallet/hooks'
 import { useToken } from 'hooks/Tokens'
 import login from 'utils/login'
 import { fetchFeeInfo } from 'utils/presale'
-import { NULL_ADDRESS } from 'constants/index'
-import { TOKEN_CHOICES, MAX_APPROVE_VALUE, FEE_DECIMALS } from 'constants/presale'
+import { NULL_ADDRESS, MAX_UINT256 } from 'constants/index'
+import { TOKEN_CHOICES, FEE_DECIMALS } from 'constants/presale'
 import { PresaleInfo, FeeInfo, FieldProps, LoadingForButton, LoadingButtonTypes } from '../types'
 import { StyledText } from './Shared'
 import ContributionBox from './ContributionBox'
@@ -113,7 +113,7 @@ const BuyTokens = ({
   useEffect(() => {
     async function fetchApproveAmount() {
       const aprrovedAmount: BigNumber = await paymentTokenContract?.allowance(account, presaleAddress)
-      setIsApproved(aprrovedAmount.gte(presaleInfo?.maxBuy.sub(boughtAmount) || MAX_APPROVE_VALUE))
+      setIsApproved(aprrovedAmount.gte(presaleInfo?.maxBuy.sub(boughtAmount) || MAX_UINT256))
     }
     if (paymentTokenContract && account && presaleInfo) fetchApproveAmount()
   }, [account, paymentTokenContract, presaleAddress, presaleInfo, boughtAmount])
@@ -134,7 +134,7 @@ const BuyTokens = ({
     try {
       setIsLoadingButton({ type: LoadingButtonTypes.ApproveCurrency, error: '', isClicked: true })
       setIsMainLoading(true)
-      const receipt = await paymentTokenContract?.approve(presaleAddress, MAX_APPROVE_VALUE)
+      const receipt = await paymentTokenContract?.approve(presaleAddress, MAX_UINT256)
       await library.waitForTransaction(receipt.hash)
       setIsLoadingButton({ type: LoadingButtonTypes.NotSelected, error: '', isClicked: false })
       setIsMainLoading(false)

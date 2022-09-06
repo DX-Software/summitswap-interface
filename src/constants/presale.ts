@@ -2,8 +2,6 @@ import { Option } from 'react-dropdown'
 import { BUSD, KODA, USDC, USDT, NULL_ADDRESS } from '.'
 
 export const PRESALE_FACTORY_ADDRESS = `${process.env.REACT_APP_PRESALE_FACTORY_ADDRESS}`
-// used as a max token amount to approve factory
-export const MAX_APPROVE_VALUE = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
 
 export const SUMMITSWAP_LINK = 'https://summitswap.finance/#/swap?output='
 export const PANKCAKESWAP_LINK = 'https://pancakeswap.finance/swap?outputCurrency='
