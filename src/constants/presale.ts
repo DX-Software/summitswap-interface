@@ -3,9 +3,6 @@ import { BUSD, KODA, USDC, USDT, NULL_ADDRESS } from '.'
 
 export const PRESALE_FACTORY_ADDRESS = `${process.env.REACT_APP_PRESALE_FACTORY_ADDRESS}`
 
-export const MESSAGE_ERROR = 'MESSAGE_ERROR'
-export const MESSAGE_SUCCESS = 'MESSAGE_SUCCESS'
-
 export const WHITELIST_SALE: Option = { label: 'Whitelist', value: 'Whitelist' }
 export const PUBLIC_SALE: Option = { label: 'Public', value: 'Public' }
 
