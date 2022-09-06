@@ -23,9 +23,6 @@ export const ADDRESS_PER_PAGE = 5
 export const WHITELIST_ADDRESSES_PER_PAGE = 10
 export const PRESALES_PER_PAGE_ADMIN_PANEL = 10
 
-export const WITHDRAW_PAYMENT = 'withdrawPaymentToken'
-export const EMERGENCY_WITHDRAW_PAYMENT = 'emergencyWithdrawPaymentToken'
-
 export const JOIN_IDS_WITH = '.|*|.'
 
 export const RADIO_VALUES = {
