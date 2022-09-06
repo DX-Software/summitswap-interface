@@ -2,7 +2,7 @@ import { AddIcon, Button, Flex, Heading } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
 import { useKickstarterAccountById, useKickstarterByAccountId } from 'api/useKickstarterApi'
 import { PER_PAGE } from 'constants/kickstarter'
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import EmptyMyKickstarterSection from '../BrowseProject/EmptyMyKickstarterSection'
 import ConnectWalletSection from '../shared/ConnectWalletSection'
 import ProjectCards from '../shared/ProjectCards'
@@ -11,6 +11,7 @@ function MyProject() {
   const { account } = useWeb3React()
 
   const [currentPage, setCurrentPage] = useState(1)
+  const [isCreate, setIsCreate] = useState(false)
   const [showKickstarterId, setShowKickstarterId] = useState<string>()
 
   const kickstarterAccount = useKickstarterAccountById(account || '')
@@ -21,9 +22,17 @@ function MyProject() {
     return Math.ceil(totalItems / PER_PAGE)
   }, [kickstarterAccount?.data])
 
+  const toggleIsCreate = useCallback(() => {
+    setIsCreate((prev) => !prev)
+  }, [])
+
   if (!account) {
     return <ConnectWalletSection />
   }
+
+  // if (isCreate) {
+  //   return <CreateProject />
+  // }
 
   return (
     <Flex flexDirection="column">
@@ -33,8 +42,7 @@ function MyProject() {
           scale="sm"
           startIcon={<AddIcon width="12px" color="text" />}
           style={{ fontFamily: 'Poppins' }}
-          // onClick={toggleIsCreate}
-          onClick={() => null}
+          onClick={toggleIsCreate}
         >
           Create New Project
         </Button>
