@@ -136,7 +136,7 @@ const LaunchPad = () => {
     }
   }, [account])
 
-  const handleChangeTabIndex = (newIndex: number) => setTabIndex(newIndex)
+  const tabIndexHandler = (newIndex: number) => setTabIndex(newIndex)
   const viewPresaleHandler = (address: string) => setSelectedPresale(address)
 
   const sortLivePresales = useMemo(async () => {
@@ -332,7 +332,7 @@ const LaunchPad = () => {
           ) : (
             <>
               <Heading>{headingTexts[buttonIndex]}</Heading>
-              <NavTab activeIndex={tabIndex} onItemClick={handleChangeTabIndex}>
+              <NavTab activeIndex={tabIndex} onItemClick={tabIndexHandler}>
                 <StyledText>All Presales</StyledText>
                 <StyledText>Live Now</StyledText>
                 <StyledText>Coming Soon</StyledText>

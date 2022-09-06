@@ -99,7 +99,7 @@ const MyPresales = ({ setHomeButtonIndex }: Props) => {
     if (factoryContract && account) fetchPresales()
   }, [factoryContract, account])
 
-  const handleChangeTabIndex = (newIndex: number) => setTabIndex(newIndex)
+  const tabIndexHandler = (newIndex: number) => setTabIndex(newIndex)
   const viewPresaleHandler = (address: string) => setSelectedPresale(address)
 
   const accountPendingPresales = useMemo(() => {
@@ -157,7 +157,7 @@ const MyPresales = ({ setHomeButtonIndex }: Props) => {
         ) : (
           <>
             <Heading>My Presales</Heading>
-            <NavTab activeIndex={tabIndex} onItemClick={handleChangeTabIndex}>
+            <NavTab activeIndex={tabIndex} onItemClick={tabIndexHandler}>
               <StyledText>{sectionTexts[0]}</StyledText>
               <StyledText>{sectionTexts[1]}</StyledText>
             </NavTab>

@@ -268,7 +268,7 @@ const PresaleCard = ({ presaleAddress, viewPresaleHandler }: Props) => {
               <StyledText style={{ display: 'inline-block' }} fontSize="12px" bold color="linkColor">
                 {`${presaleInfo?.totalBought.mul(100).div(presaleInfo.hardcap).toNumber()}%`}
               </StyledText>
-              &nbsp;reached ({`${formatUnits(presaleInfo?.totalBought || 0,  paymentToken?.decimals)} ${currency}`})
+              &nbsp;reached ({`${formatUnits(presaleInfo?.totalBought || 0, paymentToken?.decimals)} ${currency}`})
             </StyledText>
           )}
         </StyledText>
