@@ -14,7 +14,7 @@ import {
   FEE_PAYMENT_TOKEN,
   FEE_PRESALE_TOKEN,
   FEE_EMERGENCY_WITHDRAW,
-  JOIN_IDS_WITH,
+  CONTACT_INFO_DELIMITER,
 } from 'constants/presale'
 import { useToken } from 'hooks/Tokens'
 import { fetchPresaleInfo } from 'utils/presale'
@@ -142,7 +142,7 @@ const CreatePresale = ({ setHomeButtonIndex }: Props) => {
       setIsLoading(true)
 
       const combinedSocialIds = [values.websiteUrl, values.discordId, values.twitterId, values.telegramId].join(
-        JOIN_IDS_WITH
+        CONTACT_INFO_DELIMITER
       )
 
       try {

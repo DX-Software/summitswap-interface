@@ -7,7 +7,7 @@ import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { useToken } from 'hooks/Tokens'
 import { usePresaleContract, useFactoryPresaleContract } from 'hooks/useContract'
 import { fetchPresaleInfo, fetchFeeInfo, fetchProjectDetails } from 'utils/presale'
-import { FEE_DECIMALS, JOIN_IDS_WITH } from 'constants/presale'
+import { FEE_DECIMALS, CONTACT_INFO_DELIMITER } from 'constants/presale'
 import { NULL_ADDRESS } from 'constants/index'
 import { getUtcDate } from '../CreatePresale/CreationStep06'
 import { PresaleInfo, ProjectDetails, FeeInfo, FieldNames, AdminForm as IAdminForm } from '../types'
@@ -62,7 +62,7 @@ const EditPresale = ({ presaleAddress, handleEditButtonHandler }: Props) => {
         return
       }
       const combinedSocialIds = [values.websiteUrl, values.discordId, values.twitterId, values.telegramId].join(
-        JOIN_IDS_WITH
+        CONTACT_INFO_DELIMITER
       )
 
       try {

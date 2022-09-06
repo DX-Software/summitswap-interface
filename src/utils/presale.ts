@@ -1,5 +1,5 @@
 import { BigNumber, Contract } from 'ethers'
-import {JOIN_IDS_WITH} from 'constants/presale'
+import { CONTACT_INFO_DELIMITER } from 'constants/presale'
 import { FieldNames, PresaleInfo, PresalePhases, FeeInfo, ProjectDetails } from '../pages/PresaleApplication/types'
 
 export async function fetchPresaleInfo(presaleContract: Contract | null) {
@@ -72,7 +72,7 @@ export async function fetchProjectDetails(presaleContract: Contract | null) {
     combinedSocialIds,
   ] = await presaleContract?.getProjectsDetails()
 
-  const [websiteUrl, discordId, twitterId, telegramId] = combinedSocialIds.split(JOIN_IDS_WITH)
+  const [websiteUrl, discordId, twitterId, telegramId] = combinedSocialIds.split( CONTACT_INFO_DELIMITER )
 
   return {
     logoUrl,

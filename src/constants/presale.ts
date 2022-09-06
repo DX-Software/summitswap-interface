@@ -12,7 +12,7 @@ export const PRESALE_CARDS_PER_PAGE = 9
 export const ADDRESS_PER_PAGE = 5
 export const PRESALES_PER_PAGE_ADMIN_PANEL = 10
 
-export const JOIN_IDS_WITH = '.|*|.'
+export const CONTACT_INFO_DELIMITER = '.|*|.'
 
 export const RADIO_VALUES = {
   WHITELIST_ENABLED: true,
