@@ -3,9 +3,6 @@ import { BUSD, KODA, USDC, USDT, NULL_ADDRESS } from '.'
 
 export const PRESALE_FACTORY_ADDRESS = `${process.env.REACT_APP_PRESALE_FACTORY_ADDRESS}`
 
-export const SUMMITSWAP_LINK = 'https://summitswap.finance/#/swap?output='
-export const PANKCAKESWAP_LINK = 'https://pancakeswap.finance/swap?outputCurrency='
-
 export const MESSAGE_ERROR = 'MESSAGE_ERROR'
 export const MESSAGE_SUCCESS = 'MESSAGE_SUCCESS'
 
