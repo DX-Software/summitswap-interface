@@ -108,3 +108,9 @@ export const checkSalePhase = (presale: PresaleInfo | undefined) => {
   }
   return ''
 }
+
+export const getUtcDate = (date: string, time: string) => {
+  const date2 = new Date(date)
+  const [hours, mins] = time.split(':')
+  return new Date(Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate(), Number(hours), Number(mins)))
+}

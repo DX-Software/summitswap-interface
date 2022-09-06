@@ -6,6 +6,7 @@ import { FormikProps } from 'formik'
 import styled from 'styled-components'
 import { useTokenContract } from 'hooks/useContract'
 import { RADIO_VALUES, TOKEN_CHOICES } from 'constants/presale'
+import { getUtcDate } from 'utils/presale'
 import ButtonsWrapper from './ButtonsWrapper'
 import { GridContainer as Grid, GridItem1, GridItem2 } from './GridComponents'
 import { PresaleDetails, ProjectDetails } from '../types'
@@ -100,12 +101,6 @@ export const ResponsiveFlex = styled(Flex)`
     flex-direction: column;
   }
 `
-
-export const getUtcDate = (date: string, time: string) => {
-  const date2 = new Date(date)
-  const [hours, mins] = time.split(':')
-  return new Date(Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate(), Number(hours), Number(mins)))
-}
 
 const CreationStep06 = ({
   isLoading,

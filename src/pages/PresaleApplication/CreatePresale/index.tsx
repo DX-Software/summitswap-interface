@@ -17,7 +17,7 @@ import {
   CONTACT_INFO_DELIMITER,
 } from 'constants/presale'
 import { useToken } from 'hooks/Tokens'
-import { fetchPresaleInfo } from 'utils/presale'
+import { fetchPresaleInfo, getUtcDate } from 'utils/presale'
 import { ROUTER_ADDRESS, PANCAKESWAP_ROUTER_V2_ADDRESS } from '../../../constants'
 import steps from './steps-data'
 import CreationStep01 from './CreationStep01'
@@ -25,7 +25,7 @@ import CreationStep02 from './CreationStep02'
 import CreationStep03 from './CreationStep03'
 import CreationStep04 from './CreationStep04'
 import CreationStep05 from './CreationStep05'
-import CreationStep06, { Divider, getUtcDate } from './CreationStep06'
+import CreationStep06, { Divider } from './CreationStep06'
 import { validatePresaleDetails, validateProjectDetails } from './formValidations'
 import { PresaleDetails, ProjectDetails, FieldNames } from '../types'
 
