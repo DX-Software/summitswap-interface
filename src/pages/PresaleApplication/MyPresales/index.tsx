@@ -18,7 +18,7 @@ import {
 } from '@koda-finance/summitswap-uikit'
 import { RowFixed } from 'components/Row'
 import { Heading } from '../AdminPanel'
-import PresaleCard from '../PresaleCard'
+import PresaleCards from '../PresaleCards'
 import PresaleSummary from '../PresaleSummary'
 import Presale from '../Presale'
 
@@ -55,20 +55,14 @@ const StyledText = styled(Text)`
   }
 `
 
-const ResonsiveFlex = styled(Flex)`
-  justify-content: space-evenly;
-  @media (max-width: 680px) {
-    justify-content: center;
-  }
-`
-
 interface Props {
   setHomeButtonIndex: React.Dispatch<React.SetStateAction<number>>
 }
 
 const MyPresales = ({ setHomeButtonIndex }: Props) => {
   const { account } = useWeb3React()
-
+  const [pendingPage, setPendingPage] = useState(1)
+  const [approvedPage, setApprovedPage] = useState(1)
   const [tabIndex, setTabIndex] = useState(0)
   const [selectedPresale, setSelectedPresale] = useState('')
   const [accountPresales, setAccountPresales] = useState<string[]>([])
@@ -164,11 +158,12 @@ const MyPresales = ({ setHomeButtonIndex }: Props) => {
             <Divider />
             {tabIndex === 0 &&
               (accountPendingPresales.length ? (
-                <ResonsiveFlex marginTop="16px" flexWrap="wrap">
-                  {accountPendingPresales.map((address) => (
-                    <PresaleCard viewPresaleHandler={viewPresaleHandler} presaleAddress={address} />
-                  ))}
-                </ResonsiveFlex>
+                <PresaleCards
+                  page={pendingPage}
+                  setPage={setPendingPage}
+                  viewPresaleHandler={viewPresaleHandler}
+                  presaleAddresses={accountPendingPresales}
+                />
               ) : (
                 <Text marginTop="24px" color={darkColors.textDisabled}>
                   You don’t have any ongoing presale
@@ -177,11 +172,12 @@ const MyPresales = ({ setHomeButtonIndex }: Props) => {
 
             {tabIndex === 1 &&
               (accountApprovedPresales.length ? (
-                <ResonsiveFlex marginTop="16px" flexWrap="wrap">
-                  {accountApprovedPresales.map((address) => (
-                    <PresaleCard viewPresaleHandler={viewPresaleHandler} presaleAddress={address} />
-                  ))}
-                </ResonsiveFlex>
+                <PresaleCards
+                  page={approvedPage}
+                  setPage={setApprovedPage}
+                  viewPresaleHandler={viewPresaleHandler}
+                  presaleAddresses={accountApprovedPresales}
+                />
               ) : (
                 <Text marginTop="24px" color={darkColors.textDisabled}>
                   You don’t have any approved presale

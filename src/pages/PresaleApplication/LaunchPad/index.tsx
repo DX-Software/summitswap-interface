@@ -1,10 +1,9 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useEffect, useState, useMemo } from 'react'
 import styled from 'styled-components'
-import { Pagination } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { useFactoryPresaleContract, usePresaleContracts } from 'hooks/useContract'
-import { PRESALE_CARDS_PER_PAGE, ALL_PRESALE_OPTION, WHITELIST_ONLY, PUBLIC_ONLY_OPTION } from 'constants/presale'
+import { ALL_PRESALE_OPTION, WHITELIST_ONLY, PUBLIC_ONLY_OPTION } from 'constants/presale'
 import {
   ArrowBackIcon,
   Breadcrumbs,
@@ -24,10 +23,9 @@ import {
 import { RowFixed } from 'components/Row'
 import { fetchPresaleInfo, checkSalePhase } from 'utils/presale'
 import { isAddress } from 'utils'
-import { usePaginationStyles } from '../Presale/Shared'
 import { PresalePhases } from '../types'
 import { Heading } from '../AdminPanel'
-import PresaleCard from '../PresaleCard'
+import PresaleCards from '../PresaleCards'
 import Presale from '../Presale'
 
 const ContentWrapper = styled(Box)`
@@ -63,13 +61,6 @@ const StyledText = styled(Text)`
   }
 `
 
-const ResonsiveFlex = styled(Flex)`
-  justify-content: space-evenly;
-  @media (max-width: 680px) {
-    justify-content: center;
-  }
-`
-
 const SelectWrapper = styled(Box)`
   width: 100%;
   max-width: 226px;
@@ -102,10 +93,6 @@ const SearchInput = styled(Input)`
   }
 `
 
-const PaginationWrapper = styled.div`
-  position: fixed;
-  right: 1;
-`
 const LaunchPad = () => {
   const { account } = useWeb3React()
 
@@ -121,7 +108,6 @@ const LaunchPad = () => {
 
   const factoryContract = useFactoryPresaleContract()
   const presaleContracts = usePresaleContracts(approvedPresales)
-  const paginationStyles = usePaginationStyles()
 
   useEffect(() => {
     async function fetchPresales() {
@@ -281,14 +267,6 @@ const LaunchPad = () => {
     }
   }
 
-  const startIndex =
-    (buttonIndex === 0 ? browsePage : contributionPage) * PRESALE_CARDS_PER_PAGE - PRESALE_CARDS_PER_PAGE
-  const endIndex =
-    startIndex + PRESALE_CARDS_PER_PAGE > showAddresses.length
-      ? showAddresses.length
-      : startIndex + PRESALE_CARDS_PER_PAGE
-  const slicedAddresses = showAddresses.slice(startIndex, endIndex)
-
   const headingTexts = ['Browse Presale', 'My Contribution']
   return (
     <>
@@ -368,40 +346,27 @@ const LaunchPad = () => {
                   />
                 </SelectWrapper>
               </Flex>
-              <ResonsiveFlex marginTop="16px" flexWrap="wrap">
-                {(filteredAddresses.length ? filteredAddresses : slicedAddresses).map((address) => (
-                  <PresaleCard key={address} viewPresaleHandler={viewPresaleHandler} presaleAddress={address} />
-                ))}
-              </ResonsiveFlex>
-            </>
-          )}
-        </Box>
-        {!selectedPresale && (
-          <ResonsiveFlex>
-            <PaginationWrapper>
               {buttonIndex === 0 && (
-                <Pagination
-                  variant="outlined"
-                  shape="rounded"
-                  sx={paginationStyles}
-                  count={filteredAddresses.length ? 1 : Math.ceil(showAddresses.length / PRESALE_CARDS_PER_PAGE)}
+                <PresaleCards
                   page={browsePage}
-                  onChange={(_, value: number) => setBrowsePage(value)}
+                  setPage={setBrowsePage}
+                  viewPresaleHandler={viewPresaleHandler}
+                  presaleAddresses={showAddresses}
+                  filteredAddresses={filteredAddresses}
                 />
               )}
               {buttonIndex === 1 && (
-                <Pagination
-                  variant="outlined"
-                  shape="rounded"
-                  sx={paginationStyles}
-                  count={filteredAddresses.length ? 1 : Math.ceil(showAddresses.length / PRESALE_CARDS_PER_PAGE)}
+                <PresaleCards
                   page={contributionPage}
-                  onChange={(_, value: number) => setContributionPage(value)}
+                  setPage={setContributionPage}
+                  viewPresaleHandler={viewPresaleHandler}
+                  presaleAddresses={showAddresses}
+                  filteredAddresses={filteredAddresses}
                 />
               )}
-            </PaginationWrapper>
-          </ResonsiveFlex>
-        )}
+            </>
+          )}
+        </Box>
       </ContentWrapper>
     </>
   )
