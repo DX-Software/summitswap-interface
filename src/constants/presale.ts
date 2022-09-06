@@ -1,13 +1,6 @@
-import { Option } from 'react-dropdown'
 import { BUSD, KODA, USDC, USDT, NULL_ADDRESS } from '.'
 
 export const PRESALE_FACTORY_ADDRESS = `${process.env.REACT_APP_PRESALE_FACTORY_ADDRESS}`
-
-export const WHITELIST_SALE: Option = { label: 'Whitelist', value: 'Whitelist' }
-export const PUBLIC_SALE: Option = { label: 'Public', value: 'Public' }
-
-export const NO_FILTER: Option = { value: 'NO_FILTER', label: 'No Filter' }
-export const FILTER_OWNER: Option = { value: 'OWNER', label: 'Owner' }
 
 export const FEE_PAYMENT_TOKEN = 2 // 2%
 export const FEE_PRESALE_TOKEN = 2 // 2%
