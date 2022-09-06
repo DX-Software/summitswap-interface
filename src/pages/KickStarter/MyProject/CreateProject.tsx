@@ -11,6 +11,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { Divider } from '../shared'
 import { Project } from '../types'
+import CreationStep01 from './CreationStep01'
 
 type Prop = {
   isCreate: boolean
@@ -126,7 +127,9 @@ function CreateProject({ isCreate, toggleIsCreate }: Prop) {
       </Heading>
       <Divider style={{ marginBottom: '24px' }} />
       <FormikProvider value={formik}>
-        {/* {currentCreationStep === 1 && <CreationStep01 />} */}
+        {currentCreationStep === 1 && (
+          <CreationStep01 setCurrentCreationStep={setCurrentCreationStep} formik={formik} />
+        )}
         {/* {currentCreationStep === 2 && <CreationStep02 />}
       {currentCreationStep === 3 && <CreationStep03 handleCreateProject={handleCreateProject} />} */}
       </FormikProvider>
