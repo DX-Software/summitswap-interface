@@ -20,13 +20,15 @@ import MyPresales from './MyPresales'
 export default function PresaleApplication() {
   const { account, activate, deactivate } = useWeb3React()
   const [buttonIndex, setButtonIndex] = useState(0)
-  const [accountIsAdmin, setAccountIsAdmin] = useState(false)
+  const [accountIsAdminOrOwner, setAccountIsAdminOrOwner] = useState(false)
 
   const factoryContract = useFactoryPresaleContract()
 
   useEffect(() => {
     async function checkAccountIsAdmin() {
-      setAccountIsAdmin(await factoryContract?.isAdmin(account))
+      setAccountIsAdminOrOwner(
+        (await factoryContract?.isAdmin(account)) || (await factoryContract?.owner()) === account
+      )
     }
     if (account && factoryContract) {
       checkAccountIsAdmin()
@@ -34,8 +36,8 @@ export default function PresaleApplication() {
   }, [account, factoryContract])
 
   useEffect(() => {
-    if (buttonIndex === 1 && !accountIsAdmin) setButtonIndex(0)
-  }, [accountIsAdmin, buttonIndex])
+    if (buttonIndex === 1 && !accountIsAdminOrOwner) setButtonIndex(0)
+  }, [accountIsAdminOrOwner, buttonIndex])
 
   const handleLogin = useCallback(
     (connectorId: string) => {
@@ -50,12 +52,12 @@ export default function PresaleApplication() {
       <Box marginY="24px">
         <ButtonMenu activeIndex={buttonIndex} onItemClick={(index) => setButtonIndex(index)}>
           <ButtonMenuItem>Create Presale</ButtonMenuItem>
-          {accountIsAdmin ? <ButtonMenuItem>Admin Panel</ButtonMenuItem> : <></>}
+          {accountIsAdminOrOwner ? <ButtonMenuItem>Admin Panel</ButtonMenuItem> : <></>}
           <ButtonMenuItem>My Presales</ButtonMenuItem>
         </ButtonMenu>
       </Box>
       {buttonIndex === 0 && <CreatePresale setHomeButtonIndex={setButtonIndex} />}
-      {accountIsAdmin && buttonIndex === 1 && <AdminPanel />}
+      {accountIsAdminOrOwner && buttonIndex === 1 && <AdminPanel />}
       {buttonIndex === 2 && <MyPresales setHomeButtonIndex={setButtonIndex} />}
     </>
   ) : (
