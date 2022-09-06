@@ -16,7 +16,7 @@ import React, { useCallback, useState } from 'react'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import styled from 'styled-components'
 import CreationStep01 from './CreationStep01.old'
-import CreationStep02 from './CreationStep02'
+import CreationStep02 from './CreationStep02.old'
 import CreationStep03 from './CreationStep03'
 
 const Divider = styled.div`

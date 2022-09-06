@@ -12,6 +12,7 @@ import { useTransactionAdder } from 'state/transactions/hooks'
 import { Divider } from '../shared'
 import { Project } from '../types'
 import CreationStep01 from './CreationStep01'
+import CreationStep02 from './CreationStep02'
 
 type Prop = {
   isCreate: boolean
@@ -130,8 +131,10 @@ function CreateProject({ isCreate, toggleIsCreate }: Prop) {
         {currentCreationStep === 1 && (
           <CreationStep01 setCurrentCreationStep={setCurrentCreationStep} formik={formik} />
         )}
-        {/* {currentCreationStep === 2 && <CreationStep02 />}
-      {currentCreationStep === 3 && <CreationStep03 handleCreateProject={handleCreateProject} />} */}
+        {currentCreationStep === 2 && (
+          <CreationStep02 setCurrentCreationStep={setCurrentCreationStep} formik={formik} />
+        )}
+        {/* {currentCreationStep === 3 && <CreationStep03 handleCreateProject={handleCreateProject} />} */}
       </FormikProvider>
       <TransactionConfirmationModal
         isOpen={isOpen}
