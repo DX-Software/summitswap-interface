@@ -150,17 +150,20 @@ const LaunchPad = () => {
           }
         })
       )
+
       return comparableArray
-        .filter(
-          (info) =>
-            checkSalePhase(info.presaleInfo) === PresalePhases.PresalePhase &&
-            (filter === ALL_PRESALE_OPTION.value
-              ? true
-              : filter === WHITELIST_ONLY.value
-              ? info.presaleInfo.isWhitelistEnabled
-              : !info.presaleInfo.isWhitelistEnabled) &&
-            (buttonIndex === 1 ? info.presaleInfo.owner === account || info.contributors.includes(account) : true)
-        )
+        .filter((info) => {
+          if (!(checkSalePhase(info.presaleInfo) === PresalePhases.PresalePhase)) {
+            return false
+          }
+          if (buttonIndex === 1 && !(info.presaleInfo.owner === account || info.contributors.includes(account))) {
+            return false
+          }
+          if (filter === ALL_PRESALE_OPTION.value) return true
+          if (filter === WHITELIST_ONLY.value && info.presaleInfo.isWhitelistEnabled) return true
+          if (filter === PUBLIC_ONLY_OPTION.value && !info.presaleInfo.isWhitelistEnabled) return true
+          return false
+        })
         .sort((a, b) => a.presaleInfo.endPresaleTime.toNumber() - b.presaleInfo.endPresaleTime.toNumber())
         .map((obj) => obj.presaleAddress)
     }
@@ -178,17 +181,20 @@ const LaunchPad = () => {
           }
         })
       )
+
       return comparableArray
-        .filter(
-          (info) =>
-            checkSalePhase(info.presaleInfo) === PresalePhases.PresaleNotStarted &&
-            (filter === ALL_PRESALE_OPTION.value
-              ? true
-              : filter === WHITELIST_ONLY.value
-              ? info.presaleInfo.isWhitelistEnabled
-              : !info.presaleInfo.isWhitelistEnabled) &&
-            (buttonIndex === 1 ? info.presaleInfo.owner === account || info.contributors.includes(account) : true)
-        )
+        .filter((info) => {
+          if (!(checkSalePhase(info.presaleInfo) === PresalePhases.PresaleNotStarted)) {
+            return false
+          }
+          if (buttonIndex === 1 && !(info.presaleInfo.owner === account || info.contributors.includes(account))) {
+            return false
+          }
+          if (filter === ALL_PRESALE_OPTION.value) return true
+          if (filter === WHITELIST_ONLY.value && info.presaleInfo.isWhitelistEnabled) return true
+          if (filter === PUBLIC_ONLY_OPTION.value && !info.presaleInfo.isWhitelistEnabled) return true
+          return false
+        })
         .sort((a, b) => a.presaleInfo.startPresaleTime.toNumber() - b.presaleInfo.startPresaleTime.toNumber())
         .map((obj) => obj.presaleAddress)
     }
@@ -207,20 +213,23 @@ const LaunchPad = () => {
           }
         })
       )
+
       return comparableArray
-        .filter(
-          (info) =>
-            !(
-              checkSalePhase(info.presaleInfo) === PresalePhases.PresaleNotStarted ||
-              checkSalePhase(info.presaleInfo) === PresalePhases.PresalePhase
-            ) &&
-            (filter === ALL_PRESALE_OPTION.value
-              ? true
-              : filter === WHITELIST_ONLY.value
-              ? info.presaleInfo.isWhitelistEnabled
-              : !info.presaleInfo.isWhitelistEnabled) &&
-            (buttonIndex === 1 ? info.presaleInfo.owner === account || info.contributors.includes(account) : true)
-        )
+        .filter((info) => {
+          if (
+            checkSalePhase(info.presaleInfo) === PresalePhases.PresaleNotStarted ||
+            checkSalePhase(info.presaleInfo) === PresalePhases.PresalePhase
+          ) {
+            return false
+          }
+          if (buttonIndex === 1 && !(info.presaleInfo.owner === account || info.contributors.includes(account))) {
+            return false
+          }
+          if (filter === ALL_PRESALE_OPTION.value) return true
+          if (filter === WHITELIST_ONLY.value && info.presaleInfo.isWhitelistEnabled) return true
+          if (filter === PUBLIC_ONLY_OPTION.value && !info.presaleInfo.isWhitelistEnabled) return true
+          return false
+        })
         .sort((a, b) => {
           if (a.finaliseTime !== 0) {
             if (b.finaliseTime !== 0) {
