@@ -1,7 +1,7 @@
 import { Button, Flex, Skeleton, Text, TextArea } from "@koda-finance/summitswap-uikit"
 import AccountIcon from "components/AccountIcon"
 import CopyButton from "components/CopyButton"
-import { useKickstarterContext } from "contexts/kickstarter"
+import { useKickstarterContext } from "pages/KickStarter/contexts/kickstarter"
 import React, { useCallback, useMemo } from "react"
 import styled from "styled-components"
 import { shortenAddress } from "utils"

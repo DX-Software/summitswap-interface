@@ -2,7 +2,7 @@ import { AddIcon, ArrowBackIcon, ArrowForwardIcon, Button, Flex, Heading, Text }
 import { Grid } from '@mui/material'
 import { Arrow, PageButtons } from 'components/InfoTables/shared'
 import { PER_PAGE } from 'constants/kickstarter'
-import { useKickstarterContext } from 'contexts/kickstarter'
+import { useKickstarterContext } from 'pages/KickStarter/contexts/kickstarter'
 import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import CreateProject from './CreateProject'

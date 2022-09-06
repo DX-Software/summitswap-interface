@@ -2,7 +2,7 @@ import { ArrowBackIcon, ArrowForwardIcon, Flex, Heading, Input, SearchIcon, Sele
 import { Grid } from '@mui/material'
 import { Arrow, PageButtons } from 'components/InfoTables/shared'
 import { PER_PAGE } from 'constants/kickstarter'
-import { useKickstarterContext } from 'contexts/kickstarter'
+import { useKickstarterContext } from 'pages/KickStarter/contexts/kickstarter'
 import { OrderDirection } from 'hooks/useKickstarters'
 import React, { useMemo } from 'react'
 import { isDesktop } from 'react-device-detect'

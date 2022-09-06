@@ -1,5 +1,5 @@
 import { ArrowForwardIcon, Button, Flex, ImageAddIcon, Input, Text, TextArea } from '@koda-finance/summitswap-uikit'
-import { useKickstarterContext } from 'contexts/kickstarter'
+import { useKickstarterContext } from 'pages/KickStarter/contexts/kickstarter'
 import React, { useCallback, useMemo, useRef } from 'react'
 import styled from 'styled-components'
 import FundingInput from './FundingInput'

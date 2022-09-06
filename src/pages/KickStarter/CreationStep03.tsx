@@ -1,7 +1,7 @@
 import { BinanceIcon, Button, Flex, Heading, Skeleton, Text } from '@koda-finance/summitswap-uikit'
 import AccountIcon from 'components/AccountIcon'
 import CopyButton from 'components/CopyButton'
-import { useKickstarterContext } from 'contexts/kickstarter'
+import { useKickstarterContext } from 'pages/KickStarter/contexts/kickstarter'
 import { format } from 'date-fns'
 import React from 'react'
 import styled from 'styled-components'

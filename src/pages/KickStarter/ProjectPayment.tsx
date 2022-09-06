@@ -3,7 +3,7 @@ import { ArrowBackIcon, ArrowForwardIcon, BinanceIcon, Box, Breadcrumbs, Button,
 import { Grid } from "@mui/material"
 import AccountIcon from "components/AccountIcon"
 import TransactionConfirmationModal, { TransactionErrorContent } from "components/TransactionConfirmationModal"
-import { useKickstarterContext } from "contexts/kickstarter"
+import { useKickstarterContext } from "pages/KickStarter/contexts/kickstarter"
 import { format } from "date-fns"
 import { parseUnits } from 'ethers/lib/utils'
 import { useKickstarterContract } from 'hooks/useContract'

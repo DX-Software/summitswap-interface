@@ -1,7 +1,7 @@
 import { ArrowBackIcon, BinanceIcon, Breadcrumbs, Button, FacebookIcon, FileIcon, Flex, Progress, ShareIcon, Skeleton, Tag, Text, TwitterIcon } from "@koda-finance/summitswap-uikit"
 import { Grid } from "@mui/material"
 import Tooltip from "components/Tooltip"
-import { useKickstarterContext } from "contexts/kickstarter"
+import { useKickstarterContext } from "pages/KickStarter/contexts/kickstarter"
 import { format } from "date-fns"
 import { BackedKickstarter } from "hooks/useBackKickstartersByAddress"
 import { Kickstarter } from "hooks/useKickstarter"

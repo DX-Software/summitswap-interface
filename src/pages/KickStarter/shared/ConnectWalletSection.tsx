@@ -1,6 +1,6 @@
 import React from "react"
 import { Button, Flex, Heading, WalletIcon } from "@koda-finance/summitswap-uikit"
-import { useKickstarterContext } from "contexts/kickstarter"
+import { useKickstarterContext } from "pages/KickStarter/contexts/kickstarter"
 
 function ConnectWalletSection() {
   const { onPresentConnectModal } = useKickstarterContext()

@@ -1,5 +1,5 @@
 import { ArrowForwardIcon, Button, Flex, Heading } from "@koda-finance/summitswap-uikit";
-import { useKickstarterContext } from "contexts/kickstarter";
+import { useKickstarterContext } from "pages/KickStarter/contexts/kickstarter";
 import React from "react"
 
 function EmptyMyKickstarterSection() {

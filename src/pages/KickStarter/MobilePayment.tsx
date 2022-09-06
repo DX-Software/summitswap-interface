@@ -1,6 +1,6 @@
 import { ArrowForwardIcon, BinanceIcon, Box, Button, Flex, Heading, Skeleton, Text, WalletIcon } from "@koda-finance/summitswap-uikit"
 import AccountIcon from "components/AccountIcon"
-import { useKickstarterContext } from "contexts/kickstarter"
+import { useKickstarterContext } from "pages/KickStarter/contexts/kickstarter"
 import { parseUnits } from "ethers/lib/utils"
 import { Kickstarter } from "hooks/useKickstarter"
 import React from "react"

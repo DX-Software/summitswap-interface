@@ -9,7 +9,7 @@ import {
 import { useWeb3React } from '@web3-react/core'
 import { useUploadImageApi } from 'api/useUploadImageApi'
 import TransactionConfirmationModal, { TransactionErrorContent } from 'components/TransactionConfirmationModal'
-import { useKickstarterContext } from 'contexts/kickstarter'
+import { useKickstarterContext } from 'pages/KickStarter/contexts/kickstarter'
 import { parseUnits } from 'ethers/lib/utils'
 import { useKickstarterFactoryContract } from 'hooks/useContract'
 import React, { useCallback, useState } from 'react'
