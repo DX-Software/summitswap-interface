@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js"
-import { BackedKickstarter, Kickstarter, KickstarterAccount, KickstarterContribution, KickstarterFactory, KickstarterProgressStatus } from "types/kickstarter"
+import { BackedKickstarter, Kickstarter, KickstarterAccount, KickstarterApprovalStatus, KickstarterContribution, KickstarterFactory, KickstarterProgressStatus } from "types/kickstarter"
 
 const oneDayTimestamp = 60 * 60 * 24
 
@@ -89,4 +89,14 @@ export const getKickstarterStatusLabel = (endTimestamp: number, showInDays = fal
   if (!showInDays && kickstarterStatus === KickstarterProgressStatus.COMPLETED) return "Completed"
   if (showInDays || dayRemaining <= 7) return `${dayRemaining} day${dayRemaining > 1 ? "s" : ""} left`
   return "Ongoing"
+}
+
+export const getKickstarterApprovalStatusLabel = (approvalStatus: KickstarterApprovalStatus) => {
+  if (approvalStatus === KickstarterApprovalStatus.WAITING_FOR_APPROVAL) {
+    return "Waiting for Approval";
+  }
+  if (approvalStatus === KickstarterApprovalStatus.APPROVED) {
+    return "Approved";
+  }
+  return "Rejected";
 }

@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js'
 import React, { useState } from 'react'
 import { Kickstarter, OrderDirection, OrderKickstarterBy } from 'types/kickstarter'
 import KickstarterTable from '../shared/KickstarterTable'
-import ProjectDetails from './ProjectDetails'
+import ProjectDetails from './KickstarterDetails'
 
 type Props = {
   handleShowKickstarter: (kickstarterId: string) => void

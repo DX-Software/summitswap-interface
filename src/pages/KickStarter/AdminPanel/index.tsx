@@ -6,7 +6,7 @@ import { AdminTabs, NavItem } from '../types'
 import ApprovalHistory from './ApprovalHistory'
 import ProjectSettings from './ProjectSettings'
 import WaitingForApproval from './WaitingForApproval'
-import ProjectDetails from './ProjectDetails'
+import KickstarterDetails from './KickstarterDetails'
 
 function AdminPanel() {
   const { account } = useWeb3React()
@@ -37,7 +37,7 @@ function AdminPanel() {
 
   if (kickstarterId) {
     return (
-      <ProjectDetails
+      <KickstarterDetails
         previousPage={navItems[activeTabIndex].label}
         kickstarterId={kickstarterId}
         handleKickstarterId={setKickstarterId}
