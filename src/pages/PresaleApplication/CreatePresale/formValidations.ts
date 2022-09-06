@@ -1,6 +1,5 @@
 import { differenceInDays } from 'date-fns'
-import checkUrl from 'utils/checkUrl'
-import checkEmail from 'utils/checkEmail'
+import { checkEmail, checkUrl } from 'utils/validations'
 import { CONTACT_METHOD_OPTIONS } from 'constants/presale'
 import { PresaleDetails, PresaleDetailsErrors, ProjectDetails } from '../types'
 

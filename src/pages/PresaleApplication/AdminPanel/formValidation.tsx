@@ -1,5 +1,4 @@
-import checkUrl from 'utils/checkUrl'
-import checkEmail from 'utils/checkEmail'
+import { checkEmail, checkUrl } from 'utils/validations'
 import { differenceInDays } from 'date-fns'
 import { formatUnits } from 'ethers/lib/utils'
 import { BigNumber } from 'ethers'
