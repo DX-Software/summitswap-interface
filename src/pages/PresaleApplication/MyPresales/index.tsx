@@ -4,7 +4,6 @@ import { isAddress } from 'utils'
 import { useWeb3React } from '@web3-react/core'
 import { useLocation } from 'react-router-dom'
 import { useFactoryPresaleContract } from 'hooks/useContract'
-import { PRESALE_FACTORY_ADDRESS } from 'constants/presale'
 import {
   ArrowBackIcon,
   Breadcrumbs,
@@ -76,7 +75,7 @@ const MyPresales = ({ setHomeButtonIndex }: Props) => {
   const [pendingPresales, setPendingPresales] = useState<string[]>([])
   const [approvedPresales, setApprovedPresales] = useState<string[]>([])
 
-  const factoryContract = useFactoryPresaleContract(PRESALE_FACTORY_ADDRESS)
+  const factoryContract = useFactoryPresaleContract()
   const location = useLocation()
 
   useEffect(() => {

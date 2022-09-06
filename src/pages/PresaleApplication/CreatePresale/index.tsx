@@ -10,7 +10,6 @@ import { Box, Text } from '@koda-finance/summitswap-uikit'
 import {
   RADIO_VALUES,
   TOKEN_CHOICES,
-  PRESALE_FACTORY_ADDRESS,
   FEE_DECIMALS,
   FEE_PAYMENT_TOKEN,
   FEE_PRESALE_TOKEN,
@@ -49,7 +48,7 @@ const CreatePresale = ({ setHomeButtonIndex }: Props) => {
   const [accountBalance, setAccountBalance] = useState<BigNumber>(BigNumber.from(0))
 
   const tokenContract = useTokenContract(selectedToken?.address, true)
-  const factoryContract = useFactoryPresaleContract(PRESALE_FACTORY_ADDRESS)
+  const factoryContract = useFactoryPresaleContract()
   const lastTokenPresaleContract = usePresaleContract(lastTokenPresales)
 
   useEffect(() => {

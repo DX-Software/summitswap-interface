@@ -4,7 +4,6 @@ import { BigNumber } from 'ethers'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 import { AutoRenewIcon, Box, Button, Text, Heading, Input } from '@koda-finance/summitswap-uikit'
 import { useFactoryPresaleContract } from 'hooks/useContract'
-import { PRESALE_FACTORY_ADDRESS } from 'constants/presale'
 import { Caption } from '../Texts'
 
 const PresaleSettings = () => {
@@ -15,7 +14,7 @@ const PresaleSettings = () => {
   const [valueError, setValueError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [currentCreationFee, setCurrentPresaleFee] = useState<BigNumber>()
-  const factoryContract = useFactoryPresaleContract(PRESALE_FACTORY_ADDRESS)
+  const factoryContract = useFactoryPresaleContract()
 
   useEffect(() => {
     async function checkAccountIsOwner() {

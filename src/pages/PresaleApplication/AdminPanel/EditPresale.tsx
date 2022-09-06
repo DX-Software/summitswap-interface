@@ -7,7 +7,7 @@ import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { useToken } from 'hooks/Tokens'
 import { usePresaleContract, useFactoryPresaleContract } from 'hooks/useContract'
 import { fetchPresaleInfo, fetchFeeInfo, fetchProjectDetails } from 'utils/presale'
-import { FEE_DECIMALS, PRESALE_FACTORY_ADDRESS, JOIN_IDS_WITH } from 'constants/presale'
+import { FEE_DECIMALS, JOIN_IDS_WITH } from 'constants/presale'
 import { NULL_ADDRESS } from 'constants/index'
 import { getUtcDate } from '../CreatePresale/CreationStep06'
 import { PresaleInfo, ProjectDetails, FeeInfo, FieldNames, AdminForm as IAdminForm } from '../types'
@@ -28,7 +28,7 @@ const EditPresale = ({ presaleAddress, handleEditButtonHandler }: Props) => {
   const [presaleFeeInfo, setPresaleFeeInfo] = useState<FeeInfo>()
   const [projectDetails, setProjectDetails] = useState<ProjectDetails>()
 
-  const factoryContract = useFactoryPresaleContract(PRESALE_FACTORY_ADDRESS)
+  const factoryContract = useFactoryPresaleContract()
   const presaleContract = usePresaleContract(presaleAddress)
   const paymentToken = useToken(
     presaleFeeInfo?.paymentToken !== NULL_ADDRESS ? presaleFeeInfo?.paymentToken : undefined

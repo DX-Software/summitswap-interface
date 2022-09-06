@@ -11,6 +11,7 @@ import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
 import { LOCKER_ADDRESS, REFERRAL_ADDRESS } from '../constants'
 import { TokenType, TOKEN_CREATOR_ADDRESS } from '../constants/createToken'
+import { PRESALE_FACTORY_ADDRESS } from '../constants/presale'
 import CREATE_STANDARD_TOKEN_ABI from '../constants/abis/createStandardToken.json'
 import CREATE_LIQUIDITY_TOKEN_ABI from '../constants/abis/createLiquidityToken.json'
 import ERC20_ABI from '../constants/abis/erc20.json'
@@ -127,8 +128,8 @@ export function useTokenCreatorContract(tokenType: TokenType): Contract | null {
   return useContract(TOKEN_CREATOR_ADDRESS[tokenType], createTokenAbi)
 }
 
-export function useFactoryPresaleContract(factoryAddress: string): Contract | null {
-  return useContract(factoryAddress, PRESALE_FACOTRY_ABI)
+export function useFactoryPresaleContract(): Contract | null {
+  return useContract(PRESALE_FACTORY_ADDRESS, PRESALE_FACOTRY_ABI)
 }
 
 export function usePresaleContract(presaleAddress: string): Contract | null {

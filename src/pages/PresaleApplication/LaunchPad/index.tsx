@@ -5,7 +5,6 @@ import { Pagination } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { useFactoryPresaleContract, usePresaleContracts } from 'hooks/useContract'
 import {
-  PRESALE_FACTORY_ADDRESS,
   PRESALES_PER_PAGE_ADMIN_PANEL,
   ALL_PRESALE_OPTION,
   WHITELIST_ONLY,
@@ -125,7 +124,7 @@ const LaunchPad = () => {
   const [browsePage, setBrowsePage] = useState(1)
   const [contributionPage, setContributionPage] = useState(1)
 
-  const factoryContract = useFactoryPresaleContract(PRESALE_FACTORY_ADDRESS)
+  const factoryContract = useFactoryPresaleContract()
   const presaleContracts = usePresaleContracts(approvedPresales)
   const paginationStyles = usePaginationStyles()
 

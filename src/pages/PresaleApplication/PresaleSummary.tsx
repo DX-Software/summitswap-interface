@@ -16,7 +16,7 @@ import { useTokenContract, usePresaleContract, useFactoryPresaleContract } from 
 import { useToken } from 'hooks/Tokens'
 import { MouseoverTooltip } from 'components/Tooltip'
 import { fetchPresaleInfo, fetchFeeInfo, fetchProjectDetails } from 'utils/presale'
-import { FEE_DECIMALS, RADIO_VALUES, TOKEN_CHOICES, PRESALE_FACTORY_ADDRESS } from 'constants/presale'
+import { FEE_DECIMALS, RADIO_VALUES, TOKEN_CHOICES } from 'constants/presale'
 import { NULL_ADDRESS } from 'constants/index'
 import { GridItem2 } from './CreatePresale/GridComponents'
 import { PresaleInfo, ProjectDetails, FeeInfo } from './types'
@@ -72,7 +72,7 @@ const PresaleSummary = ({ presaleAddress, handleEditButtonHandler }: Props) => {
   )
   const tokenContract = useTokenContract(presaleInfo?.presaleToken, true)
   const presaleContract = usePresaleContract(presaleAddress)
-  const factoryContract = useFactoryPresaleContract(PRESALE_FACTORY_ADDRESS)
+  const factoryContract = useFactoryPresaleContract()
 
   useEffect(() => {
     async function fetchData() {

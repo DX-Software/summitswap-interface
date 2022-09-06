@@ -12,7 +12,6 @@ import {
   ButtonMenuItem,
 } from '@koda-finance/summitswap-uikit'
 import { useFactoryPresaleContract } from 'hooks/useContract'
-import { PRESALE_FACTORY_ADDRESS } from 'constants/presale'
 import login from 'utils/login'
 import CreatePresale from './CreatePresale'
 import AdminPanel from './AdminPanel'
@@ -23,7 +22,7 @@ export default function PresaleApplication() {
   const [buttonIndex, setButtonIndex] = useState(0)
   const [accountIsAdmin, setAccountIsAdmin] = useState(false)
 
-  const factoryContract = useFactoryPresaleContract(PRESALE_FACTORY_ADDRESS)
+  const factoryContract = useFactoryPresaleContract()
 
   useEffect(() => {
     async function checkAccountIsAdmin() {

@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Pagination } from '@mui/material'
 import { useFactoryPresaleContract } from 'hooks/useContract'
 import { RowFixed } from 'components/Row'
-import { PRESALE_FACTORY_ADDRESS, PRESALES_PER_PAGE_ADMIN_PANEL } from 'constants/presale'
+import { PRESALES_PER_PAGE_ADMIN_PANEL } from 'constants/presale'
 import {
   Flex,
   Box,
@@ -77,7 +77,7 @@ const AdminPanel = () => {
   const [isEditMode, setEditMode] = useState(false)
 
   const paginationStyle = usePaginationStyles()
-  const factoryContract = useFactoryPresaleContract(PRESALE_FACTORY_ADDRESS)
+  const factoryContract = useFactoryPresaleContract()
 
   useEffect(() => {
     async function fetchPresales() {
