@@ -1,5 +1,5 @@
 import React from 'react'
-import { CheckmarkIcon, CloseIcon, Flex, Skeleton, Text } from '@koda-finance/summitswap-uikit'
+import { CheckmarkIcon, CloseIcon, Flex, InfoIcon, Skeleton, Text } from '@koda-finance/summitswap-uikit'
 import styled from 'styled-components'
 import { KickstarterApprovalStatus } from 'types/kickstarter'
 import { getKickstarterApprovalStatusLabel } from 'utils/kickstarter'
@@ -7,6 +7,7 @@ import { getKickstarterApprovalStatusLabel } from 'utils/kickstarter'
 type InfoProps = {
   title: string
   description: string
+  tooltipText?: string
   isLoading?: boolean
 }
 type CurrencyInfoProps = {
@@ -53,6 +54,31 @@ const ImgCurrency = styled.div<{ image: string }>`
   background-blend-mode: overlay;
 `
 
+const Tooltip = styled.div`
+  position: relative;
+
+  :hover div {
+    visibility: visible;
+  }
+`
+
+const TooltipText = styled.div`
+  width: 240px;
+  visibility: hidden;
+  font-size: 12px;
+  line-height: 16px;
+  background-color: ${({theme}) => theme.colors.sidebarBackground};
+  color: white;
+  border-radius: 6px;
+  padding: 8px 12px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 999;
+`
+
 export const Divider = styled(Flex)`
   width: 100%;
   height: 1px;
@@ -60,12 +86,20 @@ export const Divider = styled(Flex)`
   background-color: ${({theme}) => theme.colors.inputColor};
 `
 
-export const TextInfo = ({ title, description, isLoading = false }: InfoProps) => {
+export const TextInfo = ({ title, description, tooltipText, isLoading = false }: InfoProps) => {
   return (
     <>
-      <Text fontSize="14px" color="textSubtle" marginBottom="4px">
-        {title}
-      </Text>
+      <Flex style={{ columnGap: "8px", alignItems: "center" }}>
+        <Text fontSize="14px" color="textSubtle" marginBottom="4px">
+          {title}
+        </Text>
+        {tooltipText && (
+          <Tooltip>
+            <InfoIcon width="16px" />
+            <TooltipText>{tooltipText}</TooltipText>
+          </Tooltip>
+        )}
+      </Flex>
       {isLoading ? <Skeleton width={180} height={24} /> : <Text>{description}</Text>}
     </>
   )

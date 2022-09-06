@@ -94,11 +94,52 @@ const ProjectDetails = () => {
   )
 }
 
+const FundAndRewardsSystem = () => {
+  return (
+    <>
+      <Heading size='lg' marginBottom="16px" color="sidebarActiveColor">Fund & Reward System</Heading>
+      <TextInfo
+        title="Creator Wallet Address"
+        description="0x653222feCf0C7a936C121832561f9DD8774eE496"
+      />
+      <br />
+      <TextInfo
+        title="Reward Description"
+        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non nibh a, commodo aliquam nullam pharetra viverra. Etiam odio aliquam quis lacus, justo, aliquam molestie suspendisse tempus."
+      />
+      <br />
+      <Grid container spacing="16px">
+        <Grid item xs={12} sm={6}>
+          <TextInfo
+            title="Project Due Date"
+            description="Tuesday, July 26th 2022"
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextInfo
+            title="Reward Description"
+            description="Tuesday, July 26th 2022"
+            tooltipText="This is only an estimated date. It might be possible for the reward to be distributed earlier or later from scheduled."
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextInfo title="Contact Method" description="Telegram" />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextInfo title="Telegram ID" description="summitswap" />
+        </Grid>
+      </Grid>
+    </>
+  )
+}
+
 function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }: KickstarterDetailsProps) {
   return (
     <Flex flexDirection="column">
       <Header previousPage={previousPage} handleKickstarterId={handleKickstarterId} />
       <ProjectDetails />
+      <Divider />
+      <FundAndRewardsSystem />
       <Divider />
     </Flex>
   )
