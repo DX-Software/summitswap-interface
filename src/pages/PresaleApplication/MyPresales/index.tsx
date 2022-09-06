@@ -24,7 +24,7 @@ import Presale from '../Presale'
 
 const ContentWrapper = styled(Box)`
   max-width: 950px;
-  width: 100%;
+  width: 950px;
   margin: 0 auto;
   margin-top: 24px;
   ::-webkit-scrollbar {

@@ -23,6 +23,7 @@ import EditPresale from './EditPresale'
 
 const ContentWrapper = styled(Box)`
   max-width: 90%;
+  width: 950px;
   margin: 0 auto;
   margin-top: 24px;
   ::-webkit-scrollbar {
@@ -143,9 +144,7 @@ const AdminPanel = () => {
   }
 
   return (
-    <ContentWrapper
-      overflow={(tabIndex === 2 && !selectedPresale) || (isEditMode && selectedPresale) ? 'visible' : 'scroll'}
-    >
+    <ContentWrapper overflow={isEditMode || selectedPresale ? 'visible' : 'scroll'}>
       <Box width={selectedPresale || '950px'}>
         {selectedPresale ? (
           <>
