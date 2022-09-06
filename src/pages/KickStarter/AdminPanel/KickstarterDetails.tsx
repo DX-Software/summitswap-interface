@@ -1,6 +1,6 @@
 import { ArrowBackIcon, Breadcrumbs, Flex, Heading, Skeleton, Text } from "@koda-finance/summitswap-uikit"
 import { Grid } from "@mui/material"
-import React from "react"
+import React, { useState } from "react"
 import styled from "styled-components"
 import { KickstarterApprovalStatus } from "types/kickstarter"
 import { CurrencyInfo, Divider, StatusInfo, TextInfo } from "../shared"
@@ -68,6 +68,7 @@ const ProjectDetails = () => {
       <Heading size='lg' marginBottom="16px" color="sidebarActiveColor">Project Details</Heading>
       <ProjectDetailsContainer>
         <ImgKickstarter image="https://picsum.photos/400" />
+        <br />
         <Flex flexDirection="column">
           <StatusInfo title="Project Status" approvalStatus={KickstarterApprovalStatus.WAITING_FOR_APPROVAL} />
           <Divider />
@@ -133,7 +134,41 @@ const FundAndRewardsSystem = () => {
   )
 }
 
+const Withdrawal = () => {
+  return (
+    <>
+      <Heading size='lg' marginBottom="16px" color="sidebarActiveColor">Withdrawal Fee Amount</Heading>
+      <Grid container spacing="16px">
+        <Grid item xs={12} sm={6} lg={4}>
+          <TextInfo
+            title="Fee Method"
+            description="Percentage"
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} lg={4}>
+          <TextInfo
+            title="Fee Percentage"
+            description="5%"
+          />
+        </Grid>
+      </Grid>
+    </>
+  )
+}
+
+const EditWithdrawal = () => {
+  return (
+    <>
+      <Heading size='lg' marginBottom="8px" color="sidebarActiveColor">Withdrawal Fee Amount</Heading>
+      <Text>Withdrawal fee is collected when project creator wants to withdraw their project fund</Text>
+      <br />
+    </>
+  )
+}
+
 function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }: KickstarterDetailsProps) {
+  const [isEdit, setIsEdit] = useState(false);
+
   return (
     <Flex flexDirection="column">
       <Header previousPage={previousPage} handleKickstarterId={handleKickstarterId} />
@@ -141,6 +176,7 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
       <Divider />
       <FundAndRewardsSystem />
       <Divider />
+      <Withdrawal />
     </Flex>
   )
 }
