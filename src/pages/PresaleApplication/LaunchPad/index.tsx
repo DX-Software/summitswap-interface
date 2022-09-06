@@ -378,7 +378,6 @@ const LaunchPad = () => {
         </Box>
         {!selectedPresale && (
           <ResonsiveFlex>
-            <Box />
             <PaginationWrapper>
               {buttonIndex === 0 && (
                 <Pagination
