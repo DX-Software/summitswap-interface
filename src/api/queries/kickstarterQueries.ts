@@ -71,29 +71,31 @@ export const KICKSTARTERS_BY_ACCOUNT_ID = gql`
 `
 
 export const KICKSTARTERS = gql`
-  kickstarters(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection) {
-    id
-    owner {
+  query kickstarters($first: Int!, $skip: Int!, $orderBy: Bytes!, $orderDirection: Bytes!) {
+    kickstarters(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection) {
       id
+      owner {
+        id
+      }
+      title
+      creator
+      imageUrl
+      projectDescription
+      rewardDescription
+      minContribution
+      totalContributor
+      totalContribution
+      projectGoals
+      rewardDistributionTimestamp
+      startTimestamp
+      endTimestamp
+      createdAt
     }
-    title
-    creator
-    imageUrl
-    projectDescription
-    rewardDescription
-    minContribution
-    totalContributor
-    totalContribution
-    projectGoals
-    rewardDistributionTimestamp
-    startTimestamp
-    endTimestamp
-    createdAt
   }
 `
 
 export const KICKSTARTERS_SEARCH = gql`
-  query kickstarters($text: Bytes!, $first: Int!, $orderBy: Bytes!, $orderDirection: Bytes!, $skip: Int!) {
+  query kickstarters($text: Bytes!, $first: Int!, $skip: Int!, $orderBy: Bytes!, $orderDirection: Bytes!) {
     kickstarterSearch(text: $text, first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection) {
       id
       owner {
@@ -117,8 +119,12 @@ export const KICKSTARTERS_SEARCH = gql`
 `
 
 export const KICKSTARTERS_BY_END_TIME_BETWEEN = gql`
-  query kickstarters($first: Int!, $skip: Int!$startTimestamp: BigInt!, $endTimestamp: BigInt!) {
-    kickstarters(first: $first, skip: $skip, where: { endTimestamp_gte: $startTimestamp, endTimestamp_lte: $endTimestamp }) {
+  query kickstarters($first: Int!, $skip: Int!, $startTimestamp: BigInt!, $endTimestamp: BigInt!) {
+    kickstarters(
+      first: $first
+      skip: $skip
+      where: { endTimestamp_gte: $startTimestamp, endTimestamp_lte: $endTimestamp }
+    ) {
       id
       owner {
         id

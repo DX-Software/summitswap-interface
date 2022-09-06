@@ -24,7 +24,7 @@ import {
 export function useKickstarterFactoryById(kickstarterFactoryId: string) {
   return useQuery('useKickstarterFactoryById', async () => {
     const data = await kickstarterClient.request(KICKSTARTER_FACTORY_BY_ID, {
-      address: kickstarterFactoryId.toLowerCase(),
+      address: kickstarterFactoryId,
     })
     const kickstarter = convertToKickstarterFactory(data.summitKickstarterFactory)
     return kickstarter
@@ -67,36 +67,24 @@ export function useKickstarters(
   page = 1,
   perPage = PER_PAGE,
   orderBy = OrderKickstarterBy.TITLE,
-  orderDirection = OrderDirection.ASC
+  orderDirection = OrderDirection.ASC,
+  searchText: string | undefined
 ) {
-  return useQuery('useKickstarters', async () => {
-    const data = await kickstarterClient.request(KICKSTARTERS, {
-      first: perPage,
-      skip: (page - 1) * perPage,
-      orderBy,
-      orderDirection,
-    })
-    const kickstarters = data.kickstarters.map((kickstarter) => convertToKickstarter(kickstarter))
-    return kickstarters
-  })
-}
+  return useQuery(['useKickstarters', page, orderDirection, searchText], async () => {
+    const query = searchText ? KICKSTARTERS_SEARCH : KICKSTARTERS
+    const key = searchText ? 'kickstarterSearch' : 'kickstarters'
 
-export function useKickstartersSearch(
-  searchText: string,
-  page = 1,
-  perPage = PER_PAGE,
-  orderBy = OrderKickstarterBy.TITLE,
-  orderDirection = OrderDirection.ASC
-) {
-  return useQuery('useKickstartersSearch', async () => {
-    const data = await kickstarterClient.request(KICKSTARTERS_SEARCH, {
+    const filter = {
       text: searchText,
       first: perPage,
       skip: (page - 1) * perPage,
       orderBy,
       orderDirection,
-    })
-    const kickstarters = data.kickstarterSearch.map((kickstarter) => convertToKickstarter(kickstarter))
+    }
+    if (!searchText) delete filter.text
+
+    const data = await kickstarterClient.request(query, filter)
+    const kickstarters: Kickstarter[] = data[key].map((kickstarter) => convertToKickstarter(kickstarter))
     return kickstarters
   })
 }
@@ -114,7 +102,7 @@ export function useKickstarterByEndTimeBetween(
       startTimestamp,
       endTimestamp,
     })
-    const kickstarters = data.kickstarters.map((kickstarter) => convertToKickstarter(kickstarter))
+    const kickstarters: Kickstarter[] = data.kickstarters.map((kickstarter) => convertToKickstarter(kickstarter))
     return kickstarters
   })
 }

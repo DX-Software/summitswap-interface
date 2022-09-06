@@ -9,7 +9,7 @@ import CreateProject from './CreateProject'
 import ProjectCard from './ProjectCard'
 import ProjectDetails from './ProjectDetails'
 import ConnectWalletSection from './shared/ConnectWalletSection'
-import EmptyMyKickstarterSection from './shared/EmptyMyKickstarterSection'
+import EmptyMyKickstarterSection from './BrowseProject/EmptyMyKickstarterSection'
 import { Project } from './types'
 
 function MyProject() {
