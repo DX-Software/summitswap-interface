@@ -32,7 +32,7 @@ export function useKickstarterFactoryById(kickstarterFactoryId: string) {
 }
 
 export function useKickstarterById(kickstarterId: string) {
-  return useQuery('useKickstarterById', async () => {
+  return useQuery(['useKickstarterById', kickstarterId], async () => {
     const data = await kickstarterClient.request(KICKSTARTER_BY_ID, {
       address: kickstarterId.toLowerCase(),
     })
@@ -42,7 +42,7 @@ export function useKickstarterById(kickstarterId: string) {
 }
 
 export function useKickstarterAccountById(kickstarterAccountId: string) {
-  return useQuery('useKickstarterAccountById', async () => {
+  return useQuery(['useKickstarterAccountById', kickstarterAccountId], async () => {
     const data = await kickstarterClient.request(KICKSTARTER_ACCOUNT_BY_ID, {
       address: kickstarterAccountId.toLowerCase(),
     })
@@ -52,13 +52,13 @@ export function useKickstarterAccountById(kickstarterAccountId: string) {
 }
 
 export function useKickstarterByAccountId(kickstarterAccountId: string, page = 1, perPage = PER_PAGE) {
-  return useQuery('useKickstarterByAccountId', async () => {
+  return useQuery(['useKickstarterByAccountId', page, kickstarterAccountId], async () => {
     const data = await kickstarterClient.request(KICKSTARTERS_BY_ACCOUNT_ID, {
       address: kickstarterAccountId.toLowerCase(),
       first: perPage,
       skip: (page - 1) * perPage,
     })
-    const kickstarters = data.kickstarters.map((kickstarter) => convertToKickstarter(kickstarter))
+    const kickstarters: Kickstarter[] = data.kickstarters.map((kickstarter) => convertToKickstarter(kickstarter))
     return kickstarters
   })
 }

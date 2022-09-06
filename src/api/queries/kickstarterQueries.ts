@@ -37,12 +37,14 @@ export const KICKSTARTER_BY_ID = gql`
 `
 
 export const KICKSTARTER_ACCOUNT_BY_ID = gql`
-  account(id: $address) {
-    id
-    totalKickstarter
-    totalBackedKickstarter
-    totalProjectGoals
-    totalContribution
+  query account($address: Bytes!) {
+    account(id: $address) {
+      id
+      totalKickstarter
+      totalBackedKickstarter
+      totalProjectGoals
+      totalContribution
+    }
   }
 `
 
