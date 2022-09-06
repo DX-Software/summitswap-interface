@@ -4,12 +4,7 @@ import styled from 'styled-components'
 import { Pagination } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { useFactoryPresaleContract, usePresaleContracts } from 'hooks/useContract'
-import {
-  PRESALES_PER_PAGE_ADMIN_PANEL,
-  ALL_PRESALE_OPTION,
-  WHITELIST_ONLY,
-  PUBLIC_ONLY_OPTION,
-} from 'constants/presale'
+import { PRESALE_CARDS_PER_PAGE, ALL_PRESALE_OPTION, WHITELIST_ONLY, PUBLIC_ONLY_OPTION } from 'constants/presale'
 import {
   ArrowBackIcon,
   Breadcrumbs,
@@ -278,11 +273,11 @@ const LaunchPad = () => {
   }
 
   const startIndex =
-    (buttonIndex === 0 ? browsePage : contributionPage) * PRESALES_PER_PAGE_ADMIN_PANEL - PRESALES_PER_PAGE_ADMIN_PANEL
+    (buttonIndex === 0 ? browsePage : contributionPage) * PRESALE_CARDS_PER_PAGE - PRESALE_CARDS_PER_PAGE
   const endIndex =
-    startIndex + PRESALES_PER_PAGE_ADMIN_PANEL > showAddresses.length
+    startIndex + PRESALE_CARDS_PER_PAGE > showAddresses.length
       ? showAddresses.length
-      : startIndex + PRESALES_PER_PAGE_ADMIN_PANEL
+      : startIndex + PRESALE_CARDS_PER_PAGE
   const slicedAddresses = showAddresses.slice(startIndex, endIndex)
 
   const headingTexts = ['Browse Presale', 'My Contribution']
@@ -381,7 +376,7 @@ const LaunchPad = () => {
                   variant="outlined"
                   shape="rounded"
                   sx={paginationStyles}
-                  count={filteredAddresses.length ? 1 : Math.ceil(showAddresses.length / PRESALES_PER_PAGE_ADMIN_PANEL)}
+                  count={filteredAddresses.length ? 1 : Math.ceil(showAddresses.length / PRESALE_CARDS_PER_PAGE)}
                   page={browsePage}
                   onChange={(_, value: number) => setBrowsePage(value)}
                 />
@@ -391,7 +386,7 @@ const LaunchPad = () => {
                   variant="outlined"
                   shape="rounded"
                   sx={paginationStyles}
-                  count={filteredAddresses.length ? 1 : Math.ceil(showAddresses.length / PRESALES_PER_PAGE_ADMIN_PANEL)}
+                  count={filteredAddresses.length ? 1 : Math.ceil(showAddresses.length / PRESALE_CARDS_PER_PAGE)}
                   page={contributionPage}
                   onChange={(_, value: number) => setContributionPage(value)}
                 />
