@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import styled, { useTheme } from 'styled-components'
 import { Box, Text, darkColors } from '@koda-finance/summitswap-uikit'
 

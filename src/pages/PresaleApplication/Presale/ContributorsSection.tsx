@@ -64,6 +64,7 @@ const ContributorsSection = ({ presaleAddress, currency, presaleInfo, paymentTok
   }, [contributors, presaleContract, currency, paymentTokenDecimals])
 
   const closeContributorsModalHandler = () => {
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     closeContributorsModal()
   }
 

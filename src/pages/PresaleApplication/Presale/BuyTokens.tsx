@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { BigNumber } from 'ethers'
