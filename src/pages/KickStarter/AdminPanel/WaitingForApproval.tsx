@@ -4,11 +4,14 @@ import { Kickstarter, OrderDirection, OrderKickstarterBy } from 'types/kickstart
 import KickstarterTable from '../shared/KickstarterTable'
 import ProjectDetails from './ProjectDetails'
 
-function WaitingForApproval() {
+type Props = {
+  handleShowKickstarter: (kickstarterId: string) => void
+}
+
+function WaitingForApproval({ handleShowKickstarter }: Props) {
   const [sortField, setSortField] = useState(OrderKickstarterBy.TITLE)
   const [sortDirection, setSortDirection] = useState(OrderDirection.ASC)
   const [page, setPage] = useState(1)
-  const [showKickstarterId, setShowKickstarterId] = useState<string>()
 
   const maxPage = 10
 
@@ -29,14 +32,6 @@ function WaitingForApproval() {
     },
   ]
 
-  if (showKickstarterId) {
-    return (
-      <ProjectDetails
-        kickstarterId={showKickstarterId}
-      />
-    )
-  }
-
   return (
     <KickstarterTable
       kickstarters={kickstarters}
@@ -47,7 +42,7 @@ function WaitingForApproval() {
       handlePageChanged={setPage}
       handleSortFieldChanged={setSortField}
       handleSortDirectionChanged={setSortDirection}
-      handleShowKickstarter={setShowKickstarterId}
+      handleShowKickstarter={handleShowKickstarter}
     />
   )
 }

@@ -18,10 +18,6 @@ type Props = {
   handleShowKickstarter: (kickstarterId: string) => void
 }
 
-type DataRowProps = {
-  kickstarter: Kickstarter
-}
-
 const ResponsiveGrid = styled.div`
   display: grid;
   grid-gap: 1em;

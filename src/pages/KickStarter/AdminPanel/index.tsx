@@ -6,21 +6,23 @@ import { AdminTabs, NavItem } from '../types'
 import ApprovalHistory from './ApprovalHistory'
 import ProjectSettings from './ProjectSettings'
 import WaitingForApproval from './WaitingForApproval'
+import ProjectDetails from './ProjectDetails'
 
 function AdminPanel() {
   const { account } = useWeb3React()
   const [activeTabIndex, setActiveTabIndex] = useState(0)
+  const [kickstarterId, setKickstarterId] = useState<string>("")
 
   const navItems: NavItem[] = [
     {
       label: 'Waiting for Approval',
       code: AdminTabs.WAITING_FOR_APPROVAL,
-      component: <WaitingForApproval />,
+      component: <WaitingForApproval handleShowKickstarter={setKickstarterId} />,
     },
     {
       label: 'Approval History',
       code: AdminTabs.APPROVAL_HISTORY,
-      component: <ApprovalHistory />,
+      component: <ApprovalHistory handleShowKickstarter={setKickstarterId} />,
     },
     {
       label: 'Project Settings',
@@ -31,6 +33,16 @@ function AdminPanel() {
 
   if (!account) {
     return <ConnectWalletSection />
+  }
+
+  if (kickstarterId) {
+    return (
+      <ProjectDetails
+        previousPage={navItems[activeTabIndex].label}
+        kickstarterId={kickstarterId}
+        handleKickstarterId={setKickstarterId}
+      />
+    )
   }
 
   return (
