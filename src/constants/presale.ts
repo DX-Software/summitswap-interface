@@ -20,7 +20,6 @@ export const FEE_DECIMALS = 9
 
 export const PRESALE_CARDS_PER_PAGE = 9
 export const ADDRESS_PER_PAGE = 5
-export const WHITELIST_ADDRESSES_PER_PAGE = 10
 export const PRESALES_PER_PAGE_ADMIN_PANEL = 10
 
 export const JOIN_IDS_WITH = '.|*|.'
