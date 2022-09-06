@@ -6,6 +6,7 @@ import React, { useCallback, useMemo, useState } from 'react'
 import EmptyMyKickstarterSection from '../BrowseProject/EmptyMyKickstarterSection'
 import ConnectWalletSection from '../shared/ConnectWalletSection'
 import ProjectCards from '../shared/ProjectCards'
+import CreateProject from './CreateProject'
 
 function MyProject() {
   const { account } = useWeb3React()
@@ -30,9 +31,9 @@ function MyProject() {
     return <ConnectWalletSection />
   }
 
-  // if (isCreate) {
-  //   return <CreateProject />
-  // }
+  if (isCreate) {
+    return <CreateProject isCreate={isCreate} toggleIsCreate={toggleIsCreate} />
+  }
 
   return (
     <Flex flexDirection="column">

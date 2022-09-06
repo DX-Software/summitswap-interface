@@ -5,12 +5,11 @@ import { PER_PAGE } from 'constants/kickstarter'
 import { useKickstarterContext } from 'contexts/kickstarter'
 import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import CreateProject from './CreateProject'
+import EmptyMyKickstarterSection from './BrowseProject/EmptyMyKickstarterSection'
+import CreateProject from './CreateProject.old'
 import ProjectCard from './ProjectCard'
 import ProjectDetails from './ProjectDetails'
 import ConnectWalletSection from './shared/ConnectWalletSection'
-import EmptyMyKickstarterSection from './BrowseProject/EmptyMyKickstarterSection'
-import { Project } from './types'
 
 function MyProject() {
   const { t } = useTranslation()
@@ -40,7 +39,7 @@ function MyProject() {
   } = useKickstarterContext()
 
   const maxPage = useMemo(() => {
-    const totalItems = kickstarterAccount?.totalKickstarter.toNumber() || 1;
+    const totalItems = kickstarterAccount?.totalKickstarter.toNumber() || 1
     return Math.ceil(totalItems / PER_PAGE)
   }, [kickstarterAccount?.totalKickstarter])
 
@@ -62,7 +61,7 @@ function MyProject() {
         kickstarter={kickstarterOnMyProject}
         isPayment={isPaymentOnMyProjectPage}
         toggleIsPayment={() => handleIsPaymentOnMyProjectPage(!isPaymentOnMyProjectPage)}
-        currentBackedAmount={currentBackedAmountOnMyProjectPage?.toString() || ""}
+        currentBackedAmount={currentBackedAmountOnMyProjectPage?.toString() || ''}
         backedAmount={backingAmountOnMyProjectPage}
         handleBackedAmountChanged={handleBackingAmountOnMyProjectPageChanged}
         contributors={contributorsOnMyProject}
@@ -75,19 +74,22 @@ function MyProject() {
     <Flex flexDirection="column">
       <Flex justifyContent="space-between" marginBottom="24px">
         <Heading size="xl">My Projects</Heading>
-        <Button scale="sm" startIcon={<AddIcon width="12px" color="text" />} style={{ fontFamily: 'Poppins' }} onClick={toggleIsCreate}>
+        <Button
+          scale="sm"
+          startIcon={<AddIcon width="12px" color="text" />}
+          style={{ fontFamily: 'Poppins' }}
+          onClick={toggleIsCreate}
+        >
           Create New Project
         </Button>
       </Flex>
       <Grid container spacing={2}>
-        {myKickstarters && myKickstarters.map((kickstarter) => (
-          <Grid item xs={12} sm={6} lg={4}>
-            <ProjectCard
-              kickstarter={kickstarter}
-              onClick={() => handleMyProjectChanged(kickstarter.id)}
-            />
-          </Grid>
-        ))}
+        {myKickstarters &&
+          myKickstarters.map((kickstarter) => (
+            <Grid item xs={12} sm={6} lg={4}>
+              <ProjectCard kickstarter={kickstarter} onClick={() => handleMyProjectChanged(kickstarter.id)} />
+            </Grid>
+          ))}
       </Grid>
       {maxPage > 1 && (
         <>
