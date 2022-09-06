@@ -35,7 +35,7 @@ const ImgKickstarter = styled.div<{ image: string }>`
 `
 
 const ProjectDetailsContainer = styled(Flex)`
-  column-gap: 32px;
+  column-gap: 16px;
   @media (max-width: 768px) {
     flex-direction: column;
   }
