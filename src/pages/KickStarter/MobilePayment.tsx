@@ -2,7 +2,7 @@ import { ArrowForwardIcon, BinanceIcon, Box, Button, Flex, Heading, Skeleton, Te
 import AccountIcon from "components/AccountIcon"
 import { useKickstarterContext } from "pages/KickStarter/contexts/kickstarter"
 import { parseUnits } from "ethers/lib/utils"
-import { Kickstarter } from "hooks/useKickstarter"
+import { Kickstarter } from "hooks/useKickstarters"
 import React from "react"
 import styled from "styled-components"
 import { shortenAddress } from "utils"

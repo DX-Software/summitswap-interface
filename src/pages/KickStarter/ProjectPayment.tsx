@@ -7,7 +7,7 @@ import { useKickstarterContext } from "pages/KickStarter/contexts/kickstarter"
 import { format } from "date-fns"
 import { parseUnits } from 'ethers/lib/utils'
 import { useKickstarterContract } from 'hooks/useContract'
-import { Kickstarter } from "hooks/useKickstarter"
+import { Kickstarter } from "hooks/useKickstarters"
 import React, { useCallback, useState } from "react"
 import { useTransactionAdder } from "state/transactions/hooks"
 import styled from "styled-components"

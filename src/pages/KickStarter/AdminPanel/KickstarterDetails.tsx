@@ -2,7 +2,7 @@ import { ArrowBackIcon, Breadcrumbs, Button, CheckmarkIcon, EditIcon, Flex, Head
 import { Grid } from "@mui/material"
 import { INITIAL_PROJECT_CREATION } from "constants/kickstarter"
 import { FormikProps, useFormik } from "formik"
-import React, { useCallback, useState } from "react"
+import React, { useState } from "react"
 import styled from "styled-components"
 import { ContactMethod, KickstarterApprovalStatus } from "types/kickstarter"
 import FundingInput from "../FundingInput"

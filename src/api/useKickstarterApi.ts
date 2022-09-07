@@ -1,6 +1,6 @@
 import { PER_PAGE } from 'constants/kickstarter'
 import { useQuery } from 'react-query'
-import { Kickstarter, OrderDirection, OrderKickstarterBy } from 'types/kickstarter'
+import { BackedKickstarter, Kickstarter, OrderDirection, OrderKickstarterBy } from 'types/kickstarter'
 import { kickstarterClient } from 'utils/graphql'
 import {
   convertToBackedKickstarter,
@@ -138,7 +138,7 @@ export function useBackedKickstartersByKickstarterAddress(kickstarterAddress: st
       first: perPage,
       skip: (page - 1) * perPage,
     })
-    const backedKickstarters = data.backedKickstarters.map((backedKickstarter) =>
+    const backedKickstarters: BackedKickstarter[] = data.backedKickstarters.map((backedKickstarter) =>
       convertToBackedKickstarter(backedKickstarter)
     )
     return backedKickstarters

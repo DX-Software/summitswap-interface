@@ -1,6 +1,6 @@
 import { BinanceIcon, Button, Flex, InjectedModalProps, Modal, Skeleton, Text, WalletIcon } from "@koda-finance/summitswap-uikit"
 import React, { useCallback } from "react"
-import { Kickstarter } from "hooks/useKickstarter"
+import { Kickstarter } from "hooks/useKickstarters"
 import styled from "styled-components"
 import { TransactionResponse } from '@ethersproject/providers'
 import { shortenAddress } from "utils"
