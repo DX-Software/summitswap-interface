@@ -1,4 +1,4 @@
-import { ArrowBackIcon, Breadcrumbs, Flex, Heading, Skeleton, Text } from "@koda-finance/summitswap-uikit"
+import { ArrowBackIcon, Breadcrumbs, Button, CheckmarkIcon, EditIcon, Flex, Heading, Skeleton, Text } from "@koda-finance/summitswap-uikit"
 import { Grid } from "@mui/material"
 import React, { useState } from "react"
 import styled from "styled-components"
@@ -14,6 +14,11 @@ type KickstarterDetailsProps = {
 type HeaderProps = {
   previousPage: string
   handleKickstarterId: (value: string) => void
+}
+
+type EditButtonsProps = {
+  isEdit: boolean
+  handleIsEdit: (isEdit: boolean) => void
 }
 
 const ImgKickstarter = styled.div<{ image: string }>`
@@ -41,7 +46,7 @@ const ProjectDetailsContainer = styled(Flex)`
   }
 `
 
-const Header = ({previousPage, handleKickstarterId}: HeaderProps) => {
+const Header = ({ previousPage, handleKickstarterId }: HeaderProps) => {
   return (
     <>
       <Flex borderBottom="1px solid" borderBottomColor="inputColor" paddingBottom="12px" marginBottom="32px">
@@ -54,11 +59,45 @@ const Header = ({previousPage, handleKickstarterId}: HeaderProps) => {
           </Text>
         </Breadcrumbs>
       </Flex>
-      <Flex style={{ columnGap: '8px', cursor: 'pointer' }} marginBottom="32px" onClick={() => handleKickstarterId("")}>
+      <Flex style={{ columnGap: '8px', cursor: 'pointer' }} onClick={() => handleKickstarterId("")}>
         <ArrowBackIcon color="linkColor" />
         <Text color="linkColor" style={{ textDecoration: "underline" }}>back to Admin Panel</Text>
       </Flex>
     </>
+  )
+}
+
+const EditButtons = ({isEdit, handleIsEdit}: EditButtonsProps) => {
+  return (
+    <Flex style={{ columnGap: "8px" }}>
+      {!isEdit && (
+        <Button
+        variant="tertiary"
+        scale="sm"
+        startIcon={<EditIcon />}
+        style={{fontFamily:'Poppins'}}
+        onClick={() => handleIsEdit(true)}>
+        Edit Project
+      </Button>
+      )}
+      {isEdit && (
+        <>
+          <Button
+            scale="sm"
+            startIcon={<CheckmarkIcon color="default" />}
+            style={{fontFamily:'Poppins'}}>
+            Change & Approve
+          </Button>
+          <Button
+            variant="tertiary"
+            scale="sm"
+            style={{fontFamily:'Poppins'}}
+            onClick={() => handleIsEdit(false)}>
+            Cancel Edit
+          </Button>
+        </>
+      )}
+    </Flex>
   )
 }
 
@@ -172,6 +211,9 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
   return (
     <Flex flexDirection="column">
       <Header previousPage={previousPage} handleKickstarterId={handleKickstarterId} />
+      <br />
+        <EditButtons isEdit={isEdit} handleIsEdit={setIsEdit} />
+      <br />
       <ProjectDetails />
       <Divider />
       <FundAndRewardsSystem />
