@@ -47,6 +47,7 @@ function BrowseCollection() {
   return (
     <>
       <InfoSection />
+      <Text fontSize="40px" fontFamily="Poppins" bold>Browse NFT Collections</Text>
       <NavTabWrapper marginBottom="24px">
         <NavTab activeIndex={tabActiveIndex} onItemClick={(index: number) => setTabActiveIndex(index)}>
           {collectionTabs.map((item) => {
@@ -54,7 +55,7 @@ function BrowseCollection() {
           })}
         </NavTab>
       </NavTabWrapper>
-      <Input placeholder="Seach NFT Collection by name" scale="lg" style={{ marginBottom: '32px' }} />
+      <Input placeholder="Seach collection by collection name" scale="lg" style={{ marginBottom: '32px' }} />
       <div>{collectionTabs[tabActiveIndex].component}</div>
     </>
   )
