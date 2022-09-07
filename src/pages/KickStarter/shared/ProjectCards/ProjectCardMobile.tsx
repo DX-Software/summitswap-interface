@@ -1,7 +1,7 @@
 import { BinanceIcon, Flex, Progress, Text } from "@koda-finance/summitswap-uikit"
-import { Kickstarter } from "hooks/useKickstarters"
 import React, { useMemo } from "react"
 import styled from "styled-components"
+import { Kickstarter } from "types/kickstarter"
 import { getKickstarterStatus } from "utils/kickstarter"
 import ProgressBox from "../ProgressBox"
 import StatusLabel from "../StatusLabel"
@@ -53,10 +53,10 @@ const Title = styled(Text)`
 `
 
 function ProjectCardMobile({ kickstarter, showStatus, onClick }: Props) {
-  const status = useMemo(() => getKickstarterStatus(kickstarter.endTimestamp), [kickstarter.endTimestamp])
+  const status = useMemo(() => getKickstarterStatus(kickstarter.endTimestamp?.toNumber() || 0), [kickstarter.endTimestamp])
 
   const fundedPercentage = useMemo(() => {
-    if (kickstarter.totalContribution.toString() === "0") {
+    if (!kickstarter.totalContribution || !kickstarter.projectGoals || kickstarter.projectGoals.eq(0)) {
       return "0"
     }
     return kickstarter.totalContribution.div(kickstarter.projectGoals).times(100).toString()
@@ -64,7 +64,7 @@ function ProjectCardMobile({ kickstarter, showStatus, onClick }: Props) {
 
   return (
     <Wrapper onClick={onClick}>
-      <Banner image={kickstarter.imageUrl}>
+      <Banner image={kickstarter.imageUrl || ""}>
       {showStatus && (
         <StatusLabel status={status} style={{ fontSize: "10px", marginLeft: "auto" }}>
           {status.replace(/_/g, ' ')}
@@ -78,7 +78,7 @@ function ProjectCardMobile({ kickstarter, showStatus, onClick }: Props) {
           <Text fontSize="12px">Project Goal</Text>
           <Flex style={{ columnGap: "4px" }}>
             <BinanceIcon />
-            <Text fontSize="12px">{kickstarter.projectGoals.toString()}</Text>
+            <Text fontSize="12px">{kickstarter.projectGoals?.toString()}</Text>
           </Flex>
         </Flex>
         <ProgressBox>

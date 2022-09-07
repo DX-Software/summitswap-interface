@@ -1,17 +1,21 @@
 import { ArrowBackIcon, ArrowForwardIcon, Flex, Text } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import { Arrow, PageButtons } from 'components/InfoTables/shared'
+import { isMobile } from 'react-device-detect'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { UseQueryResult } from 'react-query'
-import { Kickstarter, OrderDirection, OrderKickstarterBy } from 'types/kickstarter'
+import { Kickstarter } from 'types/kickstarter'
 import KickstartersLoadingSection from '../KickstartersLoadingSection'
 import ProjectCard from './ProjectCard'
+import ProjectCardMobile from './ProjectCardMobile'
 
 type Props = {
   kickstarters: UseQueryResult<Kickstarter[]>
   currentPage: number
   maxPage: number
+  mobileMode?: boolean
+  showMobileStatus?: boolean
   handlePageChanged: (value: number) => void
   handleShowKickstarter: (kickstarterId: string) => void
   getEmptyKickstarterSection: () => JSX.Element
@@ -21,6 +25,8 @@ function ProjectCards({
   kickstarters,
   currentPage,
   maxPage,
+  mobileMode,
+  showMobileStatus,
   handlePageChanged,
   handleShowKickstarter,
   getEmptyKickstarterSection,
@@ -36,10 +42,18 @@ function ProjectCards({
           getEmptyKickstarterSection()
         ): kickstarters.data?.map((kickstarter) => (
           <Grid item xs={12} sm={6} lg={4} key={kickstarter.id}>
-            <ProjectCard
-              kickstarter={kickstarter}
-              onClick={() => handleShowKickstarter(kickstarter.id)}
-            />
+            {isMobile && mobileMode ? (
+              <ProjectCardMobile
+                kickstarter={kickstarter}
+                onClick={() => handleShowKickstarter(kickstarter.id)}
+                showStatus={!!showMobileStatus}
+              />
+            ) : (
+              <ProjectCard
+                kickstarter={kickstarter}
+                onClick={() => handleShowKickstarter(kickstarter.id)}
+              />
+            )}
           </Grid>
         ))}
       </Grid>
