@@ -14,6 +14,7 @@ import { getKickstarterStatus, getKickstarterStatusLabel } from "utils/kickstart
 import { Divider } from "../shared"
 import ProgressBox from "../shared/ProgressBox"
 import StatusLabel from "../shared/StatusLabel"
+import ProjectPayment from "./ProjectPayment"
 
 type Tab = {
   label: string
@@ -509,6 +510,16 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
       amount: data.amount?.toString(),
     }
   ))
+
+  if (isPayment && kickstarter.data) {
+    return (
+      <ProjectPayment
+        handleKickstarterId={handleKickstarterId}
+        handleIsPayment={setIsPayment}
+        kickstarter={kickstarter.data}
+      />
+    )
+  }
 
   return (
     <Flex flexDirection="column">

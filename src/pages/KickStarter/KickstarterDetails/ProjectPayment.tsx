@@ -3,14 +3,14 @@ import { ArrowBackIcon, ArrowForwardIcon, BinanceIcon, Box, Breadcrumbs, Button,
 import { Grid } from "@mui/material"
 import AccountIcon from "components/AccountIcon"
 import TransactionConfirmationModal, { TransactionErrorContent } from "components/TransactionConfirmationModal"
-import { useKickstarterContext } from "pages/KickStarter/contexts/kickstarter"
 import { format } from "date-fns"
 import { parseUnits } from 'ethers/lib/utils'
 import { useKickstarterContract } from 'hooks/useContract'
-import { Kickstarter } from "hooks/useKickstarters"
+import { useKickstarterContext } from "pages/KickStarter/contexts/kickstarter"
 import React, { useCallback, useState } from "react"
 import { useTransactionAdder } from "state/transactions/hooks"
 import styled from "styled-components"
+import { Kickstarter } from 'types/kickstarter'
 import { shortenAddress } from "utils"
 import FundingInput from "../shared/FundingInput"
 import MobilePayment from "./MobilePayment"
@@ -18,10 +18,8 @@ import PaymentModal from "./PaymentModal"
 
 type Props = {
   kickstarter: Kickstarter
-  onBack: () => void
-  togglePayment: () => void
-  backedAmount: string
-  handleBackedAmountChanged: (value: string) => void
+  handleKickstarterId: (value: string) => void
+  handleIsPayment: (value: boolean) => void
 }
 
 const MobileBanner = styled(Flex)<{ image: string}>`
@@ -114,11 +112,12 @@ const ButtonContinue = styled(Button)`
   }
 `
 
-function ProjectPayment({ backedAmount, handleBackedAmountChanged, kickstarter, onBack, togglePayment }: Props) {
+function ProjectPayment({ kickstarter, handleKickstarterId, handleIsPayment }: Props) {
   const { account, accountBalance, onPresentConnectModal } = useKickstarterContext()
   const addTransaction = useTransactionAdder()
   const kickstarterContract = useKickstarterContract(kickstarter.id)
 
+  const [backedAmount, setBackedAmount] = useState('')
   const [isOpen, setIsOpen] = useState(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
   const [hash, setHash] = useState<string | undefined>()
@@ -180,17 +179,17 @@ function ProjectPayment({ backedAmount, handleBackedAmountChanged, kickstarter, 
   )
   const [isMobilePaymentPage, setIsMobilePaymentPage] = useState(false)
 
-  const minContributionInEth = parseUnits(kickstarter.minContribution.toString(), 18)
+  const minContributionInEth = parseUnits(kickstarter.minContribution?.toString() || "0", 18)
   const isGreaterThanMinContribution = parseUnits(backedAmount || "0", 18).gte(minContributionInEth)
 
   return (
     <Flex flexDirection="column">
       <Flex flex={1} borderBottom="1px solid" borderBottomColor="inputColor" paddingBottom="12px" marginBottom="32px">
         <Breadcrumbs>
-          <Text color="primaryDark" style={{ cursor: 'pointer' }} onClick={onBack}>
+          <Text color="primaryDark" style={{ cursor: 'pointer' }} onClick={() => handleKickstarterId("")}>
             My Project
           </Text>
-          <Text color="primaryDark" style={{ cursor: 'pointer' }} onClick={togglePayment}>
+          <Text color="primaryDark" style={{ cursor: 'pointer' }} onClick={() => handleIsPayment(false)}>
             Project Details
           </Text>
           <Text color="borderColor" style={{ fontWeight: 700 }}>
@@ -198,7 +197,7 @@ function ProjectPayment({ backedAmount, handleBackedAmountChanged, kickstarter, 
           </Text>
         </Breadcrumbs>
       </Flex>
-      <Flex style={{ columnGap: '8px', cursor: 'pointer' }} marginBottom="32px" onClick={onBack}>
+      <Flex style={{ columnGap: '8px', cursor: 'pointer' }} marginBottom="32px" onClick={() => handleKickstarterId("")}>
         <ArrowBackIcon color="linkColor" />
         <Text color="linkColor" style={{ textDecoration: "underline" }}>back to Project Details</Text>
       </Flex>
@@ -207,15 +206,15 @@ function ProjectPayment({ backedAmount, handleBackedAmountChanged, kickstarter, 
           <Heading size="lg" marginBottom="8px">
             Back Project
           </Heading>
-          <MobileBanner image={kickstarter.imageUrl} marginBottom="16px" />
+          <MobileBanner image={kickstarter.imageUrl || ""} marginBottom="16px" />
           <Flex style={{ columnGap: "16px" }}>
-            <DesktopBanner image={kickstarter.imageUrl} />
+            <DesktopBanner image={kickstarter.imageUrl || ""} />
             <Flex flexDirection="column">
               <Name>{kickstarter.creator}</Name>
               <Title>{kickstarter.title}</Title>
               <Flex style={{ columnGap: "8px" }}>
                 <BinanceIcon />
-                <Text fontSize="24px" color="textSubtle"><b style={{ color: "white" }}>{kickstarter.totalContribution.toString()}</b> / {kickstarter.projectGoals.toString()} BNB</Text>
+                <Text fontSize="24px" color="textSubtle"><b style={{ color: "white" }}>{kickstarter.totalContribution?.toString()}</b> / {kickstarter.projectGoals?.toString()} BNB</Text>
               </Flex>
             </Flex>
           </Flex>
@@ -223,15 +222,15 @@ function ProjectPayment({ backedAmount, handleBackedAmountChanged, kickstarter, 
           <Text color="textSubtle" marginBottom="4px">Project Reward</Text>
           <Text marginBottom="16px">{kickstarter.rewardDescription}</Text>
           <Text color="textSubtle" marginBottom="4px">Reward Distribution</Text>
-          <Text>{format(new Date(kickstarter.rewardDistributionTimestamp * 1000), 'LLLL do, yyyy')}</Text>
+          <Text>{format(new Date((kickstarter.rewardDistributionTimestamp?.toNumber() || 0) * 1000), 'LLLL do, yyyy')}</Text>
         </Grid>
         <SideItems item xs={12} md={5}>
           <SideWrapper marginBottom="16px">
             <Heading size="md" marginBottom="8px">Backing Project</Heading>
             <Text color="textSubtle" marginBottom="16px">
-              You have to back with minimum amount of <b style={{ color: "#00D4A4" }}>{kickstarter.minContribution.toString()} BNB</b> to participate in this project
+              You have to back with minimum amount of <b style={{ color: "#00D4A4" }}>{kickstarter.minContribution?.toString()} BNB</b> to participate in this project
             </Text>
-            <FundingInput label="Enter Backing Amount" value={backedAmount} onChange={handleBackedAmountChanged} />
+            <FundingInput label="Enter Backing Amount" value={backedAmount} onChange={setBackedAmount} />
             {!account && (
               <Button
                 variant='tertiary'
@@ -280,7 +279,7 @@ function ProjectPayment({ backedAmount, handleBackedAmountChanged, kickstarter, 
         <MobilePayment
           showPayment={showPayment}
           totalPayment={backedAmount}
-          handleBackedAmountChanged={handleBackedAmountChanged}
+          handleBackedAmountChanged={setBackedAmount}
           kickstarter={kickstarter}
         />
       )}
@@ -306,4 +305,4 @@ function ProjectPayment({ backedAmount, handleBackedAmountChanged, kickstarter, 
   )
 }
 
-export default ProjectPayment
+export default React.memo(ProjectPayment)

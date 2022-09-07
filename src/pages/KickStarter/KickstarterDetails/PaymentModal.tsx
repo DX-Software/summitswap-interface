@@ -1,10 +1,9 @@
 import { BinanceIcon, Button, Flex, InjectedModalProps, Modal, Skeleton, Text, WalletIcon } from "@koda-finance/summitswap-uikit"
 import React, { useCallback } from "react"
-import { Kickstarter } from "hooks/useKickstarters"
 import styled from "styled-components"
-import { TransactionResponse } from '@ethersproject/providers'
 import { shortenAddress } from "utils"
 import AccountIcon from "components/AccountIcon"
+import { Kickstarter } from "types/kickstarter"
 
 interface PaymentModalProps extends InjectedModalProps {
   account: string | null | undefined;
@@ -60,7 +59,7 @@ function PaymentModal({ account, accountBalance, totalPayment, kickstarter, onDi
     <Modal title="Payment Process" bodyPadding="0" onDismiss={onDismiss}>
       <ContentWrapper>
         <Flex marginBottom="16px" style={{ columnGap: "8px" }}>
-          <Banner image={kickstarter.imageUrl} />
+          <Banner image={kickstarter.imageUrl || ""} />
           <Flex flexDirection="column">
             <Name color="textSubtle" marginBottom="4px">{kickstarter.creator}</Name>
             <Title style={{ maxWidth: "320px" }}>{kickstarter.title}</Title>
