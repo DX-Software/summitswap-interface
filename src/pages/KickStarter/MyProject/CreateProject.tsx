@@ -13,6 +13,7 @@ import { Divider } from '../shared'
 import { Project } from '../types'
 import CreationStep01 from './CreationStep01'
 import CreationStep02 from './CreationStep02'
+import CreationStep03 from './CreationStep03'
 
 type Prop = {
   isCreate: boolean
@@ -134,7 +135,9 @@ function CreateProject({ isCreate, toggleIsCreate }: Prop) {
         {currentCreationStep === 2 && (
           <CreationStep02 setCurrentCreationStep={setCurrentCreationStep} formik={formik} />
         )}
-        {/* {currentCreationStep === 3 && <CreationStep03 handleCreateProject={handleCreateProject} />} */}
+        {currentCreationStep === 3 && (
+          <CreationStep03 setCurrentCreationStep={setCurrentCreationStep} formik={formik} />
+        )}
       </FormikProvider>
       <TransactionConfirmationModal
         isOpen={isOpen}
