@@ -17,6 +17,7 @@ import MobilePayment from "./MobilePayment"
 import PaymentModal from "./PaymentModal"
 
 type Props = {
+  previousPage: string
   kickstarter: Kickstarter
   handleKickstarterId: (value: string) => void
   handleIsPayment: (value: boolean) => void
@@ -112,7 +113,7 @@ const ButtonContinue = styled(Button)`
   }
 `
 
-function ProjectPayment({ kickstarter, handleKickstarterId, handleIsPayment }: Props) {
+function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handleIsPayment }: Props) {
   const { account, accountBalance, onPresentConnectModal } = useKickstarterContext()
   const addTransaction = useTransactionAdder()
   const kickstarterContract = useKickstarterContract(kickstarter.id)
@@ -187,7 +188,7 @@ function ProjectPayment({ kickstarter, handleKickstarterId, handleIsPayment }: P
       <Flex flex={1} borderBottom="1px solid" borderBottomColor="inputColor" paddingBottom="12px" marginBottom="32px">
         <Breadcrumbs>
           <Text color="primaryDark" style={{ cursor: 'pointer' }} onClick={() => handleKickstarterId("")}>
-            My Project
+            {previousPage}
           </Text>
           <Text color="primaryDark" style={{ cursor: 'pointer' }} onClick={() => handleIsPayment(false)}>
             Project Details
@@ -197,7 +198,7 @@ function ProjectPayment({ kickstarter, handleKickstarterId, handleIsPayment }: P
           </Text>
         </Breadcrumbs>
       </Flex>
-      <Flex style={{ columnGap: '8px', cursor: 'pointer' }} marginBottom="32px" onClick={() => handleKickstarterId("")}>
+      <Flex style={{ columnGap: '8px', cursor: 'pointer' }} marginBottom="32px" onClick={() => handleIsPayment(false)}>
         <ArrowBackIcon color="linkColor" />
         <Text color="linkColor" style={{ textDecoration: "underline" }}>back to Project Details</Text>
       </Flex>

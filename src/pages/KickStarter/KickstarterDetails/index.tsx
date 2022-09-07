@@ -575,6 +575,7 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
   if (isPayment && kickstarter.data) {
     return (
       <ProjectPayment
+        previousPage={previousPage}
         handleKickstarterId={handleKickstarterId}
         handleIsPayment={setIsPayment}
         kickstarter={kickstarter.data}
