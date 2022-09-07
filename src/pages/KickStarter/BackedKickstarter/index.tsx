@@ -1,6 +1,6 @@
 import { Flex, Heading } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
-import { useBackedKickstartersByContributionId } from 'api/useKickstarterApi'
+import { useBackedKickstartersByContributionId, useKickstarterAccountById } from 'api/useKickstarterApi'
 import { PER_PAGE } from 'constants/kickstarter'
 import { useKickstarterContext } from 'pages/KickStarter/contexts/kickstarter'
 import React, { useMemo, useState } from 'react'
@@ -13,19 +13,18 @@ type Props = {
   goToBrowseTab: () => void
 }
 
-function BackedProject({ goToBrowseTab }: Props) {
-  const { kickstarterAccount } = useKickstarterContext()
-
+function BackedKickstarter({ goToBrowseTab }: Props) {
   const { account } = useWeb3React()
+  const kickstarterAccount = useKickstarterAccountById(account || '')
 
   const [currentPage, setCurrentPage] = useState(1)
   const [showKickstarterId, setShowKickstarterId] = useState<string>("")
   const backedKickstarters = useBackedKickstartersByContributionId(account || "", currentPage)
 
   const maxPage = useMemo(() => {
-    const totalItems = kickstarterAccount?.totalBackedKickstarter.toNumber() || 1;
+    const totalItems = kickstarterAccount?.data?.totalBackedKickstarter?.toNumber() || 1;
     return Math.ceil(totalItems / PER_PAGE)
-  }, [kickstarterAccount?.totalBackedKickstarter])
+  }, [kickstarterAccount?.data])
 
   if (!account) {
     return <ConnectWalletSection />
@@ -50,10 +49,10 @@ function BackedProject({ goToBrowseTab }: Props) {
         maxPage={maxPage}
         handlePageChanged={setCurrentPage}
         handleShowKickstarter={setShowKickstarterId}
-        getEmptyKickstarterSection={() => <EmptyBackedKickstarter />}
+        getEmptyKickstarterSection={() => <EmptyBackedKickstarter goToBrowseTab={goToBrowseTab} />}
       />
     </Flex>
   )
 }
 
-export default BackedProject;
+export default BackedKickstarter;
