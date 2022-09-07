@@ -42,7 +42,7 @@ function BrowseProject() {
   if (showKickstarterId) {
     return (
       <KickstarterDetails
-        previousPage="Backed Project"
+        previousPage="Browse Project"
         kickstarterId={showKickstarterId}
         handleKickstarterId={setShowKickstarterId}
       />
