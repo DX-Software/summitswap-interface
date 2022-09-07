@@ -82,7 +82,7 @@ const TooltipText = styled.div`
 export const Divider = styled(Flex)`
   width: 100%;
   height: 1px;
-  margin: 16px 0px;
+  margin: 32px 0px;
   background-color: ${({theme}) => theme.colors.inputColor};
 `
 

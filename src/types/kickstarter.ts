@@ -12,6 +12,13 @@ export enum KickstarterApprovalStatus {
   REJECTED = "rejected",
 }
 
+export enum ContactMethod {
+  EMAIL = "email",
+  TELEGRAM = "telegram",
+  DISCORD = "discord",
+  TWITTER = "twitter",
+}
+
 export enum OrderDirection {
   ASC = "asc",
   DESC = "desc",

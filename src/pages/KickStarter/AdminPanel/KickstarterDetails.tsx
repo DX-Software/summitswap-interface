@@ -1,10 +1,10 @@
-import { ArrowBackIcon, Breadcrumbs, Button, CheckmarkIcon, EditIcon, Flex, Heading, Input, Radio, Skeleton, Text, TextArea } from "@koda-finance/summitswap-uikit"
+import { ArrowBackIcon, Breadcrumbs, Button, CheckmarkIcon, EditIcon, Flex, Heading, Input, Radio, Select, Skeleton, Text, TextArea } from "@koda-finance/summitswap-uikit"
 import { Grid } from "@mui/material"
 import { INITIAL_PROJECT_CREATION } from "constants/kickstarter"
 import { FormikProps, useFormik } from "formik"
 import React, { useCallback, useState } from "react"
 import styled from "styled-components"
-import { KickstarterApprovalStatus } from "types/kickstarter"
+import { ContactMethod, KickstarterApprovalStatus } from "types/kickstarter"
 import FundingInput from "../FundingInput"
 import { CurrencyInfo, Divider, StatusInfo, TextInfo } from "../shared"
 import { Project, ProjectFormField } from "../types"
@@ -265,6 +265,74 @@ const FundAndRewardsSystem = () => {
   )
 }
 
+const EditFundAndRewardsSystem = () => {
+  const contactMethods = [
+    {
+      label: 'Discrod',
+      value: ContactMethod.DISCORD,
+    },
+    {
+      label: 'Email',
+      value: ContactMethod.EMAIL,
+    },
+    {
+      label: 'Telegram',
+      value: ContactMethod.TELEGRAM,
+    },
+    {
+      label: 'Twitter',
+      value: ContactMethod.TWITTER,
+    },
+  ]
+  return (
+    <>
+      <Heading size='lg' marginBottom="16px" color="sidebarActiveColor">Fund & Reward System</Heading>
+      <TextInfo
+        title="Creator Wallet Address"
+        description="0x653222feCf0C7a936C121832561f9DD8774eE496"
+      />
+      <br />
+      <Text fontSize="14px" color="textSubtle" marginBottom="4px">Reward Description</Text>
+      <TextArea />
+      <br />
+      <Grid container spacing="16px">
+        <Grid item sm={12} md={6}>
+          <FundingInput
+            label="Project Due Date"
+            type="datetime-local"
+            value=""
+            description="NB: Due date should be minimum a week after the project is created"
+            onChange={() => console.log("value")}
+            isFunding={false}
+          />
+        </Grid>
+        <Grid item sm={12} md={6}>
+          <FundingInput
+            label="Reward Distribution"
+            type="datetime-local"
+            value=""
+            description="NB: Enter the estimate date for the reward distribution"
+            onChange={() => console.log("value")}
+            isFunding={false}
+          />
+        </Grid>
+        <Grid item sm={12} md={6}>
+          <Text fontSize="14px" color="textSubtle" marginBottom="4px">Chosen Contact Method</Text>
+          <Select
+            onValueChanged={(value) => console.log(value)}
+            options={contactMethods}
+            minWidth="165px"
+          />
+        </Grid>
+        <Grid item sm={12} md={6}>
+          <Text fontSize="14px" color="textSubtle" marginBottom="4px">Telegram ID</Text>
+          <Input />
+        </Grid>
+      </Grid>
+    </>
+  )
+}
+
 const Withdrawal = () => {
   return (
     <>
@@ -382,7 +450,7 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
       <br />
       {isEdit ? <EditProjectDetails /> : <ProjectDetails />}
       <Divider />
-      <FundAndRewardsSystem />
+      {isEdit ? <EditFundAndRewardsSystem /> : <FundAndRewardsSystem />}
       <Divider />
       {isEdit ? <EditWithdrawal formik={formik} /> : <Withdrawal />}
     </Flex>
