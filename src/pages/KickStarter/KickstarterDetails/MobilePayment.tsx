@@ -1,10 +1,10 @@
+import React from "react"
 import { ArrowForwardIcon, BinanceIcon, Box, Button, Flex, Heading, Skeleton, Text, WalletIcon } from "@koda-finance/summitswap-uikit"
 import AccountIcon from "components/AccountIcon"
-import { useKickstarterContext } from "pages/KickStarter/contexts/kickstarter"
 import { parseUnits } from "ethers/lib/utils"
-import { Kickstarter } from "hooks/useKickstarters"
-import React from "react"
+import { useKickstarterContext } from "pages/KickStarter/contexts/kickstarter"
 import styled from "styled-components"
+import { Kickstarter } from "types/kickstarter"
 import { shortenAddress } from "utils"
 import FundingInput from "../shared/FundingInput"
 
@@ -66,7 +66,7 @@ const OnlineDot = styled(Box)<{ isOnline: boolean }>`
 function MobilePayment({ showPayment, totalPayment, kickstarter, handleBackedAmountChanged }: Props) {
   const { account, accountBalance, onPresentConnectModal } = useKickstarterContext()
 
-  const minContributionInEth = parseUnits(kickstarter.minContribution.toString(), 18)
+  const minContributionInEth = parseUnits(kickstarter.minContribution?.toString() || "0", 18)
   const isGreaterThanMinContribution = parseUnits(totalPayment || "0", 18).gte(minContributionInEth)
 
   return (
@@ -75,13 +75,13 @@ function MobilePayment({ showPayment, totalPayment, kickstarter, handleBackedAmo
         Back Project
       </Heading>
       <Flex style={{ columnGap: "16px" }}>
-        <Banner image={kickstarter.imageUrl} />
+        <Banner image={kickstarter.imageUrl || ""} />
         <Flex flexDirection="column">
           <Name>{kickstarter.creator}</Name>
           <Title>{kickstarter.title}</Title>
           <Flex style={{ columnGap: "8px" }}>
             <BinanceIcon />
-            <Text color="textSubtle"><b style={{ color: "white" }}>{kickstarter.totalContribution.toString()}</b> / {kickstarter.projectGoals.toString()} BNB</Text>
+            <Text color="textSubtle"><b style={{ color: "white" }}>{kickstarter.totalContribution?.toString()}</b> / {kickstarter.projectGoals?.toString()} BNB</Text>
           </Flex>
         </Flex>
       </Flex>
@@ -90,7 +90,7 @@ function MobilePayment({ showPayment, totalPayment, kickstarter, handleBackedAmo
         Backing Project
       </Heading>
       <Text color="textSubtle" style={{ marginBottom: "24px" }}>
-        You have to back with minimum amount of <b style={{ color: "#00D4A4" }}>{kickstarter.minContribution.toString()} BNB</b> to participate in this project
+        You have to back with minimum amount of <b style={{ color: "#00D4A4" }}>{kickstarter.minContribution?.toString()} BNB</b> to participate in this project
       </Text>
       <FundingInput label="Enter Backing Amount" value={totalPayment} onChange={handleBackedAmountChanged} />
       <br />
@@ -139,4 +139,4 @@ function MobilePayment({ showPayment, totalPayment, kickstarter, handleBackedAmo
   )
 }
 
-export default MobilePayment
+export default React.memo(MobilePayment)
