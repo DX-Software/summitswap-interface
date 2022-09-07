@@ -1,11 +1,17 @@
-import { Box, Input, TabPresale, Text } from '@koda-finance/summitswap-uikit'
+import { Box, Input, NavTab, Text } from '@koda-finance/summitswap-uikit'
 import { Phase } from 'constants/whitelabel'
 import useWhitelabelNfts from 'hooks/useWhitelabelNfts'
 import useWhitelabelNftsByPhase from 'hooks/useWhitelabelNftsByPhase'
 import React, { useState } from 'react'
-import InfoSection from './InfoSection'
+import styled from 'styled-components'
+import InfoSection from './BrowseCollections/InfoSection'
 import NftCollectionGallery from './shared/NftCollectionGallery'
 import { CollectionTab, NavItem } from './types'
+
+const NavTabWrapper = styled(Box)`
+  margin-bottom: 24px;
+  border-bottom: 1px solid ${({theme}) => theme.colors.inputColor};
+`
 
 function BrowseCollection() {
   const [tabActiveIndex, setTabActiveIndex] = useState(0)
@@ -40,15 +46,15 @@ function BrowseCollection() {
 
   return (
     <>
-      <Input placeholder="Seach NFT Collection by name" scale="lg" style={{ marginBottom: '32px' }} />
       <InfoSection />
-      <Box marginBottom="24px">
-        <TabPresale activeIndex={tabActiveIndex} onItemClick={(index: number) => setTabActiveIndex(index)}>
+      <NavTabWrapper>
+        <NavTab activeIndex={tabActiveIndex} onItemClick={(index: number) => setTabActiveIndex(index)}>
           {collectionTabs.map((item) => {
             return <Text>{item.label}</Text>
           })}
-        </TabPresale>
-      </Box>
+        </NavTab>
+      </NavTabWrapper>
+      <Input placeholder="Seach NFT Collection by name" scale="lg" style={{ marginBottom: '32px' }} />
       <div>{collectionTabs[tabActiveIndex].component}</div>
     </>
   )

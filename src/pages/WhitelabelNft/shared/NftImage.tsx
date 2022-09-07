@@ -1,10 +1,7 @@
-import { Image } from '@koda-finance/summitswap-uikit'
+import { Box, darkColors, Image, Text } from '@koda-finance/summitswap-uikit'
 import React from 'react'
 import styled from 'styled-components'
-
-type Props = {
-  src: string
-}
+import CustomTag from './CustomTag'
 
 const CustomImage = styled(Image)`
   position: relative;
@@ -18,7 +15,7 @@ const CustomImage = styled(Image)`
     content: ' ';
     width: 100%;
     height: 100%;
-    background-color: #B8B8B8;
+    background-color: ${({ theme }) => theme.colors.backgroundDisabled};
     position: absolute;
     top: -5px;
     right: -7px;
@@ -29,7 +26,7 @@ const CustomImage = styled(Image)`
     content: ' ';
     width: 100%;
     height: 100%;
-    background-color: #8A8A8A;
+    background-color: ${darkColors.tertiary};
     position: absolute;
     top: -9px;
     right: -12px;
@@ -38,8 +35,36 @@ const CustomImage = styled(Image)`
   }
 `
 
-function NftImage({ src }: Props) {
-  return <CustomImage src={src} width={217} height={181} />
+const RevealTag = styled(CustomTag)`
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 5;
+  margin: 0;
+`
+
+type Props = {
+  src: string
+  isReveal?: boolean
+}
+
+function NftImage({ src, isReveal }: Props) {
+  return (
+    <Box position="relative">
+      {isReveal && (
+        <RevealTag variant="dropdownBackground">
+          <Text textTransform="uppercase" fontFamily="Poppins" fontSize="10px" bold>
+            REVEALED
+          </Text>
+        </RevealTag>
+      )}
+      <CustomImage src={src} width={217} height={181} />
+    </Box>
+  )
 }
 
 export default React.memo(NftImage)
+
+NftImage.defaultProps = {
+  isReveal: false,
+}

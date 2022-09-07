@@ -1,6 +1,6 @@
 import { Box, ButtonMenu, ButtonMenuItem } from '@koda-finance/summitswap-uikit'
 import React, { useState } from 'react'
-import BrowseCollection from './BrowseCollection'
+import BrowseCollections from './BrowseCollections'
 import { NavItem, Tabs } from './types'
 
 function WhitelabelNft() {
@@ -10,7 +10,7 @@ function WhitelabelNft() {
     {
       label: 'Browse Collections',
       code: Tabs.BROWSE_COLLECTION,
-      component: <BrowseCollection />,
+      component: <BrowseCollections />,
     },
   ]
 
