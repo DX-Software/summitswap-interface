@@ -1,10 +1,11 @@
-import { ArrowBackIcon, Breadcrumbs, Button, CheckmarkIcon, EditIcon, Flex, Heading, Input, Radio, Skeleton, Text } from "@koda-finance/summitswap-uikit"
+import { ArrowBackIcon, Breadcrumbs, Button, CheckmarkIcon, EditIcon, Flex, Heading, Input, Radio, Skeleton, Text, TextArea } from "@koda-finance/summitswap-uikit"
 import { Grid } from "@mui/material"
 import { INITIAL_PROJECT_CREATION } from "constants/kickstarter"
 import { FormikProps, useFormik } from "formik"
 import React, { useCallback, useState } from "react"
 import styled from "styled-components"
 import { KickstarterApprovalStatus } from "types/kickstarter"
+import FundingInput from "../FundingInput"
 import { CurrencyInfo, Divider, StatusInfo, TextInfo } from "../shared"
 import { Project, ProjectFormField } from "../types"
 
@@ -151,6 +152,76 @@ const ProjectDetails = () => {
           </Grid>
         </Flex>
       </ProjectDetailsContainer>
+    </>
+  )
+}
+
+const EditProjectDetails = () => {
+  return (
+    <>
+      <Heading size='lg' marginBottom="16px" color="sidebarActiveColor">Project Details</Heading>
+      <ProjectDetailsContainer>
+        <ImgKickstarter image="https://picsum.photos/400" />
+        <br />
+        <Flex flexDirection="column" style={{ width: "100%" }}>
+          <Text fontSize="14px" color="textSubtle" marginBottom="4px">Project Title</Text>
+          <Input />
+          <br />
+          <Text fontSize="14px" color="textSubtle" marginBottom="4px">Project Creator</Text>
+          <Input />
+          <br />
+          <Text fontSize="14px" color="textSubtle" marginBottom="4px">Project Description</Text>
+          <TextArea />
+          <br />
+        </Flex>
+      </ProjectDetailsContainer>
+      <Heading size='md' marginBottom="4px" color="default">Choose Project Currency</Heading>
+      <Text color="textSubtle" marginBottom="8px">Participant will pay with <b style={{ color: "#2BA55D" }}>BNB</b> for your token</Text>
+      <Grid container spacing="16px">
+        <Grid item xs={12} sm={4} lg={2} style={{ display: "flex", alignItems: "center", columnGap: "8px" }}>
+          <Radio
+            scale="sm"
+            name={ProjectFormField.currency}
+            style={{ flexShrink: 0 }}
+          />
+          <Text>BNB</Text>
+        </Grid>
+        <Grid item xs={12} sm={4} lg={2} style={{ display: "flex", alignItems: "center", columnGap: "8px" }}>
+          <Radio
+            scale="sm"
+            name={ProjectFormField.currency}
+            style={{ flexShrink: 0 }}
+          />
+          <Text>USDT</Text>
+        </Grid>
+        <Grid item xs={12} sm={4} lg={2} style={{ display: "flex", alignItems: "center", columnGap: "8px" }}>
+          <Radio
+            scale="sm"
+            name={ProjectFormField.currency}
+            style={{ flexShrink: 0 }}
+          />
+          <Text>BUSD</Text>
+        </Grid>
+      </Grid>
+      <br />
+      <Grid container spacing="16px">
+        <Grid item sm={12} md={6}>
+          <FundingInput
+            label="Project Goals"
+            value="0"
+            description="Minimum Backing"
+            onChange={(value) => console.log(value)}
+          />
+        </Grid>
+        <Grid item sm={12} md={6}>
+          <FundingInput
+            label="Enter Amount"
+            value="0"
+            description="NB : This is the minimum amount for participate in donating the project"
+            onChange={(value) => console.log(value)}
+          />
+        </Grid>
+      </Grid>
     </>
   )
 }
@@ -309,7 +380,7 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
       <br />
         <EditButtons isEdit={isEdit} handleIsEdit={setIsEdit} />
       <br />
-      <ProjectDetails />
+      {isEdit ? <EditProjectDetails /> : <ProjectDetails />}
       <Divider />
       <FundAndRewardsSystem />
       <Divider />
