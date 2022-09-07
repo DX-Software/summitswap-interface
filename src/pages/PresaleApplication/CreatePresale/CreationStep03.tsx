@@ -57,9 +57,6 @@ const CreationStep03 = ({ currency, selectedToken, formik, changeStepNumber }: P
           </ItemIconCard>
           <Box marginTop="8px">
             <Heading color="primary">Refund System</Heading>
-            <Text small marginTop="4px">
-              What is and about refund
-            </Text>
             <Box marginTop="16px" onChange={formik.handleChange}>
               <RowFixed marginBottom="8px">
                 <Box>
@@ -200,7 +197,7 @@ const CreationStep03 = ({ currency, selectedToken, formik, changeStepNumber }: P
         <GridItem1>
           <Heading color="primary">Liquidity & Listing Rate</Heading>
           <Text small marginTop="4px">
-            What is Liquidity & Listing Rate
+            Percentage of raised funds that should be allocated to Liquidity on chosen router
           </Text>
         </GridItem1>
         <GridItem2>
@@ -222,7 +219,7 @@ const CreationStep03 = ({ currency, selectedToken, formik, changeStepNumber }: P
               <Caption color={formik.touched.liquidity && !!formik.errors.liquidity ? 'failure' : 'textDisabled'}>
                 {formik.touched.liquidity && formik.errors.liquidity
                   ? formik.errors.liquidity
-                  : 'Enter the percentage of raised funds that should be allocated to Liquidity on Chosen Router (Min 25%, Max 100%)'}
+                  : 'Enter the percentage with min. of 25% and max. of 100%'}
               </Caption>
             </StyledInputWrapper>
             <StyledInputWrapper>

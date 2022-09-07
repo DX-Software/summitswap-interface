@@ -209,12 +209,9 @@ const CreationStep04 = ({ formik, changeStepNumber }: Props) => {
         </ItemIconCard>
         <GridItem1>
           <Heading color="primary">Vesting</Heading>
-          <Text small marginTop="4px">
-            What is and about vesting
-          </Text>
         </GridItem1>
         <GridItem2>
-          <Flex marginTop="8px" flexWrap="wrap" onChange={formik.handleChange}>
+          <Flex flexWrap="wrap" onChange={formik.handleChange}>
             <RowFixed marginRight="20px" marginBottom="8px">
               <Box>
                 <Radio
