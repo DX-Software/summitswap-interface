@@ -12,7 +12,7 @@ import React, { useCallback, useState } from "react"
 import { useTransactionAdder } from "state/transactions/hooks"
 import styled from "styled-components"
 import { shortenAddress } from "utils"
-import FundingInput from "./FundingInput"
+import FundingInput from "../shared/FundingInput"
 import MobilePayment from "./MobilePayment"
 import PaymentModal from "./PaymentModal"
 

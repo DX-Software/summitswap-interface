@@ -1,6 +1,6 @@
 import { Button, Flex, Text } from "@koda-finance/summitswap-uikit"
 import React from "react"
-import FundingInput from "../FundingInput"
+import FundingInput from "../shared/FundingInput"
 
 function ProjectSettings() {
   return (

@@ -8,7 +8,7 @@ import React, { useMemo } from 'react'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import styled from 'styled-components'
 import { shortenAddress } from 'utils'
-import FundingInput from '../FundingInput'
+import FundingInput from '../shared/FundingInput'
 import { Project, ProjectFormField } from '../types'
 
 const AccountWrapper = styled(Flex)`

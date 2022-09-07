@@ -2,7 +2,7 @@ import { ArrowForwardIcon, Button, Flex, ImageAddIcon, Input, Text, TextArea } f
 import { FormikProps } from 'formik'
 import React, { useCallback, useMemo, useRef } from 'react'
 import styled from 'styled-components'
-import FundingInput from '../FundingInput'
+import FundingInput from '../shared/FundingInput'
 import { Project, ProjectFormField } from '../types'
 
 const ImageAndDescriptionWrapper = styled(Flex)`

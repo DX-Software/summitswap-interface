@@ -22,7 +22,7 @@ import {
 } from './queries/kickstarterQueries'
 
 export function useKickstarterFactoryById(kickstarterFactoryId: string) {
-  return useQuery('useKickstarterFactoryById', async () => {
+  return useQuery(['useKickstarterFactoryById', kickstarterFactoryId], async () => {
     const data = await kickstarterClient.request(KICKSTARTER_FACTORY_BY_ID, {
       address: kickstarterFactoryId,
     })
@@ -95,7 +95,7 @@ export function useKickstarterByEndTimeBetween(
   page = 1,
   perPage = PER_PAGE
 ) {
-  return useQuery('useKickstarterByEndTimeBetween', async () => {
+  return useQuery(['useKickstarterByEndTimeBetween', startTimestamp, endTimestamp, page], async () => {
     const data = await kickstarterClient.request(KICKSTARTERS_BY_END_TIME_BETWEEN, {
       first: perPage,
       skip: (page - 1) * perPage,
@@ -108,7 +108,7 @@ export function useKickstarterByEndTimeBetween(
 }
 
 export function useBackedKickstartersByContributionId(contributorId: string, page = 1, perPage = PER_PAGE) {
-  return useQuery(['useBackedKickstartersByContributionId', page], async () => {
+  return useQuery(['useBackedKickstartersByContributionId', contributorId, page], async () => {
     const data = await kickstarterClient.request(BACKED_KICKSTARTERS_BY_CONTRIBUTOR_ID, {
       address: contributorId.toLowerCase(),
       first: perPage,
@@ -122,7 +122,7 @@ export function useBackedKickstartersByContributionId(contributorId: string, pag
 }
 
 export function useBackedKickstarterById(backedKickstarterId: string) {
-  return useQuery('useBackedKickstarterById', async () => {
+  return useQuery(['useBackedKickstarterById', backedKickstarterId], async () => {
     const data = await kickstarterClient.request(BACKED_KICKSTARTER_BY_ID, {
       id: backedKickstarterId.toLowerCase(),
     })
@@ -132,7 +132,7 @@ export function useBackedKickstarterById(backedKickstarterId: string) {
 }
 
 export function useBackedKickstartersByKickstarterAddress(kickstarterAddress: string, page = 1, perPage = PER_PAGE) {
-  return useQuery('useBackedKickstartersByKickstarterAddress', async () => {
+  return useQuery(['useBackedKickstartersByKickstarterAddress', kickstarterAddress, page], async () => {
     const data = await kickstarterClient.request(BACKED_KICKSTARTERS_BY_KICKSTARTER_ADDRESS, {
       address: kickstarterAddress.toLowerCase(),
       first: perPage,

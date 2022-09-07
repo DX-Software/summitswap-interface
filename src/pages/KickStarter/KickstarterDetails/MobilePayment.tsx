@@ -6,7 +6,7 @@ import { Kickstarter } from "hooks/useKickstarters"
 import React from "react"
 import styled from "styled-components"
 import { shortenAddress } from "utils"
-import FundingInput from "./FundingInput"
+import FundingInput from "../shared/FundingInput"
 
 type Props = {
   showPayment: () => void

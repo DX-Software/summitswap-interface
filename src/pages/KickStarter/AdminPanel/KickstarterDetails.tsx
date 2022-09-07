@@ -5,7 +5,7 @@ import { FormikProps, useFormik } from "formik"
 import React, { useState } from "react"
 import styled from "styled-components"
 import { ContactMethod, KickstarterApprovalStatus } from "types/kickstarter"
-import FundingInput from "../FundingInput"
+import FundingInput from "../shared/FundingInput"
 import { CurrencyInfo, Divider, StatusInfo, TextInfo } from "../shared"
 import { Project, ProjectFormField } from "../types"
 
