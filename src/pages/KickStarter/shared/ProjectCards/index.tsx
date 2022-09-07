@@ -37,7 +37,7 @@ function ProjectCards({
     <Flex flexDirection="column">
       <Grid container spacing={2}>
         {kickstarters.isFetching ? (
-          <KickstartersLoadingSection />
+          <KickstartersLoadingSection isMobile={isMobile && mobileMode} />
         ): kickstarters.isFetched && kickstarters.data?.length === 0 ? (
           getEmptyKickstarterSection()
         ): kickstarters.data?.map((kickstarter) => (

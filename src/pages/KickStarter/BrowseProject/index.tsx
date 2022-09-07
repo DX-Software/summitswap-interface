@@ -66,6 +66,7 @@ function BrowseProject() {
             handlePageChanged={setCurrentPage}
             handleShowKickstarter={setShowKickstarterId}
             getEmptyKickstarterSection={() => <EmptyKickstarterSection />}
+            mobileMode
           />
         </Box>
       )}
@@ -92,6 +93,8 @@ function BrowseProject() {
         handlePageChanged={setCurrentPage}
         handleShowKickstarter={setShowKickstarterId}
         getEmptyKickstarterSection={() => <EmptyKickstarterSection />}
+        mobileMode
+        showMobileStatus
       />
     </Flex>
   )
