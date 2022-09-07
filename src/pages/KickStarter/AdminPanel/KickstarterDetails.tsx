@@ -1,9 +1,12 @@
-import { ArrowBackIcon, Breadcrumbs, Button, CheckmarkIcon, EditIcon, Flex, Heading, Skeleton, Text } from "@koda-finance/summitswap-uikit"
+import { ArrowBackIcon, Breadcrumbs, Button, CheckmarkIcon, EditIcon, Flex, Heading, Input, Radio, Skeleton, Text } from "@koda-finance/summitswap-uikit"
 import { Grid } from "@mui/material"
-import React, { useState } from "react"
+import { INITIAL_PROJECT_CREATION } from "constants/kickstarter"
+import { FormikProps, useFormik } from "formik"
+import React, { useCallback, useState } from "react"
 import styled from "styled-components"
 import { KickstarterApprovalStatus } from "types/kickstarter"
 import { CurrencyInfo, Divider, StatusInfo, TextInfo } from "../shared"
+import { Project, ProjectFormField } from "../types"
 
 type KickstarterDetailsProps = {
   previousPage: string
@@ -19,6 +22,24 @@ type HeaderProps = {
 type EditButtonsProps = {
   isEdit: boolean
   handleIsEdit: (isEdit: boolean) => void
+}
+
+type EditWithdrawalProps = {
+  formik: FormikProps<Project>
+}
+
+type EditWithdrawalOptionProps = {
+  formik: FormikProps<Project>
+  value: string
+  isSelected: boolean
+  title: string
+  inputTitle: string
+  description: JSX.Element
+}
+
+enum WithdrawalFeeMethod {
+  PERCENTAGE = "percentage",
+  FIXED_AMOUNT = "fixed_amount"
 }
 
 const ImgKickstarter = styled.div<{ image: string }>`
@@ -157,7 +178,7 @@ const FundAndRewardsSystem = () => {
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextInfo
-            title="Reward Description"
+            title="Reward Distribution"
             description="Tuesday, July 26th 2022"
             tooltipText="This is only an estimated date. It might be possible for the reward to be distributed earlier or later from scheduled."
           />
@@ -195,18 +216,92 @@ const Withdrawal = () => {
   )
 }
 
-const EditWithdrawal = () => {
+const EditWithdrawal = ({ formik }: EditWithdrawalProps) => {
   return (
     <>
       <Heading size='lg' marginBottom="8px" color="sidebarActiveColor">Withdrawal Fee Amount</Heading>
       <Text>Withdrawal fee is collected when project creator wants to withdraw their project fund</Text>
       <br />
+      <Grid container spacing="24px">
+        <Grid item xs={12} md={6}>
+          <EditWithdrawalOption
+            formik={formik}
+            value={WithdrawalFeeMethod.PERCENTAGE.toString()}
+            isSelected={formik.values.withdrawalFeeMethod === WithdrawalFeeMethod.PERCENTAGE.toString()}
+            title="Percentage"
+            inputTitle="Enter Fee Percentage (%)"
+            description={
+              <>
+                If the project fund has total of 100 BNB, they will have to pay&nbsp;
+                <Text bold color="linkColor" style={{ display: "inline-block", fontSize: "inherit" }}>5 BNB (5%)</Text>
+                &nbsp;for the withdraw fee
+              </>
+            }
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <EditWithdrawalOption
+            formik={formik}
+            value={WithdrawalFeeMethod.FIXED_AMOUNT.toString()}
+            isSelected={formik.values.withdrawalFeeMethod === WithdrawalFeeMethod.FIXED_AMOUNT.toString()}
+            title="Fixed Amount"
+            inputTitle="Enter Fixed Amount"
+            description={
+              <>
+                If the project fund has total of 100 BNB, they will have to pay&nbsp;
+                <Text bold color="linkColor" style={{ display: "inline-block", fontSize: "inherit" }}>0 BNB</Text>
+                &nbsp;for the withdrawal fee
+              </>
+            }
+          />
+        </Grid>
+      </Grid>
+    </>
+  )
+}
+
+const EditWithdrawalOption = ({
+  formik,
+  value,
+  isSelected,
+  title,
+  inputTitle,
+  description,
+}: EditWithdrawalOptionProps) => {
+  return (
+    <>
+      <Flex alignItems="center" style={{ columnGap: "8px" }}>
+        <Radio
+          scale="sm"
+          name={ProjectFormField.withdrawalFeeMethod}
+          value={value}
+          onChange={formik.handleChange}
+          style={{ flexShrink: 0 }}
+          checked={isSelected}
+        />
+        <div>
+          <Text bold color={isSelected ? "linkColor" : "default"} fontSize="14px">{title}</Text>
+          <Text color="textSubtle" fontSize="12px">User will have to pay withdraw fee from the X% project fund</Text>
+        </div>
+      </Flex>
+      <br />
+      <Text fontSize="14px" color={isSelected ? "default": "textDisabled"}>{inputTitle}</Text>
+      <Input placeholder="0" style={{ margin: "4px 0" }} disabled={!isSelected} />
+      <Text fontSize="14px" color="textDisabled">{description}</Text>
     </>
   )
 }
 
 function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }: KickstarterDetailsProps) {
   const [isEdit, setIsEdit] = useState(false);
+
+  const formik: FormikProps<Project> = useFormik<Project>({
+    enableReinitialize: true,
+    initialValues: INITIAL_PROJECT_CREATION,
+    onSubmit: async (values, { setSubmitting, setErrors }) => {
+      console.log("values", values)
+    },
+  })
 
   return (
     <Flex flexDirection="column">
@@ -218,7 +313,7 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
       <Divider />
       <FundAndRewardsSystem />
       <Divider />
-      <Withdrawal />
+      {isEdit ? <EditWithdrawal formik={formik} /> : <Withdrawal />}
     </Flex>
   )
 }

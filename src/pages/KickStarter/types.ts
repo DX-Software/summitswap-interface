@@ -30,10 +30,13 @@ export enum ProjectFormField {
   imageUrl = 'imageUrl',
   projectDescription = 'projectDescription',
   rewardDescription = 'rewardDescription',
+  currency = 'currency',
   goals = 'goals',
   minimumBacking = 'minimumBacking',
   projectDueDate = 'projectDueDate',
   rewardDistribution = 'rewardDistribution',
+  withdrawalFeeMethod = 'withdrawalFeeMethod',
+  withdrawalFeeAmount = 'withdrawalFeeAmount',
 }
 
 export type Project = {
@@ -43,8 +46,11 @@ export type Project = {
   [ProjectFormField.imageUrl]?: string
   [ProjectFormField.projectDescription]: string
   [ProjectFormField.rewardDescription]: string
+  [ProjectFormField.currency]: string
   [ProjectFormField.goals]: string
   [ProjectFormField.minimumBacking]: string
   [ProjectFormField.projectDueDate]: string
   [ProjectFormField.rewardDistribution]: string
+  [ProjectFormField.withdrawalFeeMethod]?: string
+  [ProjectFormField.withdrawalFeeAmount]?: string
 }

@@ -79,6 +79,7 @@ const initialProjectCreation = {
   creator: '',
   projectDescription: '',
   rewardDescription: '',
+  currency: '',
   goals: '0',
   minimumBacking: '0',
   projectDueDate: '',
