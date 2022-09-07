@@ -4,6 +4,7 @@ import { KICKSTARTER_FACTORY_ADDRESS, PER_PAGE } from 'constants/kickstarter'
 import { add, getUnixTime } from 'date-fns'
 import React, { useMemo, useState } from 'react'
 import { OrderDirection, OrderKickstarterBy } from 'types/kickstarter'
+import KickstarterDetails from '../KickstarterDetails'
 import ProjectCards from '../shared/ProjectCards'
 import EmptyKickstarterSection from './EmptyKickstarterSection'
 
@@ -18,10 +19,10 @@ const sortOptions = [
   },
 ]
 
-function BackedProject() {
-  const currentTimestamp = getUnixTime(new Date())
-  const nextWeekTimestamp = getUnixTime(add(new Date(), { weeks: 1 }))
+const currentTimestamp = getUnixTime(new Date())
+const nextWeekTimestamp = getUnixTime(add(new Date(), { weeks: 1 }))
 
+function BrowseProject() {
   const [currentPage, setCurrentPage] = useState(1)
   const [sortBy, setSortBy] = useState<OrderDirection>(OrderDirection.ASC)
   const [searchKickstarter, setSearchKickstarter] = useState<string>('')
@@ -37,6 +38,16 @@ function BackedProject() {
     const totalItems = kickstarterFactory?.data?.totalKickstarter?.toNumber() || 1
     return Math.ceil(totalItems / PER_PAGE)
   }, [kickstarterFactory?.data, searchKickstarter])
+
+  if (showKickstarterId) {
+    return (
+      <KickstarterDetails
+        previousPage="Backed Project"
+        kickstarterId={showKickstarterId}
+        handleKickstarterId={setShowKickstarterId}
+      />
+    )
+  }
 
   return (
     <Flex flexDirection="column">
@@ -86,4 +97,4 @@ function BackedProject() {
   )
 }
 
-export default React.memo(BackedProject)
+export default React.memo(BrowseProject)
