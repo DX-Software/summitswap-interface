@@ -7,6 +7,7 @@ import ApprovalHistory from './ApprovalHistory'
 import ProjectSettings from './ProjectSettings'
 import WaitingForApproval from './WaitingForApproval'
 import KickstarterDetails from './KickstarterDetails'
+import { Divider } from '../shared'
 
 function AdminPanel() {
   const { account } = useWeb3React()
@@ -50,11 +51,12 @@ function AdminPanel() {
       <Heading size="xl" marginBottom="24px">
         Admin Panel
       </Heading>
-      <NavTab mb="32px" style={{ background: 'red' }} activeIndex={activeTabIndex} onItemClick={setActiveTabIndex}>
+      <NavTab mb="32px" activeIndex={activeTabIndex} onItemClick={setActiveTabIndex}>
         {navItems.map((navItem) => (
           <Text key={navItem.code}>{navItem.label}</Text>
         ))}
       </NavTab>
+      <Divider style={{ marginTop: "0px" }} />
       <br />
       {navItems[activeTabIndex]?.component}
     </Flex>

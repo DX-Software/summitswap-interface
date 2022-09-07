@@ -2,8 +2,9 @@ import { Flex, Heading } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
 import { useBackedKickstartersByContributionId } from 'api/useKickstarterApi'
 import { PER_PAGE } from 'constants/kickstarter'
-import { useKickstarterContext } from 'contexts/kickstarter'
+import { useKickstarterContext } from 'pages/KickStarter/contexts/kickstarter'
 import React, { useMemo, useState } from 'react'
+import KickstarterDetails from '../KickstarterDetails'
 import ProjectDetails from '../ProjectDetails'
 import ConnectWalletSection from '../shared/ConnectWalletSection'
 import ProjectCards from '../shared/ProjectCards'
@@ -14,23 +15,12 @@ type Props = {
 }
 
 function BackedProject({ goToBrowseTab }: Props) {
-  const {
-    kickstarterAccount,
-    backedProjectAddress,
-    kickstarterOnBackedProject,
-    isPaymentOnBackedProjectPage,
-    currentBackedAmountOnMyProjectPage,
-    backingAmountOnBackedProjectPage,
-    contributorsOnBackedProject,
-    handleBackedProjectChanged,
-    handleIsPaymentOnBackedProjectPage,
-    handleBackingAmountOnBackedProjectPageChanged,
-  } = useKickstarterContext()
+  const { kickstarterAccount } = useKickstarterContext()
 
   const { account } = useWeb3React()
 
   const [currentPage, setCurrentPage] = useState(1)
-  const [showKickstarterId, setShowKickstarterId] = useState<string>()
+  const [showKickstarterId, setShowKickstarterId] = useState<string>("")
   const backedKickstarters = useBackedKickstartersByContributionId(account || "", currentPage)
 
   const maxPage = useMemo(() => {
@@ -42,17 +32,12 @@ function BackedProject({ goToBrowseTab }: Props) {
     return <ConnectWalletSection />
   }
 
-  if (backedProjectAddress) {
+  if (showKickstarterId) {
     return (
-      <ProjectDetails
-        kickstarter={kickstarterOnBackedProject}
-        isPayment={isPaymentOnBackedProjectPage}
-        toggleIsPayment={() => handleIsPaymentOnBackedProjectPage(!isPaymentOnBackedProjectPage)}
-        currentBackedAmount={currentBackedAmountOnMyProjectPage?.toString() || ""}
-        backedAmount={backingAmountOnBackedProjectPage}
-        handleBackedAmountChanged={handleBackingAmountOnBackedProjectPageChanged}
-        contributors={contributorsOnBackedProject}
-        onBack={() => handleBackedProjectChanged(undefined)}
+      <KickstarterDetails
+        previousPage="Backed Project"
+        kickstarterId={showKickstarterId}
+        handleKickstarterId={setShowKickstarterId}
       />
     )
   }
