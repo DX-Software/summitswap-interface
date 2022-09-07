@@ -173,10 +173,8 @@ export const validateProjectDetails = (values: ProjectDetails) => {
     errors.logoUrl = 'Required*'
   } else if (!checkUrl(values.logoUrl)) {
     errors.logoUrl = 'Not a valid Url'
-  }  else if (values.logoUrl && (values.logoHeight === 0)|| (values.logoWidth === 0)) {
-    errors.logoUrl = 'Enter valid logo Url'
-  }
-
+  } 
+  
   if (!values.discordId && values.contactMethod === CONTACT_METHOD_OPTIONS[1].value) {
     errors.discordId = 'Required*'
   } else if (values.discordId && !checkUrl(values.discordId || '')) {

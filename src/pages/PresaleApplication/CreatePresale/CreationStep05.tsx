@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { FormikProps } from 'formik'
 import {
@@ -72,39 +72,8 @@ const WebsiteURlInput = styled(StyledInput)`
   }
 `
 
-interface LogoDimensions {
-  height: number
-  width: number
-}
-
 const CreationStep05 = ({ formikPresale, formikProject, changeStepNumber }: Props) => {
   const [isStepValid, setIsStepValid] = useState(false)
-  const [logoDimensions, setLogoDimensions] = useState<LogoDimensions>({ height: 0, width: 0 })
-  const imageRef = useRef<HTMLImageElement>(null)
-
-  const handleOnLogoLoad = () => {
-    setLogoDimensions({
-      height: imageRef.current?.naturalHeight || 0,
-      width: imageRef.current?.naturalWidth || 0,
-    })
-  }
-
-  const onImageError = () => {
-    setLogoDimensions({
-      height: 0,
-      width: 0,
-    })
-  }
-
-  useEffect(() => {
-    if (
-      formikProject.values.logoHeight !== logoDimensions.height &&
-      formikProject.values.logoWidth !== logoDimensions.width
-    ) {
-      formikProject.values.logoHeight = logoDimensions.height
-      formikProject.values.logoWidth = logoDimensions.width
-    }
-  }, [logoDimensions, formikProject.values])
 
   useEffect(() => {
     if (formikProject.isValid && formikProject.touched.projectName) {
@@ -140,16 +109,6 @@ const CreationStep05 = ({ formikPresale, formikProject, changeStepNumber }: Prop
             name={FieldNames.logoUrl}
             id={FieldNames.logoUrl}
             isWarning={formikProject.touched.logoUrl && !!formikProject.errors.logoUrl}
-          />
-          <img
-            height={0}
-            width={0}
-            src={formikProject.values.logoUrl}
-            ref={imageRef}
-            alt=""
-            style={{ display: 'hidden' }}
-            onLoad={handleOnLogoLoad}
-            onError={onImageError}
           />
           <Caption color={formikProject.touched.logoUrl && !!formikProject.errors.logoUrl ? 'failure' : 'textDisabled'}>
             {formikProject.touched.logoUrl && formikProject.errors.logoUrl

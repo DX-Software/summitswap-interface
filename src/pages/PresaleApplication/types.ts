@@ -44,8 +44,6 @@ export enum FieldNames {
   twitterId ='twitterId',
   email = 'email',
   isVestingEnabled = 'isVestingEnabled',
-  logoHeight = 'logoHeight',
-  logoWidth = 'logoWidth',
   accountBalance = 'accountBalance',
   isApproved = 'isApproved',
   feePaymentToken = 'feePaymentToken',
@@ -71,8 +69,6 @@ export interface ProjectDetails {
   [FieldNames.description]?: string
   [FieldNames.websiteUrl]?: string
   [FieldNames.contactMethod]?: string
-  [FieldNames.logoHeight]?: number
-  [FieldNames.logoWidth]?: number
 }
 
 export interface FeeInfo {
