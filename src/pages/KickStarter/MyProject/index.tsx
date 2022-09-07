@@ -3,7 +3,7 @@ import { useWeb3React } from '@web3-react/core'
 import { useKickstarterAccountById, useKickstarterByAccountId } from 'api/useKickstarterApi'
 import { PER_PAGE } from 'constants/kickstarter'
 import React, { useCallback, useMemo, useState } from 'react'
-import EmptyMyKickstarterSection from '../BrowseProject/EmptyMyKickstarterSection'
+import EmptyMyKickstarterSection from './EmptyMyKickstarterSection'
 import ConnectWalletSection from '../shared/ConnectWalletSection'
 import ProjectCards from '../shared/ProjectCards'
 import CreateProject from './CreateProject'
@@ -55,7 +55,7 @@ function MyProject() {
         maxPage={maxPage}
         handlePageChanged={setCurrentPage}
         handleShowKickstarter={setShowKickstarterId}
-        getEmptyKickstarterSection={() => <EmptyMyKickstarterSection />}
+        getEmptyKickstarterSection={() => <EmptyMyKickstarterSection toggleIsCreate={toggleIsCreate} />}
       />
     </Flex>
   )

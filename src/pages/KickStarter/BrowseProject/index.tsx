@@ -5,7 +5,7 @@ import { add, getUnixTime } from 'date-fns'
 import React, { useMemo, useState } from 'react'
 import { OrderDirection, OrderKickstarterBy } from 'types/kickstarter'
 import ProjectCards from '../shared/ProjectCards'
-import EmptyMyKickstarterSection from './EmptyMyKickstarterSection'
+import EmptyKickstarterSection from './EmptyKickstarterSection'
 
 const sortOptions = [
   {
@@ -54,7 +54,7 @@ function BackedProject() {
             maxPage={1}
             handlePageChanged={setCurrentPage}
             handleShowKickstarter={setShowKickstarterId}
-            getEmptyKickstarterSection={() => <EmptyMyKickstarterSection />}
+            getEmptyKickstarterSection={() => <EmptyKickstarterSection />}
           />
         </Box>
       )}
@@ -80,7 +80,7 @@ function BackedProject() {
         maxPage={maxPage}
         handlePageChanged={setCurrentPage}
         handleShowKickstarter={setShowKickstarterId}
-        getEmptyKickstarterSection={() => <EmptyMyKickstarterSection />}
+        getEmptyKickstarterSection={() => <EmptyKickstarterSection />}
       />
     </Flex>
   )

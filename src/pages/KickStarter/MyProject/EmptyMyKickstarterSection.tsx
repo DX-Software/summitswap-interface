@@ -1,10 +1,11 @@
 import { ArrowForwardIcon, Button, Flex, Heading } from "@koda-finance/summitswap-uikit";
-import { useKickstarterContext } from "pages/KickStarter/contexts/kickstarter";
 import React from "react"
 
-function EmptyMyKickstarterSection() {
-  const { toggleIsCreate } = useKickstarterContext()
+type Props = {
+  toggleIsCreate: () => void
+}
 
+function EmptyMyKickstarterSection({ toggleIsCreate }: Props) {
   return (
     <Flex mb={3} flexDirection="column" alignItems="center" justifyContent="center" height={300} style={{ width: "100%" }}>
       <Heading size="lg" color="primaryDark" style={{ fontWeight: 400, lineHeight: "36px" }} marginBottom={38} textAlign="center">
