@@ -1,20 +1,20 @@
 export enum Statuses {
-  ONGOING = "ongoing",
-  END_SOON = "end_soon",
-  COMPLETED = "completed",
+  ONGOING = 'ongoing',
+  END_SOON = 'end_soon',
+  COMPLETED = 'completed',
 }
 
 export enum Tabs {
-  MY_PROJECT = "my_project",
-  BROWSE_PROJECT = "browse_project",
-  BACKED_PROJECT = "backed_project",
-  ADMIN_PANEL = "admin_panel",
+  MY_PROJECT = 'my_project',
+  BROWSE_PROJECT = 'browse_project',
+  BACKED_PROJECT = 'backed_project',
+  ADMIN_PANEL = 'admin_panel',
 }
 
 export enum AdminTabs {
-  WAITING_FOR_APPROVAL = "waiting_for_approval",
-  APPROVAL_HISTORY = "approval_history",
-  PROJECT_SETTINGS = "project_settings",
+  WAITING_FOR_APPROVAL = 'waiting_for_approval',
+  APPROVAL_HISTORY = 'approval_history',
+  PROJECT_SETTINGS = 'project_settings',
 }
 
 export type NavItem = {
@@ -23,15 +23,28 @@ export type NavItem = {
   component: React.ReactNode
 }
 
+export enum ProjectFormField {
+  title = 'title',
+  creator = 'creator',
+  image = 'image',
+  imageUrl = 'imageUrl',
+  projectDescription = 'projectDescription',
+  rewardDescription = 'rewardDescription',
+  goals = 'goals',
+  minimumBacking = 'minimumBacking',
+  projectDueDate = 'projectDueDate',
+  rewardDistribution = 'rewardDistribution',
+}
+
 export type Project = {
-  title: string;
-  creator: string;
-  image?: File;
-  imageUrl?: string;
-  projectDescription: string;
-  rewardDescription: string;
-  goals: string;
-  minimumBacking: string;
-  projectDueDate: string;
-  rewardDistribution: string;
+  [ProjectFormField.title]: string
+  [ProjectFormField.creator]: string
+  [ProjectFormField.image]?: File
+  [ProjectFormField.imageUrl]?: string
+  [ProjectFormField.projectDescription]: string
+  [ProjectFormField.rewardDescription]: string
+  [ProjectFormField.goals]: string
+  [ProjectFormField.minimumBacking]: string
+  [ProjectFormField.projectDueDate]: string
+  [ProjectFormField.rewardDistribution]: string
 }

@@ -1,9 +1,9 @@
 import { Box, ButtonMenu, ButtonMenuItem } from '@koda-finance/summitswap-uikit'
-import { KickstarterProvider, useKickstarterContext } from 'pages/KickStarter/contexts/kickstarter'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
+import { KickstarterProvider } from './contexts/kickstarter'
+import AdminPanel from './AdminPanel'
 import BackedKickstarter from './BackedKickstarter'
 import BrowseProject from './BrowseProject'
-import AdminPanel from "./AdminPanel"
 import MyProject from './MyProject'
 import { NavItem, Tabs } from './types'
 
@@ -14,8 +14,7 @@ function KickStarter() {
     {
       label: 'My Project',
       code: Tabs.MY_PROJECT,
-      component:
-        <MyProject />,
+      component: <MyProject />,
     },
     {
       label: 'Browse Project',
@@ -43,9 +42,7 @@ function KickStarter() {
           ))}
         </ButtonMenu>
       </Box>
-      <div className="main-content">
-        {navItems[buttonIndex]?.component}
-      </div>
+      <div className="main-content">{navItems[buttonIndex]?.component}</div>
     </KickstarterProvider>
   )
 }

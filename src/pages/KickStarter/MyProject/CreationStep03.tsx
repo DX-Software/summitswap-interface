@@ -1,15 +1,15 @@
+import { ETHER } from '@koda-finance/summitswap-sdk'
 import { BinanceIcon, Button, Flex, Heading, Skeleton, Text } from '@koda-finance/summitswap-uikit'
+import { useWeb3React } from '@web3-react/core'
 import AccountIcon from 'components/AccountIcon'
 import CopyButton from 'components/CopyButton'
-import { useKickstarterContext } from 'pages/KickStarter/contexts/kickstarter'
 import { format } from 'date-fns'
+import { FormikProps } from 'formik'
 import React from 'react'
+import { useCurrencyBalance } from 'state/wallet/hooks'
 import styled from 'styled-components'
 import { shortenAddress } from 'utils'
-
-type Props = {
-  handleCreateProject: () => void
-}
+import { Project } from '../types'
 
 const ImageAndDescriptionWrapper = styled(Flex)`
   column-gap: 32px;
@@ -66,57 +66,67 @@ const ButtonWrapper = styled(Flex)`
   }
 `
 
-function CreationStep03({ handleCreateProject }: Props) {
-  const { account, accountBalance, projectCreation, handleCurrentCreationStepChanged } = useKickstarterContext()
+type Props = {
+  setCurrentCreationStep: React.Dispatch<React.SetStateAction<number>>
+  formik: FormikProps<Project>
+}
+
+function CreationStep03({ setCurrentCreationStep, formik }: Props) {
+  const { account } = useWeb3React()
+  const accountBalance = useCurrencyBalance(account ?? undefined, ETHER)?.toSignificant(6)
 
   return (
     <Flex flexDirection="column">
-      <Heading size="lg" color="menuItemActiveBackground" marginBottom="24px">Project Details</Heading>
+      <Heading size="lg" color="menuItemActiveBackground" marginBottom="24px">
+        Project Details
+      </Heading>
       <ImageAndDescriptionWrapper marginBottom="16px">
-        {projectCreation.image && (
+        {formik.values.image && (
           <ImageWrapper>
-            <img src={URL.createObjectURL(projectCreation.image)} alt="Kickstarter" style={{ width: "100%" }} />
+            <img src={URL.createObjectURL(formik.values.image)} alt="Kickstarter" style={{ width: '100%' }} />
           </ImageWrapper>
         )}
         <Flex flexDirection="column" flex={1}>
           <Text color="textSubtle" marginBottom="4px">
             Project Title
           </Text>
-          <Text>{projectCreation.title}</Text>
+          <Text>{formik.values.title}</Text>
           <br />
           <Text color="textSubtle" marginBottom="4px">
             Project Creator
           </Text>
-          <Text>{projectCreation.creator}</Text>
+          <Text>{formik.values.creator}</Text>
           <br />
           <Text color="textSubtle" marginBottom="4px">
             Project Description
           </Text>
-          <Text>{projectCreation.projectDescription}</Text>
+          <Text>{formik.values.projectDescription}</Text>
           <br />
           <CriteriaWrapper>
             <Flex flexDirection="column" marginRight="auto">
               <Text color="textSubtle" marginBottom="4px">
                 Project Goals
               </Text>
-              <Flex style={{ columnGap: "8px" }}>
+              <Flex style={{ columnGap: '8px' }}>
                 <BinanceIcon width="20px" />
-                <Text>{projectCreation.goals}</Text>
+                <Text>{formik.values.goals}</Text>
               </Flex>
             </Flex>
             <Flex flexDirection="column" marginRight="auto">
               <Text color="textSubtle" marginBottom="4px">
                 Minimum Backing
               </Text>
-              <Flex style={{ columnGap: "8px" }}>
+              <Flex style={{ columnGap: '8px' }}>
                 <BinanceIcon width="20px" />
-                <Text>{projectCreation.minimumBacking}</Text>
+                <Text>{formik.values.minimumBacking}</Text>
               </Flex>
             </Flex>
           </CriteriaWrapper>
         </Flex>
       </ImageAndDescriptionWrapper>
-      <Heading size="lg" color="menuItemActiveBackground" marginY="16px">Fund &amp; Reward System</Heading>
+      <Heading size="lg" color="menuItemActiveBackground" marginY="16px">
+        Fund &amp; Reward System
+      </Heading>
       <Flex flexDirection="column">
         {account && (
           <>
@@ -124,7 +134,7 @@ function CreationStep03({ handleCreateProject }: Props) {
             <AccountWrapper marginBottom="24px" alignItems="center">
               <AccountIcon account={account} size={32} />
               <Flex flexDirection="column" marginRight="auto">
-                <Flex style={{ columnGap: "8px" }} position="relative">
+                <Flex style={{ columnGap: '8px' }} position="relative">
                   <Text fontSize="16px">{shortenAddress(account)}</Text>
                   <CopyButton
                     color="success"
@@ -138,33 +148,37 @@ function CreationStep03({ handleCreateProject }: Props) {
                 {!accountBalance ? (
                   <Skeleton width={100} height={28} />
                 ) : (
-                  <Text fontWeight="bold" color="primaryDark">{accountBalance} BNB</Text>
+                  <Text fontWeight="bold" color="primaryDark">
+                    {accountBalance} BNB
+                  </Text>
                 )}
               </Flex>
             </AccountWrapper>
           </>
         )}
-        <Text color="textSubtle" marginBottom="4px">Reward Description</Text>
-        <Text marginBottom="24px">{projectCreation.rewardDescription}</Text>
+        <Text color="textSubtle" marginBottom="4px">
+          Reward Description
+        </Text>
+        <Text marginBottom="24px">{formik.values.rewardDescription}</Text>
         <EstimationWrapper>
           <Flex flexDirection="column" marginRight="auto">
             <Text color="textSubtle" marginBottom="4px">
               Project Due Date
             </Text>
-            <Text>{format(new Date(projectCreation.projectDueDate), 'LLLL do, yyyy HH:MM')}</Text>
+            <Text>{format(new Date(formik.values.projectDueDate), 'LLLL do, yyyy HH:mm')}</Text>
           </Flex>
           <Flex flexDirection="column" marginRight="auto">
             <Text color="textSubtle" marginBottom="4px">
               Reward Distribution
             </Text>
-            <Text>{format(new Date(projectCreation.rewardDistribution), 'LLLL do, yyyy HH:MM')}</Text>
+            <Text>{format(new Date(formik.values.rewardDistribution), 'LLLL do, yyyy HH:mm')}</Text>
           </Flex>
         </EstimationWrapper>
         <ButtonWrapper>
-          <Button variant="secondary" onClick={() => handleCurrentCreationStepChanged(1)}>
+          <Button variant="secondary" onClick={() => setCurrentCreationStep(1)}>
             Re-edit Project
           </Button>
-          <Button variant="primary" onClick={handleCreateProject}>
+          <Button variant="primary" onClick={formik.submitForm}>
             Create New Project
           </Button>
         </ButtonWrapper>
@@ -172,5 +186,4 @@ function CreationStep03({ handleCreateProject }: Props) {
     </Flex>
   )
 }
-
-export default CreationStep03
+export default React.memo(CreationStep03)
