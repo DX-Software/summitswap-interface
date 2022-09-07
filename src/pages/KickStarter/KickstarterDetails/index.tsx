@@ -15,7 +15,6 @@ import {
 } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
-import { CSVLink } from 'react-csv'
 import {
   useBackedKickstarterById,
   useBackedKickstartersByKickstarterAddress,
@@ -25,6 +24,7 @@ import Tooltip from 'components/Tooltip'
 import { format } from 'date-fns'
 import ImgCornerIllustration from 'img/corner-illustration.svg'
 import React, { useMemo, useState } from 'react'
+import { CSVLink } from 'react-csv'
 import styled from 'styled-components'
 import { BackedKickstarter, Kickstarter, KickstarterProgressStatus } from 'types/kickstarter'
 import copyText from 'utils/copyText'
@@ -32,7 +32,7 @@ import { getKickstarterStatus, getKickstarterStatusLabel } from 'utils/kickstart
 import { Divider } from '../shared'
 import ProgressBox from '../shared/ProgressBox'
 import StatusLabel from '../shared/StatusLabel'
-import ProjectPayment from "./ProjectPayment"
+import ProjectPayment from './ProjectPayment'
 
 type Tab = {
   label: string
@@ -639,4 +639,4 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
   )
 }
 
-export default KickstarterDetails
+export default React.memo(KickstarterDetails)
