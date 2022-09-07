@@ -1,6 +1,7 @@
 import { Box, ButtonMenu, ButtonMenuItem } from '@koda-finance/summitswap-uikit'
 import React, { useState } from 'react'
 import BrowseCollections from './BrowseCollections'
+import CreateCollection from './CreateCollection'
 import { NavItem, Tabs } from './types'
 
 function WhitelabelNft() {
@@ -11,6 +12,11 @@ function WhitelabelNft() {
       label: 'Browse Collections',
       code: Tabs.BROWSE_COLLECTION,
       component: <BrowseCollections />,
+    },
+    {
+      label: 'Create NFT Collection',
+      code: Tabs.CREATE_COLLECTION,
+      component: <CreateCollection />,
     },
   ]
 

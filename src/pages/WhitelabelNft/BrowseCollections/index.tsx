@@ -5,6 +5,7 @@ import useWhitelabelNftsByPhase from 'hooks/useWhitelabelNftsByPhase'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import NftCollectionGallery from '../shared/NftCollectionGallery'
+import { Title } from '../shared/Text'
 import { CollectionTab, NavItem } from '../types'
 import InfoSection from './InfoSection'
 
@@ -47,7 +48,7 @@ function BrowseCollection() {
   return (
     <>
       <InfoSection />
-      <Text fontSize="40px" fontFamily="Poppins" bold>Browse NFT Collections</Text>
+      <Title>Browse NFT Collections</Title>
       <NavTabWrapper marginBottom="24px">
         <NavTab activeIndex={tabActiveIndex} onItemClick={(index: number) => setTabActiveIndex(index)}>
           {collectionTabs.map((item) => {

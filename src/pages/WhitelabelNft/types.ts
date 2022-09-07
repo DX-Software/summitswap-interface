@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js'
 
 export enum Tabs {
   BROWSE_COLLECTION = 'browse_collection',
+  CREATE_COLLECTION = 'create_collection',
 }
 
 export enum CollectionTab {
