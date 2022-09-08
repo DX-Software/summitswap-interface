@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import { Pagination, Modal } from '@mui/material'
+import Papa from 'papaparse'
 import {
   AutoRenewIcon,
   Box,
@@ -241,27 +242,26 @@ const WhitelistSection = ({
 
   useEffect(() => {
     if (csvFileData) {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        const result = e.target?.result as string
-        const rows = result.slice(result.indexOf('\n') + 1).split('\n')
-        let error = ''
-        const value = rows
-          .map((row) => {
-            const add = row.split(',')[1].slice(1, -1)
-            if (!isAddress(add)) {
-              error = 'Not Valid addresses'
-            }
-            return add
+      Papa.parse(csvFileData, {
+        header: true,
+        skipEmptyLines: true,
+        complete: (results) => {
+          let error = ''
+          const value = results.data
+            .map((row) => {
+              if (!isAddress(row.Wallet)) {
+                error = 'Not Valid addresses'
+              }
+              return row.Wallet
+            })
+            .join(',')
+          setNewWhitelist({
+            value,
+            error,
           })
-          .join(',')
-        setNewWhitelist({
-          value,
-          error,
-        })
-        setIsWhitelistModalOpen(true)
-      }
-      reader.readAsText(csvFileData)
+          setIsWhitelistModalOpen(true)
+        },
+      })
     }
   }, [csvFileData])
 
