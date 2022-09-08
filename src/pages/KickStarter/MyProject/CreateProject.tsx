@@ -1,9 +1,11 @@
 import { TransactionResponse } from '@ethersproject/providers'
 import { ArrowBackIcon, Breadcrumbs, Flex, Heading, Text } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
+import { useKickstarterContactMethodStore } from 'api/useKickstarterApi'
 import { useUploadImageApi } from 'api/useUploadImageApi'
 import TransactionConfirmationModal, { TransactionErrorContent } from 'components/TransactionConfirmationModal'
 import { INITIAL_PROJECT_CREATION } from 'constants/kickstarter'
+import { getUnixTime } from 'date-fns'
 import { parseUnits } from 'ethers/lib/utils'
 import { FormikProps, FormikProvider, useFormik } from 'formik'
 import { useKickstarterFactoryContract } from 'hooks/useContract'
@@ -32,6 +34,7 @@ function CreateProject({ isCreate, toggleIsCreate }: Prop) {
 
   const [currentCreationStep, setCurrentCreationStep] = useState(1)
 
+  const kickstarterContactMethodStore = useKickstarterContactMethodStore()
   const kickstarterFactoryContract = useKickstarterFactoryContract()
   const uploadImageApi = useUploadImageApi()
 
@@ -65,7 +68,7 @@ function CreateProject({ isCreate, toggleIsCreate }: Prop) {
   const formik: FormikProps<Project> = useFormik<Project>({
     enableReinitialize: true,
     initialValues: INITIAL_PROJECT_CREATION,
-    onSubmit: async (values, { setSubmitting, setErrors }) => {
+    onSubmit: async (values, { setSubmitting }) => {
       try {
         if (!kickstarterFactoryContract || !account) {
           return
@@ -73,21 +76,33 @@ function CreateProject({ isCreate, toggleIsCreate }: Prop) {
         const uploadImageResult = await uploadImageApi.mutateAsync(values.image!)
 
         const serviceFee = await kickstarterFactoryContract.serviceFee()
-        const receipt = await kickstarterFactoryContract.createProject(
-          values.title,
-          values.creator,
-          uploadImageResult.url,
-          values.projectDescription,
-          values.rewardDescription,
-          parseUnits(values.minContribution, 18),
-          parseUnits(values.projectGoals, 18),
-          Math.floor(new Date(values.rewardDistributionTimestamp).getTime() / 1000),
-          Math.floor(Date.now() / 1000),
-          Math.floor(new Date(values.endTimestamp).getTime() / 1000),
-          { value: serviceFee.toString() }
-        )
+
+        const project = {
+          paymentToken: values.paymentToken,
+          title: values.title,
+          creator: values.creator,
+          imageUrl: uploadImageResult.url,
+          projectDescription: values.projectDescription,
+          rewardDescription: values.rewardDescription,
+          minContribution: parseUnits(values.minContribution, 18),
+          projectGoals: parseUnits(values.projectGoals, 18),
+          rewardDistributionTimestamp: Math.floor(new Date(values.rewardDistributionTimestamp).getTime() / 1000),
+          startTimestamp: getUnixTime(new Date()),
+          endTimestamp: getUnixTime(new Date(values.endTimestamp)),
+        }
+        const receipt = await kickstarterFactoryContract.createProject(project, { value: serviceFee.toString() })
         transactionSubmitted(receipt, 'The kickstarter has been submitted successfully')
         await library.waitForTransaction(receipt.hash)
+
+        const kickstarterAddresses = await kickstarterFactoryContract.getProjectsOf(account)
+        const lastIndex = kickstarterAddresses.length - 1
+
+        await kickstarterContactMethodStore.mutateAsync({
+          kickstarterAddress: kickstarterAddresses[lastIndex],
+          contactMethod: `${values.contactMethod}`,
+          contactValue: `${values.contactMethodValue}`,
+        })
+
         toggleIsCreate()
       } catch (err) {
         const callError = err as any
