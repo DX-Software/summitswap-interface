@@ -1,7 +1,21 @@
-import { ArrowForwardIcon, Button, Flex, ImageAddIcon, Input, Text, TextArea } from '@koda-finance/summitswap-uikit'
+/* eslint-disable jsx-a11y/label-has-associated-control */
+import {
+  ArrowForwardIcon,
+  Button,
+  Flex,
+  Heading,
+  ImageAddIcon,
+  Input,
+  Radio,
+  Text,
+  TextArea,
+} from '@koda-finance/summitswap-uikit'
+import { Grid } from '@mui/material'
+import { BUSD, NULL_ADDRESS, USDT } from 'constants/index'
 import { FormikProps } from 'formik'
 import React, { useCallback, useMemo, useRef } from 'react'
 import styled from 'styled-components'
+import ChoosePaymentToken from '../shared/ChoosePaymentToken'
 import FundingInput from '../shared/FundingInput'
 import { Project, ProjectFormField } from '../types'
 
@@ -170,6 +184,8 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
           </TextArea>
         </InputWrapper>
       </ImageAndDescriptionWrapper>
+      <ChoosePaymentToken formik={formik} />
+      <br />
       <FundingWrapper>
         <FundingInput
           label="Project Goals"
