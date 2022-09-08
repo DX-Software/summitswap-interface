@@ -70,6 +70,7 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
       formik.values.title &&
       formik.values.creator &&
       formik.values.projectDescription &&
+      formik.values.paymentToken &&
       formik.values.projectGoals &&
       Number(formik.values.projectGoals) > 0 &&
       formik.values.minContribution &&
@@ -80,6 +81,7 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
     formik.values.title,
     formik.values.creator,
     formik.values.projectDescription,
+    formik.values.paymentToken,
     formik.values.projectGoals,
     formik.values.minContribution,
   ])

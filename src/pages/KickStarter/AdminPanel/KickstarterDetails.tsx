@@ -2,6 +2,7 @@ import { ArrowBackIcon, Breadcrumbs, Button, CheckmarkIcon, EditIcon, Flex, Head
 import { Grid } from "@mui/material"
 import { useKickstarterById } from "api/useKickstarterApi"
 import { getTokenImageBySymbol } from "connectors"
+import { CONTACT_METHODS } from "constants/kickstarter"
 import { format, fromUnixTime } from "date-fns"
 import { FormikProps, FormikProvider, useFormik } from "formik"
 import React, { useCallback, useState } from "react"
@@ -322,25 +323,6 @@ const FundAndRewardsSystem = ({ kickstarter, isLoading }: SectionProps) => {
 }
 
 const EditFundAndRewardsSystem = ({ formik }: EditSectionProps) => {
-  const contactMethods = [
-    {
-      label: 'Discord',
-      value: ContactMethod.DISCORD,
-    },
-    {
-      label: 'Email',
-      value: ContactMethod.EMAIL,
-    },
-    {
-      label: 'Telegram',
-      value: ContactMethod.TELEGRAM,
-    },
-    {
-      label: 'Twitter',
-      value: ContactMethod.TWITTER,
-    },
-  ]
-
   const handleContactMethodChange = (value: string) => {
     formik.setFieldValue(ProjectFormField.contactMethod, getKickstarterContactMethodById(value))
   }
@@ -395,12 +377,14 @@ const EditFundAndRewardsSystem = ({ formik }: EditSectionProps) => {
           <Text fontSize="14px" color="textSubtle" marginBottom="4px">Chosen Contact Method</Text>
           <Select
             onValueChanged={handleContactMethodChange}
-            options={contactMethods}
+            options={CONTACT_METHODS}
             minWidth="165px"
           />
         </Grid>
         <Grid item sm={12} md={6}>
-          <Text fontSize="14px" color="textSubtle" marginBottom="4px">Telegram ID</Text>
+          <Text fontSize="14px" color="textSubtle" marginBottom="4px">
+            {CONTACT_METHODS.find((method) => formik.values.contactMethod === method.value)?.label}
+          </Text>
           <Input
             placeholder="Enter your Contact Info"
             name={ProjectFormField.contactMethodValue}
