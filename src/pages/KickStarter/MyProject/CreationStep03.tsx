@@ -3,12 +3,15 @@ import { Button, Flex, Heading, Skeleton, Text } from '@koda-finance/summitswap-
 import { useWeb3React } from '@web3-react/core'
 import AccountIcon from 'components/AccountIcon'
 import CopyButton from 'components/CopyButton'
+import { getTokenImageBySymbol } from 'connectors'
 import { format } from 'date-fns'
 import { FormikProps } from 'formik'
 import React from 'react'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import styled from 'styled-components'
 import { shortenAddress } from 'utils'
+import { getSymbolByAddress } from 'utils/kickstarter'
+import { ImgCurrency } from '../shared'
 import { Project } from '../types'
 
 const ImageAndDescriptionWrapper = styled(Flex)`
@@ -108,8 +111,7 @@ function CreationStep03({ setCurrentCreationStep, formik }: Props) {
                 Project Goals
               </Text>
               <Flex style={{ columnGap: '8px' }}>
-                <Skeleton width={20} height={20} />
-                {/* <ImgCurrency image={getTokenImageBySymbol(kickstarter.tokenSymbol)} /> */}
+                <ImgCurrency image={getTokenImageBySymbol(getSymbolByAddress(formik.values.paymentToken))} />
                 <Text>{formik.values.projectGoals}</Text>
               </Flex>
             </Flex>
@@ -118,8 +120,7 @@ function CreationStep03({ setCurrentCreationStep, formik }: Props) {
                 Minimum Backing
               </Text>
               <Flex style={{ columnGap: '8px' }}>
-                <Skeleton width={20} height={20} />
-                {/* <ImgCurrency image={getTokenImageBySymbol(kickstarter.tokenSymbol)} /> */}
+                <ImgCurrency image={getTokenImageBySymbol(getSymbolByAddress(formik.values.paymentToken))} />
                 <Text>{formik.values.minContribution}</Text>
               </Flex>
             </Flex>

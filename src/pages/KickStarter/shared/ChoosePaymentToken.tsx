@@ -4,6 +4,7 @@ import { Grid } from '@mui/material'
 import { BUSD, NULL_ADDRESS, USDT } from 'constants/index'
 import { FormikProps } from 'formik'
 import React, { useMemo } from 'react'
+import { getSymbolByAddress } from 'utils/kickstarter'
 import { Project, ProjectFormField } from '../types'
 
 type Props = {
@@ -12,14 +13,7 @@ type Props = {
 
 function ChoosePaymentToken({ formik }: Props) {
   const chosenSymbol = useMemo(() => {
-    switch (formik.values.paymentToken) {
-      case USDT.address:
-        return USDT.symbol
-      case BUSD.address:
-        return BUSD.symbol
-      default:
-        return 'BNB'
-    }
+    return getSymbolByAddress(formik.values.paymentToken)
   }, [formik.values.paymentToken])
 
   return (

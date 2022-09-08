@@ -49,7 +49,7 @@ function FundingInput({ name, label, type, tokenSymbol, value, description, onCh
         <InputWrapper>
           <InputCurrency alignItems="center">
             <ImgCurrency image={getTokenImageBySymbol(tokenSymbol)} />
-            <Text fontWeight="bold">BNB</Text>
+            <Text fontWeight="bold">{tokenSymbol}</Text>
           </InputCurrency>
           <StyledInput name={name} type={type} value={value} onChange={handleOnChange} />
         </InputWrapper>
