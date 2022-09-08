@@ -1,4 +1,4 @@
-import { ArrowBackIcon, Breadcrumbs, Button, CheckmarkIcon, EditIcon, Flex, Heading, Input, Radio, Select, Text, TextArea } from "@koda-finance/summitswap-uikit"
+import { ArrowBackIcon, Breadcrumbs, Button, CheckmarkIcon, EditIcon, Flex, Heading, Input, Radio, Select, Text, TextArea, useModal } from "@koda-finance/summitswap-uikit"
 import { Grid } from "@mui/material"
 import { useKickstarterById } from "api/useKickstarterApi"
 import { getTokenImageBySymbol } from "connectors"
@@ -14,6 +14,7 @@ import { getKickstarterApprovalById, getKickstarterContactMethodById } from "uti
 import { CurrencyInfo, Divider, StatusInfo, TextInfo } from "../shared"
 import FundingInput from "../shared/FundingInput"
 import { Project, ProjectFormField } from "../types"
+import RejectModal from "./RejectModal"
 
 type KickstarterDetailsProps = {
   previousPage: string
@@ -622,6 +623,10 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
     },
   })
 
+  const [showPayment] = useModal(
+    <RejectModal kickstarter={kickstarter.data} handleKickstarterId={handleKickstarterId} />
+  )
+
   return (
     <FormikProvider value={formik}>
       <Flex flexDirection="column">
@@ -668,7 +673,7 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
           <Divider />
           <Flex style={{ columnGap: "12px" }}>
             <Button variant="awesome" onClick={() => formik.submitForm()} isLoading={formik.isSubmitting}>Approve Project</Button>
-            <Button variant="danger" isLoading={formik.isSubmitting}>Reject Project</Button>
+            <Button variant="danger" isLoading={formik.isSubmitting} onClick={showPayment}>Reject Project</Button>
           </Flex>
         </>
       )}

@@ -1,4 +1,5 @@
 import { Button, Flex, Text } from "@koda-finance/summitswap-uikit"
+import { useWeb3React } from "@web3-react/core"
 import { formatUnits, parseEther } from "ethers/lib/utils"
 import { FormikProvider, FormikProps, useFormik } from "formik"
 import { useKickstarterFactoryContract } from "hooks/useContract"
@@ -10,6 +11,7 @@ type InputProps = {
 }
 
 function ProjectSettings() {
+  const { library } = useWeb3React()
   const kickstarterFactoryContract = useKickstarterFactoryContract()
   const [currentServiceFee, setCurrentServiceFee] = useState("0")
   const formik: FormikProps<InputProps> = useFormik<InputProps>({
@@ -21,7 +23,8 @@ function ProjectSettings() {
       if (!kickstarterFactoryContract) return
 
       try {
-        await kickstarterFactoryContract.setServiceFee(parseEther(values.amount))
+        const receipt = await kickstarterFactoryContract.setServiceFee(parseEther(values.amount))
+        await library.waitForTransaction(receipt.hash)
       } catch (e: any) {
         console.error("Failed to Update Service Fee", e.message)
       }

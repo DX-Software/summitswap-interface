@@ -61,7 +61,7 @@ export function useKickstarterFactoryContract(withSignerIfPossible?: boolean): C
   return useContract(KICKSTARTER_FACTORY_ADDRESS, SUMMIT_KICKSTARTER_FACTORY_ABI, withSignerIfPossible)
 }
 
-export function useKickstarterContract(kickstarterAddress: string, withSignerIfPossible?: boolean): Contract | null {
+export function useKickstarterContract(kickstarterAddress?: string, withSignerIfPossible?: boolean): Contract | null {
   return useContract(kickstarterAddress, SUMMIT_KICKSTARTER_ABI, withSignerIfPossible)
 }
 
