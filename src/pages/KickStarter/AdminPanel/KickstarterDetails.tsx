@@ -2,10 +2,10 @@ import { ArrowBackIcon, Breadcrumbs, Button, CheckmarkIcon, EditIcon, Flex, Head
 import { Grid } from "@mui/material"
 import { useKickstarterById } from "api/useKickstarterApi"
 import { getTokenImageBySymbol } from "connectors"
-import { INITIAL_PROJECT_CREATION } from "constants/kickstarter"
+import { BUSD, NULL_ADDRESS, USDT } from "constants/index"
 import { format } from "date-fns"
-import { FormikProps, useFormik } from "formik"
-import React, { useState } from "react"
+import { FormikProps, FormikProvider, useFormik } from "formik"
+import React, { useCallback, useState } from "react"
 import styled from "styled-components"
 import { ContactMethod, Kickstarter, KickstarterApprovalStatus, WithdrawalFeeMethod } from "types/kickstarter"
 import { CurrencyInfo, Divider, StatusInfo, TextInfo } from "../shared"
@@ -195,6 +195,20 @@ const ProjectDetails = ({ kickstarter, isLoading }: SectionProps) => {
 }
 
 const EditProjectDetails = ({ formik }: EditSectionProps) => {
+  const handleMinimumBackingChanged = useCallback(
+    (value: string) => {
+      if (value !== '' && value.match('^[0-9]{0,9}(\\.[0-9]{0,18})?$') == null) return
+      formik.setFieldValue(ProjectFormField.minContribution, value)
+    },
+    [formik]
+  )
+  const handleProjectGoalsChanged = useCallback(
+    (value: string) => {
+      if (value !== '' && value.match('^[0-9]{0,9}(\\.[0-9]{0,18})?$') == null) return
+      formik.setFieldValue(ProjectFormField.projectGoals, value)
+    },
+    [formik]
+  )
   return (
     <>
       <Heading size='lg' marginBottom="16px" color="sidebarActiveColor">Project Details</Heading>
@@ -203,13 +217,32 @@ const EditProjectDetails = ({ formik }: EditSectionProps) => {
         <br />
         <Flex flexDirection="column" style={{ width: "100%" }}>
           <Text fontSize="14px" color="textSubtle" marginBottom="4px">Project Title</Text>
-          <Input />
+          <Input
+            placeholder="Enter your project title"
+            name={ProjectFormField.title}
+            value={formik.values.title}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+          />
           <br />
           <Text fontSize="14px" color="textSubtle" marginBottom="4px">Project Creator</Text>
-          <Input />
+          <Input
+            placeholder="Enter your name"
+            name={ProjectFormField.creator}
+            value={formik.values.creator}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+          />
           <br />
           <Text fontSize="14px" color="textSubtle" marginBottom="4px">Project Description</Text>
-          <TextArea />
+          <TextArea
+            placeholder="Write something about your project"
+            name={ProjectFormField.projectDescription}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+          >
+            {formik.values.projectDescription}
+          </TextArea>
           <br />
         </Flex>
       </ProjectDetailsContainer>
@@ -219,7 +252,10 @@ const EditProjectDetails = ({ formik }: EditSectionProps) => {
         <Grid item xs={12} sm={4} lg={2} style={{ display: "flex", alignItems: "center", columnGap: "8px" }}>
           <Radio
             scale="sm"
-            name={ProjectFormField.currency}
+            name={ProjectFormField.paymentToken}
+            value={NULL_ADDRESS}
+            onChange={formik.handleChange}
+            checked={formik.values.paymentToken === NULL_ADDRESS}
             style={{ flexShrink: 0 }}
           />
           <Text>BNB</Text>
@@ -227,7 +263,10 @@ const EditProjectDetails = ({ formik }: EditSectionProps) => {
         <Grid item xs={12} sm={4} lg={2} style={{ display: "flex", alignItems: "center", columnGap: "8px" }}>
           <Radio
             scale="sm"
-            name={ProjectFormField.currency}
+            name={ProjectFormField.paymentToken}
+            value={USDT.address}
+            onChange={formik.handleChange}
+            checked={formik.values.paymentToken === USDT.address}
             style={{ flexShrink: 0 }}
           />
           <Text>USDT</Text>
@@ -235,7 +274,10 @@ const EditProjectDetails = ({ formik }: EditSectionProps) => {
         <Grid item xs={12} sm={4} lg={2} style={{ display: "flex", alignItems: "center", columnGap: "8px" }}>
           <Radio
             scale="sm"
-            name={ProjectFormField.currency}
+            name={ProjectFormField.paymentToken}
+            value={BUSD.address}
+            onChange={formik.handleChange}
+            checked={formik.values.paymentToken === BUSD.address}
             style={{ flexShrink: 0 }}
           />
           <Text>BUSD</Text>
@@ -246,17 +288,16 @@ const EditProjectDetails = ({ formik }: EditSectionProps) => {
         <Grid item sm={12} md={6}>
           <FundingInput
             label="Project Goals"
-            value="0"
-            description="Minimum Backing"
-            onChange={(value) => console.log(value)}
+            value={formik.values.projectGoals.toString()}
+            onChange={handleProjectGoalsChanged}
           />
         </Grid>
         <Grid item sm={12} md={6}>
           <FundingInput
-            label="Enter Amount"
-            value="0"
+            label="Minimum Backing"
+            value={formik.values.minContribution.toString()}
             description="NB : This is the minimum amount for participate in donating the project"
-            onChange={(value) => console.log(value)}
+            onChange={handleMinimumBackingChanged}
           />
         </Grid>
       </Grid>
@@ -316,7 +357,7 @@ const FundAndRewardsSystem = ({ kickstarter, isLoading }: SectionProps) => {
 const EditFundAndRewardsSystem = ({ formik }: EditSectionProps) => {
   const contactMethods = [
     {
-      label: 'Discrod',
+      label: 'Discord',
       value: ContactMethod.DISCORD,
     },
     {
@@ -332,6 +373,17 @@ const EditFundAndRewardsSystem = ({ formik }: EditSectionProps) => {
       value: ContactMethod.TWITTER,
     },
   ]
+
+  const handleProjectDueDateChange = (value: string) => {
+    formik.setFieldValue(ProjectFormField.endTimestamp, value)
+  }
+
+  const handleRewardDistributionChange = (value: string) => {
+    formik.setFieldValue(ProjectFormField.rewardDistributionTimestamp, value)
+  }
+
+  console.log("new Date(Number(formik.values.rewardDistributionTimestamp) * 1000).toISOString()", new Date(Number(formik.values.rewardDistributionTimestamp) * 1000).toISOString())
+
   return (
     <>
       <Heading size='lg' marginBottom="16px" color="sidebarActiveColor">Fund & Reward System</Heading>
@@ -341,16 +393,24 @@ const EditFundAndRewardsSystem = ({ formik }: EditSectionProps) => {
       />
       <br />
       <Text fontSize="14px" color="textSubtle" marginBottom="4px">Reward Description</Text>
-      <TextArea />
+      <TextArea
+        placeholder="Describe the reward for this project"
+        name={ProjectFormField.rewardDescription}
+        value={formik.values.rewardDescription}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+      />
       <br />
       <Grid container spacing="16px">
         <Grid item sm={12} md={6}>
           <FundingInput
             label="Project Due Date"
             type="datetime-local"
-            value=""
+            // name={ProjectFormField.endTimestamp}
+            value={new Date().toISOString()}
+            // value={formik.values.endTimestamp}
             description="NB: Due date should be minimum a week after the project is created"
-            onChange={() => console.log("value")}
+            onChange={handleProjectDueDateChange}
             isFunding={false}
           />
         </Grid>
@@ -358,9 +418,11 @@ const EditFundAndRewardsSystem = ({ formik }: EditSectionProps) => {
           <FundingInput
             label="Reward Distribution"
             type="datetime-local"
-            value=""
+            // name={ProjectFormField.endTimestamp}
+            // value={new Date(Number(formik.values.rewardDistributionTimestamp) * 1000).toISOString()}
+            value={formik.values.rewardDistributionTimestamp}
             description="NB: Enter the estimate date for the reward distribution"
-            onChange={() => console.log("value")}
+            onChange={handleRewardDistributionChange}
             isFunding={false}
           />
         </Grid>
@@ -384,10 +446,10 @@ const EditFundAndRewardsSystem = ({ formik }: EditSectionProps) => {
 const Withdrawal = ({ kickstarter, isLoading }: SectionProps) => {
   let withdrawalFeeMethod = "Not Defined"
   let fee = "0"
-  if (kickstarter?.fixFeeAmount) {
+  if (kickstarter && !!kickstarter.fixFeeAmount?.toNumber()) {
     withdrawalFeeMethod = "Fix Fee"
     fee = kickstarter.fixFeeAmount.times(100).div(10000).toString()
-  } else if (kickstarter?.percentageFeeAmount) {
+  } else if (kickstarter && !!kickstarter.percentageFeeAmount?.toNumber()) {
     withdrawalFeeMethod = "Percentage Fee"
     fee = `${kickstarter.percentageFeeAmount.times(100).div(10000).toString()}%`
   }
@@ -498,49 +560,63 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
 
   const formik: FormikProps<Project> = useFormik<Project>({
     enableReinitialize: true,
-    initialValues: INITIAL_PROJECT_CREATION,
+    initialValues: {
+      title: kickstarter.data?.title || "",
+      creator: kickstarter.data?.creator || "",
+      projectDescription: kickstarter.data?.projectDescription || "",
+      rewardDescription: kickstarter.data?.rewardDescription || "",
+      paymentToken: kickstarter.data?.paymentToken || "",
+      projectGoals: kickstarter.data?.projectGoals?.toString() || "",
+      minContribution: kickstarter.data?.minContribution?.toString() || "",
+      endTimestamp: kickstarter.data?.endTimestamp?.toString() || "",
+      rewardDistributionTimestamp: kickstarter.data?.rewardDistributionTimestamp?.toString() || "",
+      withdrawalFeeMethod: kickstarter.data?.fixFeeAmount?.toNumber() ? WithdrawalFeeMethod.FIXED_AMOUNT : WithdrawalFeeMethod.PERCENTAGE,
+      withdrawalFeeAmount: kickstarter.data?.fixFeeAmount?.toNumber() ? kickstarter.data?.fixFeeAmount?.toString() : (kickstarter.data?.percentageFeeAmount?.times(100).div(10000).toString() || ""),
+    },
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       console.log("values", values)
     },
   })
 
   return (
-    <Flex flexDirection="column">
-      <Header previousPage={previousPage} handleKickstarterId={handleKickstarterId} />
-      <br />
-        <EditButtons
-          isEdit={isEdit}
-          handleIsEdit={setIsEdit}
-          isDisabled={kickstarter.isFetching || !kickstarter.data}
-        />
-      <br />
-      {isEdit ? (
-        <EditProjectDetails formik={formik} />
-      ) : (
-        <ProjectDetails
-          kickstarter={kickstarter.data}
-          isLoading={kickstarter.isFetching}
-        />
-      )}
-      <Divider />
-      {isEdit ? (
-        <EditFundAndRewardsSystem formik={formik} />
-      ) : (
-        <FundAndRewardsSystem
-          kickstarter={kickstarter.data}
-          isLoading={kickstarter.isFetching}
-        />
-      )}
-      <Divider />
-      {isEdit ? (
-        <EditWithdrawal formik={formik} />
-      ) : (
-        <Withdrawal
-          kickstarter={kickstarter.data}
-          isLoading={kickstarter.isFetching}
-        />
-      )}
-    </Flex>
+    <FormikProvider value={formik}>
+      <Flex flexDirection="column">
+        <Header previousPage={previousPage} handleKickstarterId={handleKickstarterId} />
+        <br />
+          <EditButtons
+            isEdit={isEdit}
+            handleIsEdit={setIsEdit}
+            isDisabled={kickstarter.isFetching || !kickstarter.data}
+          />
+        <br />
+        {isEdit ? (
+          <EditProjectDetails formik={formik} />
+        ) : (
+          <ProjectDetails
+            kickstarter={kickstarter.data}
+            isLoading={kickstarter.isFetching}
+          />
+        )}
+        <Divider />
+        {isEdit ? (
+          <EditFundAndRewardsSystem formik={formik} />
+        ) : (
+          <FundAndRewardsSystem
+            kickstarter={kickstarter.data}
+            isLoading={kickstarter.isFetching}
+          />
+        )}
+        <Divider />
+        {(isEdit || kickstarter.data?.approvalStatus === KickstarterApprovalStatus.WAITING_FOR_APPROVAL ) ? (
+          <EditWithdrawal formik={formik} />
+        ) : (
+          <Withdrawal
+            kickstarter={kickstarter.data}
+            isLoading={kickstarter.isFetching}
+          />
+        )}
+      </Flex>
+    </FormikProvider>
   )
 }
 

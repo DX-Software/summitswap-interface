@@ -36,7 +36,6 @@ export const KODA = {
   [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0xa3A654C2369277237372cCce51Ca8403acB4FAe4', 9, 'KODA', 'KODA Token', 100, true, 11.25, 11.23)
 }[CHAIN_ID] as Token
 export const DAI = new Token(ChainId.MAINNET, '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3', 18, 'DAI', 'Dai Stablecoin')
-export const USDT = new Token(ChainId.MAINNET, '0x55d398326f99059fF775485246999027B3197955', 18, 'USDT', 'Tether USD')
 
 export const UST = new Token(
   ChainId.MAINNET,
@@ -45,6 +44,11 @@ export const UST = new Token(
   'UST',
   'Wrapped UST Token'
 )
+
+export const USDT = {
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0x55d398326f99059fF775485246999027B3197955', 18, 'USDT', 'Tether USD'),
+  [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0x7ef95a0FEE0Dd31b22626fA2e10Ee6A223F8a684', 18, 'USDT', 'Tether USD'),
+}[CHAIN_ID] as Token;
 
 export const BUSD = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56', 18, 'BUSD', 'Binance USD'),
