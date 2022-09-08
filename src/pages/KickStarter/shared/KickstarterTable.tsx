@@ -1,13 +1,17 @@
-import { ArrowBackIcon, ArrowForwardIcon, Text } from "@koda-finance/summitswap-uikit"
+import { ArrowBackIcon, ArrowForwardIcon, Skeleton, Text } from "@koda-finance/summitswap-uikit"
 import { Arrow, Break, ClickableColumnHeader, PageButtons, TableWrapper } from "components/InfoTables/shared"
+import { PER_PAGE } from "constants/kickstarter"
+import { format } from "date-fns"
 import React, { useCallback } from "react"
 import { useTranslation } from "react-i18next"
-import { Link } from "react-router-dom"
+import { UseQueryResult } from "react-query"
 import styled from "styled-components"
 import { Kickstarter, OrderKickstarterBy, OrderDirection } from "types/kickstarter"
+import { getKickstarterApprovalStatusLabel } from "utils/kickstarter"
+import { StatusText } from "."
 
 type Props = {
-  kickstarters: Kickstarter[]
+  kickstarters: UseQueryResult<Kickstarter[]>
   currentPage: number
   maxPage: number
   sortField: OrderKickstarterBy
@@ -59,16 +63,34 @@ const LinkWrapper = styled.div`
   }
 `
 
+const DataRowLoading = () => {
+  const skeletons = Array.from(Array(PER_PAGE).keys())
+  return (
+    <>
+      {skeletons.map((skeleton) => (
+        <ResponsiveGrid key={`skeleton-${skeleton}`}>
+          <Skeleton height={24} />
+          <Skeleton height={24} />
+          <Skeleton height={24} />
+          <Skeleton height={24} />
+          <Skeleton height={24} />
+          <Skeleton height={24} />
+        </ResponsiveGrid>
+      ))}
+    </>
+  )
+}
+
 const DataRow: React.FC<{ kickstarter: Kickstarter, handleShowKickstarter: (kickstarterId: string) => void }> = ({ kickstarter, handleShowKickstarter }) => {
   return (
     <LinkWrapper onClick={() => handleShowKickstarter(kickstarter.id)}>
       <ResponsiveGrid>
         <Text fontWeight={400}>{kickstarter.title}</Text>
         <Text fontWeight={400}>{kickstarter.projectGoals?.toString()}</Text>
-        <Text fontWeight={400}>{kickstarter.minContribution?.toString()}</Text>
-        <Text fontWeight={400}>{kickstarter.endTimestamp?.toString()}</Text>
-        <Text fontWeight={400}>APPROVED</Text>
-        <Text fontWeight={400}>View</Text>
+        <Text fontWeight={400}>{kickstarter.minContribution?.toString()} {kickstarter.tokenSymbol?.toString()}</Text>
+        <Text fontWeight={400}>{format(new Date((kickstarter?.endTimestamp?.toNumber() || 0) * 1000), 'LLLL do, yyyy')}</Text>
+        <StatusText approvalStatus={kickstarter.approvalStatus} fontWeight={400}>{getKickstarterApprovalStatusLabel(kickstarter.approvalStatus)}</StatusText>
+        <Text fontWeight={400} color="primary">View</Text>
       </ResponsiveGrid>
     </LinkWrapper>
   )
@@ -160,7 +182,8 @@ function KickstarterTable({
         <div />
       </ResponsiveGrid>
       <Break />
-      {kickstarters.map((kickstarter) => {
+      {kickstarters.isFetching && <DataRowLoading />}
+      {!kickstarters.isFetching && kickstarters.data?.map((kickstarter) => {
         return (
           <React.Fragment key={kickstarter.id}>
             <DataRow kickstarter={kickstarter} handleShowKickstarter={handleShowKickstarter} />
@@ -168,23 +191,28 @@ function KickstarterTable({
           </React.Fragment>
         )
       })}
-      <PageButtons>
-        <Arrow
-          onClick={() => {
-            handlePageChanged(currentPage === 1 ? currentPage : currentPage - 1)
-          }}
-        >
-          <ArrowBackIcon color={currentPage === 1 ? 'textDisabled' : 'primary'} />
-        </Arrow>
-        <Text>{t('Page {{ currentPage }} of {{ maxPage }}', { currentPage, maxPage })}</Text>
-        <Arrow
-          onClick={() => {
-            handlePageChanged(currentPage === maxPage ? currentPage : currentPage + 1)
-          }}
-        >
-          <ArrowForwardIcon color={currentPage === maxPage ? 'textDisabled' : 'primary'} />
-        </Arrow>
-      </PageButtons>
+      {kickstarters.data && kickstarters.data.length === 0 && (
+        <Text textAlign="center">No Data Found</Text>
+      )}
+      {maxPage > 1 && (
+        <PageButtons>
+          <Arrow
+            onClick={() => {
+              handlePageChanged(currentPage === 1 ? currentPage : currentPage - 1)
+            }}
+          >
+            <ArrowBackIcon color={currentPage === 1 ? 'textDisabled' : 'primary'} />
+          </Arrow>
+          <Text>{t('Page {{ currentPage }} of {{ maxPage }}', { currentPage, maxPage })}</Text>
+          <Arrow
+            onClick={() => {
+              handlePageChanged(currentPage === maxPage ? currentPage : currentPage + 1)
+            }}
+          >
+            <ArrowForwardIcon color={currentPage === maxPage ? 'textDisabled' : 'primary'} />
+          </Arrow>
+        </PageButtons>
+      )}
     </TableWrapper>
   )
 }

@@ -29,18 +29,6 @@ const StatusDot = styled.div`
   background-color: ${({ theme }) => theme.colors.info};
 `
 
-const StatusText = styled(Text)<{ approvalStatus: KickstarterApprovalStatus }>`
-  ${({ approvalStatus, theme }) => approvalStatus === KickstarterApprovalStatus.WAITING_FOR_APPROVAL && `
-    color: ${theme.colors.info};
-  `}
-  ${({ approvalStatus, theme }) => approvalStatus === KickstarterApprovalStatus.APPROVED && `
-    color: ${theme.colors.primary};
-  `}
-  ${({ approvalStatus, theme }) => approvalStatus === KickstarterApprovalStatus.REJECTED && `
-    color: ${theme.colors.failure};
-  `}
-`
-
 const ImgCurrency = styled.div<{ image: string }>`
   width: 20px;
   height: 20px;
@@ -77,6 +65,18 @@ const TooltipText = styled.div`
   /* Position the tooltip */
   position: absolute;
   z-index: 999;
+`
+
+export const StatusText = styled(Text)<{ approvalStatus?: KickstarterApprovalStatus }>`
+  ${({ approvalStatus, theme }) => approvalStatus === KickstarterApprovalStatus.WAITING_FOR_APPROVAL && `
+    color: ${theme.colors.info};
+  `}
+  ${({ approvalStatus, theme }) => approvalStatus === KickstarterApprovalStatus.APPROVED && `
+    color: ${theme.colors.primary};
+  `}
+  ${({ approvalStatus, theme }) => approvalStatus === KickstarterApprovalStatus.REJECTED && `
+    color: ${theme.colors.failure};
+  `}
 `
 
 export const Divider = styled(Flex)`
