@@ -2,6 +2,7 @@ import { ArrowBackIcon, Breadcrumbs, Button, CheckmarkIcon, EditIcon, Flex, Head
 import { Grid } from "@mui/material"
 import { useKickstarterById } from "api/useKickstarterApi"
 import { getTokenImageBySymbol } from "connectors"
+import { NULL_ADDRESS } from "constants/index"
 import { CONTACT_METHODS } from "constants/kickstarter"
 import { format, fromUnixTime } from "date-fns"
 import { parseUnits } from "ethers/lib/utils"
