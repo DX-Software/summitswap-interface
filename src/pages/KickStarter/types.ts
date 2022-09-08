@@ -1,4 +1,4 @@
-import { WithdrawalFeeMethod } from "types/kickstarter"
+import { ContactMethod, WithdrawalFeeMethod } from "types/kickstarter"
 
 export enum Statuses {
   ONGOING = 'ongoing',
@@ -30,6 +30,8 @@ export enum ProjectFormField {
   creator = 'creator',
   image = 'image',
   imageUrl = 'imageUrl',
+  contactMethod = 'contactMethod',
+  contactMethodValue = 'contactMethodValue',
   projectDescription = 'projectDescription',
   rewardDescription = 'rewardDescription',
   paymentToken = 'paymentToken',
@@ -46,6 +48,8 @@ export type Project = {
   [ProjectFormField.creator]: string
   [ProjectFormField.image]?: File
   [ProjectFormField.imageUrl]?: string
+  [ProjectFormField.contactMethod]?: ContactMethod
+  [ProjectFormField.contactMethodValue]?: string
   [ProjectFormField.projectDescription]: string
   [ProjectFormField.rewardDescription]: string
   [ProjectFormField.paymentToken]: string

@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js"
-import { BackedKickstarter, Kickstarter, KickstarterAccount, KickstarterApprovalStatus, KickstarterContribution, KickstarterFactory, KickstarterProgressStatus } from "types/kickstarter"
+import { BackedKickstarter, ContactMethod, Kickstarter, KickstarterAccount, KickstarterApprovalStatus, KickstarterContribution, KickstarterFactory, KickstarterProgressStatus } from "types/kickstarter"
 
 const oneDayTimestamp = 60 * 60 * 24
 
@@ -108,4 +108,12 @@ export const getKickstarterApprovalStatusLabel = (approvalStatus?: KickstarterAp
   if (approvalStatus === KickstarterApprovalStatus.APPROVED) return "Approved"
   if (approvalStatus === KickstarterApprovalStatus.REJECTED) return "Rejected"
   return ""
+}
+
+export const getKickstarterContactMethodById = (id: string) => {
+  if (ContactMethod.EMAIL.toString() === id) return ContactMethod.EMAIL
+  if (ContactMethod.TELEGRAM.toString() === id) return ContactMethod.TELEGRAM
+  if (ContactMethod.DISCORD.toString() === id) return ContactMethod.DISCORD
+  if (ContactMethod.TWITTER.toString() === id) return ContactMethod.TWITTER
+  return undefined
 }
