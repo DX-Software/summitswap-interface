@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { BigNumber } from 'ethers'
-import { format, add } from 'date-fns'
+import { format, add, set } from 'date-fns'
 import { useWeb3React } from '@web3-react/core'
 import { formatUnits } from 'ethers/lib/utils'
 import { AutoRenewIcon, Button, Box, CoinBagIcon, Flex, darkColors } from '@koda-finance/summitswap-uikit'
@@ -105,25 +105,15 @@ const ClaimTokens = ({ presaleAddress, isMainLoading, setIsMainLoading }: Props)
 
   const formattedDate = useMemo(() => {
     const date = new Date()
-    let monthName
-    let year
-    const day = date.getUTCDay()
-    const hours = date.getUTCHours()
+    const claimDay = presaleInfo?.claimIntervalDay.toNumber()
+    const claimHour = presaleInfo?.claimIntervalHour.toNumber()
 
-    if (
-      presaleInfo?.claimIntervalDay.lt(day) ||
-      (presaleInfo?.claimIntervalDay.eq(day) && presaleInfo?.claimIntervalHour.lt(hours))
-    ) {
-      monthName = format(date, 'LLLL')
-      year = date.getFullYear()
-    } else {
-      monthName = format(add(date, { months: 1 }), 'LLLL')
-      year = format(add(date, { months: 1 }), 'yyyy')
+    if (!claimDay || !claimHour) return ''
+    let currentTime = set(new Date(), { date: claimDay, hours: claimHour })
+    if (date.getUTCDate() > claimDay || (date.getUTCDate() === claimDay && date.getUTCHours() >= claimHour)) {
+      currentTime = add(currentTime, { months: 1 })
     }
-    const n = presaleInfo?.claimIntervalDay.toNumber() || 0
-    const suffix = ['st', 'nd', 'rd'][(((((n < 0 ? -n : n) + 90) % 100) - 10) % 10) - 1] || 'th'
-
-    return `${monthName} ${presaleInfo?.claimIntervalDay}${suffix} ${year} ${presaleInfo?.claimIntervalHour}:00 UTC`
+    return `${format(currentTime, 'MMMM do yyyy HH:00')} UTC`
   }, [presaleInfo])
 
   const onClaimHandler = async () => {
