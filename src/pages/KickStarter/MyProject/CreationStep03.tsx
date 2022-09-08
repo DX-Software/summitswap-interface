@@ -109,7 +109,7 @@ function CreationStep03({ setCurrentCreationStep, formik }: Props) {
               </Text>
               <Flex style={{ columnGap: '8px' }}>
                 <BinanceIcon width="20px" />
-                <Text>{formik.values.goals}</Text>
+                <Text>{formik.values.projectGoals}</Text>
               </Flex>
             </Flex>
             <Flex flexDirection="column" marginRight="auto">
@@ -118,7 +118,7 @@ function CreationStep03({ setCurrentCreationStep, formik }: Props) {
               </Text>
               <Flex style={{ columnGap: '8px' }}>
                 <BinanceIcon width="20px" />
-                <Text>{formik.values.minimumBacking}</Text>
+                <Text>{formik.values.minContribution}</Text>
               </Flex>
             </Flex>
           </CriteriaWrapper>
@@ -165,13 +165,13 @@ function CreationStep03({ setCurrentCreationStep, formik }: Props) {
             <Text color="textSubtle" marginBottom="4px">
               Project Due Date
             </Text>
-            <Text>{format(new Date(formik.values.projectDueDate), 'LLLL do, yyyy HH:mm')}</Text>
+            <Text>{format(new Date(formik.values.endTimestamp), 'LLLL do, yyyy HH:mm')}</Text>
           </Flex>
           <Flex flexDirection="column" marginRight="auto">
             <Text color="textSubtle" marginBottom="4px">
               Reward Distribution
             </Text>
-            <Text>{format(new Date(formik.values.rewardDistribution), 'LLLL do, yyyy HH:mm')}</Text>
+            <Text>{format(new Date(formik.values.rewardDistributionTimestamp), 'LLLL do, yyyy HH:mm')}</Text>
           </Flex>
         </EstimationWrapper>
         <ButtonWrapper>

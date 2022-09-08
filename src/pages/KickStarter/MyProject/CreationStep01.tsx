@@ -67,18 +67,18 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
       formik.values.title &&
       formik.values.creator &&
       formik.values.projectDescription &&
-      formik.values.goals &&
-      Number(formik.values.goals) > 0 &&
-      formik.values.minimumBacking &&
-      Number(formik.values.minimumBacking) > 0
+      formik.values.projectGoals &&
+      Number(formik.values.projectGoals) > 0 &&
+      formik.values.minContribution &&
+      Number(formik.values.minContribution) > 0
     )
   }, [
     formik.values.image,
     formik.values.title,
     formik.values.creator,
     formik.values.projectDescription,
-    formik.values.goals,
-    formik.values.minimumBacking,
+    formik.values.projectGoals,
+    formik.values.minContribution,
   ])
 
   const handleChooseImage = () => {
@@ -88,7 +88,7 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
   const handleProjectGoalsChanged = useCallback(
     (value: string) => {
       if (value !== '' && value.match('^[0-9]{0,9}(\\.[0-9]{0,18})?$') == null) return
-      formik.setFieldValue(ProjectFormField.goals, value)
+      formik.setFieldValue(ProjectFormField.projectGoals, value)
     },
     [formik]
   )
@@ -96,7 +96,7 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
   const handleMinimumBackingChanged = useCallback(
     (value: string) => {
       if (value !== '' && value.match('^[0-9]{0,9}(\\.[0-9]{0,18})?$') == null) return
-      formik.setFieldValue(ProjectFormField.minimumBacking, value)
+      formik.setFieldValue(ProjectFormField.minContribution, value)
     },
     [formik]
   )
@@ -173,12 +173,12 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
       <FundingWrapper>
         <FundingInput
           label="Project Goals"
-          value={formik.values.goals.toString()}
+          value={formik.values.projectGoals.toString()}
           onChange={handleProjectGoalsChanged}
         />
         <FundingInput
           label="Minimum Backing"
-          value={formik.values.minimumBacking.toString()}
+          value={formik.values.minContribution.toString()}
           description="NB : This is the minimum amount for participate in donating the project"
           onChange={handleMinimumBackingChanged}
         />

@@ -54,15 +54,15 @@ function CreationStep02({ setCurrentCreationStep, formik }: Props) {
   const accountBalance = useCurrencyBalance(account ?? undefined, ETHER)?.toSignificant(6)
 
   const hasValidInput = useMemo<boolean>(() => {
-    return !!(formik.values.rewardDescription && formik.values.rewardDistribution && formik.values.projectDueDate)
-  }, [formik.values.rewardDescription, formik.values.rewardDistribution, formik.values.projectDueDate])
+    return !!(formik.values.rewardDescription && formik.values.rewardDistributionTimestamp && formik.values.endTimestamp)
+  }, [formik.values.rewardDescription, formik.values.rewardDistributionTimestamp, formik.values.endTimestamp])
 
   const handleProjectDueDateChange = (value: string) => {
-    formik.setFieldValue(ProjectFormField.projectDueDate, value)
+    formik.setFieldValue(ProjectFormField.endTimestamp, value)
   }
 
   const handleRewardDistributionChange = (value: string) => {
-    formik.setFieldValue(ProjectFormField.rewardDistribution, value)
+    formik.setFieldValue(ProjectFormField.rewardDistributionTimestamp, value)
   }
 
   return (
@@ -110,7 +110,7 @@ function CreationStep02({ setCurrentCreationStep, formik }: Props) {
         <FundingInput
           label="Project Due Date"
           type="datetime-local"
-          value={formik.values.projectDueDate}
+          value={formik.values.endTimestamp}
           description="NB: Due date should be minimum a week after the project is created"
           onChange={handleProjectDueDateChange}
           isFunding={false}
@@ -118,7 +118,7 @@ function CreationStep02({ setCurrentCreationStep, formik }: Props) {
         <FundingInput
           label="Reward Distribution"
           type="datetime-local"
-          value={formik.values.rewardDistribution}
+          value={formik.values.rewardDistributionTimestamp}
           description="NB: Enter the estimate date for the reward distribution. Reward distribution date should be equal or greater than project due date"
           onChange={handleRewardDistributionChange}
           isFunding={false}

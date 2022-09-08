@@ -79,11 +79,11 @@ function CreateProject({ isCreate, toggleIsCreate }: Prop) {
           uploadImageResult.url,
           values.projectDescription,
           values.rewardDescription,
-          parseUnits(values.minimumBacking, 18),
-          parseUnits(values.goals, 18),
-          Math.floor(new Date(values.rewardDistribution).getTime() / 1000),
+          parseUnits(values.minContribution, 18),
+          parseUnits(values.projectGoals, 18),
+          Math.floor(new Date(values.rewardDistributionTimestamp).getTime() / 1000),
           Math.floor(Date.now() / 1000),
-          Math.floor(new Date(values.projectDueDate).getTime() / 1000),
+          Math.floor(new Date(values.endTimestamp).getTime() / 1000),
           { value: serviceFee.toString() }
         )
         transactionSubmitted(receipt, 'The kickstarter has been submitted successfully')
