@@ -1,37 +1,72 @@
 import { Box, ButtonMenu, ButtonMenuItem } from '@koda-finance/summitswap-uikit'
-import React, { useMemo, useState } from 'react'
-import { KickstarterProvider } from './contexts/kickstarter'
+import { useWeb3React } from '@web3-react/core'
+import { useKickstarterFactoryContract } from 'hooks/useContract'
+import React, { useEffect, useMemo, useState } from 'react'
 import AdminPanel from './AdminPanel'
 import BackedKickstarter from './BackedKickstarter'
 import BrowseProject from './BrowseProject'
+import { KickstarterProvider } from './contexts/kickstarter'
 import MyProject from './MyProject'
 import { NavItem, Tabs } from './types'
 
 function KickStarter() {
+  const { account } = useWeb3React()
+  const factoryContract = useKickstarterFactoryContract()
+  const [isFactoryAdmin, setIsFactoryAdmin] = useState(false)
   const [buttonIndex, setButtonIndex] = useState(0)
 
-  const navItems: NavItem[] = useMemo(() => [
-    {
-      label: 'My Project',
-      code: Tabs.MY_PROJECT,
-      component: <MyProject />,
-    },
-    {
-      label: 'Browse Project',
-      code: Tabs.BROWSE_PROJECT,
-      component: <BrowseProject />,
-    },
-    {
-      label: 'Backed Project',
-      code: Tabs.BACKED_PROJECT,
-      component: <BackedKickstarter goToBrowseTab={() => setButtonIndex(1)} />,
-    },
-    {
-      label: 'Admin Panel',
-      code: Tabs.ADMIN_PANEL,
-      component: <AdminPanel />,
-    },
-  ], [])
+  const generalTabs: NavItem[] = useMemo(
+    () => [
+      {
+        label: 'My Project',
+        code: Tabs.MY_PROJECT,
+        component: <MyProject />,
+      },
+      {
+        label: 'Browse Project',
+        code: Tabs.BROWSE_PROJECT,
+        component: <BrowseProject />,
+      },
+      {
+        label: 'Backed Project',
+        code: Tabs.BACKED_PROJECT,
+        component: <BackedKickstarter goToBrowseTab={() => setButtonIndex(1)} />,
+      },
+    ],
+    []
+  )
+
+  const navItems: NavItem[] = useMemo(
+    () =>
+      !isFactoryAdmin
+        ? generalTabs
+        : [
+            ...generalTabs,
+            {
+              label: 'Admin Panel',
+              code: Tabs.ADMIN_PANEL,
+              component: <AdminPanel />,
+            },
+          ],
+    [generalTabs, isFactoryAdmin]
+  )
+
+  useEffect(() => {
+    async function fetchIsAdmin() {
+      if (!account || !factoryContract) {
+        setIsFactoryAdmin(false)
+        return
+      }
+      const [owner, isAdmin] = await Promise.all([
+        factoryContract.owner(),
+        factoryContract.isAdmin(account)
+      ])
+
+      const isFactoryAdminTemp = account.toLowerCase() === owner.toLowerCase() || isAdmin
+      setIsFactoryAdmin(isFactoryAdminTemp)
+    }
+    fetchIsAdmin()
+  }, [factoryContract, account, navItems])
 
   return (
     <KickstarterProvider>
