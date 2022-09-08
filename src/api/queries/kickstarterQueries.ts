@@ -96,6 +96,40 @@ export const KICKSTARTERS = gql`
   }
 `
 
+export const KICKSTARTERS_BY_APPROVAL_STATUSES = gql`
+  query kickstarters($approvalStatuses: [String!], $first: Int!, $skip: Int!) {
+    kickstarters(
+      first: $first,
+      skip: $skip,
+      where: { approvalStatus_in: $approvalStatuses }
+    ) {
+      id
+      paymentToken
+      tokenSymbol
+      approvalStatus
+      owner {
+        id
+      }
+      title
+      creator
+      imageUrl
+      projectDescription
+      rewardDescription
+      minContribution
+      totalContributor
+      totalContribution
+      projectGoals
+      rewardDistributionTimestamp
+      startTimestamp
+      endTimestamp
+      percentageFeeAmount
+      fixFeeAmount
+      rejectedReason
+      createdAt
+    }
+  }
+`
+
 export const KICKSTARTERS_SEARCH = gql`
   query kickstarters($text: Bytes!, $first: Int!, $skip: Int!, $orderBy: Bytes!, $orderDirection: Bytes!) {
     kickstarterSearch(text: $text, first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection) {
