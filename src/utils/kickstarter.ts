@@ -98,10 +98,10 @@ export const getKickstarterStatusLabel = (endTimestamp: number, showInDays = fal
   return "Ongoing"
 }
 
-export const getKickstarterApprovalById = (id: string) => {
-  if (id === "0") return KickstarterApprovalStatus.WAITING_FOR_APPROVAL
+export const getKickstarterApprovalById = (id?: string) => {
   if (id === "1") return KickstarterApprovalStatus.APPROVED
-  return KickstarterApprovalStatus.REJECTED
+  if (id === "2") return KickstarterApprovalStatus.REJECTED
+  return KickstarterApprovalStatus.WAITING_FOR_APPROVAL
 }
 
 export const getKickstarterApprovalStatusLabel = (approvalStatus?: KickstarterApprovalStatus) => {

@@ -1,18 +1,22 @@
-import { ArrowBackIcon, Breadcrumbs, Button, CheckmarkIcon, EditIcon, Flex, Heading, Input, Radio, Select, Text, TextArea } from "@koda-finance/summitswap-uikit"
+import { ArrowBackIcon, Breadcrumbs, Button, CheckmarkIcon, EditIcon, Flex, Heading, Input, Radio, Select, Text, TextArea, useModal } from "@koda-finance/summitswap-uikit"
 import { Grid } from "@mui/material"
 import { useKickstarterById } from "api/useKickstarterApi"
 import { getTokenImageBySymbol } from "connectors"
+import { NULL_ADDRESS } from "constants/index"
 import { CONTACT_METHODS } from "constants/kickstarter"
 import { format, fromUnixTime } from "date-fns"
+import { parseUnits } from "ethers/lib/utils"
 import { FormikProps, FormikProvider, useFormik } from "formik"
+import { useKickstarterContract, useTokenContract } from "hooks/useContract"
 import React, { useCallback, useState } from "react"
 import styled from "styled-components"
 import { ContactMethod, Kickstarter, KickstarterApprovalStatus, WithdrawalFeeMethod } from "types/kickstarter"
-import { getKickstarterContactMethodById } from "utils/kickstarter"
+import { getKickstarterApprovalById, getKickstarterContactMethodById } from "utils/kickstarter"
 import { CurrencyInfo, Divider, StatusInfo, TextInfo } from "../shared"
 import ChoosePaymentToken from "../shared/ChoosePaymentToken"
 import FundingInput from "../shared/FundingInput"
 import { Project, ProjectFormField } from "../types"
+import RejectModal from "./RejectModal"
 
 type KickstarterDetailsProps = {
   previousPage: string
@@ -106,7 +110,8 @@ const EditButtons = ({ formik, isEdit, handleIsEdit, isDisabled }: EditButtonsPr
         startIcon={<EditIcon />}
         style={{fontFamily:'Poppins'}}
         onClick={() => handleIsEdit(true)}
-        disabled={isDisabled}>
+        disabled={isDisabled}
+        isLoading={formik.isSubmitting}>
         Edit Project
       </Button>
       )}
@@ -144,7 +149,7 @@ const ProjectDetails = ({ kickstarter, isLoading }: SectionProps) => {
         <Flex flexDirection="column">
           <StatusInfo
             title="Project Status"
-            approvalStatus={KickstarterApprovalStatus.WAITING_FOR_APPROVAL}
+            approvalStatus={kickstarter?.approvalStatus || KickstarterApprovalStatus.WAITING_FOR_APPROVAL}
             isLoading={isLoading}
           />
           <Divider />
@@ -524,8 +529,9 @@ const EditWithdrawalOption = ({
 
 function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }: KickstarterDetailsProps) {
   const [isEdit, setIsEdit] = useState(false);
-
   const kickstarter = useKickstarterById(kickstarterId)
+  const kickstarterContract = useKickstarterContract(kickstarterId)
+  const tokenContract = useTokenContract(kickstarter.data?.paymentToken)
 
   const formik: FormikProps<Project> = useFormik<Project>({
     enableReinitialize: true,
@@ -545,21 +551,44 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
       contactMethod: ContactMethod.DISCORD
     },
     onSubmit: async (values, { setSubmitting, setErrors }) => {
-      console.log("values", values)
+      if (!kickstarterContract || (kickstarter.data?.paymentToken !== NULL_ADDRESS && !tokenContract)) return
+      try {
+        let percentageFeeAmount = "0"
+        let fixFeeAmount = "0"
+        let decimals = 18
+        if (values.withdrawalFeeMethod === WithdrawalFeeMethod.PERCENTAGE) {
+          percentageFeeAmount = (Number(values.withdrawalFeeAmount || 0) * 100).toString()
+        } else if (values.withdrawalFeeMethod === WithdrawalFeeMethod.FIXED_AMOUNT) {
+          fixFeeAmount = values.withdrawalFeeAmount?.toString() || "0"
+        }
+        if (kickstarter.data?.paymentToken !== NULL_ADDRESS) {
+          decimals = await tokenContract!.decimals()
+        }
+        kickstarterContract.approve(percentageFeeAmount, parseUnits(fixFeeAmount, decimals))
+      } catch (e: any) {
+        console.error("Failed to Approve Kickstarter", e.message)
+      }
+      setSubmitting(false)
     },
   })
+
+  const [showPayment] = useModal(
+    <RejectModal kickstarter={kickstarter.data} handleKickstarterId={handleKickstarterId} />
+  )
 
   return (
     <FormikProvider value={formik}>
       <Flex flexDirection="column">
         <Header previousPage={previousPage} handleKickstarterId={handleKickstarterId} />
         <br />
+        {kickstarter.data?.approvalStatus === KickstarterApprovalStatus.WAITING_FOR_APPROVAL && (
           <EditButtons
             formik={formik}
             isEdit={isEdit}
             handleIsEdit={setIsEdit}
             isDisabled={kickstarter.isFetching || !kickstarter.data}
           />
+        )}
         <br />
         {isEdit ? (
           <EditProjectDetails formik={formik} />
@@ -592,8 +621,8 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
         <>
           <Divider />
           <Flex style={{ columnGap: "12px" }}>
-            <Button variant="awesome" onClick={() => formik.submitForm()}>Approve Project</Button>
-            <Button variant="danger">Reject Project</Button>
+            <Button variant="awesome" onClick={() => formik.submitForm()} isLoading={formik.isSubmitting}>Approve Project</Button>
+            <Button variant="danger" isLoading={formik.isSubmitting} onClick={showPayment}>Reject Project</Button>
           </Flex>
         </>
       )}
