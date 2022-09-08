@@ -229,7 +229,7 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
             <Flex flexDirection="column">
               <Name>{kickstarter.creator}</Name>
               <Title>{kickstarter.title}</Title>
-              <Flex style={{ columnGap: '8px' }}>
+              <Flex style={{ columnGap: '8px' }} alignItems="center">
                 <ImgCurrency image={getTokenImageBySymbol(kickstarter.tokenSymbol)} />
                 <Text fontSize="24px" color="textSubtle">
                   <b style={{ color: 'white' }}>{kickstarter.totalContribution?.toString()}</b> /{' '}
