@@ -1,5 +1,5 @@
 import { ETHER } from '@koda-finance/summitswap-sdk'
-import { BinanceIcon, Button, Flex, Heading, Skeleton, Text } from '@koda-finance/summitswap-uikit'
+import { Button, Flex, Heading, Skeleton, Text } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
 import AccountIcon from 'components/AccountIcon'
 import CopyButton from 'components/CopyButton'
@@ -108,7 +108,8 @@ function CreationStep03({ setCurrentCreationStep, formik }: Props) {
                 Project Goals
               </Text>
               <Flex style={{ columnGap: '8px' }}>
-                <BinanceIcon width="20px" />
+                <Skeleton width={20} height={20} />
+                {/* <ImgCurrency image={getTokenImageBySymbol(kickstarter.tokenSymbol)} /> */}
                 <Text>{formik.values.projectGoals}</Text>
               </Flex>
             </Flex>
@@ -117,7 +118,8 @@ function CreationStep03({ setCurrentCreationStep, formik }: Props) {
                 Minimum Backing
               </Text>
               <Flex style={{ columnGap: '8px' }}>
-                <BinanceIcon width="20px" />
+                <Skeleton width={20} height={20} />
+                {/* <ImgCurrency image={getTokenImageBySymbol(kickstarter.tokenSymbol)} /> */}
                 <Text>{formik.values.minContribution}</Text>
               </Flex>
             </Flex>

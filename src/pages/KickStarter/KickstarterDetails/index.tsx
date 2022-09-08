@@ -1,7 +1,5 @@
 import {
-  ArrowBackIcon,
-  BinanceIcon,
-  Breadcrumbs,
+  ArrowBackIcon, Breadcrumbs,
   Button,
   FacebookIcon,
   FileIcon,
@@ -11,16 +9,17 @@ import {
   ShareIcon,
   Skeleton,
   Text,
-  TwitterIcon,
+  TwitterIcon
 } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import {
   useBackedKickstarterById,
   useBackedKickstartersByKickstarterAddress,
-  useKickstarterById,
+  useKickstarterById
 } from 'api/useKickstarterApi'
 import Tooltip from 'components/Tooltip'
+import { getTokenImageBySymbol } from 'connectors'
 import { format } from 'date-fns'
 import ImgCornerIllustration from 'img/corner-illustration.svg'
 import React, { useMemo, useState } from 'react'
@@ -29,7 +28,7 @@ import styled from 'styled-components'
 import { BackedKickstarter, Kickstarter, KickstarterProgressStatus } from 'types/kickstarter'
 import copyText from 'utils/copyText'
 import { getKickstarterStatus, getKickstarterStatusLabel } from 'utils/kickstarter'
-import { Divider } from '../shared'
+import { Divider, ImgCurrency } from '../shared'
 import ProgressBox from '../shared/ProgressBox'
 import StatusLabel from '../shared/StatusLabel'
 import ProjectPayment from './ProjectPayment'
@@ -259,7 +258,11 @@ const Highlight = ({ kickstarter, backedKickstarter, handleIsPayment, isLoading 
         )}
         {kickstarter && <ImgKickstarterMobile image={kickstarter.imageUrl || ''} marginBottom="24px" />}
         <Flex style={{ columnGap: '8px', alignItems: 'center', marginBottom: '4px' }}>
-          {isLoading ? <Skeleton height={28} width={28} /> : <BinanceIcon width="20px" />}
+          {isLoading ? (
+            <Skeleton height={28} width={28} />
+          ) : (
+            <ImgCurrency image={getTokenImageBySymbol(kickstarter?.tokenSymbol)} />
+          )}
           {isLoading ? (
             <Skeleton height={28} width={42} />
           ) : (
@@ -406,7 +409,7 @@ const ProjectDetails = ({ kickstarter, isLoading }: ProjectDetailsProps) => {
               <Skeleton width={150} />
             ) : (
               <Flex style={{ columnGap: '8px' }}>
-                <BinanceIcon width="20px" />
+                <ImgCurrency image={getTokenImageBySymbol(kickstarter?.tokenSymbol)} />
                 {isLoading ? (
                   <Skeleton height={28} width={30} marginBottom="24px" />
                 ) : (
@@ -486,7 +489,7 @@ const DonatorCard = ({ isFirstItem, isLastItem, backedKickstarter }: DonatorCard
         </Text>
       </Flex>
       <Flex alignItems="center" style={{ columnGap: '8px' }}>
-        <BinanceIcon />
+        <ImgCurrency image={getTokenImageBySymbol(backedKickstarter.kickstarter?.tokenSymbol)} />
         <Text fontSize="24px" fontWeight="bold">
           {backedKickstarter.amount?.toString()}
         </Text>

@@ -1,18 +1,29 @@
-import React from "react"
-import { ArrowForwardIcon, BinanceIcon, Box, Button, Flex, Heading, Skeleton, Text, WalletIcon } from "@koda-finance/summitswap-uikit"
-import AccountIcon from "components/AccountIcon"
-import { parseUnits } from "ethers/lib/utils"
-import { useKickstarterContext } from "pages/KickStarter/contexts/kickstarter"
-import styled from "styled-components"
-import { Kickstarter } from "types/kickstarter"
-import { shortenAddress } from "utils"
-import FundingInput from "../shared/FundingInput"
+import {
+  ArrowForwardIcon,
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Skeleton,
+  Text,
+  WalletIcon,
+} from '@koda-finance/summitswap-uikit'
+import AccountIcon from 'components/AccountIcon'
+import { getTokenImageBySymbol } from 'connectors'
+import { parseUnits } from 'ethers/lib/utils'
+import { useKickstarterContext } from 'pages/KickStarter/contexts/kickstarter'
+import React from 'react'
+import styled from 'styled-components'
+import { Kickstarter } from 'types/kickstarter'
+import { shortenAddress } from 'utils'
+import { ImgCurrency } from '../shared'
+import FundingInput from '../shared/FundingInput'
 
 type Props = {
   showPayment: () => void
-  totalPayment: string,
-  kickstarter: Kickstarter,
-  handleBackedAmountChanged: (value: string) => void,
+  totalPayment: string
+  kickstarter: Kickstarter
+  handleBackedAmountChanged: (value: string) => void
 }
 
 const Banner = styled.div<{ image: string }>`
@@ -60,28 +71,31 @@ const OnlineDot = styled(Box)<{ isOnline: boolean }>`
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background-color: ${({ isOnline, theme }) => isOnline ? theme.colors.linkColor : theme.colors.textDisabled};
+  background-color: ${({ isOnline, theme }) => (isOnline ? theme.colors.linkColor : theme.colors.textDisabled)};
 `
 
 function MobilePayment({ showPayment, totalPayment, kickstarter, handleBackedAmountChanged }: Props) {
   const { account, accountBalance, onPresentConnectModal } = useKickstarterContext()
 
-  const minContributionInEth = parseUnits(kickstarter.minContribution?.toString() || "0", 18)
-  const isGreaterThanMinContribution = parseUnits(totalPayment || "0", 18).gte(minContributionInEth)
+  const minContributionInEth = parseUnits(kickstarter.minContribution?.toString() || '0', 18)
+  const isGreaterThanMinContribution = parseUnits(totalPayment || '0', 18).gte(minContributionInEth)
 
   return (
     <Flex flexDirection="column">
       <Heading size="lg" marginBottom="8px">
         Back Project
       </Heading>
-      <Flex style={{ columnGap: "16px" }}>
-        <Banner image={kickstarter.imageUrl || ""} />
+      <Flex style={{ columnGap: '16px' }}>
+        <Banner image={kickstarter.imageUrl || ''} />
         <Flex flexDirection="column">
           <Name>{kickstarter.creator}</Name>
           <Title>{kickstarter.title}</Title>
-          <Flex style={{ columnGap: "8px" }}>
-            <BinanceIcon />
-            <Text color="textSubtle"><b style={{ color: "white" }}>{kickstarter.totalContribution?.toString()}</b> / {kickstarter.projectGoals?.toString()} BNB</Text>
+          <Flex style={{ columnGap: '8px' }}>
+            <ImgCurrency image={getTokenImageBySymbol(kickstarter.tokenSymbol)} />
+            <Text color="textSubtle">
+              <b style={{ color: 'white' }}>{kickstarter.totalContribution?.toString()}</b> /{' '}
+              {kickstarter.projectGoals?.toString()} BNB
+            </Text>
           </Flex>
         </Flex>
       </Flex>
@@ -89,49 +103,54 @@ function MobilePayment({ showPayment, totalPayment, kickstarter, handleBackedAmo
       <Heading size="lg" marginBottom="8px">
         Backing Project
       </Heading>
-      <Text color="textSubtle" style={{ marginBottom: "24px" }}>
-        You have to back with minimum amount of <b style={{ color: "#00D4A4" }}>{kickstarter.minContribution?.toString()} BNB</b> to participate in this project
+      <Text color="textSubtle" style={{ marginBottom: '24px' }}>
+        You have to back with minimum amount of{' '}
+        <b style={{ color: '#00D4A4' }}>{kickstarter.minContribution?.toString()} BNB</b> to participate in this project
       </Text>
       <FundingInput label="Enter Backing Amount" value={totalPayment} onChange={handleBackedAmountChanged} />
       <br />
       <ConnectionWrapper>
-        <Flex alignItems="center" style={{ columnGap: "8px" }}>
+        <Flex alignItems="center" style={{ columnGap: '8px' }}>
           <OnlineDot isOnline={!!account} />
           <Text fontSize="12px">Connected Wallet</Text>
         </Flex>
-        {!account && (
-          <Text color="textDisabled">No wallet connected.</Text>
-        )}
+        {!account && <Text color="textDisabled">No wallet connected.</Text>}
         {account && (
-          <Flex alignItems="center" style={{ columnGap: "8px" }}>
+          <Flex alignItems="center" style={{ columnGap: '8px' }}>
             <AccountIcon account={account} size={32} />
-            <Flex flexDirection="column" marginRight= "auto">
-              <Text fontSize="12px" color="textDisabled">{shortenAddress(account)}</Text>
+            <Flex flexDirection="column" marginRight="auto">
+              <Text fontSize="12px" color="textDisabled">
+                {shortenAddress(account)}
+              </Text>
             </Flex>
             {!accountBalance ? (
               <Skeleton width={100} height={28} />
             ) : (
-              <Text fontWeight="bold" color="primaryDark">{accountBalance} BNB</Text>
+              <Text fontWeight="bold" color="primaryDark">
+                {accountBalance} BNB
+              </Text>
             )}
           </Flex>
         )}
       </ConnectionWrapper>
       {!account && (
         <Button
-          variant='tertiary'
+          variant="tertiary"
           startIcon={<WalletIcon />}
-          style={{ fontFamily: 'Poppins', marginTop: "32px" }}
-          onClick={onPresentConnectModal}>
+          style={{ fontFamily: 'Poppins', marginTop: '32px' }}
+          onClick={onPresentConnectModal}
+        >
           Connect Your Wallet
         </Button>
       )}
       {account && (
         <Button
-          variant='awesome'
+          variant="awesome"
           endIcon={<ArrowForwardIcon color="text" />}
-          style={{ fontFamily: 'Poppins', marginTop: "32px" }}
+          style={{ fontFamily: 'Poppins', marginTop: '32px' }}
           onClick={showPayment}
-          disabled={!Number(totalPayment) || !isGreaterThanMinContribution}>
+          disabled={!Number(totalPayment) || !isGreaterThanMinContribution}
+        >
           Continue
         </Button>
       )}

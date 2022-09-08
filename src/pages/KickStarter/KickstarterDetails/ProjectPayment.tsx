@@ -1,20 +1,34 @@
 import { TransactionResponse } from '@ethersproject/providers'
-import { ArrowBackIcon, ArrowForwardIcon, BinanceIcon, Box, Breadcrumbs, Button, Flex, Heading, Skeleton, Text, useModal, WalletIcon } from "@koda-finance/summitswap-uikit"
-import { Grid } from "@mui/material"
-import AccountIcon from "components/AccountIcon"
-import TransactionConfirmationModal, { TransactionErrorContent } from "components/TransactionConfirmationModal"
-import { format } from "date-fns"
+import {
+  ArrowBackIcon,
+  ArrowForwardIcon,
+  Box,
+  Breadcrumbs,
+  Button,
+  Flex,
+  Heading,
+  Skeleton,
+  Text,
+  useModal,
+  WalletIcon,
+} from '@koda-finance/summitswap-uikit'
+import { Grid } from '@mui/material'
+import AccountIcon from 'components/AccountIcon'
+import TransactionConfirmationModal, { TransactionErrorContent } from 'components/TransactionConfirmationModal'
+import { getTokenImageBySymbol } from 'connectors'
+import { format } from 'date-fns'
 import { parseUnits } from 'ethers/lib/utils'
 import { useKickstarterContract } from 'hooks/useContract'
-import { useKickstarterContext } from "pages/KickStarter/contexts/kickstarter"
-import React, { useCallback, useState } from "react"
-import { useTransactionAdder } from "state/transactions/hooks"
-import styled from "styled-components"
+import { useKickstarterContext } from 'pages/KickStarter/contexts/kickstarter'
+import React, { useCallback, useState } from 'react'
+import { useTransactionAdder } from 'state/transactions/hooks'
+import styled from 'styled-components'
 import { Kickstarter } from 'types/kickstarter'
-import { shortenAddress } from "utils"
-import FundingInput from "../shared/FundingInput"
-import MobilePayment from "./MobilePayment"
-import PaymentModal from "./PaymentModal"
+import { shortenAddress } from 'utils'
+import { ImgCurrency } from '../shared'
+import FundingInput from '../shared/FundingInput'
+import MobilePayment from './MobilePayment'
+import PaymentModal from './PaymentModal'
 
 type Props = {
   previousPage: string
@@ -23,7 +37,7 @@ type Props = {
   handleIsPayment: (value: boolean) => void
 }
 
-const MobileBanner = styled(Flex)<{ image: string}>`
+const MobileBanner = styled(Flex)<{ image: string }>`
   width: 100%;
   height: 120px;
   border-radius: 8px;
@@ -85,7 +99,7 @@ const SideItems = styled(Grid)`
 
 const DesktopPaymentWrapper = styled(Grid)<{ isVisibleOnMobile: boolean }>`
   @media (max-width: 900px) {
-    display: ${({ isVisibleOnMobile }) => (isVisibleOnMobile ? "block!important" : "none!important")};
+    display: ${({ isVisibleOnMobile }) => (isVisibleOnMobile ? 'block!important' : 'none!important')};
   }
 `
 
@@ -103,7 +117,7 @@ const OnlineDot = styled(Box)<{ isOnline: boolean }>`
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background-color: ${({ isOnline, theme }) => isOnline ? theme.colors.linkColor : theme.colors.textDisabled};
+  background-color: ${({ isOnline, theme }) => (isOnline ? theme.colors.linkColor : theme.colors.textDisabled)};
 `
 
 const ButtonContinue = styled(Button)`
@@ -180,14 +194,14 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
   )
   const [isMobilePaymentPage, setIsMobilePaymentPage] = useState(false)
 
-  const minContributionInEth = parseUnits(kickstarter.minContribution?.toString() || "0", 18)
-  const isGreaterThanMinContribution = parseUnits(backedAmount || "0", 18).gte(minContributionInEth)
+  const minContributionInEth = parseUnits(kickstarter.minContribution?.toString() || '0', 18)
+  const isGreaterThanMinContribution = parseUnits(backedAmount || '0', 18).gte(minContributionInEth)
 
   return (
     <Flex flexDirection="column">
       <Flex flex={1} borderBottom="1px solid" borderBottomColor="inputColor" paddingBottom="12px" marginBottom="32px">
         <Breadcrumbs>
-          <Text color="primaryDark" style={{ cursor: 'pointer' }} onClick={() => handleKickstarterId("")}>
+          <Text color="primaryDark" style={{ cursor: 'pointer' }} onClick={() => handleKickstarterId('')}>
             {previousPage}
           </Text>
           <Text color="primaryDark" style={{ cursor: 'pointer' }} onClick={() => handleIsPayment(false)}>
@@ -200,71 +214,88 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
       </Flex>
       <Flex style={{ columnGap: '8px', cursor: 'pointer' }} marginBottom="32px" onClick={() => handleIsPayment(false)}>
         <ArrowBackIcon color="linkColor" />
-        <Text color="linkColor" style={{ textDecoration: "underline" }}>back to Project Details</Text>
+        <Text color="linkColor" style={{ textDecoration: 'underline' }}>
+          back to Project Details
+        </Text>
       </Flex>
       <DesktopPaymentWrapper container spacing={2} isVisibleOnMobile={!isMobilePaymentPage}>
         <Grid item xs={12} md={7}>
           <Heading size="lg" marginBottom="8px">
             Back Project
           </Heading>
-          <MobileBanner image={kickstarter.imageUrl || ""} marginBottom="16px" />
-          <Flex style={{ columnGap: "16px" }}>
-            <DesktopBanner image={kickstarter.imageUrl || ""} />
+          <MobileBanner image={kickstarter.imageUrl || ''} marginBottom="16px" />
+          <Flex style={{ columnGap: '16px' }}>
+            <DesktopBanner image={kickstarter.imageUrl || ''} />
             <Flex flexDirection="column">
               <Name>{kickstarter.creator}</Name>
               <Title>{kickstarter.title}</Title>
-              <Flex style={{ columnGap: "8px" }}>
-                <BinanceIcon />
-                <Text fontSize="24px" color="textSubtle"><b style={{ color: "white" }}>{kickstarter.totalContribution?.toString()}</b> / {kickstarter.projectGoals?.toString()} BNB</Text>
+              <Flex style={{ columnGap: '8px' }}>
+                <ImgCurrency image={getTokenImageBySymbol(kickstarter.tokenSymbol)} />
+                <Text fontSize="24px" color="textSubtle">
+                  <b style={{ color: 'white' }}>{kickstarter.totalContribution?.toString()}</b> /{' '}
+                  {kickstarter.projectGoals?.toString()} BNB
+                </Text>
               </Flex>
             </Flex>
           </Flex>
           <Divider />
-          <Text color="textSubtle" marginBottom="4px">Project Reward</Text>
+          <Text color="textSubtle" marginBottom="4px">
+            Project Reward
+          </Text>
           <Text marginBottom="16px">{kickstarter.rewardDescription}</Text>
-          <Text color="textSubtle" marginBottom="4px">Reward Distribution</Text>
-          <Text>{format(new Date((kickstarter.rewardDistributionTimestamp?.toNumber() || 0) * 1000), 'LLLL do, yyyy')}</Text>
+          <Text color="textSubtle" marginBottom="4px">
+            Reward Distribution
+          </Text>
+          <Text>
+            {format(new Date((kickstarter.rewardDistributionTimestamp?.toNumber() || 0) * 1000), 'LLLL do, yyyy')}
+          </Text>
         </Grid>
         <SideItems item xs={12} md={5}>
           <SideWrapper marginBottom="16px">
-            <Heading size="md" marginBottom="8px">Backing Project</Heading>
+            <Heading size="md" marginBottom="8px">
+              Backing Project
+            </Heading>
             <Text color="textSubtle" marginBottom="16px">
-              You have to back with minimum amount of <b style={{ color: "#00D4A4" }}>{kickstarter.minContribution?.toString()} BNB</b> to participate in this project
+              You have to back with minimum amount of{' '}
+              <b style={{ color: '#00D4A4' }}>{kickstarter.minContribution?.toString()} BNB</b> to participate in this
+              project
             </Text>
             <FundingInput label="Enter Backing Amount" value={backedAmount} onChange={setBackedAmount} />
             {!account && (
               <Button
-                variant='tertiary'
+                variant="tertiary"
                 startIcon={<WalletIcon />}
-                style={{ fontFamily: 'Poppins', marginTop: "32px" }}
-                onClick={onPresentConnectModal}>
+                style={{ fontFamily: 'Poppins', marginTop: '32px' }}
+                onClick={onPresentConnectModal}
+              >
                 Connect Your Wallet
               </Button>
             )}
             {account && (
               <Button
-                variant='awesome'
+                variant="awesome"
                 endIcon={<ArrowForwardIcon color="text" />}
-                style={{ fontFamily: 'Poppins', marginTop: "32px" }}
+                style={{ fontFamily: 'Poppins', marginTop: '32px' }}
                 onClick={showPayment}
-                disabled={!Number(backedAmount) || !isGreaterThanMinContribution}>
+                disabled={!Number(backedAmount) || !isGreaterThanMinContribution}
+              >
                 Proceed
               </Button>
             )}
           </SideWrapper>
           <SideWrapper>
-            <Flex alignItems="center" marginBottom="8px" style={{ columnGap: "8px" }}>
+            <Flex alignItems="center" marginBottom="8px" style={{ columnGap: '8px' }}>
               <OnlineDot isOnline={!!account} />
               <Text fontSize="12px">Connected Wallet</Text>
             </Flex>
-            {!account && (
-              <Text color="textDisabled">No wallet connected.</Text>
-            )}
+            {!account && <Text color="textDisabled">No wallet connected.</Text>}
             {account && (
-              <Flex alignItems="center" style={{ columnGap: "8px" }}>
+              <Flex alignItems="center" style={{ columnGap: '8px' }}>
                 <AccountIcon account={account} size={32} />
-                <Flex flexDirection="column" marginRight= "auto">
-                  <Text fontSize="16px" color="textDisabled">{shortenAddress(account)}</Text>
+                <Flex flexDirection="column" marginRight="auto">
+                  <Text fontSize="16px" color="textDisabled">
+                    {shortenAddress(account)}
+                  </Text>
                 </Flex>
                 {!accountBalance ? (
                   <Skeleton width={100} height={28} />
@@ -287,8 +318,9 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
       {!isMobilePaymentPage && (
         <ButtonContinue
           endIcon={<ArrowForwardIcon color="text" />}
-          style={{ fontFamily: 'Poppins', marginTop: "32px" }}
-          onClick={() => setIsMobilePaymentPage(true)}>
+          style={{ fontFamily: 'Poppins', marginTop: '32px' }}
+          onClick={() => setIsMobilePaymentPage(true)}
+        >
           Continue
         </ButtonContinue>
       )}

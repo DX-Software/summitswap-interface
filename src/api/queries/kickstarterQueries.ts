@@ -58,6 +58,9 @@ export const KICKSTARTERS_BY_ACCOUNT_ID = gql`
   query kickstarters($first: Int!, $skip: Int!, $address: Bytes!) {
     kickstarters(first: $first, skip: $skip, orderBy: createdAt, orderDirection: desc, where: { owner: $address }) {
       id
+      paymentToken
+      tokenSymbol
+      approvalStatus
       owner {
         id
       }
@@ -82,6 +85,9 @@ export const KICKSTARTERS = gql`
   query kickstarters($first: Int!, $skip: Int!, $orderBy: Bytes!, $orderDirection: Bytes!) {
     kickstarters(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection) {
       id
+      paymentToken
+      tokenSymbol
+      approvalStatus
       owner {
         id
       }
@@ -104,11 +110,7 @@ export const KICKSTARTERS = gql`
 
 export const KICKSTARTERS_BY_APPROVAL_STATUSES = gql`
   query kickstarters($approvalStatuses: [String!], $first: Int!, $skip: Int!) {
-    kickstarters(
-      first: $first,
-      skip: $skip,
-      where: { approvalStatus_in: $approvalStatuses }
-    ) {
+    kickstarters(first: $first, skip: $skip, where: { approvalStatus_in: $approvalStatuses }) {
       id
       paymentToken
       tokenSymbol
@@ -140,6 +142,9 @@ export const KICKSTARTERS_SEARCH = gql`
   query kickstarters($text: Bytes!, $first: Int!, $skip: Int!, $orderBy: Bytes!, $orderDirection: Bytes!) {
     kickstarterSearch(text: $text, first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection) {
       id
+      paymentToken
+      tokenSymbol
+      approvalStatus
       owner {
         id
       }
@@ -168,6 +173,9 @@ export const KICKSTARTERS_BY_END_TIME_BETWEEN = gql`
       where: { endTimestamp_gte: $startTimestamp, endTimestamp_lte: $endTimestamp }
     ) {
       id
+      paymentToken
+      tokenSymbol
+      approvalStatus
       owner {
         id
       }
@@ -201,6 +209,9 @@ export const BACKED_KICKSTARTERS_BY_CONTRIBUTOR_ID = gql`
       amount
       kickstarter {
         id
+        paymentToken
+        tokenSymbol
+        approvalStatus
         owner {
           id
         }
@@ -232,6 +243,9 @@ export const BACKED_KICKSTARTER_BY_ID = gql`
       }
       kickstarter {
         id
+        paymentToken
+        tokenSymbol
+        approvalStatus
         owner {
           id
         }
@@ -269,6 +283,9 @@ export const BACKED_KICKSTARTERS_BY_KICKSTARTER_ADDRESS = gql`
       }
       kickstarter {
         id
+        paymentToken
+        tokenSymbol
+        approvalStatus
         owner {
           id
         }

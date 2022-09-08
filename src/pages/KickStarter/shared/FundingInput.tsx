@@ -1,16 +1,19 @@
-import { Text, Input, BinanceIcon } from '@koda-finance/summitswap-uikit';
+import { Input, Text } from '@koda-finance/summitswap-uikit'
+import { getTokenImageBySymbol } from 'connectors'
 import React from 'react'
-import { Flex } from 'rebass';
-import styled from 'styled-components';
+import { Flex } from 'rebass'
+import styled from 'styled-components'
+import { ImgCurrency } from '.'
 
 type Props = {
-  label: string;
-  name?: string;
-  type?: string;
-  value: string;
-  isFunding?: boolean;
-  description?: string;
-  onChange: (value: string) => void;
+  label: string
+  name?: string
+  type?: string
+  tokenSymbol?: string
+  value: string
+  isFunding?: boolean
+  description?: string
+  onChange: (value: string) => void
 }
 
 const InputWrapper = styled(Flex)`
@@ -32,38 +35,50 @@ const InputCurrency = styled(Flex)`
   column-gap: 8px;
 `
 
-function FundingInput({ name, label, type, value, description, onChange, isFunding }: Props) {
-
+function FundingInput({ name, label, type, tokenSymbol, value, description, onChange, isFunding }: Props) {
   const handleOnChange = (e) => {
     onChange(e.target.value)
   }
 
   return (
     <Flex flexDirection="column" flex={1}>
-      <Text color="textSubtle" marginBottom="4px">{label}</Text>
+      <Text color="textSubtle" marginBottom="4px">
+        {label}
+      </Text>
       {isFunding && (
         <InputWrapper>
           <InputCurrency alignItems="center">
-            <BinanceIcon />
+            <ImgCurrency image={getTokenImageBySymbol(tokenSymbol)} />
             <Text fontWeight="bold">BNB</Text>
           </InputCurrency>
           <StyledInput name={name} type={type} value={value} onChange={handleOnChange} />
         </InputWrapper>
       )}
       {!isFunding && (
-        <InputWrapper style={{ borderRadius: "16px!important" }}>
-          <StyledInput style={{ borderRadius: "16px" }} name={name} type={type} value={value} onChange={handleOnChange} />
+        <InputWrapper style={{ borderRadius: '16px!important' }}>
+          <StyledInput
+            style={{ borderRadius: '16px' }}
+            name={name}
+            type={type}
+            value={value}
+            onChange={handleOnChange}
+          />
         </InputWrapper>
       )}
-      {description && <Text color="textDisabled" fontSize="12px" marginTop="8px">{description}</Text>}
+      {description && (
+        <Text color="textDisabled" fontSize="12px" marginTop="8px">
+          {description}
+        </Text>
+      )}
     </Flex>
   )
 }
 
-export default FundingInput;
+export default React.memo(FundingInput)
 
 FundingInput.defaultProps = {
-  type: "text",
+  type: 'text',
+  tokenSymbol: 'bnb',
   description: undefined,
   isFunding: true,
 }
