@@ -1,12 +1,15 @@
-import { ArrowBackIcon, Breadcrumbs, Button, CheckmarkIcon, EditIcon, Flex, Heading, Input, Radio, Select, Skeleton, Text, TextArea } from "@koda-finance/summitswap-uikit"
+import { ArrowBackIcon, Breadcrumbs, Button, CheckmarkIcon, EditIcon, Flex, Heading, Input, Radio, Select, Text, TextArea } from "@koda-finance/summitswap-uikit"
 import { Grid } from "@mui/material"
+import { useKickstarterById } from "api/useKickstarterApi"
+import { getTokenImageBySymbol } from "connectors"
 import { INITIAL_PROJECT_CREATION } from "constants/kickstarter"
+import { format } from "date-fns"
 import { FormikProps, useFormik } from "formik"
 import React, { useState } from "react"
 import styled from "styled-components"
-import { ContactMethod, KickstarterApprovalStatus } from "types/kickstarter"
-import FundingInput from "../shared/FundingInput"
+import { ContactMethod, Kickstarter, KickstarterApprovalStatus, WithdrawalFeeMethod } from "types/kickstarter"
 import { CurrencyInfo, Divider, StatusInfo, TextInfo } from "../shared"
+import FundingInput from "../shared/FundingInput"
 import { Project, ProjectFormField } from "../types"
 
 type KickstarterDetailsProps = {
@@ -22,10 +25,16 @@ type HeaderProps = {
 
 type EditButtonsProps = {
   isEdit: boolean
+  isDisabled: boolean
   handleIsEdit: (isEdit: boolean) => void
 }
 
-type EditWithdrawalProps = {
+type SectionProps = {
+  kickstarter?: Kickstarter
+  isLoading?: boolean
+}
+
+type EditSectionProps = {
   formik: FormikProps<Project>
 }
 
@@ -36,11 +45,6 @@ type EditWithdrawalOptionProps = {
   title: string
   inputTitle: string
   description: JSX.Element
-}
-
-enum WithdrawalFeeMethod {
-  PERCENTAGE = "percentage",
-  FIXED_AMOUNT = "fixed_amount"
 }
 
 const ImgKickstarter = styled.div<{ image: string }>`
@@ -89,7 +93,7 @@ const Header = ({ previousPage, handleKickstarterId }: HeaderProps) => {
   )
 }
 
-const EditButtons = ({isEdit, handleIsEdit}: EditButtonsProps) => {
+const EditButtons = ({ isEdit, handleIsEdit, isDisabled }: EditButtonsProps) => {
   return (
     <Flex style={{ columnGap: "8px" }}>
       {!isEdit && (
@@ -98,7 +102,8 @@ const EditButtons = ({isEdit, handleIsEdit}: EditButtonsProps) => {
         scale="sm"
         startIcon={<EditIcon />}
         style={{fontFamily:'Poppins'}}
-        onClick={() => handleIsEdit(true)}>
+        onClick={() => handleIsEdit(true)}
+        disabled={isDisabled}>
         Edit Project
       </Button>
       )}
@@ -107,14 +112,16 @@ const EditButtons = ({isEdit, handleIsEdit}: EditButtonsProps) => {
           <Button
             scale="sm"
             startIcon={<CheckmarkIcon color="default" />}
-            style={{fontFamily:'Poppins'}}>
+            style={{fontFamily:'Poppins'}}
+            disabled={isDisabled}>
             Change & Approve
           </Button>
           <Button
             variant="tertiary"
             scale="sm"
             style={{fontFamily:'Poppins'}}
-            onClick={() => handleIsEdit(false)}>
+            onClick={() => handleIsEdit(false)}
+            disabled={isDisabled}>
             Cancel Edit
           </Button>
         </>
@@ -123,7 +130,7 @@ const EditButtons = ({isEdit, handleIsEdit}: EditButtonsProps) => {
   )
 }
 
-const ProjectDetails = () => {
+const ProjectDetails = ({ kickstarter, isLoading }: SectionProps) => {
   return (
     <>
       <Heading size='lg' marginBottom="16px" color="sidebarActiveColor">Project Details</Heading>
@@ -131,23 +138,54 @@ const ProjectDetails = () => {
         <ImgKickstarter image="https://picsum.photos/400" />
         <br />
         <Flex flexDirection="column">
-          <StatusInfo title="Project Status" approvalStatus={KickstarterApprovalStatus.WAITING_FOR_APPROVAL} />
+          <StatusInfo
+            title="Project Status"
+            approvalStatus={KickstarterApprovalStatus.WAITING_FOR_APPROVAL}
+            isLoading={isLoading}
+          />
           <Divider />
-          <TextInfo title="Project Title" description="Summit Swap #1 Project" />
+          <TextInfo
+            title="Project Title"
+            description={kickstarter?.title}
+            isLoading={isLoading}
+          />
           <br />
-          <TextInfo title="Project Creator" description="SUMMITSWAP" />
+          <TextInfo
+            title="Project Creator"
+            description={kickstarter?.creator}
+            isLoading={isLoading}
+          />
           <br />
-          <TextInfo title="Project Description" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non nibh a, commodo aliquam nullam pharetra viverra. Etiam odio aliquam quis lacus, justo, aliquam molestie suspendisse tempus." />
+          <TextInfo
+            title="Project Description"
+            description={kickstarter?.projectDescription}
+            isLoading={isLoading}
+          />
           <br />
           <Grid container spacing="16px">
             <Grid item xs={12} sm={6} lg={4}>
-              <CurrencyInfo title="Project Currency" description="BNB" iconUrl="/images/coins/bnb.png" />
+              <CurrencyInfo
+                title="Project Currency"
+                description={kickstarter?.tokenSymbol}
+                iconUrl={getTokenImageBySymbol(kickstarter?.tokenSymbol)}
+                isLoading={isLoading}
+              />
             </Grid>
             <Grid item xs={12} sm={6} lg={4}>
-              <CurrencyInfo title="Project Goals" description="101" iconUrl="/images/coins/bnb.png" />
+              <CurrencyInfo
+                title="Project Goals"
+                description={kickstarter?.projectGoals?.toString()}
+                iconUrl={getTokenImageBySymbol(kickstarter?.tokenSymbol)}
+                isLoading={isLoading}
+              />
             </Grid>
             <Grid item xs={12} sm={6} lg={4}>
-              <CurrencyInfo title="Minimum Backing" description="10" iconUrl="/images/coins/bnb.png" />
+              <CurrencyInfo
+                title="Minimum Backing"
+                description={kickstarter?.minContribution?.toString()}
+                iconUrl={getTokenImageBySymbol(kickstarter?.tokenSymbol)}
+                isLoading={isLoading}
+              />
             </Grid>
           </Grid>
         </Flex>
@@ -156,7 +194,7 @@ const ProjectDetails = () => {
   )
 }
 
-const EditProjectDetails = () => {
+const EditProjectDetails = ({ formik }: EditSectionProps) => {
   return (
     <>
       <Heading size='lg' marginBottom="16px" color="sidebarActiveColor">Project Details</Heading>
@@ -226,46 +264,56 @@ const EditProjectDetails = () => {
   )
 }
 
-const FundAndRewardsSystem = () => {
+const FundAndRewardsSystem = ({ kickstarter, isLoading }: SectionProps) => {
   return (
     <>
       <Heading size='lg' marginBottom="16px" color="sidebarActiveColor">Fund & Reward System</Heading>
       <TextInfo
         title="Creator Wallet Address"
-        description="0x653222feCf0C7a936C121832561f9DD8774eE496"
+        description={kickstarter?.owner?.id}
+        isLoading={isLoading}
       />
       <br />
       <TextInfo
         title="Reward Description"
-        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non nibh a, commodo aliquam nullam pharetra viverra. Etiam odio aliquam quis lacus, justo, aliquam molestie suspendisse tempus."
+        description={kickstarter?.rewardDescription}
+        isLoading={isLoading}
       />
       <br />
       <Grid container spacing="16px">
         <Grid item xs={12} sm={6}>
           <TextInfo
             title="Project Due Date"
-            description="Tuesday, July 26th 2022"
+            description={format(new Date((kickstarter?.endTimestamp?.toNumber() || 0) * 1000), 'LLLL do, yyyy')}
+            isLoading={isLoading}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextInfo
             title="Reward Distribution"
-            description="Tuesday, July 26th 2022"
+            description={format(new Date((kickstarter?.rewardDistributionTimestamp?.toNumber() || 0) * 1000), 'LLLL do, yyyy')}
             tooltipText="This is only an estimated date. It might be possible for the reward to be distributed earlier or later from scheduled."
+            isLoading={isLoading}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextInfo title="Contact Method" description="Telegram" />
+          <TextInfo
+            title="Contact Method"
+            description="Telegram"
+          />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextInfo title="Telegram ID" description="summitswap" />
+          <TextInfo
+            title="Telegram ID"
+            description="summitswap"
+          />
         </Grid>
       </Grid>
     </>
   )
 }
 
-const EditFundAndRewardsSystem = () => {
+const EditFundAndRewardsSystem = ({ formik }: EditSectionProps) => {
   const contactMethods = [
     {
       label: 'Discrod',
@@ -333,7 +381,17 @@ const EditFundAndRewardsSystem = () => {
   )
 }
 
-const Withdrawal = () => {
+const Withdrawal = ({ kickstarter, isLoading }: SectionProps) => {
+  let withdrawalFeeMethod = "Not Defined"
+  let fee = "0"
+  if (kickstarter?.fixFeeAmount) {
+    withdrawalFeeMethod = "Fix Fee"
+    fee = kickstarter.fixFeeAmount.times(100).div(10000).toString()
+  } else if (kickstarter?.percentageFeeAmount) {
+    withdrawalFeeMethod = "Percentage Fee"
+    fee = `${kickstarter.percentageFeeAmount.times(100).div(10000).toString()}%`
+  }
+
   return (
     <>
       <Heading size='lg' marginBottom="16px" color="sidebarActiveColor">Withdrawal Fee Amount</Heading>
@@ -341,13 +399,15 @@ const Withdrawal = () => {
         <Grid item xs={12} sm={6} lg={4}>
           <TextInfo
             title="Fee Method"
-            description="Percentage"
+            description={withdrawalFeeMethod}
+            isLoading={isLoading}
           />
         </Grid>
         <Grid item xs={12} sm={6} lg={4}>
           <TextInfo
             title="Fee Percentage"
-            description="5%"
+            description={fee}
+            isLoading={isLoading}
           />
         </Grid>
       </Grid>
@@ -355,7 +415,7 @@ const Withdrawal = () => {
   )
 }
 
-const EditWithdrawal = ({ formik }: EditWithdrawalProps) => {
+const EditWithdrawal = ({ formik }: EditSectionProps) => {
   return (
     <>
       <Heading size='lg' marginBottom="8px" color="sidebarActiveColor">Withdrawal Fee Amount</Heading>
@@ -434,6 +494,8 @@ const EditWithdrawalOption = ({
 function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }: KickstarterDetailsProps) {
   const [isEdit, setIsEdit] = useState(false);
 
+  const kickstarter = useKickstarterById(kickstarterId)
+
   const formik: FormikProps<Project> = useFormik<Project>({
     enableReinitialize: true,
     initialValues: INITIAL_PROJECT_CREATION,
@@ -446,15 +508,40 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
     <Flex flexDirection="column">
       <Header previousPage={previousPage} handleKickstarterId={handleKickstarterId} />
       <br />
-        <EditButtons isEdit={isEdit} handleIsEdit={setIsEdit} />
+        <EditButtons
+          isEdit={isEdit}
+          handleIsEdit={setIsEdit}
+          isDisabled={kickstarter.isFetching || !kickstarter.data}
+        />
       <br />
-      {isEdit ? <EditProjectDetails /> : <ProjectDetails />}
+      {isEdit ? (
+        <EditProjectDetails formik={formik} />
+      ) : (
+        <ProjectDetails
+          kickstarter={kickstarter.data}
+          isLoading={kickstarter.isFetching}
+        />
+      )}
       <Divider />
-      {isEdit ? <EditFundAndRewardsSystem /> : <FundAndRewardsSystem />}
+      {isEdit ? (
+        <EditFundAndRewardsSystem formik={formik} />
+      ) : (
+        <FundAndRewardsSystem
+          kickstarter={kickstarter.data}
+          isLoading={kickstarter.isFetching}
+        />
+      )}
       <Divider />
-      {isEdit ? <EditWithdrawal formik={formik} /> : <Withdrawal />}
+      {isEdit ? (
+        <EditWithdrawal formik={formik} />
+      ) : (
+        <Withdrawal
+          kickstarter={kickstarter.data}
+          isLoading={kickstarter.isFetching}
+        />
+      )}
     </Flex>
   )
 }
 
-export default KickstarterDetails
+export default React.memo(KickstarterDetails)

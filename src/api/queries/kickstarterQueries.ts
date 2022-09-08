@@ -16,6 +16,9 @@ export const KICKSTARTER_BY_ID = gql`
   query kickstarter($address: Bytes!) {
     kickstarter(id: $address) {
       id
+      paymentToken
+      tokenSymbol
+      approvalStatus
       owner {
         id
       }
@@ -31,6 +34,9 @@ export const KICKSTARTER_BY_ID = gql`
       rewardDistributionTimestamp
       startTimestamp
       endTimestamp
+      percentageFeeAmount
+      fixFeeAmount
+      rejectedReason
       createdAt
     }
   }

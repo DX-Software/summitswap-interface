@@ -18,6 +18,11 @@ export enum KickstarterApprovalStatus {
   REJECTED = "rejected",
 }
 
+export enum WithdrawalFeeMethod {
+  PERCENTAGE = "percentage",
+  FIXED_AMOUNT = "fixed_amount"
+}
+
 export enum ContactMethod {
   EMAIL = "email",
   TELEGRAM = "telegram",

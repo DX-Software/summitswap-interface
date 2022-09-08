@@ -6,14 +6,14 @@ import { getKickstarterApprovalStatusLabel } from 'utils/kickstarter'
 
 type InfoProps = {
   title: string
-  description: string
+  description?: string
   tooltipText?: string
   isLoading?: boolean
 }
 type CurrencyInfoProps = {
   title: string
-  description: string
-  iconUrl: string
+  description?: string
+  iconUrl?: string
   isLoading?: boolean
 }
 type StatusInfoProps = {
@@ -115,7 +115,7 @@ export const CurrencyInfo = ({ title, description, iconUrl, isLoading }: Currenc
         <Skeleton width={90} height={24} />
       ) : (
         <Flex style={{ columnGap: '8px', alignItems: 'center' }}>
-          <ImgCurrency image={iconUrl} />
+          <ImgCurrency image={iconUrl || ""} />
           <Text>{description}</Text>
         </Flex>
       )}

@@ -86,9 +86,9 @@ const DataRow: React.FC<{ kickstarter: Kickstarter, handleShowKickstarter: (kick
     <LinkWrapper onClick={() => handleShowKickstarter(kickstarter.id)}>
       <ResponsiveGrid>
         <Text fontWeight={400}>{kickstarter.title}</Text>
-        <Text fontWeight={400}>{kickstarter.projectGoals?.toString()}</Text>
+        <Text fontWeight={400}>{kickstarter.projectGoals?.toString()} {kickstarter.tokenSymbol?.toString()}</Text>
         <Text fontWeight={400}>{kickstarter.minContribution?.toString()} {kickstarter.tokenSymbol?.toString()}</Text>
-        <Text fontWeight={400}>{format(new Date((kickstarter?.endTimestamp?.toNumber() || 0) * 1000), 'LLLL do, yyyy')}</Text>
+        <Text fontWeight={400}>{format(new Date((kickstarter?.endTimestamp?.toNumber() || 0) * 1000), 'yyyy.mm.dd HH:MM O')}</Text>
         <StatusText approvalStatus={kickstarter.approvalStatus} fontWeight={400}>{getKickstarterApprovalStatusLabel(kickstarter.approvalStatus)}</StatusText>
         <Text fontWeight={400} color="primary">View</Text>
       </ResponsiveGrid>
