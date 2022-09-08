@@ -1,14 +1,18 @@
 import { ETHER } from '@koda-finance/summitswap-sdk'
-import { BinanceIcon, Button, Flex, Heading, Skeleton, Text } from '@koda-finance/summitswap-uikit'
+import { Button, Flex, Heading, Skeleton, Text } from '@koda-finance/summitswap-uikit'
+import { Grid } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import AccountIcon from 'components/AccountIcon'
 import CopyButton from 'components/CopyButton'
+import { getTokenImageBySymbol } from 'connectors'
 import { format } from 'date-fns'
 import { FormikProps } from 'formik'
 import React from 'react'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import styled from 'styled-components'
 import { shortenAddress } from 'utils'
+import { getSymbolByAddress } from 'utils/kickstarter'
+import { ImgCurrency, TextInfo } from '../shared'
 import { Project } from '../types'
 
 const ImageAndDescriptionWrapper = styled(Flex)`
@@ -42,17 +46,6 @@ const AccountWrapper = styled(Flex)`
 
 const CriteriaWrapper = styled(Flex)`
   row-gap: 16px;
-  @media (max-width: 576px) {
-    flex-direction: column;
-  }
-`
-
-const EstimationWrapper = styled(Flex)`
-  flex: 1;
-  column-gap: 32px;
-  row-gap: 16px;
-  margin-bottom: 32px;
-
   @media (max-width: 576px) {
     flex-direction: column;
   }
@@ -108,7 +101,7 @@ function CreationStep03({ setCurrentCreationStep, formik }: Props) {
                 Project Goals
               </Text>
               <Flex style={{ columnGap: '8px' }}>
-                <BinanceIcon width="20px" />
+                <ImgCurrency image={getTokenImageBySymbol(getSymbolByAddress(formik.values.paymentToken))} />
                 <Text>{formik.values.projectGoals}</Text>
               </Flex>
             </Flex>
@@ -117,7 +110,7 @@ function CreationStep03({ setCurrentCreationStep, formik }: Props) {
                 Minimum Backing
               </Text>
               <Flex style={{ columnGap: '8px' }}>
-                <BinanceIcon width="20px" />
+                <ImgCurrency image={getTokenImageBySymbol(getSymbolByAddress(formik.values.paymentToken))} />
                 <Text>{formik.values.minContribution}</Text>
               </Flex>
             </Flex>
@@ -160,20 +153,29 @@ function CreationStep03({ setCurrentCreationStep, formik }: Props) {
           Reward Description
         </Text>
         <Text marginBottom="24px">{formik.values.rewardDescription}</Text>
-        <EstimationWrapper>
-          <Flex flexDirection="column" marginRight="auto">
-            <Text color="textSubtle" marginBottom="4px">
-              Project Due Date
-            </Text>
-            <Text>{format(new Date(formik.values.endTimestamp), 'LLLL do, yyyy HH:mm')}</Text>
-          </Flex>
-          <Flex flexDirection="column" marginRight="auto">
-            <Text color="textSubtle" marginBottom="4px">
-              Reward Distribution
-            </Text>
-            <Text>{format(new Date(formik.values.rewardDistributionTimestamp), 'LLLL do, yyyy HH:mm')}</Text>
-          </Flex>
-        </EstimationWrapper>
+        {/* <EstimationWrapper> */}
+        <Grid container spacing="16px">
+          <Grid item xs={12} sm={6}>
+            <TextInfo
+              title="Project Due Date"
+              description={format(new Date(formik.values.endTimestamp), 'LLLL do, yyyy HH:mm')}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextInfo
+              title="Reward Distribution"
+              description={format(new Date(formik.values.rewardDistributionTimestamp), 'LLLL do, yyyy HH:mm')}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextInfo title="Contact Method" description={formik.values.contactMethod} />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextInfo title={formik.values.contactMethod || ''} description={formik.values.contactMethodValue} />
+          </Grid>
+        </Grid>
+        <br />
+        <br />
         <ButtonWrapper>
           <Button variant="secondary" onClick={() => setCurrentCreationStep(1)}>
             Re-edit Project

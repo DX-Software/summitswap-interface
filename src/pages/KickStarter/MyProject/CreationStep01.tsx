@@ -1,7 +1,10 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 import { ArrowForwardIcon, Button, Flex, ImageAddIcon, Input, Text, TextArea } from '@koda-finance/summitswap-uikit'
 import { FormikProps } from 'formik'
 import React, { useCallback, useMemo, useRef } from 'react'
 import styled from 'styled-components'
+import { getSymbolByAddress } from 'utils/kickstarter'
+import ChoosePaymentToken from '../shared/ChoosePaymentToken'
 import FundingInput from '../shared/FundingInput'
 import { Project, ProjectFormField } from '../types'
 
@@ -67,6 +70,7 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
       formik.values.title &&
       formik.values.creator &&
       formik.values.projectDescription &&
+      formik.values.paymentToken &&
       formik.values.projectGoals &&
       Number(formik.values.projectGoals) > 0 &&
       formik.values.minContribution &&
@@ -77,6 +81,7 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
     formik.values.title,
     formik.values.creator,
     formik.values.projectDescription,
+    formik.values.paymentToken,
     formik.values.projectGoals,
     formik.values.minContribution,
   ])
@@ -170,14 +175,18 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
           </TextArea>
         </InputWrapper>
       </ImageAndDescriptionWrapper>
+      <ChoosePaymentToken formik={formik} />
+      <br />
       <FundingWrapper>
         <FundingInput
           label="Project Goals"
+          tokenSymbol={getSymbolByAddress(formik.values.paymentToken)}
           value={formik.values.projectGoals.toString()}
           onChange={handleProjectGoalsChanged}
         />
         <FundingInput
           label="Minimum Backing"
+          tokenSymbol={getSymbolByAddress(formik.values.paymentToken)}
           value={formik.values.minContribution.toString()}
           description="NB : This is the minimum amount for participate in donating the project"
           onChange={handleMinimumBackingChanged}

@@ -2,7 +2,7 @@ import { ArrowBackIcon, Breadcrumbs, Button, CheckmarkIcon, EditIcon, Flex, Head
 import { Grid } from "@mui/material"
 import { useKickstarterById } from "api/useKickstarterApi"
 import { getTokenImageBySymbol } from "connectors"
-import { BUSD, NULL_ADDRESS, USDT } from "constants/index"
+import { CONTACT_METHODS } from "constants/kickstarter"
 import { format, fromUnixTime } from "date-fns"
 import { parseUnits } from "ethers/lib/utils"
 import { FormikProps, FormikProvider, useFormik } from "formik"
@@ -12,6 +12,7 @@ import styled from "styled-components"
 import { ContactMethod, Kickstarter, KickstarterApprovalStatus, WithdrawalFeeMethod } from "types/kickstarter"
 import { getKickstarterApprovalById, getKickstarterContactMethodById } from "utils/kickstarter"
 import { CurrencyInfo, Divider, StatusInfo, TextInfo } from "../shared"
+import ChoosePaymentToken from "../shared/ChoosePaymentToken"
 import FundingInput from "../shared/FundingInput"
 import { Project, ProjectFormField } from "../types"
 import RejectModal from "./RejectModal"
@@ -253,43 +254,7 @@ const EditProjectDetails = ({ formik }: EditSectionProps) => {
           <br />
         </Flex>
       </ProjectDetailsContainer>
-      <Heading size='md' marginBottom="4px" color="default">Choose Project Currency</Heading>
-      <Text color="textSubtle" marginBottom="8px">Participant will pay with <b style={{ color: "#2BA55D" }}>BNB</b> for your token</Text>
-      <Grid container spacing="16px">
-        <Grid item xs={12} sm={4} lg={2} style={{ display: "flex", alignItems: "center", columnGap: "8px" }}>
-          <Radio
-            scale="sm"
-            name={ProjectFormField.paymentToken}
-            value={NULL_ADDRESS}
-            onChange={formik.handleChange}
-            checked={formik.values.paymentToken === NULL_ADDRESS}
-            style={{ flexShrink: 0 }}
-          />
-          <Text>BNB</Text>
-        </Grid>
-        <Grid item xs={12} sm={4} lg={2} style={{ display: "flex", alignItems: "center", columnGap: "8px" }}>
-          <Radio
-            scale="sm"
-            name={ProjectFormField.paymentToken}
-            value={USDT.address}
-            onChange={formik.handleChange}
-            checked={formik.values.paymentToken === USDT.address}
-            style={{ flexShrink: 0 }}
-          />
-          <Text>USDT</Text>
-        </Grid>
-        <Grid item xs={12} sm={4} lg={2} style={{ display: "flex", alignItems: "center", columnGap: "8px" }}>
-          <Radio
-            scale="sm"
-            name={ProjectFormField.paymentToken}
-            value={BUSD.address}
-            onChange={formik.handleChange}
-            checked={formik.values.paymentToken === BUSD.address}
-            style={{ flexShrink: 0 }}
-          />
-          <Text>BUSD</Text>
-        </Grid>
-      </Grid>
+      <ChoosePaymentToken formik={formik} />
       <br />
       <Grid container spacing="16px">
         <Grid item sm={12} md={6}>
@@ -362,25 +327,6 @@ const FundAndRewardsSystem = ({ kickstarter, isLoading }: SectionProps) => {
 }
 
 const EditFundAndRewardsSystem = ({ formik }: EditSectionProps) => {
-  const contactMethods = [
-    {
-      label: 'Discord',
-      value: ContactMethod.DISCORD,
-    },
-    {
-      label: 'Email',
-      value: ContactMethod.EMAIL,
-    },
-    {
-      label: 'Telegram',
-      value: ContactMethod.TELEGRAM,
-    },
-    {
-      label: 'Twitter',
-      value: ContactMethod.TWITTER,
-    },
-  ]
-
   const handleContactMethodChange = (value: string) => {
     formik.setFieldValue(ProjectFormField.contactMethod, getKickstarterContactMethodById(value))
   }
@@ -435,12 +381,14 @@ const EditFundAndRewardsSystem = ({ formik }: EditSectionProps) => {
           <Text fontSize="14px" color="textSubtle" marginBottom="4px">Chosen Contact Method</Text>
           <Select
             onValueChanged={handleContactMethodChange}
-            options={contactMethods}
+            options={CONTACT_METHODS}
             minWidth="165px"
           />
         </Grid>
         <Grid item sm={12} md={6}>
-          <Text fontSize="14px" color="textSubtle" marginBottom="4px">Telegram ID</Text>
+          <Text fontSize="14px" color="textSubtle" marginBottom="4px">
+            {CONTACT_METHODS.find((method) => formik.values.contactMethod === method.value)?.label}
+          </Text>
           <Input
             placeholder="Enter your Contact Info"
             name={ProjectFormField.contactMethodValue}

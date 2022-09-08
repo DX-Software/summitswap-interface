@@ -29,7 +29,7 @@ const StatusDot = styled.div`
   background-color: ${({ theme }) => theme.colors.info};
 `
 
-const ImgCurrency = styled.div<{ image: string }>`
+export const ImgCurrency = styled.div<{ image: string }>`
   width: 20px;
   height: 20px;
   border-radius: 10px;
@@ -55,7 +55,7 @@ const TooltipText = styled.div`
   visibility: hidden;
   font-size: 12px;
   line-height: 16px;
-  background-color: ${({theme}) => theme.colors.sidebarBackground};
+  background-color: ${({ theme }) => theme.colors.sidebarBackground};
   color: white;
   border-radius: 6px;
   padding: 8px 12px;
@@ -68,13 +68,19 @@ const TooltipText = styled.div`
 `
 
 export const StatusText = styled(Text)<{ approvalStatus?: KickstarterApprovalStatus }>`
-  ${({ approvalStatus, theme }) => approvalStatus === KickstarterApprovalStatus.WAITING_FOR_APPROVAL && `
+  ${({ approvalStatus, theme }) =>
+    approvalStatus === KickstarterApprovalStatus.WAITING_FOR_APPROVAL &&
+    `
     color: ${theme.colors.info};
   `}
-  ${({ approvalStatus, theme }) => approvalStatus === KickstarterApprovalStatus.APPROVED && `
+  ${({ approvalStatus, theme }) =>
+    approvalStatus === KickstarterApprovalStatus.APPROVED &&
+    `
     color: ${theme.colors.primary};
   `}
-  ${({ approvalStatus, theme }) => approvalStatus === KickstarterApprovalStatus.REJECTED && `
+  ${({ approvalStatus, theme }) =>
+    approvalStatus === KickstarterApprovalStatus.REJECTED &&
+    `
     color: ${theme.colors.failure};
   `}
 `
@@ -83,13 +89,13 @@ export const Divider = styled(Flex)`
   width: 100%;
   height: 1px;
   margin: 32px 0px;
-  background-color: ${({theme}) => theme.colors.inputColor};
+  background-color: ${({ theme }) => theme.colors.inputColor};
 `
 
 export const TextInfo = ({ title, description, tooltipText, isLoading = false }: InfoProps) => {
   return (
     <>
-      <Flex style={{ columnGap: "8px", alignItems: "center" }}>
+      <Flex style={{ columnGap: '8px', alignItems: 'center' }}>
         <Text fontSize="14px" color="textSubtle" marginBottom="4px">
           {title}
         </Text>
@@ -115,7 +121,7 @@ export const CurrencyInfo = ({ title, description, iconUrl, isLoading }: Currenc
         <Skeleton width={90} height={24} />
       ) : (
         <Flex style={{ columnGap: '8px', alignItems: 'center' }}>
-          <ImgCurrency image={iconUrl || ""} />
+          <ImgCurrency image={iconUrl || ''} />
           <Text>{description}</Text>
         </Flex>
       )}
@@ -135,7 +141,7 @@ export const StatusInfo = ({ title, approvalStatus, isLoading = false }: StatusI
         <Flex style={{ columnGap: '8px', alignItems: 'center' }}>
           {approvalStatus === KickstarterApprovalStatus.WAITING_FOR_APPROVAL && <StatusDot />}
           {approvalStatus === KickstarterApprovalStatus.APPROVED && <CheckmarkIcon width="24px" />}
-          {approvalStatus === KickstarterApprovalStatus.REJECTED && <CloseIcon width="28px" color='failure' />}
+          {approvalStatus === KickstarterApprovalStatus.REJECTED && <CloseIcon width="28px" color="failure" />}
           <StatusText approvalStatus={approvalStatus}>{getKickstarterApprovalStatusLabel(approvalStatus)}</StatusText>
         </Flex>
       )}

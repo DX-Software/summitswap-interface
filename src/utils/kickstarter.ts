@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js"
+import { BUSD, NULL_ADDRESS, USDT } from "constants/index"
 import { BackedKickstarter, ContactMethod, Kickstarter, KickstarterAccount, KickstarterApprovalStatus, KickstarterContribution, KickstarterFactory, KickstarterProgressStatus } from "types/kickstarter"
 
 const oneDayTimestamp = 60 * 60 * 24
@@ -116,4 +117,17 @@ export const getKickstarterContactMethodById = (id: string) => {
   if (ContactMethod.DISCORD.toString() === id) return ContactMethod.DISCORD
   if (ContactMethod.TWITTER.toString() === id) return ContactMethod.TWITTER
   return undefined
+}
+
+export const getSymbolByAddress = (address: string) => {
+  switch (address) {
+    case NULL_ADDRESS:
+      return "BNB"
+    case USDT.address:
+      return USDT.symbol
+    case BUSD.address:
+      return BUSD.symbol
+    default:
+      return ''
+  }
 }

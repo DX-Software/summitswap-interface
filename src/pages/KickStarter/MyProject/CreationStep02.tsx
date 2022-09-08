@@ -1,8 +1,10 @@
 import { ETHER } from '@koda-finance/summitswap-sdk'
-import { Button, Flex, Skeleton, Text, TextArea } from '@koda-finance/summitswap-uikit'
+import { Button, Flex, Input, Select, Skeleton, Text, TextArea } from '@koda-finance/summitswap-uikit'
+import { Grid } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import AccountIcon from 'components/AccountIcon'
 import CopyButton from 'components/CopyButton'
+import { CONTACT_METHODS } from 'constants/kickstarter'
 import { FormikProps } from 'formik'
 import React, { useMemo } from 'react'
 import { useCurrencyBalance } from 'state/wallet/hooks'
@@ -24,18 +26,6 @@ const AccountWrapper = styled(Flex)`
   }
 `
 
-const EstimationWrapper = styled(Flex)`
-  flex: 1;
-  column-gap: 32px;
-  row-gap: 16px;
-  margin-top: 24px;
-  margin-bottom: 32px;
-
-  @media (max-width: 576px) {
-    flex-direction: column;
-  }
-`
-
 const ButtonWrapper = styled(Flex)`
   justify-content: space-between;
   row-gap: 16px;
@@ -54,8 +44,20 @@ function CreationStep02({ setCurrentCreationStep, formik }: Props) {
   const accountBalance = useCurrencyBalance(account ?? undefined, ETHER)?.toSignificant(6)
 
   const hasValidInput = useMemo<boolean>(() => {
-    return !!(formik.values.rewardDescription && formik.values.rewardDistributionTimestamp && formik.values.endTimestamp)
-  }, [formik.values.rewardDescription, formik.values.rewardDistributionTimestamp, formik.values.endTimestamp])
+    return !!(
+      formik.values.rewardDescription &&
+      formik.values.rewardDistributionTimestamp &&
+      formik.values.endTimestamp &&
+      formik.values.contactMethod &&
+      formik.values.contactMethodValue
+    )
+  }, [
+    formik.values.rewardDescription,
+    formik.values.rewardDistributionTimestamp,
+    formik.values.endTimestamp,
+    formik.values.contactMethod,
+    formik.values.contactMethodValue,
+  ])
 
   const handleProjectDueDateChange = (value: string) => {
     formik.setFieldValue(ProjectFormField.endTimestamp, value)
@@ -63,6 +65,10 @@ function CreationStep02({ setCurrentCreationStep, formik }: Props) {
 
   const handleRewardDistributionChange = (value: string) => {
     formik.setFieldValue(ProjectFormField.rewardDistributionTimestamp, value)
+  }
+
+  const handleContactMethodChange = (value: string) => {
+    formik.setFieldValue(ProjectFormField.contactMethod, value)
   }
 
   return (
@@ -106,24 +112,49 @@ function CreationStep02({ setCurrentCreationStep, formik }: Props) {
       >
         {formik.values.rewardDescription}
       </TextArea>
-      <EstimationWrapper>
-        <FundingInput
-          label="Project Due Date"
-          type="datetime-local"
-          value={formik.values.endTimestamp}
-          description="NB: Due date should be minimum a week after the project is created"
-          onChange={handleProjectDueDateChange}
-          isFunding={false}
-        />
-        <FundingInput
-          label="Reward Distribution"
-          type="datetime-local"
-          value={formik.values.rewardDistributionTimestamp}
-          description="NB: Enter the estimate date for the reward distribution. Reward distribution date should be equal or greater than project due date"
-          onChange={handleRewardDistributionChange}
-          isFunding={false}
-        />
-      </EstimationWrapper>
+      <br />
+      <Grid container spacing="16px">
+        <Grid item sm={12} md={6}>
+          <FundingInput
+            label="Project Due Date"
+            type="datetime-local"
+            value={formik.values.endTimestamp}
+            description="NB: Due date should be minimum a week after the project is created"
+            onChange={handleProjectDueDateChange}
+            isFunding={false}
+          />
+        </Grid>
+        <Grid item sm={12} md={6}>
+          <FundingInput
+            label="Reward Distribution"
+            type="datetime-local"
+            value={formik.values.rewardDistributionTimestamp}
+            description="NB: Enter the estimate date for the reward distribution. Reward distribution date should be equal or greater than project due date"
+            onChange={handleRewardDistributionChange}
+            isFunding={false}
+          />
+        </Grid>
+        <Grid item sm={12} md={6}>
+          <Text fontSize="14px" color="textSubtle" marginBottom="4px">
+            Chosen Contact Method
+          </Text>
+          <Select onValueChanged={handleContactMethodChange} options={CONTACT_METHODS} minWidth="165px" />
+        </Grid>
+        <Grid item sm={12} md={6}>
+          <Text fontSize="14px" color="textSubtle" marginBottom="4px">
+            {CONTACT_METHODS.find((method) => formik.values.contactMethod === method.value)?.label}
+          </Text>
+          <Input
+            placeholder="Enter your Contact Info"
+            name={ProjectFormField.contactMethodValue}
+            value={formik.values.contactMethodValue}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+          />
+        </Grid>
+      </Grid>
+      <br />
+
       <ButtonWrapper>
         <Button variant="secondary" onClick={() => setCurrentCreationStep(1)}>
           Previous Step
