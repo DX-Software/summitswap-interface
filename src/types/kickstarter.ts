@@ -6,6 +6,12 @@ export enum KickstarterProgressStatus {
   COMPLETED = "completed",
 }
 
+export enum KickstarterApprovalStatusId {
+  WAITING_FOR_APPROVAL = "0",
+  APPROVED = "1",
+  REJECTED = "2",
+}
+
 export enum KickstarterApprovalStatus {
   WAITING_FOR_APPROVAL = "waiting_for_approval",
   APPROVED = "approved",
@@ -46,6 +52,9 @@ export type KickstarterFactory = {
 
 export type Kickstarter = {
   id: string
+  paymentToken?: string
+  tokenSymbol?: string
+  approvalStatus?: KickstarterApprovalStatus
   owner?: KickstarterAccount
   title?: string
   creator?: string
@@ -59,6 +68,9 @@ export type Kickstarter = {
   rewardDistributionTimestamp?: BigNumber
   startTimestamp?: BigNumber
   endTimestamp?: BigNumber
+  percentageFeeAmount?: BigNumber
+  fixFeeAmount?: BigNumber
+  rejectedReason?: string
   createdAt?: BigNumber
 }
 
