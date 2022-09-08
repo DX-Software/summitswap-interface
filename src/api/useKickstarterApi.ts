@@ -14,6 +14,7 @@ import {
   BACKED_KICKSTARTER_BY_ID,
   KICKSTARTERS,
   KICKSTARTERS_BY_ACCOUNT_ID,
+  KICKSTARTERS_BY_APPROVAL_STATUSES,
   KICKSTARTERS_BY_END_TIME_BETWEEN,
   KICKSTARTERS_SEARCH,
   KICKSTARTER_ACCOUNT_BY_ID,
@@ -85,6 +86,18 @@ export function useKickstarters(
 
     const data = await kickstarterClient.request(query, filter)
     const kickstarters: Kickstarter[] = data[key].map((kickstarter) => convertToKickstarter(kickstarter))
+    return kickstarters
+  })
+}
+
+export function useKickstartersByApprovalStatuses(approvalStatuses: string[], page = 1, perPage = PER_PAGE) {
+  return useQuery(['useKickstartersByApprovalStatuses', page], async () => {
+    const data = await kickstarterClient.request(KICKSTARTERS_BY_APPROVAL_STATUSES, {
+      approvalStatuses,
+      first: perPage,
+      skip: (page - 1) * perPage,
+    })
+    const kickstarters: Kickstarter[] = data.kickstarters.map((kickstarter) => convertToKickstarter(kickstarter))
     return kickstarters
   })
 }
