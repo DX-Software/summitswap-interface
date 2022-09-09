@@ -1,6 +1,7 @@
 import { Box, ButtonMenu, ButtonMenuItem } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
 import { useKickstarterFactoryContract } from 'hooks/useContract'
+import useParsedQueryString from 'hooks/useParsedQueryString'
 import React, { useEffect, useMemo, useState } from 'react'
 import AdminPanel from './AdminPanel'
 import BackedKickstarter from './BackedKickstarter'
@@ -10,6 +11,7 @@ import MyProject from './MyProject'
 import { NavItem, Tabs } from './types'
 
 function KickStarter() {
+  const parsedQs = useParsedQueryString()
   const { account } = useWeb3React()
   const factoryContract = useKickstarterFactoryContract()
   const [isFactoryAdmin, setIsFactoryAdmin] = useState(false)
@@ -50,6 +52,12 @@ function KickStarter() {
           ],
     [generalTabs, isFactoryAdmin]
   )
+
+  useEffect(() => {
+    if (!parsedQs.kickstarter) return
+    const browseTabIndex = generalTabs.findIndex((generalTab) => generalTab.code === Tabs.BROWSE_PROJECT)
+    setButtonIndex(browseTabIndex)
+  }, [parsedQs, generalTabs])
 
   useEffect(() => {
     async function fetchIsAdmin() {

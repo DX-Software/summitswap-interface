@@ -1,6 +1,13 @@
 import { PER_PAGE } from 'constants/kickstarter'
 import { useMutation, useQuery } from 'react-query'
-import { BackedKickstarter, Kickstarter, KickstarterContact, KickstarterContributor, OrderDirection, OrderKickstarterBy } from 'types/kickstarter'
+import {
+  BackedKickstarter,
+  Kickstarter,
+  KickstarterContact,
+  KickstarterContributor,
+  OrderDirection,
+  OrderKickstarterBy,
+} from 'types/kickstarter'
 import { kickstarterClient } from 'utils/graphql'
 import {
   convertToBackedKickstarter,
@@ -92,19 +99,36 @@ export function useKickstarters(
   })
 }
 
-export function useKickstartersByApprovalStatuses(approvalStatuses: string[], page = 1, perPage = PER_PAGE) {
-  return useQuery(['useKickstartersByApprovalStatuses', page], async () => {
-    const data = await kickstarterClient.request(KICKSTARTERS_BY_APPROVAL_STATUSES, {
+export function useKickstartersByApprovalStatuses(
+  approvalStatuses: string[],
+  page = 1,
+  perPage = PER_PAGE,
+  orderBy = OrderKickstarterBy.TITLE,
+  orderDirection = OrderDirection.ASC,
+  searchText?: string | undefined
+) {
+  return useQuery(['useKickstartersByApprovalStatuses', page, searchText, orderBy, orderDirection], async () => {
+    const query = searchText ? KICKSTARTERS_SEARCH : KICKSTARTERS_BY_APPROVAL_STATUSES
+    const key = searchText ? 'kickstarterSearch' : 'kickstarters'
+
+    const filter = {
       approvalStatuses,
+      text: searchText,
       first: perPage,
       skip: (page - 1) * perPage,
-    })
-    const kickstarters: Kickstarter[] = data.kickstarters.map((kickstarter) => convertToKickstarter(kickstarter))
+      orderBy,
+      orderDirection,
+    }
+    if (!searchText) delete filter.text
+
+    const data = await kickstarterClient.request(query, filter)
+    const kickstarters: Kickstarter[] = data[key].map((kickstarter) => convertToKickstarter(kickstarter))
     return kickstarters
   })
 }
 
 export function useKickstarterByEndTimeBetween(
+  approvalStatuses: string[],
   startTimestamp: number,
   endTimestamp: number,
   page = 1,
@@ -116,6 +140,7 @@ export function useKickstarterByEndTimeBetween(
       skip: (page - 1) * perPage,
       startTimestamp,
       endTimestamp,
+      approvalStatuses,
     })
     const kickstarters: Kickstarter[] = data.kickstarters.map((kickstarter) => convertToKickstarter(kickstarter))
     return kickstarters

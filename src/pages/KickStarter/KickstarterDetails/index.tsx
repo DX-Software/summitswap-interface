@@ -22,8 +22,9 @@ import Tooltip from 'components/Tooltip'
 import { getTokenImageBySymbol } from 'connectors'
 import { format } from 'date-fns'
 import ImgCornerIllustration from 'img/corner-illustration.svg'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { CSVLink } from 'react-csv'
+import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { BackedKickstarter, Kickstarter, KickstarterContributor, KickstarterProgressStatus } from 'types/kickstarter'
 import copyText from 'utils/copyText'
@@ -212,7 +213,7 @@ const Highlight = ({ kickstarter, backedKickstarter, handleIsPayment, isLoading 
     return kickstarter?.totalContribution?.div(kickstarter.projectGoals).times(100).toNumber()
   }, [kickstarter])
 
-  const currentPageLink = encodeURIComponent(`${window.location.href}?kickstarter=${kickstarter?.id}`)
+  const currentPageLink = window.location.href
 
   const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
 
@@ -522,6 +523,7 @@ const Donators = ({ kickstarterContributors }: DonatorsProps) => {
 
 function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }: KickstarterDetailsProps) {
   const { account } = useWeb3React()
+  const history = useHistory()
   const kickstarter = useKickstarterById(kickstarterId)
   const kickstarterContributors = useKickstarterContributors(kickstarterId)
   const backedKickstarter = useBackedKickstarterById(`${kickstarterId.toString()}-${account?.toString()}`)
@@ -581,6 +583,24 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
         createdAt: format(new Date(data.createdAt || 0), 'yyyy-MM-dd HH:mm:ss'),
       }))
 
+  useEffect(() => {
+    if (kickstarter.isFetched && !kickstarter.data) {
+      handleKickstarterId("")
+    }
+  }, [kickstarter, handleKickstarterId])
+
+  useEffect(() => {
+    if (kickstarter.data) {
+      history.replace({
+        search: `?kickstarter=${kickstarter.data.id}`
+      })
+    }
+    return () => {
+      history.replace({
+        search: ""
+      })
+    }
+  }, [history, kickstarter])
 
   if (isPayment && kickstarter.data) {
     return (

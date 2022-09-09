@@ -1,9 +1,12 @@
 import { Box, Flex, Heading, Input, Select, SortIcon } from '@koda-finance/summitswap-uikit'
-import { useKickstarterByEndTimeBetween, useKickstarterFactoryById, useKickstarters } from 'api/useKickstarterApi'
+import { useKickstarterByEndTimeBetween, useKickstarterFactoryById, useKickstarters, useKickstartersByApprovalStatuses } from 'api/useKickstarterApi'
 import { KICKSTARTER_FACTORY_ADDRESS, PER_PAGE } from 'constants/kickstarter'
 import { add, getUnixTime } from 'date-fns'
-import React, { useMemo, useState } from 'react'
-import { OrderDirection, OrderKickstarterBy } from 'types/kickstarter'
+import useDebounce from 'hooks/useDebounce'
+import useParsedQueryString from 'hooks/useParsedQueryString'
+import React, { useEffect, useMemo, useState } from 'react'
+import { KickstarterApprovalStatusId, OrderDirection, OrderKickstarterBy } from 'types/kickstarter'
+import { isAddress } from 'utils'
 import KickstarterDetails from '../KickstarterDetails'
 import ProjectCards from '../shared/ProjectCards'
 import EmptyKickstarterSection from './EmptyKickstarterSection'
@@ -28,8 +31,11 @@ function BrowseProject() {
   const [searchKickstarter, setSearchKickstarter] = useState<string>('')
   const [showKickstarterId, setShowKickstarterId] = useState<string>()
 
-  const kickstarters = useKickstarters(currentPage, PER_PAGE, OrderKickstarterBy.TITLE, sortBy, searchKickstarter)
-  const almostEndedKickstarters = useKickstarterByEndTimeBetween(currentTimestamp, nextWeekTimestamp)
+  const debouncedSearchTerm = useDebounce(searchKickstarter, 600);
+
+  const parsedQs = useParsedQueryString()
+  const kickstarters = useKickstartersByApprovalStatuses([KickstarterApprovalStatusId.APPROVED], currentPage, PER_PAGE, OrderKickstarterBy.TITLE, sortBy, debouncedSearchTerm)
+  const almostEndedKickstarters = useKickstarterByEndTimeBetween([KickstarterApprovalStatusId.APPROVED], currentTimestamp, nextWeekTimestamp)
   const kickstarterFactory = useKickstarterFactoryById(KICKSTARTER_FACTORY_ADDRESS)
 
   const maxPage = useMemo(() => {
@@ -38,6 +44,11 @@ function BrowseProject() {
     const totalItems = kickstarterFactory?.data?.totalKickstarter?.toNumber() || 1
     return Math.ceil(totalItems / PER_PAGE)
   }, [kickstarterFactory?.data, searchKickstarter])
+
+  useEffect(() => {
+    if (!parsedQs.kickstarter || !isAddress(parsedQs.kickstarter.toString())) return
+    setShowKickstarterId(parsedQs.kickstarter.toString())
+  }, [parsedQs])
 
   if (showKickstarterId) {
     return (

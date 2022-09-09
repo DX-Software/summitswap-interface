@@ -110,8 +110,8 @@ export const KICKSTARTERS = gql`
 `
 
 export const KICKSTARTERS_BY_APPROVAL_STATUSES = gql`
-  query kickstarters($approvalStatuses: [String!], $first: Int!, $skip: Int!) {
-    kickstarters(first: $first, skip: $skip, where: { approvalStatus_in: $approvalStatuses }) {
+  query kickstarters($approvalStatuses: [String!], $first: Int!, $skip: Int!, $orderBy: Bytes!, $orderDirection: Bytes!) {
+    kickstarters(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection, where: { approvalStatus_in: $approvalStatuses }) {
       id
       paymentToken
       tokenSymbol
@@ -140,8 +140,8 @@ export const KICKSTARTERS_BY_APPROVAL_STATUSES = gql`
 `
 
 export const KICKSTARTERS_SEARCH = gql`
-  query kickstarters($text: Bytes!, $first: Int!, $skip: Int!, $orderBy: Bytes!, $orderDirection: Bytes!) {
-    kickstarterSearch(text: $text, first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection) {
+  query kickstarters($text: Bytes!, $first: Int!, $skip: Int!, $orderBy: Bytes!, $orderDirection: Bytes!, $approvalStatuses: [String!]) {
+    kickstarterSearch(text: $text, first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection, where: { approvalStatuses_in: $approvalStatuses }) {
       id
       paymentToken
       tokenSymbol
@@ -167,11 +167,11 @@ export const KICKSTARTERS_SEARCH = gql`
 `
 
 export const KICKSTARTERS_BY_END_TIME_BETWEEN = gql`
-  query kickstarters($first: Int!, $skip: Int!, $startTimestamp: BigInt!, $endTimestamp: BigInt!) {
+  query kickstarters($first: Int!, $skip: Int!, $startTimestamp: BigInt!, $endTimestamp: BigInt!, $approvalStatuses: [String!]) {
     kickstarters(
       first: $first
       skip: $skip
-      where: { endTimestamp_gte: $startTimestamp, endTimestamp_lte: $endTimestamp }
+      where: { endTimestamp_gte: $startTimestamp, endTimestamp_lte: $endTimestamp, approvalStatuses_in: $approvalStatuses }
     ) {
       id
       paymentToken
