@@ -1,6 +1,7 @@
-import { useKickstartersByApprovalStatuses } from 'api/useKickstarterApi'
+import { useKickstarterFactoryById, useKickstartersByApprovalStatuses } from 'api/useKickstarterApi'
 import BigNumber from 'bignumber.js'
-import React, { useState } from 'react'
+import { KICKSTARTER_FACTORY_ADDRESS, PER_PAGE } from 'constants/kickstarter'
+import React, { useMemo, useState } from 'react'
 import { Kickstarter, KickstarterApprovalStatusId, OrderDirection, OrderKickstarterBy } from 'types/kickstarter'
 import KickstarterTable from '../shared/KickstarterTable'
 import ProjectDetails from './KickstarterDetails'
@@ -14,7 +15,12 @@ function WaitingForApproval({ handleShowKickstarter }: Props) {
   const [sortDirection, setSortDirection] = useState(OrderDirection.ASC)
   const [page, setPage] = useState(1)
 
-  const maxPage = 10
+  const kickstarterFactory = useKickstarterFactoryById(KICKSTARTER_FACTORY_ADDRESS)
+
+  const maxPage = useMemo(() => {
+    const totalItems = kickstarterFactory.data?.totalWaitingForApprovalKickstarter?.toNumber() || 1;
+    return Math.ceil(totalItems / PER_PAGE)
+  }, [kickstarterFactory.data])
 
   const kickstarters = useKickstartersByApprovalStatuses([KickstarterApprovalStatusId.WAITING_FOR_APPROVAL], page)
 

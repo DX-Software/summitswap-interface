@@ -77,6 +77,7 @@ const DataRowLoading = () => {
           <Skeleton height={24} />
         </ResponsiveGrid>
       ))}
+      <br />
     </>
   )
 }
@@ -191,8 +192,8 @@ function KickstarterTable({
           </React.Fragment>
         )
       })}
-      {kickstarters.data && kickstarters.data.length === 0 && (
-        <Text textAlign="center">No Data Found</Text>
+      {!kickstarters.isFetching && kickstarters.data && kickstarters.data.length === 0 && (
+        <Text textAlign="center" marginBottom="16px">No Data Found</Text>
       )}
       {maxPage > 1 && (
         <PageButtons>
