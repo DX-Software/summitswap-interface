@@ -112,7 +112,7 @@ export const getKickstarterApprovalStatusLabel = (approvalStatus?: KickstarterAp
   return ""
 }
 
-export const getKickstarterContactMethodById = (id: string) => {
+export const getKickstarterContactMethodById = (id?: string) => {
   if (ContactMethod.EMAIL.toString() === id) return ContactMethod.EMAIL
   if (ContactMethod.TELEGRAM.toString() === id) return ContactMethod.TELEGRAM
   if (ContactMethod.DISCORD.toString() === id) return ContactMethod.DISCORD

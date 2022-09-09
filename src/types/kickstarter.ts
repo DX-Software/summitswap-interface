@@ -103,3 +103,10 @@ export type KickstarterContribution = {
   amount?: BigNumber
   createdAt?: BigNumber
 }
+
+export type KickstarterContact = {
+  _id: string
+  kickstarterAddress?: string
+  contactMethod?: string
+  contactValue?: string
+}

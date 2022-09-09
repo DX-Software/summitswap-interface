@@ -1,7 +1,7 @@
 import { ArrowBackIcon, Breadcrumbs, Button, CheckmarkIcon, EditIcon, Flex, Heading, Input, Radio, Select, Skeleton, Text, TextArea, useModal } from "@koda-finance/summitswap-uikit"
 import { Grid } from "@mui/material"
 import { useWeb3React } from "@web3-react/core"
-import { useKickstarterById, useKickstarterContactMethodUpdate } from "api/useKickstarterApi"
+import { useKickstarterById, useKickstarterContactMethod, useKickstarterContactMethodUpdate } from "api/useKickstarterApi"
 import { UploadImageResult, useUploadImageApi } from "api/useUploadImageApi"
 import { getTokenImageBySymbol } from "connectors"
 import { NULL_ADDRESS } from "constants/index"
@@ -39,6 +39,7 @@ type EditButtonsProps = {
 }
 
 type SectionProps = {
+  formik?: FormikProps<Project>
   kickstarter?: Kickstarter
   isLoading?: boolean
 }
@@ -140,7 +141,7 @@ const EditButtons = ({ formik, isEdit, handleIsEdit, isDisabled }: EditButtonsPr
   )
 }
 
-const ProjectDetails = ({ kickstarter, isLoading }: SectionProps) => {
+const ProjectDetails = ({ formik, kickstarter, isLoading }: SectionProps) => {
   return (
     <>
       <Heading size='lg' marginBottom="16px" color="sidebarActiveColor">Project Details</Heading>
@@ -314,7 +315,7 @@ const EditProjectDetails = ({ formik, kickstarter }: EditSectionProps) => {
   )
 }
 
-const FundAndRewardsSystem = ({ kickstarter, isLoading }: SectionProps) => {
+const FundAndRewardsSystem = ({ formik, kickstarter, isLoading }: SectionProps) => {
   return (
     <>
       <Heading size='lg' marginBottom="16px" color="sidebarActiveColor">Fund & Reward System</Heading>
@@ -349,13 +350,15 @@ const FundAndRewardsSystem = ({ kickstarter, isLoading }: SectionProps) => {
         <Grid item xs={12} sm={6}>
           <TextInfo
             title="Contact Method"
-            description="Telegram"
+            description={formik?.values.contactMethod}
+            isLoading={isLoading}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextInfo
             title="Telegram ID"
-            description="summitswap"
+            description={formik?.values.contactMethodValue}
+            isLoading={isLoading}
           />
         </Grid>
       </Grid>
@@ -439,7 +442,7 @@ const EditFundAndRewardsSystem = ({ formik, kickstarter }: EditSectionProps) => 
   )
 }
 
-const Withdrawal = ({ kickstarter, isLoading }: SectionProps) => {
+const Withdrawal = ({ formik, kickstarter, isLoading }: SectionProps) => {
   let withdrawalFeeMethod = "Not Defined"
   let fee = "0"
   if (kickstarter && !!kickstarter.fixFeeAmount?.toNumber()) {
@@ -570,6 +573,7 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
   const kickstarterContract = useKickstarterContract(kickstarterId)
   const tokenContract = useTokenContract(kickstarter.data?.paymentToken)
   const uploadImageApi = useUploadImageApi()
+  const kickstarterContactMethod = useKickstarterContactMethod(kickstarterId)
   const kickstarterContactMethodUpdate = useKickstarterContactMethodUpdate()
 
   const formik: FormikProps<Project> = useFormik<Project>({
@@ -588,7 +592,8 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
       rewardDistributionTimestamp: format(fromUnixTime(kickstarter.data?.rewardDistributionTimestamp?.toNumber() || 0), 'yyyy-MM-dd\'T\'HH:mm'),
       withdrawalFeeMethod: kickstarter.data?.fixFeeAmount?.toNumber() ? WithdrawalFeeMethod.FIXED_AMOUNT : WithdrawalFeeMethod.PERCENTAGE,
       withdrawalFeeAmount: kickstarter.data?.fixFeeAmount?.toNumber() ? kickstarter.data?.fixFeeAmount?.toString() : (kickstarter.data?.percentageFeeAmount?.times(100).div(10000).toString() || ""),
-      contactMethod: ContactMethod.DISCORD
+      contactMethod: getKickstarterContactMethodById(kickstarterContactMethod.data?.contactMethod),
+      contactMethodValue: kickstarterContactMethod.data?.contactValue
     },
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       if (!kickstarterContract || (kickstarter.data?.paymentToken !== NULL_ADDRESS && !tokenContract)) return
@@ -698,8 +703,9 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
           <EditFundAndRewardsSystem formik={formik} />
         ) : (
           <FundAndRewardsSystem
+            formik={formik}
             kickstarter={kickstarter.data}
-            isLoading={kickstarter.isFetching}
+            isLoading={kickstarter.isFetching || kickstarterContactMethod.isFetching}
           />
         )}
         <Divider />

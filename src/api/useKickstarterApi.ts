@@ -1,6 +1,6 @@
 import { PER_PAGE } from 'constants/kickstarter'
 import { useMutation, useQuery } from 'react-query'
-import { BackedKickstarter, Kickstarter, OrderDirection, OrderKickstarterBy } from 'types/kickstarter'
+import { BackedKickstarter, Kickstarter, KickstarterContact, OrderDirection, OrderKickstarterBy } from 'types/kickstarter'
 import { kickstarterClient } from 'utils/graphql'
 import {
   convertToBackedKickstarter,
@@ -166,7 +166,7 @@ const contactUrl = 'kickstarter/contact'
 export function useKickstarterContactMethod(kickstarterAddress: string) {
   return useQuery('kickstarterContact', async () => {
     const res = await httpClient.get(`${contactUrl}/${kickstarterAddress}`)
-    return res
+    return res.data as KickstarterContact
   })
 }
 
