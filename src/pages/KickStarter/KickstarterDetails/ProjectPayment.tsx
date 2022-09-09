@@ -7,12 +7,14 @@ import {
   Button,
   Flex,
   Heading,
+  Input,
   Skeleton,
   Text,
   useModal,
   WalletIcon,
 } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
+import { useKickstarterContributorStore } from 'api/useKickstarterApi'
 import AccountIcon from 'components/AccountIcon'
 import TransactionConfirmationModal, { TransactionErrorContent } from 'components/TransactionConfirmationModal'
 import { getTokenImageBySymbol } from 'connectors'
@@ -131,13 +133,19 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
   const { account, accountBalance, onPresentConnectModal } = useKickstarterContext()
   const addTransaction = useTransactionAdder()
   const kickstarterContract = useKickstarterContract(kickstarter.id)
+  const kickstarterContributorStore = useKickstarterContributorStore()
 
+  const [email, setEmail] = useState('')
   const [backedAmount, setBackedAmount] = useState('')
   const [isOpen, setIsOpen] = useState(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
   const [hash, setHash] = useState<string | undefined>()
   const [pendingText, setPendingText] = useState<string>('')
   const [errorMessage, setErrorMessage] = useState<string | undefined>()
+
+  const handleEmailChanged = (e) => {
+    setEmail(e.target.value)
+  }
 
   const onDismiss = () => {
     setHash(undefined)
@@ -172,16 +180,24 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
         return
       }
       const transactionValue = parseUnits(backedAmount, 18).toString()
-      const receipt = await kickstarterContract.contribute({
+      const receipt = await kickstarterContract.contribute(transactionValue, {
         value: transactionValue,
       })
       transactionSubmitted(receipt, 'The contribution has been submitted successfully')
+      await kickstarterContributorStore.mutateAsync({
+        kickstarterAddress: kickstarter.id,
+        walletAddress: account,
+        currencyAddress: kickstarter.paymentToken || "",
+        currencySymbol: kickstarter.tokenSymbol || "",
+        email,
+        contributionAmount: backedAmount,
+      })
     } catch (err) {
       const callError = err as any
       const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message
       transactionFailed(callErrorMessage)
     }
-  }, [kickstarterContract, account, backedAmount, kickstarter, transactionSubmitted, transactionFailed])
+  }, [kickstarterContributorStore, kickstarterContract, account, backedAmount, kickstarter, transactionSubmitted, transactionFailed, email])
 
   const [showPayment] = useModal(
     <PaymentModal
@@ -266,6 +282,10 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
               tokenSymbol={kickstarter?.tokenSymbol}
               onChange={setBackedAmount}
             />
+            <br />
+            <Text fontSize="14px">Enter E-mail Address</Text>
+            <Input placeholder="e.g. summitswap@domain.com" value={email} onChange={handleEmailChanged} />
+            <Text fontSize="12px" color="textSubtle">We will keep you updated for this project by e-mail</Text>
             {!account && (
               <Button
                 variant="tertiary"
@@ -282,7 +302,7 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
                 endIcon={<ArrowForwardIcon color="text" />}
                 style={{ fontFamily: 'Poppins', marginTop: '32px' }}
                 onClick={showPayment}
-                disabled={!Number(backedAmount) || !isGreaterThanMinContribution}
+                disabled={!Number(backedAmount) || !isGreaterThanMinContribution || !email.trim()}
               >
                 Proceed
               </Button>
@@ -314,6 +334,8 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
       </DesktopPaymentWrapper>
       {isMobilePaymentPage && (
         <MobilePayment
+          email={email}
+          handleEmailChanged={handleEmailChanged}
           showPayment={showPayment}
           totalPayment={backedAmount}
           handleBackedAmountChanged={setBackedAmount}

@@ -162,6 +162,7 @@ export function useBackedKickstartersByKickstarterAddress(kickstarterAddress: st
 
 // API BACKEND
 const contactUrl = 'kickstarter/contact'
+const contributorUrl = 'kickstarter/contributor'
 
 export function useKickstarterContactMethod(kickstarterAddress: string) {
   return useQuery('kickstarterContact', async () => {
@@ -198,6 +199,35 @@ export function useKickstarterContactMethodUpdate() {
       contactValue: string
     }) => {
       return httpClient.post(`${contactUrl}/${kickstarterAddress}`, { contactMethod, contactValue })
+    }
+  )
+}
+
+export function useKickstarterContributorStore() {
+  return useMutation(
+    ({
+      kickstarterAddress,
+      walletAddress,
+      currencyAddress,
+      currencySymbol,
+      email,
+      contributionAmount,
+    }: {
+      kickstarterAddress: string
+      walletAddress: string
+      currencyAddress: string
+      currencySymbol: string
+      email: string
+      contributionAmount: string
+    }) => {
+      return httpClient.post(contributorUrl, {
+        kickstarterAddress,
+        walletAddress,
+        currencyAddress,
+        currencySymbol,
+        email,
+        contributionAmount,
+      })
     }
   )
 }

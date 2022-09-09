@@ -4,6 +4,7 @@ import {
   Button,
   Flex,
   Heading,
+  Input,
   Skeleton,
   Text,
   WalletIcon,
@@ -20,6 +21,8 @@ import { ImgCurrency } from '../shared'
 import FundingInput from '../shared/FundingInput'
 
 type Props = {
+  email: string,
+  handleEmailChanged: (e) => void
   showPayment: () => void
   totalPayment: string
   kickstarter: Kickstarter
@@ -74,7 +77,7 @@ const OnlineDot = styled(Box)<{ isOnline: boolean }>`
   background-color: ${({ isOnline, theme }) => (isOnline ? theme.colors.linkColor : theme.colors.textDisabled)};
 `
 
-function MobilePayment({ showPayment, totalPayment, kickstarter, handleBackedAmountChanged }: Props) {
+function MobilePayment({ email, handleEmailChanged, showPayment, totalPayment, kickstarter, handleBackedAmountChanged }: Props) {
   const { account, accountBalance, onPresentConnectModal } = useKickstarterContext()
 
   const minContributionInEth = parseUnits(kickstarter.minContribution?.toString() || '0', 18)
@@ -138,6 +141,9 @@ function MobilePayment({ showPayment, totalPayment, kickstarter, handleBackedAmo
           </Flex>
         )}
       </ConnectionWrapper>
+      <Text fontSize="14px">Enter E-mail Address</Text>
+      <Input placeholder="e.g. summitswap@domain.com" value={email} onChange={handleEmailChanged} />
+      <Text fontSize="12px" color="textSubtle">We will keep you updated for this project by e-mail</Text>
       {!account && (
         <Button
           variant="tertiary"
