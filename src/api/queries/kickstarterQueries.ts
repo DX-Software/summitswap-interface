@@ -4,6 +4,9 @@ export const KICKSTARTER_FACTORY_BY_ID = gql`
   query kickstarterFactory($address: Bytes!) {
     summitKickstarterFactory(id: $address) {
       id
+      totalWaitingForApprovalKickstarter
+      totalApprovedKickstarter
+      totalRejectedKickstarter
       totalKickstarter
       totalBackedKickstarter
       totalContribution

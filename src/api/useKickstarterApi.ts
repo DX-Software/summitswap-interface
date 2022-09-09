@@ -27,7 +27,7 @@ import {
 export function useKickstarterFactoryById(kickstarterFactoryId: string) {
   return useQuery(['useKickstarterFactoryById', kickstarterFactoryId], async () => {
     const data = await kickstarterClient.request(KICKSTARTER_FACTORY_BY_ID, {
-      address: kickstarterFactoryId,
+      address: kickstarterFactoryId.toLowerCase(),
     })
     const kickstarter = convertToKickstarterFactory(data.summitKickstarterFactory)
     return kickstarter

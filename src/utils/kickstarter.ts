@@ -11,6 +11,9 @@ export function convertToKickstarterFactory(data?: { [key: string]: any } | null
     totalKickstarter: data.totalKickstarter ? new BigNumber(data.totalKickstarter) : undefined,
     totalBackedKickstarter: data.totalBackedKickstarter ? new BigNumber(data.totalBackedKickstarter) : undefined,
     totalContribution: data.totalContribution ? new BigNumber(data.totalContribution) : undefined,
+    totalWaitingForApprovalKickstarter: data.totalWaitingForApprovalKickstarter ?  new BigNumber(data.totalWaitingForApprovalKickstarter) : undefined,
+    totalApprovedKickstarter: data.totalApprovedKickstarter ?  new BigNumber(data.totalApprovedKickstarter) : undefined,
+    totalRejectedKickstarter: data.totalRejectedKickstarter ?  new BigNumber(data.totalRejectedKickstarter) : undefined,
   }
 }
 

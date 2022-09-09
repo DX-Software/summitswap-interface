@@ -52,6 +52,9 @@ export type KickstarterFactory = {
   totalKickstarter?: BigNumber
   totalBackedKickstarter?: BigNumber
   totalContribution?: BigNumber
+  totalWaitingForApprovalKickstarter?: BigNumber
+  totalApprovedKickstarter?: BigNumber
+  totalRejectedKickstarter?: BigNumber
 }
 
 export type Kickstarter = {
