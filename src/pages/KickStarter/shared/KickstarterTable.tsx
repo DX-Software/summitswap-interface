@@ -32,14 +32,14 @@ const ResponsiveGrid = styled.div`
   grid-template-columns: 2fr repeat(5, 1fr);
 
   @media screen and (max-width: 900px) {
-    grid-template-columns: 20px 2fr repeat(3, 1fr);
+    grid-template-columns: 2fr repeat(4, 1fr);
     & :nth-child(4) {
       display: none;
     }
   }
 
   @media screen and (max-width: 800px) {
-    grid-template-columns: 20px 2fr repeat(2, 1fr);
+    grid-template-columns: 2fr repeat(3, 1fr);
     & :nth-child(6) {
       display: none;
     }
@@ -47,7 +47,7 @@ const ResponsiveGrid = styled.div`
 
   @media screen and (max-width: 670px) {
     grid-template-columns: 1fr 1fr;
-    > *:first-child {
+    > *:nth-child(2) {
       display: none;
     }
     > *:nth-child(3) {
