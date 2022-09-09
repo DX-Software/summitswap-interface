@@ -110,3 +110,14 @@ export type KickstarterContact = {
   contactMethod?: string
   contactValue?: string
 }
+
+export type KickstarterContributor = {
+  _id: string
+  kickstarterAddress?: string
+  walletAddress?: string
+  currencyAddress?: string
+  currencySymbol?: string
+  email?: string
+  contributionAmount?: string
+  createdAt?: string
+}

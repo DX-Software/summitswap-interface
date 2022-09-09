@@ -15,8 +15,8 @@ import { Grid } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import {
   useBackedKickstarterById,
-  useBackedKickstartersByKickstarterAddress,
-  useKickstarterById
+  useKickstarterById,
+  useKickstarterContributors
 } from 'api/useKickstarterApi'
 import Tooltip from 'components/Tooltip'
 import { getTokenImageBySymbol } from 'connectors'
@@ -25,7 +25,7 @@ import ImgCornerIllustration from 'img/corner-illustration.svg'
 import React, { useMemo, useState } from 'react'
 import { CSVLink } from 'react-csv'
 import styled from 'styled-components'
-import { BackedKickstarter, Kickstarter, KickstarterProgressStatus } from 'types/kickstarter'
+import { BackedKickstarter, Kickstarter, KickstarterContributor, KickstarterProgressStatus } from 'types/kickstarter'
 import copyText from 'utils/copyText'
 import { getKickstarterStatus, getKickstarterStatusLabel } from 'utils/kickstarter'
 import { Divider, ImgCurrency } from '../shared'
@@ -74,11 +74,11 @@ type RewardsProps = {
 }
 
 type DonatorsProps = {
-  backedKickstarters: BackedKickstarter[]
+  kickstarterContributors: KickstarterContributor[]
 }
 
 type DonatorCardProps = {
-  backedKickstarter: BackedKickstarter
+  kickstarterContributor: KickstarterContributor
   isFirstItem: boolean
   isLastItem: boolean
 }
@@ -474,7 +474,7 @@ const Rewards = ({ kickstarter, backedKickstarter, isLoading }: RewardsProps) =>
   )
 }
 
-const DonatorCard = ({ isFirstItem, isLastItem, backedKickstarter }: DonatorCardProps) => {
+const DonatorCard = ({ isFirstItem, isLastItem, kickstarterContributor }: DonatorCardProps) => {
   return (
     <DonatorWrapper
       justifyContent="space-between"
@@ -485,35 +485,35 @@ const DonatorCard = ({ isFirstItem, isLastItem, backedKickstarter }: DonatorCard
     >
       <Flex flexDirection="column">
         <Text fontSize="14px" color="textSubtle">
-          {backedKickstarter.contributor?.id}
+          {kickstarterContributor.walletAddress}
         </Text>
       </Flex>
       <Flex alignItems="center" style={{ columnGap: '8px' }}>
-        <ImgCurrency image={getTokenImageBySymbol(backedKickstarter.kickstarter?.tokenSymbol)} />
+        <ImgCurrency image={getTokenImageBySymbol(kickstarterContributor.currencySymbol)} />
         <Text fontSize="24px" fontWeight="bold">
-          {backedKickstarter.amount?.toString()}
+          {kickstarterContributor.contributionAmount}
         </Text>
       </Flex>
     </DonatorWrapper>
   )
 }
 
-const Donators = ({ backedKickstarters }: DonatorsProps) => {
+const Donators = ({ kickstarterContributors }: DonatorsProps) => {
   return (
     <>
-      {!backedKickstarters ||
-        (backedKickstarters.length === 0 && (
+      {!kickstarterContributors ||
+        (kickstarterContributors.length === 0 && (
           <Text color="textDisabled" marginTop="16px">
             There are no backer for this project. Share your project to everyone now.
           </Text>
         ))}
-      {backedKickstarters &&
-        backedKickstarters.map((contributor, index) => (
+      {kickstarterContributors &&
+        kickstarterContributors.map((contributor, index) => (
           <DonatorCard
-            key={contributor.id}
-            backedKickstarter={contributor}
+            key={contributor._id}
+            kickstarterContributor={contributor}
             isFirstItem={index === 0}
-            isLastItem={index === backedKickstarters.length - 1}
+            isLastItem={index === kickstarterContributors.length - 1}
           />
         ))}
     </>
@@ -523,8 +523,8 @@ const Donators = ({ backedKickstarters }: DonatorsProps) => {
 function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }: KickstarterDetailsProps) {
   const { account } = useWeb3React()
   const kickstarter = useKickstarterById(kickstarterId)
+  const kickstarterContributors = useKickstarterContributors(kickstarterId)
   const backedKickstarter = useBackedKickstarterById(`${kickstarterId.toString()}-${account?.toString()}`)
-  const backedKickstarters = useBackedKickstartersByKickstarterAddress(kickstarterId, 1, 1000)
 
   const [isPayment, setIsPayment] = useState(false)
   const [activeTabIndex, setActiveTabIndex] = useState(0)
@@ -562,18 +562,25 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
   const csvHeaders = [
     { label: 'Number', key: 'number' },
     { label: 'Wallet', key: 'wallet' },
-    { label: 'Currency', key: 'currency' },
-    { label: 'Amount', key: 'amount' },
+    { label: 'Email', key: 'email' },
+    { label: 'Currency Address', key: 'currencyAddress' },
+    { label: 'Currency Symbol', key: 'currencySymbol' },
+    { label: 'Amount', key: 'contributionAmount' },
+    { label: 'Created At', key: 'createdAt' },
   ]
 
-  const csvData = !backedKickstarters.data
+  const csvData = !kickstarterContributors.data
     ? []
-    : backedKickstarters.data.map((data, index) => ({
+    : kickstarterContributors.data.map((data, index) => ({
         number: index + 1,
-        wallet: data.contributor?.id,
-        currency: 'BNB',
-        amount: data.amount?.toString(),
+        wallet: data.walletAddress,
+        email: data.email,
+        currencyAddress: data.currencyAddress,
+        currencySymbol: data.currencySymbol,
+        amount: data.contributionAmount,
+        createdAt: format(new Date(data.createdAt || 0), 'yyyy-MM-dd HH:mm:ss'),
       }))
+
 
   if (isPayment && kickstarter.data) {
     return (
@@ -623,7 +630,7 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
             isLoading={kickstarter.isFetching || backedKickstarter.isFetching}
           />
         )}
-        {selectedTab.code === TabCode.DONATORS && <Donators backedKickstarters={backedKickstarters.data || []} />}
+        {selectedTab.code === TabCode.DONATORS && <Donators kickstarterContributors={kickstarterContributors.data || []} />}
       </Flex>
 
       {account && kickstarter?.data && account.toLowerCase() === kickstarter.data.owner?.id && (
