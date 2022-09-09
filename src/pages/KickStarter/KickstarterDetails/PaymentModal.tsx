@@ -1,10 +1,14 @@
 import { Button, Flex, InjectedModalProps, Modal, Skeleton, Text, WalletIcon } from '@koda-finance/summitswap-uikit'
 import AccountIcon from 'components/AccountIcon'
 import { getTokenImageBySymbol } from 'connectors'
-import React, { useCallback } from 'react'
+import { BUSD, MAX_UINT256, NULL_ADDRESS } from 'constants/index'
+import { useTokenContract } from 'hooks/useContract'
+import { BigNumber } from 'ethers'
+import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Kickstarter } from 'types/kickstarter'
 import { shortenAddress } from 'utils'
+import { useWeb3React } from '@web3-react/core'
 import { ImgCurrency } from '../shared'
 
 interface PaymentModalProps extends InjectedModalProps {
@@ -58,10 +62,49 @@ function PaymentModal({
   onDismiss,
   handlePayment,
 }: PaymentModalProps) {
+  const { library } = useWeb3React()
+  const [isLoading, setIsLoading] = useState(true)
+  const [isApproved, setIsApproved] = useState(false)
+  // const tokenContract = useTokenContract(kickstarter.paymentToken)
+  const tokenContract = useTokenContract(BUSD.address)
   const pay = useCallback(() => {
     handlePayment()
     if (onDismiss) onDismiss()
   }, [handlePayment, onDismiss])
+
+  const approve = useCallback(async () => {
+    if (!tokenContract || !account || !library) {
+      return
+    }
+
+    const receipt = await tokenContract.approve(kickstarter.id, MAX_UINT256)
+
+    setIsLoading(true)
+    await library.waitForTransaction(receipt.hash)
+    setIsLoading(false)
+
+    setIsApproved(true)
+
+    approve()
+  }, [account, tokenContract, library, setIsLoading, kickstarter])
+
+  useEffect(() => {
+    async function handleIsApproved() {
+      let isApprovedTemp = false
+      if (!kickstarter.paymentToken || !tokenContract || !account) {
+        isApprovedTemp = false
+      } else if (BUSD.address === NULL_ADDRESS) {
+        isApprovedTemp = true
+      } else {
+        const userBalance = (await tokenContract.balanceOf(account)) as BigNumber
+        const userApprovedAlready = (await tokenContract.allowance(account, kickstarter.id)) as BigNumber
+        isApprovedTemp = userApprovedAlready.gte(userBalance)
+      }
+      setIsApproved(isApprovedTemp)
+      setIsLoading(false)
+    }
+    handleIsApproved()
+  }, [kickstarter, tokenContract, account])
 
   return (
     <Modal title="Payment Process" bodyPadding="0" onDismiss={onDismiss}>
@@ -97,7 +140,7 @@ function PaymentModal({
             </Flex>
           </>
         )}
-        <DescriptionWrapper marginBottom="24px">
+        <DescriptionWrapper>
           <Text fontWeight="bold" small>
             Total Payment
           </Text>
@@ -108,7 +151,13 @@ function PaymentModal({
             </Text>
           </Flex>
         </DescriptionWrapper>
-        <Button startIcon={<WalletIcon color="text" />} onClick={pay}>
+        {!isApproved && (
+          <Button onClick={approve} isLoading={isLoading} disabled={!account || !tokenContract || !library}>
+            Approve
+          </Button>
+        )}
+        <br />
+        <Button startIcon={<WalletIcon color="text" />} isLoading={isLoading} disabled={!isApproved} onClick={pay}>
           Pay Now
         </Button>
       </ContentWrapper>

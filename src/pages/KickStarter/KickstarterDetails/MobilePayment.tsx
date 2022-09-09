@@ -141,6 +141,7 @@ function MobilePayment({ email, handleEmailChanged, showPayment, totalPayment, k
           </Flex>
         )}
       </ConnectionWrapper>
+      <br />
       <Text fontSize="14px">Enter E-mail Address</Text>
       <Input placeholder="e.g. summitswap@domain.com" value={email} onChange={handleEmailChanged} />
       <Text fontSize="12px" color="textSubtle">We will keep you updated for this project by e-mail</Text>
@@ -160,7 +161,7 @@ function MobilePayment({ email, handleEmailChanged, showPayment, totalPayment, k
           endIcon={<ArrowForwardIcon color="text" />}
           style={{ fontFamily: 'Poppins', marginTop: '32px' }}
           onClick={showPayment}
-          disabled={!Number(totalPayment) || !isGreaterThanMinContribution}
+          disabled={!Number(totalPayment) || !isGreaterThanMinContribution || !email}
         >
           Continue
         </Button>

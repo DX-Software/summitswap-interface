@@ -18,6 +18,7 @@ import { useKickstarterContributorStore } from 'api/useKickstarterApi'
 import AccountIcon from 'components/AccountIcon'
 import TransactionConfirmationModal, { TransactionErrorContent } from 'components/TransactionConfirmationModal'
 import { getTokenImageBySymbol } from 'connectors'
+import { NULL_ADDRESS } from 'constants/index'
 import { format } from 'date-fns'
 import { parseUnits } from 'ethers/lib/utils'
 import { useKickstarterContract } from 'hooks/useContract'
@@ -181,7 +182,7 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
       }
       const transactionValue = parseUnits(backedAmount, 18).toString()
       const receipt = await kickstarterContract.contribute(transactionValue, {
-        value: transactionValue,
+        value: kickstarter.paymentToken === NULL_ADDRESS ?  transactionValue : 0,
       })
       transactionSubmitted(receipt, 'The contribution has been submitted successfully')
       await kickstarterContributorStore.mutateAsync({
@@ -212,6 +213,14 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
 
   const minContributionInEth = parseUnits(kickstarter.minContribution?.toString() || '0', 18)
   const isGreaterThanMinContribution = parseUnits(backedAmount || '0', 18).gte(minContributionInEth)
+
+  const handleBackedAmountChanged = useCallback(
+    (value: string) => {
+      if (value !== '' && value.match('^[0-9]{0,9}(\\.[0-9]{0,18})?$') == null) return
+      setBackedAmount(value)
+    },
+    []
+  )
 
   return (
     <Flex flexDirection="column">
@@ -280,7 +289,7 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
               label="Enter Backing Amount"
               value={backedAmount}
               tokenSymbol={kickstarter?.tokenSymbol}
-              onChange={setBackedAmount}
+              onChange={handleBackedAmountChanged}
             />
             <br />
             <Text fontSize="14px">Enter E-mail Address</Text>
@@ -338,7 +347,7 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
           handleEmailChanged={handleEmailChanged}
           showPayment={showPayment}
           totalPayment={backedAmount}
-          handleBackedAmountChanged={setBackedAmount}
+          handleBackedAmountChanged={handleBackedAmountChanged}
           kickstarter={kickstarter}
         />
       )}
