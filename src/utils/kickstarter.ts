@@ -120,12 +120,12 @@ export const getKickstarterContactMethodById = (id: string) => {
 }
 
 export const getSymbolByAddress = (address: string) => {
-  switch (address) {
+  switch (address.toLowerCase()) {
     case NULL_ADDRESS:
       return "BNB"
-    case USDT.address:
+    case USDT.address.toLowerCase():
       return USDT.symbol
-    case BUSD.address:
+    case BUSD.address.toLowerCase():
       return BUSD.symbol
     default:
       return ''
