@@ -51,7 +51,6 @@ export type KickstarterFactory = {
   id: string
   totalKickstarter?: BigNumber
   totalBackedKickstarter?: BigNumber
-  totalProjectGoals?: BigNumber
   totalContribution?: BigNumber
 }
 
@@ -91,7 +90,6 @@ export type KickstarterAccount = {
   id: string
   totalKickstarter?: BigNumber
   totalBackedKickstarter?: BigNumber
-  totalProjectGoals?: BigNumber
   totalContribution?: BigNumber
 }
 

@@ -10,7 +10,6 @@ export function convertToKickstarterFactory(data?: { [key: string]: any } | null
     id: data.id || "",
     totalKickstarter: data.totalKickstarter ? new BigNumber(data.totalKickstarter) : undefined,
     totalBackedKickstarter: data.totalBackedKickstarter ? new BigNumber(data.totalBackedKickstarter) : undefined,
-    totalProjectGoals: data.totalProjectGoals ? new BigNumber(data.totalProjectGoals) : undefined,
     totalContribution: data.totalContribution ? new BigNumber(data.totalContribution) : undefined,
   }
 }
@@ -59,7 +58,6 @@ export function convertToKickstarterAccount(data?: { [key: string]: any } | null
     id: data.id || "",
     totalKickstarter: data.totalKickstarter ? new BigNumber(data.totalKickstarter) : undefined,
     totalBackedKickstarter: data.totalBackedKickstarter ? new BigNumber(data.totalBackedKickstarter) : undefined,
-    totalProjectGoals: data.totalProjectGoals ? new BigNumber(data.totalProjectGoals) : undefined,
     totalContribution: data.totalContribution ? new BigNumber(data.totalContribution) : undefined,
   }
 }

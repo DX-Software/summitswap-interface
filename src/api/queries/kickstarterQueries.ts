@@ -6,7 +6,6 @@ export const KICKSTARTER_FACTORY_BY_ID = gql`
       id
       totalKickstarter
       totalBackedKickstarter
-      totalProjectGoals
       totalContribution
     }
   }
@@ -48,7 +47,6 @@ export const KICKSTARTER_ACCOUNT_BY_ID = gql`
       id
       totalKickstarter
       totalBackedKickstarter
-      totalProjectGoals
       totalContribution
     }
   }
