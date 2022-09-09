@@ -180,7 +180,7 @@ function CreationStep03({ setCurrentCreationStep, formik }: Props) {
           <Button variant="secondary" onClick={() => setCurrentCreationStep(1)}>
             Re-edit Project
           </Button>
-          <Button variant="primary" onClick={formik.submitForm}>
+          <Button variant="primary" onClick={formik.submitForm} isLoading={formik.isSubmitting}>
             Create New Project
           </Button>
         </ButtonWrapper>

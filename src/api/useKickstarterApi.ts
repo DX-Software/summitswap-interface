@@ -1,5 +1,5 @@
 import { PER_PAGE } from 'constants/kickstarter'
-import { useQuery } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import { BackedKickstarter, Kickstarter, OrderDirection, OrderKickstarterBy } from 'types/kickstarter'
 import { kickstarterClient } from 'utils/graphql'
 import {
@@ -8,6 +8,7 @@ import {
   convertToKickstarterAccount,
   convertToKickstarterFactory,
 } from 'utils/kickstarter'
+import httpClient from './http'
 import {
   BACKED_KICKSTARTERS_BY_CONTRIBUTOR_ID,
   BACKED_KICKSTARTERS_BY_KICKSTARTER_ADDRESS,
@@ -22,6 +23,7 @@ import {
   KICKSTARTER_FACTORY_BY_ID,
 } from './queries/kickstarterQueries'
 
+// GRAPHQL
 export function useKickstarterFactoryById(kickstarterFactoryId: string) {
   return useQuery(['useKickstarterFactoryById', kickstarterFactoryId], async () => {
     const data = await kickstarterClient.request(KICKSTARTER_FACTORY_BY_ID, {
@@ -156,4 +158,30 @@ export function useBackedKickstartersByKickstarterAddress(kickstarterAddress: st
     )
     return backedKickstarters
   })
+}
+
+// API BACKEND
+const contactUrl = 'kickstarter/contact'
+
+export function useKickstarterContactMethod(kickstarterAddress: string) {
+  return useQuery('kickstarterContact', async () => {
+    const res = await httpClient.get(`${contactUrl}/${kickstarterAddress}`)
+    return res
+  })
+}
+
+export function useKickstarterContactMethodStore() {
+  return useMutation(
+    ({
+      kickstarterAddress,
+      contactMethod,
+      contactValue,
+    }: {
+      kickstarterAddress: string
+      contactMethod: string
+      contactValue: string
+    }) => {
+      return httpClient.post(contactUrl, { kickstarterAddress, contactMethod, contactValue })
+    }
+  )
 }
