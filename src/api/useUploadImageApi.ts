@@ -1,7 +1,7 @@
 import { useMutation } from 'react-query'
 import httpClient from './http'
 
-type UploadImageResult = {
+export type UploadImageResult = {
   fileName: string
   rootCid: string
   url: string
