@@ -1,7 +1,7 @@
 import { ArrowBackIcon, Breadcrumbs, Button, CheckmarkIcon, EditIcon, Flex, Heading, Input, Radio, Select, Skeleton, Text, TextArea, useModal } from "@koda-finance/summitswap-uikit"
 import { Grid } from "@mui/material"
 import { useWeb3React } from "@web3-react/core"
-import { useKickstarterById } from "api/useKickstarterApi"
+import { useKickstarterById, useKickstarterContactMethodUpdate } from "api/useKickstarterApi"
 import { UploadImageResult, useUploadImageApi } from "api/useUploadImageApi"
 import { getTokenImageBySymbol } from "connectors"
 import { NULL_ADDRESS } from "constants/index"
@@ -570,6 +570,42 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
   const kickstarterContract = useKickstarterContract(kickstarterId)
   const tokenContract = useTokenContract(kickstarter.data?.paymentToken)
   const uploadImageApi = useUploadImageApi()
+  const kickstarterContactMethodUpdate = useKickstarterContactMethodUpdate()
+
+  const formik: FormikProps<Project> = useFormik<Project>({
+    enableReinitialize: true,
+    initialValues: {
+      title: kickstarter.data?.title || "",
+      creator: kickstarter.data?.creator || "",
+      image: undefined,
+      imageUrl: kickstarter.data?.imageUrl,
+      projectDescription: kickstarter.data?.projectDescription || "",
+      rewardDescription: kickstarter.data?.rewardDescription || "",
+      paymentToken: kickstarter.data?.paymentToken || "",
+      projectGoals: kickstarter.data?.projectGoals?.toString() || "",
+      minContribution: kickstarter.data?.minContribution?.toString() || "",
+      endTimestamp: format(fromUnixTime(kickstarter.data?.endTimestamp?.toNumber() || 0), 'yyyy-MM-dd\'T\'HH:mm'),
+      rewardDistributionTimestamp: format(fromUnixTime(kickstarter.data?.rewardDistributionTimestamp?.toNumber() || 0), 'yyyy-MM-dd\'T\'HH:mm'),
+      withdrawalFeeMethod: kickstarter.data?.fixFeeAmount?.toNumber() ? WithdrawalFeeMethod.FIXED_AMOUNT : WithdrawalFeeMethod.PERCENTAGE,
+      withdrawalFeeAmount: kickstarter.data?.fixFeeAmount?.toNumber() ? kickstarter.data?.fixFeeAmount?.toString() : (kickstarter.data?.percentageFeeAmount?.times(100).div(10000).toString() || ""),
+      contactMethod: ContactMethod.DISCORD
+    },
+    onSubmit: async (values, { setSubmitting, setErrors }) => {
+      if (!kickstarterContract || (kickstarter.data?.paymentToken !== NULL_ADDRESS && !tokenContract)) return
+      setSubmitting(true)
+      try {
+        if(!isEdit) {
+          await handleApproveProject()
+        } else {
+          await handleEditAndApproveProject()
+        }
+        handleKickstarterId("")
+      } catch (e: any) {
+        console.error("Failed to Approve Kickstarter", e.message)
+      }
+      setSubmitting(false)
+    },
+  })
 
   const getPercentageFeeAndFixFeeAmount = async () => {
     let percentageFeeAmount = "0"
@@ -614,7 +650,6 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
       endTimestamp: getUnixTime(new Date(formik.values.endTimestamp)),
     }
 
-    console.log("project", project)
     const withdrawalFee = await getPercentageFeeAndFixFeeAmount()
     const receipt = await kickstarterContract![
       "configProjectInfo((address,string,string,string,string,string,uint256,uint256,uint256,uint256,uint256),uint8,uint256,uint256)"
@@ -624,44 +659,13 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
       withdrawalFee.percentageFeeAmount,
       withdrawalFee.fixFeeAmount
     )
+    await kickstarterContactMethodUpdate.mutateAsync({
+      kickstarterAddress: kickstarterId,
+      contactMethod: `${formik.values.contactMethod}`,
+      contactValue: `${formik.values.contactMethodValue}`,
+    })
     await library.waitForTransaction(receipt.hash)
   }
-
-
-  const formik: FormikProps<Project> = useFormik<Project>({
-    enableReinitialize: true,
-    initialValues: {
-      title: kickstarter.data?.title || "",
-      creator: kickstarter.data?.creator || "",
-      image: undefined,
-      imageUrl: kickstarter.data?.imageUrl,
-      projectDescription: kickstarter.data?.projectDescription || "",
-      rewardDescription: kickstarter.data?.rewardDescription || "",
-      paymentToken: kickstarter.data?.paymentToken || "",
-      projectGoals: kickstarter.data?.projectGoals?.toString() || "",
-      minContribution: kickstarter.data?.minContribution?.toString() || "",
-      endTimestamp: format(fromUnixTime(kickstarter.data?.endTimestamp?.toNumber() || 0), 'yyyy-MM-dd\'T\'HH:mm'),
-      rewardDistributionTimestamp: format(fromUnixTime(kickstarter.data?.rewardDistributionTimestamp?.toNumber() || 0), 'yyyy-MM-dd\'T\'HH:mm'),
-      withdrawalFeeMethod: kickstarter.data?.fixFeeAmount?.toNumber() ? WithdrawalFeeMethod.FIXED_AMOUNT : WithdrawalFeeMethod.PERCENTAGE,
-      withdrawalFeeAmount: kickstarter.data?.fixFeeAmount?.toNumber() ? kickstarter.data?.fixFeeAmount?.toString() : (kickstarter.data?.percentageFeeAmount?.times(100).div(10000).toString() || ""),
-      contactMethod: ContactMethod.DISCORD
-    },
-    onSubmit: async (values, { setSubmitting, setErrors }) => {
-      if (!kickstarterContract || (kickstarter.data?.paymentToken !== NULL_ADDRESS && !tokenContract)) return
-      setSubmitting(true)
-      try {
-        if(!isEdit) {
-          await handleApproveProject()
-        } else {
-          await handleEditAndApproveProject()
-        }
-        handleKickstarterId("")
-      } catch (e: any) {
-        console.error("Failed to Approve Kickstarter", e.message)
-      }
-      setSubmitting(false)
-    },
-  })
 
   const [showPayment] = useModal(
     <RejectModal kickstarter={kickstarter.data} handleKickstarterId={handleKickstarterId} />

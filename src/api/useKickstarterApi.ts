@@ -185,3 +185,19 @@ export function useKickstarterContactMethodStore() {
     }
   )
 }
+
+export function useKickstarterContactMethodUpdate() {
+  return useMutation(
+    ({
+      kickstarterAddress,
+      contactMethod,
+      contactValue,
+    }: {
+      kickstarterAddress: string
+      contactMethod: string
+      contactValue: string
+    }) => {
+      return httpClient.post(`${contactUrl}/${kickstarterAddress}`, { contactMethod, contactValue })
+    }
+  )
+}
