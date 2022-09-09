@@ -50,7 +50,7 @@ function ChoosePaymentToken({ formik }: Props) {
             name={ProjectFormField.paymentToken}
             value={USDT.address}
             onChange={formik.handleChange}
-            checked={formik.values.paymentToken === USDT.address}
+            checked={formik.values.paymentToken.toLowerCase() === USDT.address.toLowerCase()}
             style={{ flexShrink: 0 }}
           />
           <label htmlFor={`${ProjectFormField.paymentToken}-${USDT.address}`}>
@@ -64,7 +64,7 @@ function ChoosePaymentToken({ formik }: Props) {
             name={ProjectFormField.paymentToken}
             value={BUSD.address}
             onChange={formik.handleChange}
-            checked={formik.values.paymentToken === BUSD.address}
+            checked={formik.values.paymentToken.toLowerCase() === BUSD.address.toLowerCase()}
             style={{ flexShrink: 0 }}
           />
           <label htmlFor={`${ProjectFormField.paymentToken}-${BUSD.address}`}>

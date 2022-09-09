@@ -107,7 +107,12 @@ function MobilePayment({ showPayment, totalPayment, kickstarter, handleBackedAmo
         You have to back with minimum amount of{' '}
         <b style={{ color: '#00D4A4' }}>{kickstarter.minContribution?.toString()} BNB</b> to participate in this project
       </Text>
-      <FundingInput label="Enter Backing Amount" value={totalPayment} onChange={handleBackedAmountChanged} />
+      <FundingInput
+        label="Enter Backing Amount"
+        tokenSymbol={kickstarter?.tokenSymbol}
+        value={totalPayment}
+        onChange={handleBackedAmountChanged}
+      />
       <br />
       <ConnectionWrapper>
         <Flex alignItems="center" style={{ columnGap: '8px' }}>

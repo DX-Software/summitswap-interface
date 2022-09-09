@@ -78,7 +78,7 @@ export default React.memo(FundingInput)
 
 FundingInput.defaultProps = {
   type: 'text',
-  tokenSymbol: 'bnb',
+  tokenSymbol: 'BNB',
   description: undefined,
   isFunding: true,
 }

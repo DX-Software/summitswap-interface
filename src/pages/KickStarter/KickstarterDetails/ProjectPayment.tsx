@@ -260,7 +260,12 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
               <b style={{ color: '#00D4A4' }}>{kickstarter.minContribution?.toString()} BNB</b> to participate in this
               project
             </Text>
-            <FundingInput label="Enter Backing Amount" value={backedAmount} onChange={setBackedAmount} />
+            <FundingInput
+              label="Enter Backing Amount"
+              value={backedAmount}
+              tokenSymbol={kickstarter?.tokenSymbol}
+              onChange={setBackedAmount}
+            />
             {!account && (
               <Button
                 variant="tertiary"
