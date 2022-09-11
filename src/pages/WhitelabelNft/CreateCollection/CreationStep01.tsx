@@ -1,8 +1,8 @@
-import { Box, darkColors, Flex, ImageAddIcon, Text } from '@koda-finance/summitswap-uikit'
+import { Box, darkColors, Flex } from '@koda-finance/summitswap-uikit'
 import { FormikProps, FormikValues } from 'formik'
 import React from 'react'
 import { HelperText, SubTitle } from '../shared/Text'
-import DragAndDrop from './DragAndDrop'
+import UploadImageInput from './UploadImageInput'
 
 type Props = {
   setCurrentCreationStep: React.Dispatch<React.SetStateAction<number>>
@@ -14,26 +14,13 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
     <>
       <SubTitle>Collection Details</SubTitle>
       <Flex style={{ marginBottom: 12 }}>
-        <DragAndDrop
-          name="images"
-          accept="image/*"
-          multiple
-          handleChange={() => null}
-          icon={<ImageAddIcon width={74} />}
-        >
+        <UploadImageInput name="asd" formik={formik}>
           Upload Your Thumbnail Image
-        </DragAndDrop>
+        </UploadImageInput>
         <Box marginRight={16} />
-        <DragAndDrop
-          name="spreadsheet"
-          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-          // handleChange={handleSpreadsheetOnChange}
-          handleChange={() => null}
-          color={darkColors.primaryDark}
-          icon={<ImageAddIcon width={74} color={darkColors.primaryDark} />}
-        >
+        <UploadImageInput name="asdd" color={darkColors.primaryDark} formik={formik}>
           Upload Your Conceal Image
-        </DragAndDrop>
+        </UploadImageInput>
       </Flex>
       <HelperText>NB : If you don&#39;t upload the images, we will set it as default image</HelperText>
     </>

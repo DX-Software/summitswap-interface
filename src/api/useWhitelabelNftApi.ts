@@ -1,5 +1,5 @@
-import { WhitelabelUploadParameter, WhitelabelUploadResult } from 'pages/WhitelabelNft/types'
 import { useMutation } from 'react-query'
+import { WhitelabelUploadParameter, WhitelabelUploadResult } from 'types/whitelabelNft'
 import httpClient from './http'
 
 const URL = 'whitelabel-nft'
@@ -13,9 +13,7 @@ export function useWhitelabelNftApiUpload() {
     data.nftImages.forEach((nftImage) => {
       formData.append('images', nftImage)
     })
-
     const res = await httpClient.post(`${URL}/upload`, formData)
-
     return res.data as WhitelabelUploadResult
   })
 }

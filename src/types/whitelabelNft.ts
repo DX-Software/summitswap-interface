@@ -18,16 +18,26 @@ export type NavItem = {
   component: React.ReactNode
 }
 
-export type WhitelabelFormValues = {
-  name: string
-  symbol: string
-  whitelistMintPrice: string
-  publicMintPrice: string
-  phase: number
+export enum WhitelabelNftFormField {
+  name = 'name',
+  symbol = 'symbol',
+  previewImageUrl = 'previewImageUrl',
+  maxSupply = 'maxSupply',
+  whitelistMintPrice = 'whitelistMintPrice',
+  publicMintPrice = 'publicMintPrice',
+  phase = 'phase',
+  isReveal = 'isReveal',
 }
 
-export type WhitelabelNftTokenInfo = WhitelabelFormValues & {
-  maxSupply: string
+export type WhitelabelNft = {
+  [WhitelabelNftFormField.name]: string
+  [WhitelabelNftFormField.symbol]: string
+  [WhitelabelNftFormField.previewImageUrl]?: string
+  [WhitelabelNftFormField.maxSupply]?: string
+  [WhitelabelNftFormField.whitelistMintPrice]: string
+  [WhitelabelNftFormField.publicMintPrice]: string
+  [WhitelabelNftFormField.phase]: number
+  [WhitelabelNftFormField.isReveal]: boolean
 }
 
 export type WhitelabelUploadParameter = {
@@ -39,12 +49,6 @@ export type WhitelabelUploadParameter = {
 export type WhitelabelUploadResult = {
   rootCid: string
   totalNft: number
-}
-
-export type WhitelabelNftCardProp = {
-  collectionName: string
-  maxSupply: number
-  phase: 'PAUSED' | 'WHITELIST' | 'PUBLIC'
 }
 
 export type WhitelabelNftGraphql = {

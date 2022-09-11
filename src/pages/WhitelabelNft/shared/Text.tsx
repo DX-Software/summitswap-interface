@@ -1,30 +1,22 @@
-import { lightColors, Text } from '@koda-finance/summitswap-uikit'
-import React from 'react'
+import { Text } from '@koda-finance/summitswap-uikit'
 import styled from 'styled-components'
 
-export function Title({ children }: { children: React.ReactNode }) {
-  return (
-    <Text fontSize="40px" fontFamily="Poppins" bold mb="8px">
-      {children}
-    </Text>
-  )
-}
-
-export function SubTitle({ children, color }: { children: React.ReactNode; color?: string }) {
-  return (
-    <Text fontSize="24px" fontFamily="Poppins" bold mb="8px" color={color}>
-      {children}
-    </Text>
-  )
-}
-
-export const HelperText = styled(Text)`
-  color: ${({ color }) => color};
-  font-size: ${({ fontSize }) => fontSize};
+export const Title = styled(Text)`
   font-family: 'Poppins';
+  font-size: ${({ fontSize }) => fontSize || '40px'};
+  font-weight: 600;
+  margin-bottom: 8px;
 `
 
-HelperText.defaultProps = {
-  color: lightColors.textSubtle,
-  fontSize: '14px',
-}
+export const SubTitle = styled(Text)`
+  font-family: 'Poppins';
+  font-size: ${({ fontSize }) => fontSize || '24px'};
+  font-weight: 600;
+  margin-bottom: 8px;
+`
+
+export const HelperText = styled(Text)`
+  color: ${({ theme }) => theme.colors.textSubtle};
+  font-size: ${({ fontSize }) => fontSize || '14px'};
+  font-family: 'Poppins';
+`

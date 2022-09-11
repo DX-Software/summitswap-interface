@@ -4,9 +4,9 @@ import useWhitelabelNfts from 'hooks/useWhitelabelNfts'
 import useWhitelabelNftsByPhase from 'hooks/useWhitelabelNftsByPhase'
 import React, { useState } from 'react'
 import styled from 'styled-components'
+import { CollectionTab, NavItem } from 'types/whitelabelNft'
 import NftCollectionGallery from '../shared/NftCollectionGallery'
 import { Title } from '../shared/Text'
-import { CollectionTab, NavItem } from '../types'
 import InfoSection from './InfoSection'
 
 const NavTabWrapper = styled(Box)`

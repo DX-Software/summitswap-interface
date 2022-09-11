@@ -1,8 +1,8 @@
 import BigNumber from 'bignumber.js'
 import { PER_PAGE, Phase } from 'constants/whitelabel'
 import { gql } from 'graphql-request'
-import { WhitelabelNftGraphql } from 'pages/WhitelabelNft/types'
 import { useQuery } from 'react-query'
+import { WhitelabelNftGraphql } from 'types/whitelabelNft'
 import { whitelabelNftClient } from 'utils/graphql'
 
 const WHITELABEL_NFT = gql`

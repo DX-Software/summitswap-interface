@@ -1,12 +1,13 @@
 import { Button, Flex, Input, Text } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
 import { useWhitelabelNftApiUpload } from 'api/useWhitelabelNftApi'
-import { Phase } from 'constants/whitelabel'
+import { INITIAL_PROJECT_CREATION } from 'constants/whitelabel'
 import { Field, FormikProps, FormikProvider, useFormik } from 'formik'
 import { useWhitelabelFactoryContract } from 'hooks/useContract'
 import React, { useCallback, useState } from 'react'
-import { WhitelabelFormValues, WhitelabelNftTokenInfo } from './types'
-import DragAndDrop from './CreateCollection/DragAndDrop'
+import { WhitelabelNft } from 'types/whitelabelNft'
+// import { WhitelabelFormField, WhitelabelNftTokenInfo } from './types'
+// import DragAndDrop from './CreateCollection/DragAndDrop'
 
 // const NftCardPreview = ({ nftMetadata }: { nftMetadata: NftMetadata }) => {
 //   return (
@@ -42,32 +43,22 @@ export default function CreateWhitelabelNftForm() {
     }
   }, [])
 
-  const formik: FormikProps<WhitelabelFormValues> = useFormik<WhitelabelFormValues>({
-    initialValues: {
-      name: '',
-      symbol: '',
-      whitelistMintPrice: '0',
-      publicMintPrice: '0',
-      phase: Phase.Pause,
-    },
+  const formik: FormikProps<WhitelabelNft> = useFormik<WhitelabelNft>({
+    initialValues: INITIAL_PROJECT_CREATION,
     onSubmit: async (values, { setSubmitting, setErrors }) => {
-      const result = await whitelabelNftApiUpload.mutateAsync({
-        walletAddress: account!,
-        spreadsheet: spreadsheet!,
-        nftImages,
-      })
-
-      const { rootCid, totalNft } = result
-      const tokenInfo: WhitelabelNftTokenInfo = { ...values, maxSupply: totalNft.toString() }
-      const baseUrl = `ipfs://${rootCid}`
-
-      const serviceFee = await whitelabelFactoryContract?.serviceFee()
-
-      await whitelabelFactoryContract?.createNft(tokenInfo, baseUrl, {
-        value: serviceFee,
-      })
-
-      setSubmitting(false)
+      // const result = await whitelabelNftApiUpload.mutateAsync({
+      //   walletAddress: account!,
+      //   spreadsheet: spreadsheet!,
+      //   nftImages,
+      // })
+      // const { rootCid, totalNft } = result
+      // const tokenInfo: WhitelabelNftTokenInfo = { ...values, maxSupply: totalNft.toString() }
+      // const baseUrl = `ipfs://${rootCid}`
+      // const serviceFee = await whitelabelFactoryContract?.serviceFee()
+      // await whitelabelFactoryContract?.createNft(tokenInfo, baseUrl, {
+      //   value: serviceFee,
+      // })
+      // setSubmitting(false)
     },
   })
 
@@ -108,7 +99,7 @@ export default function CreateWhitelabelNftForm() {
             as={Field}
           />
           <Flex justifyContent="space-around" style={{ marginBottom: 12 }}>
-            <DragAndDrop name="images" accept="image/*" multiple handleChange={handleImageOnChange}>
+            {/* <DragAndDrop name="images" accept="image/*" multiple handleChange={handleImageOnChange}>
               {nftImages.length > 0 ? `${nftImages.length} images selected` : 'Drag and Drop your NFT images here'}
             </DragAndDrop>
             <DragAndDrop
@@ -117,7 +108,7 @@ export default function CreateWhitelabelNftForm() {
               handleChange={handleSpreadsheetOnChange}
             >
               {spreadsheet ? 'Spreadsheet selected' : 'Upload your metadata spreadsheet here'}
-            </DragAndDrop>
+            </DragAndDrop> */}
           </Flex>
           <Button marginX="auto" onClick={formik.submitForm}>
             Submit

@@ -1,7 +1,7 @@
 import { Grid } from '@mui/material'
 import React from 'react'
 import { UseQueryResult } from 'react-query'
-import { WhitelabelNftGraphql } from '../types'
+import { WhitelabelNftGraphql } from 'types/whitelabelNft'
 import NftCollectionGalleryItem from './NftCollectionGalleryItem'
 
 type Props = {

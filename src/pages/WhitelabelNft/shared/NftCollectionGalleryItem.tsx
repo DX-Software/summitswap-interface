@@ -1,9 +1,9 @@
 import { Text } from '@koda-finance/summitswap-uikit'
 import { Phase } from 'constants/whitelabel'
 import React, { useMemo } from 'react'
-import { WhitelabelNftGraphql } from '../types'
+import { WhitelabelNftGraphql } from 'types/whitelabelNft'
 import CustomTag from './CustomTag'
-import NftImage from './NftImage'
+import NftCollectionGalleryItemImage from './NftCollectionGalleryItemImage'
 
 type Props = {
   data: WhitelabelNftGraphql
@@ -16,7 +16,7 @@ function NftCollectionGalleryItem({ data }: Props) {
 
   return (
     <>
-      <NftImage src="https://picsum.photos/seed/picsum/200/300" />
+      <NftCollectionGalleryItemImage src="https://picsum.photos/seed/picsum/200/300" />
       <CustomTag>
         <Text textTransform="uppercase" fontFamily="Poppins" fontSize="10px" bold>
           {phase} PHASE

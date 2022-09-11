@@ -1,8 +1,8 @@
 import { Box, ButtonMenu, ButtonMenuItem } from '@koda-finance/summitswap-uikit'
 import React, { useState } from 'react'
+import { NavItem, Tabs } from 'types/whitelabelNft'
 import BrowseCollections from './BrowseCollections'
 import CreateCollection from './CreateCollection'
-import { NavItem, Tabs } from './types'
 
 function WhitelabelNft() {
   const [buttonIndex, setButtonIndex] = useState(0)

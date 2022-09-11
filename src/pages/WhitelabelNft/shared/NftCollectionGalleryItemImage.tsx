@@ -48,7 +48,7 @@ type Props = {
   isReveal?: boolean
 }
 
-function NftImage({ src, isReveal }: Props) {
+function NftCollectionGalleryItemImage({ src, isReveal }: Props) {
   return (
     <Box position="relative">
       {isReveal && (
@@ -63,8 +63,8 @@ function NftImage({ src, isReveal }: Props) {
   )
 }
 
-export default React.memo(NftImage)
+export default React.memo(NftCollectionGalleryItemImage)
 
-NftImage.defaultProps = {
+NftCollectionGalleryItemImage.defaultProps = {
   isReveal: false,
 }

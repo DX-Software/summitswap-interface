@@ -4,13 +4,13 @@ import useWhitelabelNfts from 'hooks/useWhitelabelNfts'
 import useWhitelabelNftsByPhase from 'hooks/useWhitelabelNftsByPhase'
 import React, { useState } from 'react'
 import styled from 'styled-components'
+import { CollectionTab, NavItem } from 'types/whitelabelNft'
 import InfoSection from './BrowseCollections/InfoSection'
 import NftCollectionGallery from './shared/NftCollectionGallery'
-import { CollectionTab, NavItem } from './types'
 
 const NavTabWrapper = styled(Box)`
   margin-bottom: 24px;
-  border-bottom: 1px solid ${({theme}) => theme.colors.inputColor};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.inputColor};
 `
 
 function BrowseCollection() {
