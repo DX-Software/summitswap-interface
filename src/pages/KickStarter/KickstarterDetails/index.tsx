@@ -276,7 +276,7 @@ const Highlight = ({ kickstarter, backedKickstarter, handleIsPayment, isLoading 
           <Skeleton height={24} width={240} marginBottom="16px" />
         ) : (
           <Text color="textSubtle" marginBottom="16px">
-            backed of {kickstarter?.projectGoals?.toString() || 0} BNB goal
+            backed of {kickstarter?.projectGoals?.toString() || 0} {kickstarter?.tokenSymbol} goal
           </Text>
         )}
         {!isLoading && (
@@ -527,6 +527,7 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
   const kickstarter = useKickstarterById(kickstarterId)
   const kickstarterContributors = useKickstarterContributors(kickstarterId)
   const backedKickstarter = useBackedKickstarterById(`${kickstarterId.toString()}-${account?.toString()}`)
+  console.log("toplesgelas", kickstarter)
 
   const [isPayment, setIsPayment] = useState(false)
   const [activeTabIndex, setActiveTabIndex] = useState(0)
