@@ -422,6 +422,7 @@ const EditFundAndRewardsSystem = ({ formik, kickstarter }: EditSectionProps) => 
           <Select
             onValueChanged={handleContactMethodChange}
             options={CONTACT_METHODS}
+            selected={formik.values.contactMethod}
             minWidth="165px"
           />
         </Grid>

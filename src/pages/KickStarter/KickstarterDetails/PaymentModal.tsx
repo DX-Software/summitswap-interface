@@ -66,7 +66,7 @@ function PaymentModal({
   const [isLoading, setIsLoading] = useState(true)
   const [isApproved, setIsApproved] = useState(false)
   // const tokenContract = useTokenContract(kickstarter.paymentToken)
-  const tokenContract = useTokenContract(BUSD.address)
+  const tokenContract = useTokenContract(kickstarter.paymentToken)
   const pay = useCallback(() => {
     handlePayment()
     if (onDismiss) onDismiss()
@@ -91,10 +91,10 @@ function PaymentModal({
   useEffect(() => {
     async function handleIsApproved() {
       let isApprovedTemp = false
-      if (!kickstarter.paymentToken || !tokenContract || !account) {
-        isApprovedTemp = false
-      } else if (BUSD.address === NULL_ADDRESS) {
+      if (kickstarter.paymentToken === NULL_ADDRESS) {
         isApprovedTemp = true
+      } else if (!kickstarter.paymentToken || !tokenContract || !account) {
+        isApprovedTemp = false
       } else {
         const userBalance = (await tokenContract.balanceOf(account)) as BigNumber
         const userApprovedAlready = (await tokenContract.allowance(account, kickstarter.id)) as BigNumber
