@@ -4,6 +4,7 @@ import { FormikProps, FormikValues } from 'formik'
 import React from 'react'
 import { WhitelabelNftFormField } from 'types/whitelabelNft'
 import { NavStepButton } from '../shared/Button'
+import CurrencyInput from '../shared/CurrencyInput'
 import InputField from '../shared/InputField'
 import { HelperText } from '../shared/Text'
 import UploadImageInput from './UploadImageInput'
@@ -82,7 +83,7 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
           </Heading>
           <Text marginBottom="16px">Whitelist Mint Price is the NFT mint price when it’s on whitelist phase</Text>
 
-          <InputField
+          <CurrencyInput
             label="Enter Whitelist Mint Price"
             name={WhitelabelNftFormField.whitelistMintPrice}
             placeholder="e.g. 10"
@@ -95,7 +96,7 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
           </Heading>
           <Text marginBottom="16px">Public Mint Price is the NFT mint price when it’s on public phase</Text>
 
-          <InputField
+          <CurrencyInput
             label="Enter Public Mint Price"
             name={WhitelabelNftFormField.publicMintPrice}
             placeholder="e.g. 10"
