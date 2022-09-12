@@ -1,8 +1,7 @@
-import { Flex, Text } from '@koda-finance/summitswap-uikit'
+import { Flex, Heading, Text } from '@koda-finance/summitswap-uikit'
 import { FormikProps, FormikProvider, FormikValues, useFormik } from 'formik'
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Title } from '../shared/Text'
 import CreationStep01 from './CreationStep01'
 
 const Divider = styled.div`
@@ -23,14 +22,16 @@ function CreateCollection() {
 
   return (
     <Flex flexDirection="column">
-      <Text color="textSubtle">
+      <Text color="textSubtle" marginBottom="4px">
         Step{' '}
         <Text color="linkColor" bold style={{ display: 'inline-block' }}>
           0{currentCreationStep}
         </Text>{' '}
         of 03 - Collection Details
       </Text>
-      <Title>Create NFT Collection</Title>
+      <Heading size="xl" marginBottom="16px">
+        Create NFT Collection
+      </Heading>
       <Divider />
       <FormikProvider value={formik}>
         {currentCreationStep === 1 && (

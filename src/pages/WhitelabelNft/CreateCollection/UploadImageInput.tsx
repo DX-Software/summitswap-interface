@@ -9,14 +9,14 @@ const ImageWrapper = styled(Flex)`
   cursor: pointer;
 
   > img {
-    width: 225px;
+    width: 100%;
     height: 200px;
     object-fit: cover;
   }
 `
 
 const ImagePlaceholderWrapper = styled(Flex)`
-  width: 225px;
+  width: 100%;
   height: 200px;
   border: 3px dashed ${({ color, theme }) => color || theme.colors.primary};
   border-radius: 8px;

@@ -21,7 +21,9 @@ export type NavItem = {
 export enum WhitelabelNftFormField {
   name = 'name',
   symbol = 'symbol',
+  concealName = 'concealName',
   previewImageUrl = 'previewImageUrl',
+  concealImageUrl = 'concealImageUrl',
   maxSupply = 'maxSupply',
   whitelistMintPrice = 'whitelistMintPrice',
   publicMintPrice = 'publicMintPrice',

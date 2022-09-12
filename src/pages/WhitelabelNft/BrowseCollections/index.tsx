@@ -1,4 +1,4 @@
-import { Box, Input, NavTab, Text } from '@koda-finance/summitswap-uikit'
+import { Box, Heading, Input, NavTab, Text } from '@koda-finance/summitswap-uikit'
 import { Phase } from 'constants/whitelabel'
 import useWhitelabelNfts from 'hooks/useWhitelabelNfts'
 import useWhitelabelNftsByPhase from 'hooks/useWhitelabelNftsByPhase'
@@ -6,7 +6,6 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import { CollectionTab, NavItem } from 'types/whitelabelNft'
 import NftCollectionGallery from '../shared/NftCollectionGallery'
-import { Title } from '../shared/Text'
 import InfoSection from './InfoSection'
 
 const NavTabWrapper = styled(Box)`
@@ -48,7 +47,9 @@ function BrowseCollection() {
   return (
     <>
       <InfoSection />
-      <Title>Browse NFT Collections</Title>
+      <Heading size="xl" marginBottom="16px">
+        Browse NFT Collections
+      </Heading>
       <NavTabWrapper marginBottom="24px">
         <NavTab activeIndex={tabActiveIndex} onItemClick={(index: number) => setTabActiveIndex(index)}>
           {collectionTabs.map((item) => {
