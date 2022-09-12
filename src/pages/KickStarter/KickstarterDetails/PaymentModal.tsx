@@ -65,7 +65,6 @@ function PaymentModal({
   const { library } = useWeb3React()
   const [isLoading, setIsLoading] = useState(true)
   const [isApproved, setIsApproved] = useState(false)
-  // const tokenContract = useTokenContract(kickstarter.paymentToken)
   const tokenContract = useTokenContract(kickstarter.paymentToken)
   const pay = useCallback(() => {
     handlePayment()
