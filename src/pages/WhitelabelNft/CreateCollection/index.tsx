@@ -6,7 +6,7 @@ import CreationStep01 from './CreationStep01'
 import CreationStep02 from './CreationStep02'
 
 function CreateCollection() {
-  const [currentCreationStep, setCurrentCreationStep] = useState(1)
+  const [currentCreationStep, setCurrentCreationStep] = useState(0)
 
   const formik: FormikProps<FormikValues> = useFormik<FormikValues>({
     enableReinitialize: true,

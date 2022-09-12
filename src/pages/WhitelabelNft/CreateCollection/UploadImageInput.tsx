@@ -1,18 +1,39 @@
-import { Box, Flex, ImageAddIcon, lightColors, Text } from '@koda-finance/summitswap-uikit'
+import { Box, Button, CloseIcon, Flex, ImageAddIcon, lightColors, Text } from '@koda-finance/summitswap-uikit'
 import { FormikProps, FormikValues } from 'formik'
 import React, { useRef } from 'react'
 import styled from 'styled-components'
 
 const ImageWrapper = styled(Flex)`
+  position: relative;
   border-radius: 8px;
   overflow: hidden;
   cursor: pointer;
+`
 
-  > img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-  }
+const SelectedImage = styled.img`
+  width: 225px;
+  height: 200px;
+  object-fit: cover;
+`
+
+const RemoveImageButton = styled(Button)`
+  position: absolute;
+  border-radius: 0;
+  width: 20px;
+  height: 20px;
+  padding: 4px;
+  z-index: 10;
+`
+
+const SelectedPlaceholder = styled.div`
+  position: absolute;
+  color: white;
+  bottom: 0;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  background-color: ${({ theme }) => theme.colors.dropdownBackground};
+  opacity: 0.8;
 `
 
 const ImagePlaceholderWrapper = styled(Flex)`
@@ -29,17 +50,22 @@ const ImagePlaceholderWrapper = styled(Flex)`
 
 type Props = {
   name: string
+  selectedPlaceholder?: string
   color?: string
   formik: FormikProps<FormikValues>
   children: React.ReactNode
 }
 
-function UploadImageInput({ name, color, formik, children }: Props) {
+function UploadImageInput({ name, selectedPlaceholder, color, formik, children }: Props) {
   const inputFileElement = useRef<HTMLInputElement>(null)
 
   const handleImageSelected = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return
     formik.setFieldValue(name, event.target.files[0])
+  }
+
+  const handleImageRemove = () => {
+    formik.setFieldValue(name, '')
   }
 
   const handleChooseImage = () => {
@@ -49,8 +75,14 @@ function UploadImageInput({ name, color, formik, children }: Props) {
   return (
     <>
       {formik.values[name] ? (
-        <ImageWrapper onClick={handleChooseImage}>
-          <img src={URL.createObjectURL(formik.values[name])} alt="Whitelabel NFT" />
+        <ImageWrapper>
+          <RemoveImageButton variant="danger" onClick={handleImageRemove}>
+            <CloseIcon color="white" width={16} height={16} />
+          </RemoveImageButton>
+          <Box onClick={handleChooseImage}>
+            <SelectedImage src={URL.createObjectURL(formik.values[name])} alt="Whitelabel NFT" />
+            {selectedPlaceholder && <SelectedPlaceholder>{selectedPlaceholder}</SelectedPlaceholder>}
+          </Box>
         </ImageWrapper>
       ) : (
         <ImagePlaceholderWrapper
