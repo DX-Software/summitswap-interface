@@ -45,12 +45,24 @@ const RevealTag = styled(CustomTag)`
 
 type Props = {
   src: string
+  scale?: 'sm' | 'md'
   isReveal?: boolean
 }
 
-function NftCollectionGalleryItemImage({ src, isReveal }: Props) {
+function NftCollectionGalleryItemImage({ src, scale = 'md', isReveal }: Props) {
+  const scaleVariants = {
+    sm: {
+      width: 123,
+      height: 103,
+    },
+    md: {
+      width: 201,
+      height: 171,
+    },
+  }
+
   return (
-    <Box position="relative">
+    <Box position="relative" width={scaleVariants[scale].width} height={scaleVariants[scale].height}>
       {isReveal && (
         <RevealTag variant="dropdownBackground">
           <Text textTransform="uppercase" fontFamily="Poppins" fontSize="10px" bold>
@@ -58,7 +70,7 @@ function NftCollectionGalleryItemImage({ src, isReveal }: Props) {
           </Text>
         </RevealTag>
       )}
-      <CustomImage src={src} width={217} height={181} />
+      <CustomImage src={src} width={scaleVariants[scale].width} height={scaleVariants[scale].height} />
     </Box>
   )
 }
@@ -66,5 +78,6 @@ function NftCollectionGalleryItemImage({ src, isReveal }: Props) {
 export default React.memo(NftCollectionGalleryItemImage)
 
 NftCollectionGalleryItemImage.defaultProps = {
+  scale: 'md',
   isReveal: false,
 }

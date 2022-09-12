@@ -1,18 +1,12 @@
-import { ArrowForwardIcon, Button, darkColors, Flex, Heading, Text } from '@koda-finance/summitswap-uikit'
+import { ArrowForwardIcon, darkColors, Flex, Heading, Text } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import { FormikProps, FormikValues } from 'formik'
 import React from 'react'
-import styled from 'styled-components'
 import { WhitelabelNftFormField } from 'types/whitelabelNft'
+import { NavStepButton } from '../shared/Button'
 import InputField from '../shared/InputField'
 import { HelperText } from '../shared/Text'
 import UploadImageInput from './UploadImageInput'
-
-const NextStepButton = styled(Button)`
-  @media (max-width: 768px) {
-    width: 100%;
-  }
-`
 
 type Props = {
   setCurrentCreationStep: React.Dispatch<React.SetStateAction<number>>
@@ -109,9 +103,13 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
       <br />
 
       <Flex justifyContent="flex-end">
-        <NextStepButton variant="tertiary" onClick={() => setCurrentCreationStep(2)}>
-          <b>Next Step</b> <ArrowForwardIcon width={24} />
-        </NextStepButton>
+        <NavStepButton
+          variant="tertiary"
+          onClick={() => setCurrentCreationStep((prev) => prev + 1)}
+          endIcon={<ArrowForwardIcon width={24} />}
+        >
+          <b>Next Step</b>
+        </NavStepButton>
       </Flex>
     </>
   )
