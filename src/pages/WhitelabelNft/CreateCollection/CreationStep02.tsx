@@ -1,7 +1,7 @@
 import { ArrowBackIcon, ArrowForwardIcon, Button, ExchangeIcon } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import { FormikProps } from 'formik'
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import { WhitelabelNft, WhitelabelNftFormField } from 'types/whitelabelNft'
 import { NavStepButton } from '../shared/Button'
 import Divider from '../shared/Divider'
@@ -15,6 +15,25 @@ type Props = {
 }
 
 function CreationStep02({ setCurrentCreationStep, formik }: Props) {
+  const [isValid, setIsValid] = useState(false)
+
+  const handleOnClickValidate = useCallback(() => {
+    console.log('a')
+  }, [])
+
+  const handleNextPage = useCallback(async () => {
+    const errors = await formik.validateForm()
+    formik.setFieldTouched(WhitelabelNftFormField.nftImages, true, true)
+    formik.setFieldTouched(WhitelabelNftFormField.spreadsheet, true, true)
+
+    if (
+      !Object.keys(errors).includes(WhitelabelNftFormField.nftImages) &&
+      !Object.keys(errors).includes(WhitelabelNftFormField.spreadsheet)
+    ) {
+      setCurrentCreationStep((prev) => prev + 1)
+    }
+  }, [formik, setCurrentCreationStep])
+
   return (
     <>
       <Grid container spacing="32px" marginBottom="72px">
@@ -27,7 +46,9 @@ function CreationStep02({ setCurrentCreationStep, formik }: Props) {
 
           <Divider />
 
-          <Button startIcon={<ExchangeIcon color="default" />}>Validate NFT Collection</Button>
+          <Button startIcon={<ExchangeIcon color="default" />} onClick={handleOnClickValidate}>
+            Validate NFT Collection
+          </Button>
         </Grid>
       </Grid>
       <Grid container spacing="16px">
@@ -41,11 +62,7 @@ function CreationStep02({ setCurrentCreationStep, formik }: Props) {
           </NavStepButton>
         </Grid>
         <Grid item xs={12} lg={6} display="flex" justifyContent="flex-end">
-          <NavStepButton
-            variant="tertiary"
-            onClick={() => setCurrentCreationStep((prev) => prev + 1)}
-            endIcon={<ArrowForwardIcon width={24} />}
-          >
+          <NavStepButton variant="tertiary" onClick={handleNextPage} endIcon={<ArrowForwardIcon width={24} />}>
             <b>Next Step</b>
           </NavStepButton>
         </Grid>

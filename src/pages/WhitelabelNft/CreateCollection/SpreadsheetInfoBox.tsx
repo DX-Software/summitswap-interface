@@ -1,6 +1,7 @@
 import { Box, Button, DownloadIcon, ExchangeIcon, Heading, SpreadsheetIcon } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
-import React from 'react'
+import { DOWNLOAD_METADATA_URL } from 'api/useWhitelabelNftApi'
+import React, { useCallback, useRef } from 'react'
 import styled from 'styled-components'
 import NftCollectionGalleryItemImage from '../shared/NftCollectionGalleryItemImage'
 import { HelperText } from '../shared/Text'
@@ -47,6 +48,12 @@ const ButtonDownload = styled(Button)`
 `
 
 function SpreadsheetInfoBox() {
+  const downloadLinkRef = useRef<HTMLAnchorElement>(null)
+
+  const handleDownload = useCallback(() => {
+    downloadLinkRef.current?.click()
+  }, [])
+
   return (
     <SpreadSheetWrapper>
       <Heading color="success" size="md" marginBottom="24px">
@@ -66,14 +73,15 @@ function SpreadsheetInfoBox() {
           </SpreadSheetIconWrapper>
         </Grid>
       </Grid>
-      {/* </Flex> */}
 
       <HelperText marginY="16px">
         Viverra elementum in egestas consequat est. Nisl est sit ac elit, at dui ornare sapien. Nam ultrices bibendum
         cursus pretium id mollis. Molestie id tortor, eget eu sed tortor.
       </HelperText>
-
-      <ButtonDownload variant="tertiary" startIcon={<DownloadIcon />} width="100%">
+      <a ref={downloadLinkRef} href={DOWNLOAD_METADATA_URL} style={{ display: 'none' }}>
+        Download
+      </a>
+      <ButtonDownload variant="tertiary" startIcon={<DownloadIcon />} width="100%" onClick={handleDownload}>
         <b>Download Metadata Format</b>
       </ButtonDownload>
     </SpreadSheetWrapper>

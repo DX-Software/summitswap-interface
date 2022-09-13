@@ -1,6 +1,6 @@
-import { Button, Heading, lightColors, UploadIcon } from '@koda-finance/summitswap-uikit'
+import { Box, Button, Heading, lightColors, UploadIcon } from '@koda-finance/summitswap-uikit'
 import { SUPPORTED_IMAGE_FORMAT } from 'constants/whitelabel'
-import { FormikProps } from 'formik'
+import { ErrorMessage, FormikProps } from 'formik'
 import React, { useCallback, useMemo, useRef } from 'react'
 import { WhitelabelNft } from 'types/whitelabelNft'
 import { HelperText } from '../shared/Text'
@@ -37,7 +37,7 @@ function UploadNftImages({ name, formik }: Props) {
   }
 
   return (
-    <>
+    <Box marginBottom="32px">
       <Heading size="md" marginBottom="8px">
         Upload Your NFTs
       </Heading>
@@ -68,12 +68,18 @@ function UploadNftImages({ name, formik }: Props) {
       <Button
         variant={hasSelected ? 'secondary' : 'awesome'}
         startIcon={<UploadIcon color={hasSelected ? 'primary' : 'default'} />}
-        marginBottom="32px"
         onClick={handleChooseImages}
       >
         <b>Upload NFT Images</b>
       </Button>
-    </>
+      <ErrorMessage name={name}>
+        {(msg) => (
+          <HelperText fontSize="12px" marginTop="4px" color="failure">
+            {msg.replace(name, "NFT Images")}
+          </HelperText>
+        )}
+      </ErrorMessage>
+    </Box>
   )
 }
 

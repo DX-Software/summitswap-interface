@@ -9,7 +9,7 @@ import {
   UploadIcon,
 } from '@koda-finance/summitswap-uikit'
 import { SUPPORTED_METADATA_FORMAT } from 'constants/whitelabel'
-import { FormikProps } from 'formik'
+import { ErrorMessage, FormikProps } from 'formik'
 import React, { useCallback, useRef } from 'react'
 import styled from 'styled-components'
 import { WhitelabelNft } from 'types/whitelabelNft'
@@ -51,7 +51,7 @@ function UploadNftMetadata({ name, formik }: Props) {
   }
 
   return (
-    <>
+    <Box marginBottom="32px">
       <Heading size="md" marginBottom="8px">
         Upload the Metadata Sheet
       </Heading>
@@ -73,16 +73,24 @@ function UploadNftMetadata({ name, formik }: Props) {
           <CloseIcon cursor="pointer" width={24} color="failure" marginLeft="24px" />
         </Flex>
       ) : (
-        <Button
-          variant="awesome"
-          startIcon={<UploadIcon color="default" />}
-          marginBottom="32px"
-          onClick={handleChooseImages}
-        >
-          <b>Upload Metadata Sheet</b>
-        </Button>
+        <>
+          <Button
+            variant="awesome"
+            startIcon={<UploadIcon color="default" />}
+            onClick={handleChooseImages}
+          >
+            <b>Upload Metadata Sheet</b>
+          </Button>
+          <ErrorMessage name={name}>
+            {(msg) => (
+              <HelperText fontSize="12px" marginTop="4px" color="failure">
+                {msg.replace(name, 'NFT Metadata')}
+              </HelperText>
+            )}
+          </ErrorMessage>
+        </>
       )}
-    </>
+    </Box>
   )
 }
 
