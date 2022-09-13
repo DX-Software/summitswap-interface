@@ -46,7 +46,7 @@ export type WhitelabelNft = {
   [WhitelabelNftFormField.phase]: number
   [WhitelabelNftFormField.isReveal]: boolean
 
-  [WhitelabelNftFormField.nftImages]?: File[]
+  [WhitelabelNftFormField.nftImages]: File[]
   [WhitelabelNftFormField.spreadsheet]?: File
 }
 

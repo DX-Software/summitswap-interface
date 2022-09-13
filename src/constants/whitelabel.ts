@@ -20,4 +20,6 @@ export const INITIAL_WHITELABEL_CREATION = {
   [WhitelabelNftFormField.publicMintPrice]: '',
   [WhitelabelNftFormField.phase]: Phase.Pause,
   [WhitelabelNftFormField.isReveal]: false,
+
+  [WhitelabelNftFormField.nftImages]: [],
 }

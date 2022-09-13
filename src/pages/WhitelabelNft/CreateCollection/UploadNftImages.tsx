@@ -1,25 +1,35 @@
 import { Button, Heading, UploadIcon } from '@koda-finance/summitswap-uikit'
 import { FormikProps } from 'formik'
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useMemo, useRef } from 'react'
 import { WhitelabelNft } from 'types/whitelabelNft'
 import { HelperText } from '../shared/Text'
 import NftImageCarousel from './NftImageCarousel'
 
 type Props = {
+  name: string
   formik: FormikProps<WhitelabelNft>
 }
 
-function UploadNftImages({ formik }: Props) {
+function UploadNftImages({ name, formik }: Props) {
   const inputFileElement = useRef<HTMLInputElement>(null)
 
-  const [nftImages, setNftImages] = useState<File[]>([])
+  const hasSelected = useMemo(() => {
+    return formik.values[name].length > 0
+  }, [formik, name])
 
-  const handleImageOnChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const files = Array.from(e.target.files)
-      setNftImages(files)
-    }
-  }, [])
+  const handleImageOnChange = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files) {
+        const files = Array.from(e.target.files)
+        formik.setFieldValue(name, files)
+      }
+    },
+    [formik, name]
+  )
+
+  const handleImageOnAbort = useCallback(() => {
+    formik.setFieldValue(name, [])
+  }, [formik, name])
 
   const handleChooseImages = () => {
     inputFileElement.current?.click()
@@ -32,19 +42,20 @@ function UploadNftImages({ formik }: Props) {
       </Heading>
       <HelperText marginBottom="8px">Upload all of your NFTs images here</HelperText>
 
-      {nftImages.length > 0 && <NftImageCarousel images={nftImages} />}
+      {hasSelected && <NftImageCarousel name={name} formik={formik} />}
 
       <input
         ref={inputFileElement}
         type="file"
         accept="image/png, image/jpeg"
         onChange={handleImageOnChange}
+        onAbort={handleImageOnAbort}
         multiple
         hidden
       />
       <Button
-        variant={nftImages.length > 0 ? 'secondary' : 'awesome'}
-        startIcon={<UploadIcon color={nftImages.length > 0 ? 'primary' : 'default'} />}
+        variant={hasSelected ? 'secondary' : 'awesome'}
+        startIcon={<UploadIcon color={hasSelected ? 'primary' : 'default'} />}
         marginBottom="32px"
         onClick={handleChooseImages}
       >

@@ -2,7 +2,7 @@ import { ArrowBackIcon, ArrowForwardIcon, Button, ExchangeIcon } from '@koda-fin
 import { Grid } from '@mui/material'
 import { FormikProps } from 'formik'
 import React from 'react'
-import { WhitelabelNft } from 'types/whitelabelNft'
+import { WhitelabelNft, WhitelabelNftFormField } from 'types/whitelabelNft'
 import { NavStepButton } from '../shared/Button'
 import Divider from '../shared/Divider'
 import SpreadsheetInfoBox from './SpreadsheetInfoBox'
@@ -22,7 +22,7 @@ function CreationStep02({ setCurrentCreationStep, formik }: Props) {
           <SpreadsheetInfoBox />
         </Grid>
         <Grid item xs={12} lg={6.85}>
-          <UploadNftImages formik={formik} />
+          <UploadNftImages name={WhitelabelNftFormField.nftImages} formik={formik} />
           <UploadNftMetadata formik={formik} />
 
           <Divider />

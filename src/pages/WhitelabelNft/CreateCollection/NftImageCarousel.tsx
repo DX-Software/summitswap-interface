@@ -1,8 +1,10 @@
 /* eslint-disable react/no-array-index-key */
 import { ArrowBackIcon, ArrowForwardIcon, Button, CloseIcon, lightColors, Text } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
+import { FormikProps } from 'formik'
 import React, { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
+import { WhitelabelNft } from 'types/whitelabelNft'
 import Divider from '../shared/Divider'
 import { HelperText } from '../shared/Text'
 
@@ -28,12 +30,17 @@ const RemoveImageButton = styled(Button)`
 `
 
 type Props = {
-  images: File[]
+  name: string
+  formik: FormikProps<WhitelabelNft>
 }
 
-function NftImageCarousel({ images }: Props) {
+function NftImageCarousel({ name, formik }: Props) {
   const PER_PAGE = 8
   const [page, setPage] = useState(1)
+
+  const images = useMemo(() => {
+    return formik.values[name] as File[]
+  }, [formik.values, name])
 
   const slicedImages = useMemo(() => {
     return images.slice((page - 1) * PER_PAGE, page * PER_PAGE)
@@ -53,17 +60,22 @@ function NftImageCarousel({ images }: Props) {
     setPage((prev) => prev + 1)
   }, [page, lastPage])
 
-  const handleClickRemoveImage = useCallback((index) => {
-    console.log(index)
-  }, [])
+  const handleClickRemoveImage = useCallback(
+    (index) => {
+      const clonedImages = [...formik.values[name]]
+      clonedImages.splice(index, 1)
+      formik.setFieldValue(name, clonedImages)
+    },
+    [formik, name]
+  )
 
   return (
     <>
       <Grid container spacing="6px">
         {slicedImages.map((image, index) => (
-          <Grid item xs={3} sm={1.5}>
+          <Grid item xs={3} sm={1.5} key={`nft-image-${index}`}>
             <StyledImageWrapper>
-              <StyledImage key={`nft-image-${index}`} src={URL.createObjectURL(image)} alt={`NFT Image ${index}`} />
+              <StyledImage src={URL.createObjectURL(image)} alt={`NFT Image ${index}`} />
               <RemoveImageButton variant="danger" onClick={() => handleClickRemoveImage(index)}>
                 <CloseIcon color="white" width={16} height={16} />
               </RemoveImageButton>
