@@ -1,6 +1,8 @@
 import { Flex, Heading, Text } from '@koda-finance/summitswap-uikit'
-import { FormikProps, FormikProvider, FormikValues, useFormik } from 'formik'
+import { INITIAL_WHITELABEL_CREATION } from 'constants/whitelabel'
+import { FormikProps, FormikProvider, useFormik } from 'formik'
 import React, { useState } from 'react'
+import { WhitelabelNft } from 'types/whitelabelNft'
 import Divider from '../shared/Divider'
 import CreationStep01 from './CreationStep01'
 import CreationStep02 from './CreationStep02'
@@ -8,9 +10,9 @@ import CreationStep02 from './CreationStep02'
 function CreateCollection() {
   const [currentCreationStep, setCurrentCreationStep] = useState(0)
 
-  const formik: FormikProps<FormikValues> = useFormik<FormikValues>({
+  const formik: FormikProps<WhitelabelNft> = useFormik<WhitelabelNft>({
     enableReinitialize: true,
-    initialValues: {},
+    initialValues: INITIAL_WHITELABEL_CREATION,
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       setSubmitting(false)
     },

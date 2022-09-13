@@ -1,6 +1,7 @@
 import { Box, Input, Text } from '@koda-finance/summitswap-uikit'
-import { FormikProps, FormikValues } from 'formik'
+import { FormikProps } from 'formik'
 import React from 'react'
+import { WhitelabelNft } from 'types/whitelabelNft'
 import { HelperText } from './Text'
 
 type Props = {
@@ -8,7 +9,7 @@ type Props = {
   name: string
   placeholder: string
   helperText?: string
-  formik: FormikProps<FormikValues>
+  formik: FormikProps<WhitelabelNft>
 }
 
 function InputField({ label, name, placeholder, helperText, formik }: Props) {
@@ -17,7 +18,13 @@ function InputField({ label, name, placeholder, helperText, formik }: Props) {
       <Text color="#E2E2E2" fontSize="14px">
         {label}
       </Text>
-      <Input name={name} placeholder={placeholder} onChange={formik.handleChange} />
+      <Input
+        name={name}
+        placeholder={placeholder}
+        value={formik.values[name]}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+      />
       {helperText && (
         <HelperText fontSize="12px" marginTop="4px">
           {helperText}

@@ -29,17 +29,25 @@ export enum WhitelabelNftFormField {
   publicMintPrice = 'publicMintPrice',
   phase = 'phase',
   isReveal = 'isReveal',
+
+  nftImages = 'nftImages',
+  spreadsheet = 'spreadsheet',
 }
 
 export type WhitelabelNft = {
   [WhitelabelNftFormField.name]: string
   [WhitelabelNftFormField.symbol]: string
-  [WhitelabelNftFormField.previewImageUrl]?: string
+  [WhitelabelNftFormField.concealName]?: string
+  [WhitelabelNftFormField.previewImageUrl]?: string | File
+  [WhitelabelNftFormField.concealImageUrl]?: string | File
   [WhitelabelNftFormField.maxSupply]?: string
   [WhitelabelNftFormField.whitelistMintPrice]: string
   [WhitelabelNftFormField.publicMintPrice]: string
   [WhitelabelNftFormField.phase]: number
   [WhitelabelNftFormField.isReveal]: boolean
+
+  [WhitelabelNftFormField.nftImages]?: File[]
+  [WhitelabelNftFormField.spreadsheet]?: File
 }
 
 export type WhitelabelUploadParameter = {

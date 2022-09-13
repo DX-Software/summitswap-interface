@@ -1,7 +1,8 @@
 import { Box, EtherIcon, Flex, Input, Text } from '@koda-finance/summitswap-uikit'
-import { FormikProps, FormikValues } from 'formik'
+import { FormikProps } from 'formik'
 import React from 'react'
 import styled from 'styled-components'
+import { WhitelabelNft } from 'types/whitelabelNft'
 import { HelperText } from './Text'
 
 const InputWrapper = styled(Flex)`
@@ -28,7 +29,7 @@ type Props = {
   name: string
   placeholder: string
   helperText?: string
-  formik: FormikProps<FormikValues>
+  formik: FormikProps<WhitelabelNft>
 }
 
 function CurrencyInput({ label, name, placeholder, helperText, formik }: Props) {
@@ -43,7 +44,13 @@ function CurrencyInput({ label, name, placeholder, helperText, formik }: Props) 
             <EtherIcon color="linkColor" />
             <Text fontWeight="bold">ETH</Text>
           </InputCurrency>
-          <StyledInput name={name} placeholder={placeholder} onChange={formik.handleChange} />
+          <StyledInput
+            name={name}
+            placeholder={placeholder}
+            value={formik.values[name]}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+          />
         </InputWrapper>
       </Flex>
       {helperText && (

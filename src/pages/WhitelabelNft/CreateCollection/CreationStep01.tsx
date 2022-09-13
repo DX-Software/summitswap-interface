@@ -1,8 +1,8 @@
 import { ArrowForwardIcon, darkColors, Flex, Heading, Text } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
-import { FormikProps, FormikValues } from 'formik'
+import { FormikProps } from 'formik'
 import React from 'react'
-import { WhitelabelNftFormField } from 'types/whitelabelNft'
+import { WhitelabelNft, WhitelabelNftFormField } from 'types/whitelabelNft'
 import { NavStepButton } from '../shared/Button'
 import CurrencyInput from '../shared/CurrencyInput'
 import InputField from '../shared/InputField'
@@ -11,7 +11,7 @@ import UploadImageInput from './UploadImageInput'
 
 type Props = {
   setCurrentCreationStep: React.Dispatch<React.SetStateAction<number>>
-  formik: FormikProps<FormikValues>
+  formik: FormikProps<WhitelabelNft>
 }
 
 function CreationStep01({ setCurrentCreationStep, formik }: Props) {

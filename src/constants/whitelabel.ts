@@ -10,10 +10,11 @@ export enum Phase {
 
 export const PER_PAGE = 12
 
-export const INITIAL_PROJECT_CREATION = {
+export const INITIAL_WHITELABEL_CREATION = {
   [WhitelabelNftFormField.name]: '',
   [WhitelabelNftFormField.symbol]: '',
   [WhitelabelNftFormField.previewImageUrl]: '',
+  [WhitelabelNftFormField.concealImageUrl]: '',
   [WhitelabelNftFormField.maxSupply]: '',
   [WhitelabelNftFormField.whitelistMintPrice]: '',
   [WhitelabelNftFormField.publicMintPrice]: '',

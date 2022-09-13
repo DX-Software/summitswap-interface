@@ -2,6 +2,7 @@ import { Box, Button, CloseIcon, Flex, ImageAddIcon, lightColors, Text } from '@
 import { FormikProps, FormikValues } from 'formik'
 import React, { useRef } from 'react'
 import styled from 'styled-components'
+import { WhitelabelNft } from 'types/whitelabelNft'
 
 const ImageWrapper = styled(Flex)`
   position: relative;
@@ -11,8 +12,7 @@ const ImageWrapper = styled(Flex)`
 `
 
 const SelectedImage = styled.img`
-  width: 225px;
-  height: 200px;
+  aspect-ratio: 225px / 200px;
   object-fit: cover;
 `
 
@@ -52,7 +52,7 @@ type Props = {
   name: string
   selectedPlaceholder?: string
   color?: string
-  formik: FormikProps<FormikValues>
+  formik: FormikProps<WhitelabelNft>
   children: React.ReactNode
 }
 

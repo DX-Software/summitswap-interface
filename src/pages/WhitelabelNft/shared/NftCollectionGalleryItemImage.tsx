@@ -1,38 +1,47 @@
-import { Box, darkColors, Image, Text } from '@koda-finance/summitswap-uikit'
+import { Box, darkColors, Text } from '@koda-finance/summitswap-uikit'
 import React from 'react'
 import styled from 'styled-components'
 import CustomTag from './CustomTag'
 
-const CustomImage = styled(Image)`
+const ImageWrapper = styled.div`
   position: relative;
+  width: 100%;
+  aspect-ratio: 207 / 173;
+`
 
-  > img {
-    z-index: 3;
-    border-radius: 8px;
-  }
+const StyledImage = styled.img`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  border-radius: 8px;
+  z-index: 3;
+`
 
-  ::after {
-    content: ' ';
-    width: 100%;
-    height: 100%;
-    background-color: ${({ theme }) => theme.colors.backgroundDisabled};
-    position: absolute;
-    top: -5px;
-    right: -7px;
-    border-radius: 8px;
-    z-index: 2;
-  }
-  ::before {
-    content: ' ';
-    width: 100%;
-    height: 100%;
-    background-color: ${darkColors.tertiary};
-    position: absolute;
-    top: -9px;
-    right: -12px;
-    border-radius: 8px;
-    z-index: 1;
-  }
+const Shadow1 = styled.div`
+  position: absolute;
+  background-color: ${({ theme }) => theme.colors.backgroundDisabled};
+  top: -5px;
+  right: -7px;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  border-radius: 8px;
+  z-index: 2;
+`
+
+const Shadow2 = styled.div`
+  position: absolute;
+  background-color: ${darkColors.tertiary};
+  top: -9px;
+  right: -12px;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  border-radius: 8px;
+  z-index: 1;
 `
 
 const RevealTag = styled(CustomTag)`
@@ -45,24 +54,12 @@ const RevealTag = styled(CustomTag)`
 
 type Props = {
   src: string
-  scale?: 'sm' | 'md'
   isReveal?: boolean
 }
 
-function NftCollectionGalleryItemImage({ src, scale = 'md', isReveal }: Props) {
-  const scaleVariants = {
-    sm: {
-      width: 123,
-      height: 103,
-    },
-    md: {
-      width: 201,
-      height: 171,
-    },
-  }
-
+function NftCollectionGalleryItemImage({ src, isReveal }: Props) {
   return (
-    <Box position="relative" width={scaleVariants[scale].width} height={scaleVariants[scale].height}>
+    <Box>
       {isReveal && (
         <RevealTag variant="dropdownBackground">
           <Text textTransform="uppercase" fontFamily="Poppins" fontSize="10px" bold>
@@ -70,7 +67,11 @@ function NftCollectionGalleryItemImage({ src, scale = 'md', isReveal }: Props) {
           </Text>
         </RevealTag>
       )}
-      <CustomImage src={src} width={scaleVariants[scale].width} height={scaleVariants[scale].height} />
+      <ImageWrapper>
+        <StyledImage src={src} alt="NFT item" />
+        <Shadow1 />
+        <Shadow2 />
+      </ImageWrapper>
     </Box>
   )
 }
@@ -78,6 +79,5 @@ function NftCollectionGalleryItemImage({ src, scale = 'md', isReveal }: Props) {
 export default React.memo(NftCollectionGalleryItemImage)
 
 NftCollectionGalleryItemImage.defaultProps = {
-  scale: 'md',
   isReveal: false,
 }
