@@ -29,6 +29,7 @@ const ImageWrapper = styled(Flex)`
   border-radius: 8px;
   overflow: hidden;
   cursor: pointer;
+  max-height: 230px;
 `
 
 const AccountWrapper = styled(Flex)`
