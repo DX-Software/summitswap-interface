@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-import { ArrowBackIcon, ArrowForwardIcon, Button, CloseIcon, Text } from '@koda-finance/summitswap-uikit'
+import { ArrowBackIcon, ArrowForwardIcon, Button, CloseIcon, Flex, Text } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import { FormikProps } from 'formik'
 import React, { useCallback, useMemo, useState } from 'react'
@@ -12,8 +12,8 @@ const StyledImageWrapper = styled.div`
 `
 
 const StyledImage = styled.img`
-  width: 60px;
-  height: 60px;
+  width: 100%;
+  height: auto;
 `
 
 const RemoveImageButton = styled(Button)`
@@ -70,9 +70,9 @@ function NftImageCarousel({ name, canEdit, formik }: Props) {
 
   return (
     <>
-      <Grid container spacing="6px">
+      <Grid container spacing="6px" marginBottom="16px">
         {slicedImages.map((image, index) => (
-          <Grid item xs={3} sm={1.5} key={`nft-image-${index}`}>
+          <Grid item xs={3} lg={1.5} key={`nft-image-${index}`}>
             <StyledImageWrapper>
               <StyledImage src={URL.createObjectURL(image)} alt={`NFT Image ${index}`} />
               {!!canEdit && (
@@ -84,27 +84,22 @@ function NftImageCarousel({ name, canEdit, formik }: Props) {
           </Grid>
         ))}
       </Grid>
-      <Grid container spacing="12px" marginBottom="16px">
-        <Grid item>
-          <ArrowBackIcon
-            cursor={page === 1 ? 'default' : 'pointer'}
-            color={page === 1 ? 'default' : 'primary'}
-            onClick={handleClickPreviousPage}
-          />
-        </Grid>
-        <Grid item>
-          <Text>
-            Page {page} of {lastPage}
-          </Text>
-        </Grid>
-        <Grid item>
-          <ArrowForwardIcon
-            cursor={page === lastPage ? 'default' : 'pointer'}
-            color={page === lastPage ? 'default' : 'primary'}
-            onClick={handleClickNextPage}
-          />
-        </Grid>
-      </Grid>
+
+      <Flex alignItems="center" marginX="auto" marginBottom="16px" style={{ columnGap: '10px' }}>
+        <ArrowBackIcon
+          cursor={page === 1 ? 'default' : 'pointer'}
+          color={page === 1 ? 'default' : 'primary'}
+          onClick={handleClickPreviousPage}
+        />
+        <Text>
+          Page {page} of {lastPage}
+        </Text>
+        <ArrowForwardIcon
+          cursor={page === lastPage ? 'default' : 'pointer'}
+          color={page === lastPage ? 'default' : 'primary'}
+          onClick={handleClickNextPage}
+        />
+      </Flex>
       <Divider style={{ marginBottom: '8px' }} />
     </>
   )

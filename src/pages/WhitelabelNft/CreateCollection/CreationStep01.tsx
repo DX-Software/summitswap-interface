@@ -1,7 +1,7 @@
 import { ArrowForwardIcon, darkColors, Flex, Heading, Text } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import { FormikProps } from 'formik'
-import React from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { WhitelabelNft, WhitelabelNftFormField } from 'types/whitelabelNft'
 import { NavStepButton } from '../shared/Button'
 import CurrencyInput from '../shared/CurrencyInput'
@@ -15,6 +15,23 @@ type Props = {
 }
 
 function CreationStep01({ setCurrentCreationStep, formik }: Props) {
+  const handleNextPage = useCallback(async () => {
+    const errors = await formik.validateForm()
+    formik.setFieldTouched(WhitelabelNftFormField.name, true, true)
+    formik.setFieldTouched(WhitelabelNftFormField.symbol, true, true)
+    formik.setFieldTouched(WhitelabelNftFormField.whitelistMintPrice, true, true)
+    formik.setFieldTouched(WhitelabelNftFormField.publicMintPrice, true, true)
+
+    if (
+      !Object.keys(errors).includes(WhitelabelNftFormField.name) &&
+      !Object.keys(errors).includes(WhitelabelNftFormField.symbol) &&
+      !Object.keys(errors).includes(WhitelabelNftFormField.whitelistMintPrice) &&
+      !Object.keys(errors).includes(WhitelabelNftFormField.publicMintPrice)
+    ) {
+      setCurrentCreationStep((prev) => prev + 1)
+    }
+  }, [formik, setCurrentCreationStep])
+
   return (
     <>
       <Heading size="lg" fontFamily="Poppins" marginBottom="16px">
@@ -84,7 +101,7 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
           <Text marginBottom="16px">Whitelist Mint Price is the NFT mint price when it’s on whitelist phase</Text>
 
           <CurrencyInput
-            label="Enter Whitelist Mint Price"
+            label="Whitelist Mint Price"
             name={WhitelabelNftFormField.whitelistMintPrice}
             placeholder="e.g. 10"
             formik={formik}
@@ -97,7 +114,7 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
           <Text marginBottom="16px">Public Mint Price is the NFT mint price when it’s on public phase</Text>
 
           <CurrencyInput
-            label="Enter Public Mint Price"
+            label="Public Mint Price"
             name={WhitelabelNftFormField.publicMintPrice}
             placeholder="e.g. 10"
             formik={formik}
@@ -109,11 +126,7 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
       <br />
 
       <Flex justifyContent="flex-end">
-        <NavStepButton
-          variant="tertiary"
-          onClick={() => setCurrentCreationStep((prev) => prev + 1)}
-          endIcon={<ArrowForwardIcon width={24} />}
-        >
+        <NavStepButton variant="tertiary" onClick={handleNextPage} endIcon={<ArrowForwardIcon width={24} />}>
           <b>Next Step</b>
         </NavStepButton>
       </Flex>

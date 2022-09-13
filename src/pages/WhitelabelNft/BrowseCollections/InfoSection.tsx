@@ -89,7 +89,7 @@ function InfoSection() {
 
   return (
     <Wrapper marginBottom="32px">
-      <InfoImage src="/images/koda-mascot.png" />
+      <InfoImage src="/images/whitelabel-nfts/koda-mascot.png" />
       <InfoWrapper>
         <Flex justifyContent="between" marginBottom="8px">
           <Text bold color="linkColor">

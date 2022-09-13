@@ -1,4 +1,5 @@
 import { Button, Heading, lightColors, UploadIcon } from '@koda-finance/summitswap-uikit'
+import { SUPPORTED_IMAGE_FORMAT } from 'constants/whitelabel'
 import { FormikProps } from 'formik'
 import React, { useCallback, useMemo, useRef } from 'react'
 import { WhitelabelNft } from 'types/whitelabelNft'
@@ -58,7 +59,7 @@ function UploadNftImages({ name, formik }: Props) {
       <input
         ref={inputFileElement}
         type="file"
-        accept="image/png, image/jpeg"
+        accept={SUPPORTED_IMAGE_FORMAT.join(',')}
         onChange={handleImageOnChange}
         onAbort={handleImageOnAbort}
         multiple

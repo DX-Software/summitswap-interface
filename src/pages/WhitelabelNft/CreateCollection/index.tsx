@@ -7,6 +7,7 @@ import Divider from '../shared/Divider'
 import CreationStep01 from './CreationStep01'
 import CreationStep02 from './CreationStep02'
 import CreationStep03 from './CreationStep03'
+import validationSchema from './validation'
 
 function CreateCollection() {
   const [currentCreationStep, setCurrentCreationStep] = useState(0)
@@ -14,6 +15,7 @@ function CreateCollection() {
   const formik: FormikProps<WhitelabelNft> = useFormik<WhitelabelNft>({
     enableReinitialize: true,
     initialValues: INITIAL_WHITELABEL_CREATION,
+    validationSchema,
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       setSubmitting(false)
     },

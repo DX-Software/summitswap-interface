@@ -1,5 +1,6 @@
 import { Box, Button, CloseIcon, Flex, ImageAddIcon, lightColors, Text } from '@koda-finance/summitswap-uikit'
-import { FormikProps, FormikValues } from 'formik'
+import { SUPPORTED_IMAGE_FORMAT } from 'constants/whitelabel'
+import { FormikProps } from 'formik'
 import React, { useRef } from 'react'
 import styled from 'styled-components'
 import { WhitelabelNft } from 'types/whitelabelNft'
@@ -12,7 +13,8 @@ const ImageWrapper = styled(Flex)`
 `
 
 const SelectedImage = styled.img`
-  aspect-ratio: 225px / 200px;
+  width: 100%;
+  max-height: 200px;
   object-fit: cover;
 `
 
@@ -65,7 +67,10 @@ function UploadImageInput({ name, selectedPlaceholder, color, formik, children }
   }
 
   const handleImageRemove = () => {
-    formik.setFieldValue(name, '')
+    formik.setFieldValue(name, undefined)
+    if (inputFileElement.current) {
+      inputFileElement.current.value = ''
+    }
   }
 
   const handleChooseImage = () => {
@@ -79,7 +84,7 @@ function UploadImageInput({ name, selectedPlaceholder, color, formik, children }
           <RemoveImageButton variant="danger" onClick={handleImageRemove}>
             <CloseIcon color="white" width={16} height={16} />
           </RemoveImageButton>
-          <Box onClick={handleChooseImage}>
+          <Box onClick={handleChooseImage} width="100%" background="black">
             <SelectedImage src={URL.createObjectURL(formik.values[name])} alt="Whitelabel NFT" />
             {selectedPlaceholder && <SelectedPlaceholder>{selectedPlaceholder}</SelectedPlaceholder>}
           </Box>
@@ -103,7 +108,7 @@ function UploadImageInput({ name, selectedPlaceholder, color, formik, children }
       <input
         ref={inputFileElement}
         type="file"
-        accept="image/png, image/jpeg"
+        accept={SUPPORTED_IMAGE_FORMAT.join(',')}
         onChange={handleImageSelected}
         style={{ display: 'none' }}
       />

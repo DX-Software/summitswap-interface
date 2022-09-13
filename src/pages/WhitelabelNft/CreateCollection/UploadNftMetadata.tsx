@@ -8,8 +8,9 @@ import {
   Text,
   UploadIcon,
 } from '@koda-finance/summitswap-uikit'
+import { SUPPORTED_METADATA_FORMAT } from 'constants/whitelabel'
 import { FormikProps } from 'formik'
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useRef } from 'react'
 import styled from 'styled-components'
 import { WhitelabelNft } from 'types/whitelabelNft'
 import { HelperText } from '../shared/Text'
@@ -59,7 +60,7 @@ function UploadNftMetadata({ name, formik }: Props) {
       <input
         ref={inputFileElement}
         type="file"
-        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        accept={SUPPORTED_METADATA_FORMAT}
         onChange={handleSpreadsheetOnChange}
         hidden
       />

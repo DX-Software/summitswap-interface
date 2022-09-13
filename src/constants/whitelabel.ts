@@ -15,12 +15,14 @@ export const INITIAL_WHITELABEL_CREATION = {
   [WhitelabelNftFormField.symbol]: '',
   [WhitelabelNftFormField.previewImage]: undefined,
   [WhitelabelNftFormField.concealImage]: undefined,
-  [WhitelabelNftFormField.maxSupply]: '',
-  [WhitelabelNftFormField.whitelistMintPrice]: '',
-  [WhitelabelNftFormField.publicMintPrice]: '',
+  [WhitelabelNftFormField.whitelistMintPrice]: '0',
+  [WhitelabelNftFormField.publicMintPrice]: '0',
   [WhitelabelNftFormField.phase]: Phase.Pause,
   [WhitelabelNftFormField.isReveal]: false,
 
   [WhitelabelNftFormField.nftImages]: [],
   [WhitelabelNftFormField.spreadsheet]: undefined,
 }
+
+export const SUPPORTED_IMAGE_FORMAT = ['image/jpg', 'image/jpeg', 'image/png']
+export const SUPPORTED_METADATA_FORMAT = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'

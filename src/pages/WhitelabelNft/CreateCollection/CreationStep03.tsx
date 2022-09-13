@@ -9,7 +9,7 @@ import {
 } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import { FormikProps } from 'formik'
-import React from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { WhitelabelNft, WhitelabelNftFormField } from 'types/whitelabelNft'
 import { NavStepButton } from '../shared/Button'
@@ -42,12 +42,19 @@ type Props = {
 }
 
 function CreationStep03({ setCurrentCreationStep, formik }: Props) {
+  const previewImage = useMemo(() => {
+    if (formik.values.previewImage) {
+      return URL.createObjectURL(formik.values.previewImage)
+    }
+    return '/images/whitelabel-nfts/thumbnail_default.png'
+  }, [formik.values.previewImage])
+
   return (
     <>
       <Grid container spacing="40px">
         <Grid item xs={12} md={5}>
           <Box marginTop="12px">
-            <NftCollectionGalleryItemImage src={URL.createObjectURL(formik.values.previewImage!)} />
+            <NftCollectionGalleryItemImage src={previewImage} />
           </Box>
         </Grid>
         <Grid item xs={12} md={7}>

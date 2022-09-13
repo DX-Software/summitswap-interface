@@ -55,7 +55,7 @@ function SpreadsheetInfoBox() {
 
       <Grid container>
         <Grid item xs={4}>
-          <NftCollectionGalleryItemImage src="https://picsum.photos/536/354" />
+          <NftCollectionGalleryItemImage src="/images/whitelabel-nfts/nft-image-placeholder.png" />
         </Grid>
         <Grid item xs={4} display="flex" justifyContent="flex-end" alignItems="center">
           <ExchangeIconResponsive />

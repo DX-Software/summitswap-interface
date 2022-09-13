@@ -1,6 +1,6 @@
 import { Box, EtherIcon, Flex, Input, Text } from '@koda-finance/summitswap-uikit'
-import { FormikProps } from 'formik'
-import React from 'react'
+import { ErrorMessage, FormikProps } from 'formik'
+import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { WhitelabelNft } from 'types/whitelabelNft'
 import { HelperText } from './Text'
@@ -33,6 +33,14 @@ type Props = {
 }
 
 function CurrencyInput({ label, name, placeholder, helperText, formik }: Props) {
+  const handleOnChange = useCallback(
+    (value: string) => {
+      if (value !== '' && value.match('^[0-9]{0,9}(\\.[0-9]{0,18})?$') == null) return
+      formik.setFieldValue(name, value)
+    },
+    [formik, name]
+  )
+
   return (
     <Box marginBottom="16px">
       <Text color="#E2E2E2" fontSize="14px">
@@ -48,7 +56,7 @@ function CurrencyInput({ label, name, placeholder, helperText, formik }: Props) 
             name={name}
             placeholder={placeholder}
             value={formik.values[name]}
-            onChange={formik.handleChange}
+            onChange={(e) => handleOnChange(e.target.value)}
             onBlur={formik.handleBlur}
           />
         </InputWrapper>
@@ -58,6 +66,13 @@ function CurrencyInput({ label, name, placeholder, helperText, formik }: Props) 
           {helperText}
         </HelperText>
       )}
+      <ErrorMessage name={name}>
+        {(msg) => (
+          <HelperText fontSize="12px" marginTop="4px" color="failure">
+            {msg.replace(name, label)}
+          </HelperText>
+        )}
+      </ErrorMessage>
     </Box>
   )
 }

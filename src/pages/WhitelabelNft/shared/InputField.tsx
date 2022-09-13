@@ -1,5 +1,5 @@
 import { Box, Input, Text } from '@koda-finance/summitswap-uikit'
-import { FormikProps } from 'formik'
+import { ErrorMessage, FormikProps } from 'formik'
 import React from 'react'
 import { WhitelabelNft } from 'types/whitelabelNft'
 import { HelperText } from './Text'
@@ -30,6 +30,13 @@ function InputField({ label, name, placeholder, helperText, formik }: Props) {
           {helperText}
         </HelperText>
       )}
+      <ErrorMessage name={name}>
+        {(msg) => (
+          <HelperText fontSize="12px" marginTop="4px" color="failure">
+            {msg.replace(name, label)}
+          </HelperText>
+        )}
+      </ErrorMessage>
     </Box>
   )
 }
