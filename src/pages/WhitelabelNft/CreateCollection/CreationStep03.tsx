@@ -133,6 +133,7 @@ function CreationStep03({ setCurrentCreationStep, formik }: Props) {
             variant="secondary"
             onClick={() => setCurrentCreationStep((prev) => prev - 1)}
             startIcon={<ArrowBackIcon width={24} />}
+            isLoading={formik.isSubmitting}
           >
             <b>Previous Step</b>
           </NavStepButton>
@@ -140,8 +141,9 @@ function CreationStep03({ setCurrentCreationStep, formik }: Props) {
         <Grid item xs={12} lg={6} display="flex" justifyContent="flex-end">
           <NavStepButton
             variant="primary"
-            onClick={() => null}
+            onClick={formik.submitForm}
             endIcon={<ArrowForwardIcon width={24} color="default" />}
+            isLoading={formik.isSubmitting}
           >
             <b>Create New Collection</b>
           </NavStepButton>
