@@ -67,10 +67,10 @@ function ProjectCard({ kickstarter, onClick }: Props) {
           <Text fontSize="14px">Project Goal</Text>
           <Flex alignItems="center" style={{ columnGap: '8px' }}>
             <ImgCurrency image={getTokenImageBySymbol(kickstarter.tokenSymbol)} />
-            <Text fontSize="14px">{kickstarter.projectGoals?.toString()}</Text>
+            <Text fontSize="14px">{`${kickstarter.projectGoals?.toString()} ${kickstarter.tokenSymbol}`}</Text>
           </Flex>
         </Flex>
-        <Text color="primary" marginBottom="8px">
+        <Text marginBottom="8px">
           <b>{fundedPercentage}%</b> funded
         </Text>
         <ProgressBox>
