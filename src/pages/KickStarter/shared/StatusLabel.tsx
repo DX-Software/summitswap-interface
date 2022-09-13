@@ -1,7 +1,6 @@
-import React from "react"
-import { Text } from "@koda-finance/summitswap-uikit"
-import styled from "styled-components"
-import { KickstarterProgressStatus } from "types/kickstarter"
+import { Text } from '@koda-finance/summitswap-uikit'
+import styled from 'styled-components'
+import { KickstarterProgressStatus } from 'types/kickstarter'
 
 const StatusLabel = styled(Text)<{ status?: KickstarterProgressStatus }>`
   height: fit-content;
