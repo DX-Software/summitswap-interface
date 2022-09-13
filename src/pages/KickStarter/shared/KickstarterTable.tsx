@@ -1,14 +1,14 @@
-import { ArrowBackIcon, ArrowForwardIcon, Skeleton, Text } from "@koda-finance/summitswap-uikit"
-import { Arrow, Break, ClickableColumnHeader, PageButtons, TableWrapper } from "components/InfoTables/shared"
-import { PER_PAGE } from "constants/kickstarter"
-import { format } from "date-fns"
-import React, { useCallback } from "react"
-import { useTranslation } from "react-i18next"
-import { UseQueryResult } from "react-query"
-import styled from "styled-components"
-import { Kickstarter, OrderKickstarterBy, OrderDirection } from "types/kickstarter"
-import { getKickstarterApprovalStatusLabel } from "utils/kickstarter"
-import { StatusText } from "."
+import { ArrowBackIcon, ArrowForwardIcon, Skeleton, Text } from '@koda-finance/summitswap-uikit'
+import { Arrow, Break, ClickableColumnHeader, PageButtons, TableWrapper } from 'components/InfoTables/shared'
+import { PER_PAGE } from 'constants/kickstarter'
+import { format } from 'date-fns'
+import React, { useCallback, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { UseQueryResult } from 'react-query'
+import styled from 'styled-components'
+import { Kickstarter, OrderKickstarterBy, OrderDirection } from 'types/kickstarter'
+import { getKickstarterApprovalStatusLabel } from 'utils/kickstarter'
+import { StatusText } from '.'
 
 type Props = {
   kickstarters: UseQueryResult<Kickstarter[]>
@@ -82,16 +82,29 @@ const DataRowLoading = () => {
   )
 }
 
-const DataRow: React.FC<{ kickstarter: Kickstarter, handleShowKickstarter: (kickstarterId: string) => void }> = ({ kickstarter, handleShowKickstarter }) => {
+const DataRow: React.FC<{ kickstarter: Kickstarter; handleShowKickstarter: (kickstarterId: string) => void }> = ({
+  kickstarter,
+  handleShowKickstarter,
+}) => {
   return (
     <LinkWrapper onClick={() => handleShowKickstarter(kickstarter.id)}>
       <ResponsiveGrid>
         <Text fontWeight={400}>{kickstarter.title}</Text>
-        <Text fontWeight={400}>{kickstarter.projectGoals?.toString()} {kickstarter.tokenSymbol?.toString()}</Text>
-        <Text fontWeight={400}>{kickstarter.minContribution?.toString()} {kickstarter.tokenSymbol?.toString()}</Text>
-        <Text fontWeight={400}>{format(new Date((kickstarter?.endTimestamp?.toNumber() || 0) * 1000), 'yyyy.MM.dd HH:mm O')}</Text>
-        <StatusText approvalStatus={kickstarter.approvalStatus} fontWeight={400}>{getKickstarterApprovalStatusLabel(kickstarter.approvalStatus)}</StatusText>
-        <Text fontWeight={400} color="primary">View</Text>
+        <Text fontWeight={400}>
+          {kickstarter.projectGoals?.toString()} {kickstarter.tokenSymbol?.toString()}
+        </Text>
+        <Text fontWeight={400}>
+          {kickstarter.minContribution?.toString()} {kickstarter.tokenSymbol?.toString()}
+        </Text>
+        <Text fontWeight={400}>
+          {format(new Date((kickstarter?.endTimestamp?.toNumber() || 0) * 1000), 'yyyy.MM.dd HH:mm O')}
+        </Text>
+        <StatusText approvalStatus={kickstarter.approvalStatus} fontWeight={400}>
+          {getKickstarterApprovalStatusLabel(kickstarter.approvalStatus)}
+        </StatusText>
+        <Text fontWeight={400} color="primary">
+          View
+        </Text>
       </ResponsiveGrid>
     </LinkWrapper>
   )
@@ -123,6 +136,21 @@ function KickstarterTable({
     },
     [sortDirection, sortField, handleSortFieldChanged, handleSortDirectionChanged]
   )
+
+  const sortedKickstarters = useMemo(() => {
+    return kickstarters.data
+      ? kickstarters.data
+          .sort((a, b) => {
+            if (a && b) {
+              return a[sortField] > b[sortField]
+                ? (sortDirection === OrderDirection.DESC ? -1 : 1) * 1
+                : (sortDirection === OrderDirection.DESC ? -1 : 1) * -1
+            }
+            return -1
+          })
+          .slice(PER_PAGE * (currentPage - 1), currentPage * PER_PAGE)
+      : []
+  }, [kickstarters.data, currentPage, sortDirection, sortField])
 
   const arrow = useCallback(
     (field: string) => {
@@ -184,16 +212,19 @@ function KickstarterTable({
       </ResponsiveGrid>
       <Break />
       {kickstarters.isFetching && <DataRowLoading />}
-      {!kickstarters.isFetching && kickstarters.data?.map((kickstarter) => {
-        return (
-          <React.Fragment key={kickstarter.id}>
-            <DataRow kickstarter={kickstarter} handleShowKickstarter={handleShowKickstarter} />
-            <Break />
-          </React.Fragment>
-        )
-      })}
+      {!kickstarters.isFetching &&
+        sortedKickstarters.map((kickstarter) => {
+          return (
+            <React.Fragment key={kickstarter.id}>
+              <DataRow kickstarter={kickstarter} handleShowKickstarter={handleShowKickstarter} />
+              <Break />
+            </React.Fragment>
+          )
+        })}
       {!kickstarters.isFetching && kickstarters.data && kickstarters.data.length === 0 && (
-        <Text textAlign="center" marginBottom="16px">No Data Found</Text>
+        <Text textAlign="center" marginBottom="16px">
+          No Data Found
+        </Text>
       )}
       {maxPage > 1 && (
         <PageButtons>
@@ -218,4 +249,4 @@ function KickstarterTable({
   )
 }
 
-export default KickstarterTable;
+export default KickstarterTable
