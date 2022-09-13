@@ -154,7 +154,6 @@ function CreationStep03({ setCurrentCreationStep, formik }: Props) {
           Reward Description
         </Text>
         <Text marginBottom="24px">{formik.values.rewardDescription}</Text>
-        {/* <EstimationWrapper> */}
         <Grid container spacing="16px">
           <Grid item xs={12} sm={6}>
             <TextInfo
