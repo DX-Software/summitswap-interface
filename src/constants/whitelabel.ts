@@ -13,8 +13,8 @@ export const PER_PAGE = 12
 export const INITIAL_WHITELABEL_CREATION = {
   [WhitelabelNftFormField.name]: '',
   [WhitelabelNftFormField.symbol]: '',
-  [WhitelabelNftFormField.previewImageUrl]: '',
-  [WhitelabelNftFormField.concealImageUrl]: '',
+  [WhitelabelNftFormField.previewImage]: undefined,
+  [WhitelabelNftFormField.concealImage]: undefined,
   [WhitelabelNftFormField.maxSupply]: '',
   [WhitelabelNftFormField.whitelistMintPrice]: '',
   [WhitelabelNftFormField.publicMintPrice]: '',
@@ -22,4 +22,5 @@ export const INITIAL_WHITELABEL_CREATION = {
   [WhitelabelNftFormField.isReveal]: false,
 
   [WhitelabelNftFormField.nftImages]: [],
+  [WhitelabelNftFormField.spreadsheet]: undefined,
 }

@@ -6,6 +6,7 @@ import { WhitelabelNft } from 'types/whitelabelNft'
 import Divider from '../shared/Divider'
 import CreationStep01 from './CreationStep01'
 import CreationStep02 from './CreationStep02'
+import CreationStep03 from './CreationStep03'
 
 function CreateCollection() {
   const [currentCreationStep, setCurrentCreationStep] = useState(0)
@@ -26,6 +27,10 @@ function CreateCollection() {
     {
       label: 'Defined NFTs',
       component: <CreationStep02 setCurrentCreationStep={setCurrentCreationStep} formik={formik} />,
+    },
+    {
+      label: 'Summary',
+      component: <CreationStep03 setCurrentCreationStep={setCurrentCreationStep} formik={formik} />,
     },
   ]
 

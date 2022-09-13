@@ -1,4 +1,4 @@
-import { Button, Heading, UploadIcon } from '@koda-finance/summitswap-uikit'
+import { Button, Heading, lightColors, UploadIcon } from '@koda-finance/summitswap-uikit'
 import { FormikProps } from 'formik'
 import React, { useCallback, useMemo, useRef } from 'react'
 import { WhitelabelNft } from 'types/whitelabelNft'
@@ -42,7 +42,18 @@ function UploadNftImages({ name, formik }: Props) {
       </Heading>
       <HelperText marginBottom="8px">Upload all of your NFTs images here</HelperText>
 
-      {hasSelected && <NftImageCarousel name={name} formik={formik} />}
+      {hasSelected && (
+        <>
+          <NftImageCarousel name={name} canEdit formik={formik} />
+          <HelperText marginBottom="16px">
+            Total images uploaded:{' '}
+            <HelperText bold style={{ display: 'inline-block', color: lightColors.primary }}>
+              {formik.values[name].length}
+            </HelperText>{' '}
+            image(s)
+          </HelperText>
+        </>
+      )}
 
       <input
         ref={inputFileElement}

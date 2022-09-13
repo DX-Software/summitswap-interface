@@ -1,12 +1,11 @@
 /* eslint-disable react/no-array-index-key */
-import { ArrowBackIcon, ArrowForwardIcon, Button, CloseIcon, lightColors, Text } from '@koda-finance/summitswap-uikit'
+import { ArrowBackIcon, ArrowForwardIcon, Button, CloseIcon, Text } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import { FormikProps } from 'formik'
 import React, { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { WhitelabelNft } from 'types/whitelabelNft'
 import Divider from '../shared/Divider'
-import { HelperText } from '../shared/Text'
 
 const StyledImageWrapper = styled.div`
   position: relative;
@@ -15,7 +14,6 @@ const StyledImageWrapper = styled.div`
 const StyledImage = styled.img`
   width: 60px;
   height: 60px;
-  border: 1px solid white;
 `
 
 const RemoveImageButton = styled(Button)`
@@ -23,18 +21,19 @@ const RemoveImageButton = styled(Button)`
   top: 0;
   right: 0;
   border-radius: 0;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   padding: 4px;
   z-index: 10;
 `
 
 type Props = {
   name: string
+  canEdit?: boolean
   formik: FormikProps<WhitelabelNft>
 }
 
-function NftImageCarousel({ name, formik }: Props) {
+function NftImageCarousel({ name, canEdit, formik }: Props) {
   const PER_PAGE = 8
   const [page, setPage] = useState(1)
 
@@ -76,9 +75,11 @@ function NftImageCarousel({ name, formik }: Props) {
           <Grid item xs={3} sm={1.5} key={`nft-image-${index}`}>
             <StyledImageWrapper>
               <StyledImage src={URL.createObjectURL(image)} alt={`NFT Image ${index}`} />
-              <RemoveImageButton variant="danger" onClick={() => handleClickRemoveImage(index)}>
-                <CloseIcon color="white" width={16} height={16} />
-              </RemoveImageButton>
+              {!!canEdit && (
+                <RemoveImageButton variant="danger" onClick={() => handleClickRemoveImage(index)}>
+                  <CloseIcon color="white" width={16} height={16} />
+                </RemoveImageButton>
+              )}
             </StyledImageWrapper>
           </Grid>
         ))}
@@ -105,15 +106,12 @@ function NftImageCarousel({ name, formik }: Props) {
         </Grid>
       </Grid>
       <Divider style={{ marginBottom: '8px' }} />
-      <HelperText marginBottom="16px">
-        Total images uploaded:{' '}
-        <HelperText bold style={{ display: 'inline-block', color: lightColors.primary }}>
-          {images.length}
-        </HelperText>{' '}
-        image(s)
-      </HelperText>
     </>
   )
 }
 
 export default React.memo(NftImageCarousel)
+
+NftImageCarousel.defaultProps = {
+  canEdit: false,
+}

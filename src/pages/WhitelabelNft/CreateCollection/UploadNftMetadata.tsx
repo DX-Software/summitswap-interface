@@ -28,19 +28,22 @@ const SpreadsheetName = styled(Text)`
 `
 
 type Props = {
+  name: string
   formik: FormikProps<WhitelabelNft>
 }
 
-function UploadNftMetadata({ formik }: Props) {
+function UploadNftMetadata({ name, formik }: Props) {
   const inputFileElement = useRef<HTMLInputElement>(null)
-  const [spreadsheet, setSpreadsheet] = useState<File>()
 
-  const handleSpreadsheetOnChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const file = e.target.files[0]
-      setSpreadsheet(file)
-    }
-  }, [])
+  const handleSpreadsheetOnChange = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files) {
+        const file = e.target.files[0]
+        formik.setFieldValue(name, file)
+      }
+    },
+    [formik, name]
+  )
 
   const handleChooseImages = () => {
     inputFileElement.current?.click()
@@ -60,18 +63,18 @@ function UploadNftMetadata({ formik }: Props) {
         onChange={handleSpreadsheetOnChange}
         hidden
       />
-      {spreadsheet ? (
+      {formik.values.spreadsheet ? (
         <Flex alignItems="center" marginBottom="24px">
           <SpreadsheetIconWrapper marginRight="8px">
             <SpreadsheetIcon width={24} color="default" />
           </SpreadsheetIconWrapper>
-          <SpreadsheetName>{spreadsheet.name}</SpreadsheetName>
+          <SpreadsheetName>{formik.values.spreadsheet.name}</SpreadsheetName>
           <CloseIcon cursor="pointer" width={24} color="failure" marginLeft="24px" />
         </Flex>
       ) : (
         <Button
-          variant={spreadsheet ? 'secondary' : 'awesome'}
-          startIcon={<UploadIcon color={spreadsheet ? 'primary' : 'default'} />}
+          variant="awesome"
+          startIcon={<UploadIcon color="default" />}
           marginBottom="32px"
           onClick={handleChooseImages}
         >

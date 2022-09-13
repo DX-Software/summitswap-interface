@@ -23,7 +23,7 @@ function CreationStep02({ setCurrentCreationStep, formik }: Props) {
         </Grid>
         <Grid item xs={12} lg={6.85}>
           <UploadNftImages name={WhitelabelNftFormField.nftImages} formik={formik} />
-          <UploadNftMetadata formik={formik} />
+          <UploadNftMetadata name={WhitelabelNftFormField.spreadsheet} formik={formik} />
 
           <Divider />
 

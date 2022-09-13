@@ -3,6 +3,12 @@ import React from 'react'
 import styled from 'styled-components'
 import CustomTag from './CustomTag'
 
+const BoxWrapper = styled(Box)`
+  @media (max-width: 576px) {
+    padding-right: 12px;
+  }
+`
+
 const ImageWrapper = styled.div`
   position: relative;
   width: 100%;
@@ -18,6 +24,7 @@ const StyledImage = styled.img`
   max-width: 100%;
   border-radius: 8px;
   z-index: 3;
+  object-fit: cover;
 `
 
 const Shadow1 = styled.div`
@@ -59,20 +66,20 @@ type Props = {
 
 function NftCollectionGalleryItemImage({ src, isReveal }: Props) {
   return (
-    <Box>
-      {isReveal && (
-        <RevealTag variant="dropdownBackground">
-          <Text textTransform="uppercase" fontFamily="Poppins" fontSize="10px" bold>
-            REVEALED
-          </Text>
-        </RevealTag>
-      )}
+    <BoxWrapper>
       <ImageWrapper>
+        {isReveal && (
+          <RevealTag variant="dropdownBackground">
+            <Text textTransform="uppercase" fontFamily="Poppins" fontSize="10px" bold>
+              REVEALED
+            </Text>
+          </RevealTag>
+        )}
         <StyledImage src={src} alt="NFT item" />
         <Shadow1 />
         <Shadow2 />
       </ImageWrapper>
-    </Box>
+    </BoxWrapper>
   )
 }
 

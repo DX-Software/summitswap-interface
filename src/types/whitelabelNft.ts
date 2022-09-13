@@ -22,8 +22,8 @@ export enum WhitelabelNftFormField {
   name = 'name',
   symbol = 'symbol',
   concealName = 'concealName',
-  previewImageUrl = 'previewImageUrl',
-  concealImageUrl = 'concealImageUrl',
+  previewImage = 'previewImage',
+  concealImage = 'concealImage',
   maxSupply = 'maxSupply',
   whitelistMintPrice = 'whitelistMintPrice',
   publicMintPrice = 'publicMintPrice',
@@ -38,8 +38,8 @@ export type WhitelabelNft = {
   [WhitelabelNftFormField.name]: string
   [WhitelabelNftFormField.symbol]: string
   [WhitelabelNftFormField.concealName]?: string
-  [WhitelabelNftFormField.previewImageUrl]?: string | File
-  [WhitelabelNftFormField.concealImageUrl]?: string | File
+  [WhitelabelNftFormField.previewImage]?: File
+  [WhitelabelNftFormField.concealImage]?: File
   [WhitelabelNftFormField.maxSupply]?: string
   [WhitelabelNftFormField.whitelistMintPrice]: string
   [WhitelabelNftFormField.publicMintPrice]: string

@@ -26,7 +26,7 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
           <Grid container spacing="16px" marginBottom="16px">
             <Grid item xs={12} sm={6} lg={6}>
               <UploadImageInput
-                name={WhitelabelNftFormField.previewImageUrl}
+                name={WhitelabelNftFormField.previewImage}
                 selectedPlaceholder="Thumbnail Image"
                 formik={formik}
               >
@@ -35,7 +35,7 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
             </Grid>
             <Grid item xs={12} sm={6} lg={6}>
               <UploadImageInput
-                name={WhitelabelNftFormField.concealImageUrl}
+                name={WhitelabelNftFormField.concealImage}
                 selectedPlaceholder="Conceal Image"
                 color={darkColors.primaryDark}
                 formik={formik}
