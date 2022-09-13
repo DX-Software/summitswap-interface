@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import { ArrowForwardIcon, Button, Flex, ImageAddIcon, Input, Text, TextArea } from '@koda-finance/summitswap-uikit'
 import { FormikProps } from 'formik'
-import React, { useCallback, useMemo, useRef } from 'react'
+import React, { useCallback, useRef, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { getSymbolByAddress } from 'utils/kickstarter'
 import ChoosePaymentToken from '../shared/ChoosePaymentToken'
@@ -62,19 +62,22 @@ type Props = {
 }
 
 function CreationStep01({ setCurrentCreationStep, formik }: Props) {
+  const [isStepValid, setIsStepValid] = useState(false)
   const inputFileElement = useRef<HTMLInputElement>(null)
 
-  const hasValidInput = useMemo<boolean>(() => {
-    return !!(
-      formik.values.image &&
-      formik.values.title &&
-      formik.values.creator &&
-      formik.values.projectDescription &&
-      formik.values.paymentToken &&
-      formik.values.projectGoals &&
-      Number(formik.values.projectGoals) > 0 &&
-      formik.values.minContribution &&
-      Number(formik.values.minContribution) > 0
+  useEffect(() => {
+    setIsStepValid(
+      !!(
+        formik.values.image &&
+        formik.values.title &&
+        formik.values.creator &&
+        formik.values.projectDescription &&
+        formik.values.paymentToken &&
+        formik.values.projectGoals &&
+        Number(formik.values.projectGoals) > 0 &&
+        formik.values.minContribution &&
+        Number(formik.values.minContribution) > 0
+      )
     )
   }, [
     formik.values.image,
@@ -196,7 +199,7 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
         variant="tertiary"
         endIcon={<ArrowForwardIcon />}
         onClick={() => setCurrentCreationStep(2)}
-        disabled={!hasValidInput}
+        disabled={!isStepValid}
       >
         Next Step
       </ButtonNext>
