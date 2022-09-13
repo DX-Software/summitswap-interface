@@ -6,7 +6,7 @@ import AccountIcon from 'components/AccountIcon'
 import CopyButton from 'components/CopyButton'
 import { CONTACT_METHODS } from 'constants/kickstarter'
 import { FormikProps } from 'formik'
-import React, { useMemo } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import styled from 'styled-components'
 import { shortenAddress } from 'utils'
@@ -41,15 +41,18 @@ type Props = {
 
 function CreationStep02({ setCurrentCreationStep, formik }: Props) {
   const { account } = useWeb3React()
+  const [isStepValid, setIsStepValid] = useState(false)
   const accountBalance = useCurrencyBalance(account ?? undefined, ETHER)?.toSignificant(6)
 
-  const hasValidInput = useMemo<boolean>(() => {
-    return !!(
-      formik.values.rewardDescription &&
-      formik.values.rewardDistributionTimestamp &&
-      formik.values.endTimestamp &&
-      formik.values.contactMethod &&
-      formik.values.contactMethodValue
+  useEffect(() => {
+    setIsStepValid(
+      !!(
+        formik.values.rewardDescription &&
+        formik.values.rewardDistributionTimestamp &&
+        formik.values.endTimestamp &&
+        formik.values.contactMethod &&
+        formik.values.contactMethodValue
+      )
     )
   }, [
     formik.values.rewardDescription,
@@ -159,7 +162,7 @@ function CreationStep02({ setCurrentCreationStep, formik }: Props) {
         <Button variant="secondary" onClick={() => setCurrentCreationStep(1)}>
           Previous Step
         </Button>
-        <Button variant="primary" onClick={() => setCurrentCreationStep(3)} disabled={!hasValidInput}>
+        <Button variant="primary" onClick={() => setCurrentCreationStep(3)} disabled={!isStepValid}>
           Create New Project
         </Button>
       </ButtonWrapper>
