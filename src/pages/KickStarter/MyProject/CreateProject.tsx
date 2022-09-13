@@ -26,7 +26,7 @@ function CreateProject({ isCreate, toggleIsCreate }: Prop) {
   const { account, library } = useWeb3React()
   const addTransaction = useTransactionAdder()
 
-  const [isOpen, setIsOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [hash, setHash] = useState<string | undefined>()
   const [pendingText, setPendingText] = useState<string>('')
   const [errorMessage, setErrorMessage] = useState<string | undefined>()
@@ -43,12 +43,12 @@ function CreateProject({ isCreate, toggleIsCreate }: Prop) {
     setPendingText('')
     setErrorMessage('')
     setIsAttemptingTxn(false)
-    setIsOpen(false)
+    setIsModalOpen(false)
   }
 
   const transactionSubmitted = useCallback(
     (response: TransactionResponse, summary: string) => {
-      setIsOpen(true)
+      setIsModalOpen(true)
       setIsAttemptingTxn(false)
       setHash(response.hash)
       addTransaction(response, {
@@ -59,7 +59,7 @@ function CreateProject({ isCreate, toggleIsCreate }: Prop) {
   )
 
   const transactionFailed = useCallback((messFromError: string) => {
-    setIsOpen(true)
+    setIsModalOpen(true)
     setIsAttemptingTxn(false)
     setHash(undefined)
     setErrorMessage(messFromError)
@@ -155,7 +155,7 @@ function CreateProject({ isCreate, toggleIsCreate }: Prop) {
         )}
       </FormikProvider>
       <TransactionConfirmationModal
-        isOpen={isOpen}
+        isOpen={isModalOpen}
         onDismiss={onDismiss}
         attemptingTxn={isAttemptingTxn}
         hash={hash}
