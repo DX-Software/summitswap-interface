@@ -46,6 +46,13 @@ function UploadNftMetadata({ name, formik }: Props) {
     [formik, name]
   )
 
+  const handleRemoveInput = useCallback(() => {
+    formik.setFieldValue(name, undefined)
+    if (inputFileElement.current) {
+      inputFileElement.current.value = ''
+    }
+  }, [formik, name])
+
   const handleChooseImages = () => {
     inputFileElement.current?.click()
   }
@@ -70,15 +77,11 @@ function UploadNftMetadata({ name, formik }: Props) {
             <SpreadsheetIcon width={24} color="default" />
           </SpreadsheetIconWrapper>
           <SpreadsheetName>{formik.values.spreadsheet.name}</SpreadsheetName>
-          <CloseIcon cursor="pointer" width={24} color="failure" marginLeft="24px" />
+          <CloseIcon cursor="pointer" width={24} color="failure" marginLeft="24px" onClick={handleRemoveInput} />
         </Flex>
       ) : (
         <>
-          <Button
-            variant="awesome"
-            startIcon={<UploadIcon color="default" />}
-            onClick={handleChooseImages}
-          >
+          <Button variant="awesome" startIcon={<UploadIcon color="default" />} onClick={handleChooseImages}>
             <b>Upload Metadata Sheet</b>
           </Button>
           <ErrorMessage name={name}>

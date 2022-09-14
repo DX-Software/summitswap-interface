@@ -1,13 +1,24 @@
-import { ArrowBackIcon, ArrowForwardIcon, Button, ExchangeIcon } from '@koda-finance/summitswap-uikit'
+import {
+  ArrowBackIcon,
+  ArrowForwardIcon,
+  Box,
+  Button,
+  darkColors,
+  ExchangeIcon,
+  Text,
+} from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
+import { useWhitelabelNftApiValidate } from 'api/useWhitelabelNftApi'
 import { FormikProps } from 'formik'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import styled from 'styled-components'
 import { WhitelabelNft, WhitelabelNftFormField } from 'types/whitelabelNft'
 import { NavStepButton } from '../shared/Button'
 import Divider from '../shared/Divider'
 import SpreadsheetInfoBox from './SpreadsheetInfoBox'
 import UploadNftImages from './UploadNftImages'
 import UploadNftMetadata from './UploadNftMetadata'
+import ValidationMessageAlert from './ValidationMessageAlert'
 
 type Props = {
   setCurrentCreationStep: React.Dispatch<React.SetStateAction<number>>
@@ -15,13 +26,20 @@ type Props = {
 }
 
 function CreationStep02({ setCurrentCreationStep, formik }: Props) {
-  const [isValid, setIsValid] = useState(false)
+  const whitelabelNftApiValidate = useWhitelabelNftApiValidate()
 
-  const handleOnClickValidate = useCallback(() => {
-    console.log('a')
-  }, [])
+  const [isValidated, setIsValidated] = useState(false)
+  const [validatedMessage, setValidatedMessage] = useState('')
+  const [validatedError, setValidatedError] = useState<string[]>([])
 
-  const handleNextPage = useCallback(async () => {
+  const isValidateDisabled = useMemo(() => {
+    if (formik.values.nftImages && formik.values.spreadsheet) {
+      return false
+    }
+    return true
+  }, [formik.values.nftImages, formik.values.spreadsheet])
+
+  const hasFormFilled = useCallback(async () => {
     const errors = await formik.validateForm()
     formik.setFieldTouched(WhitelabelNftFormField.nftImages, true, true)
     formik.setFieldTouched(WhitelabelNftFormField.spreadsheet, true, true)
@@ -30,9 +48,44 @@ function CreationStep02({ setCurrentCreationStep, formik }: Props) {
       !Object.keys(errors).includes(WhitelabelNftFormField.nftImages) &&
       !Object.keys(errors).includes(WhitelabelNftFormField.spreadsheet)
     ) {
+      return true
+    }
+    return false
+  }, [formik])
+
+  const handleOnClickValidate = useCallback(async () => {
+    try {
+      if (!(await hasFormFilled())) return
+      setValidatedMessage('')
+      setValidatedError([])
+      setIsValidated(false)
+
+      const res = await whitelabelNftApiValidate.mutateAsync({
+        spreadsheet: formik.values.spreadsheet!,
+        nftImages: formik.values.nftImages,
+      })
+      if (res.status === 201) {
+        setValidatedMessage(res.data.message)
+        setIsValidated(true)
+      }
+    } catch (error: any) {
+      const errorData = error.response.data
+      setValidatedMessage(errorData.error)
+      setValidatedError(errorData.message)
+    }
+  }, [hasFormFilled, formik.values.spreadsheet, formik.values.nftImages, whitelabelNftApiValidate])
+
+  const handleNextPage = useCallback(async () => {
+    if ((await hasFormFilled()) && isValidated) {
       setCurrentCreationStep((prev) => prev + 1)
     }
-  }, [formik, setCurrentCreationStep])
+  }, [hasFormFilled, setCurrentCreationStep, isValidated])
+
+  useEffect(() => {
+    setValidatedMessage('')
+    setValidatedError([])
+    setIsValidated(false)
+  }, [formik.values.nftImages, formik.values.spreadsheet])
 
   return (
     <>
@@ -46,9 +99,19 @@ function CreationStep02({ setCurrentCreationStep, formik }: Props) {
 
           <Divider />
 
-          <Button startIcon={<ExchangeIcon color="default" />} onClick={handleOnClickValidate}>
+          <Button
+            variant={isValidateDisabled ? 'awesome' : 'primary'}
+            startIcon={<ExchangeIcon color="default" />}
+            onClick={handleOnClickValidate}
+            disabled={isValidateDisabled}
+          >
             Validate NFT Collection
           </Button>
+          {validatedMessage && (
+            <ValidationMessageAlert isSuccess={validatedError.length === 0} errors={validatedError}>
+              {validatedMessage}
+            </ValidationMessageAlert>
+          )}
         </Grid>
       </Grid>
       <Grid container spacing="16px">
@@ -62,7 +125,12 @@ function CreationStep02({ setCurrentCreationStep, formik }: Props) {
           </NavStepButton>
         </Grid>
         <Grid item xs={12} lg={6} display="flex" justifyContent="flex-end">
-          <NavStepButton variant="tertiary" onClick={handleNextPage} endIcon={<ArrowForwardIcon width={24} />}>
+          <NavStepButton
+            variant="tertiary"
+            onClick={handleNextPage}
+            endIcon={<ArrowForwardIcon width={24} />}
+            disabled={!isValidated}
+          >
             <b>Next Step</b>
           </NavStepButton>
         </Grid>

@@ -50,15 +50,17 @@ export type WhitelabelNft = {
   [WhitelabelNftFormField.spreadsheet]?: File
 }
 
-export type WhitelabelUploadParameter = {
-  walletAddress: string
+export type WhitelabelValidateParameter = {
   spreadsheet: File
   nftImages: File[]
 }
 
+export type WhitelabelUploadParameter = WhitelabelValidateParameter & {
+  walletAddress: string
+}
+
 export type WhitelabelUploadResult = {
   rootCid: string
-  totalNft: number
 }
 
 export type WhitelabelNftGraphql = {
