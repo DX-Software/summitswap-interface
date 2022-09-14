@@ -481,7 +481,7 @@ const Withdrawal = ({ formik, kickstarter, isLoading }: SectionProps) => {
   let fee = '0'
   if (kickstarter && !!kickstarter.fixFeeAmount?.toNumber()) {
     withdrawalFeeMethod = 'Fix Fee'
-    fee = kickstarter.fixFeeAmount.times(100).div(10000).toString()
+    fee = `${kickstarter.fixFeeAmount.toString()} ${getSymbolByAddress(kickstarter?.paymentToken || '')}`
   } else if (kickstarter && !!kickstarter.percentageFeeAmount?.toNumber()) {
     withdrawalFeeMethod = 'Percentage Fee'
     fee = `${kickstarter.percentageFeeAmount.times(100).div(10000).toString()}%`
@@ -497,7 +497,7 @@ const Withdrawal = ({ formik, kickstarter, isLoading }: SectionProps) => {
           <TextInfo title="Fee Method" description={withdrawalFeeMethod} isLoading={isLoading} />
         </Grid>
         <Grid item xs={12} sm={6} lg={4}>
-          <TextInfo title="Fee Percentage" description={fee} isLoading={isLoading} />
+          <TextInfo title="Fee" description={fee} isLoading={isLoading} />
         </Grid>
       </Grid>
     </>
