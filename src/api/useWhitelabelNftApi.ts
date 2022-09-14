@@ -4,7 +4,7 @@ import { WhitelabelUploadParameter, WhitelabelUploadResult } from 'types/whitela
 import httpClient from './http'
 
 const URL = 'whitelabel-nft'
-export const DOWNLOAD_METADATA_URL = `${BACKEND_API}/${URL}/download/metadata`
+export const DOWNLOAD_METADATA_URL = `${BACKEND_API}/${URL}/metadata/download`
 
 // eslint-disable-next-line import/prefer-default-export
 export function useWhitelabelNftApiUpload() {
