@@ -139,18 +139,16 @@ function KickstarterTable({
 
   const sortedKickstarters = useMemo(() => {
     return kickstarters.data
-      ? kickstarters.data
-          .sort((a, b) => {
-            if (a && b) {
-              return a[sortField] > b[sortField]
-                ? (sortDirection === OrderDirection.DESC ? -1 : 1) * 1
-                : (sortDirection === OrderDirection.DESC ? -1 : 1) * -1
-            }
-            return -1
-          })
-          .slice(PER_PAGE * (currentPage - 1), currentPage * PER_PAGE)
+      ? kickstarters.data.sort((a, b) => {
+          if (a && b) {
+            return a[sortField] > b[sortField]
+              ? (sortDirection === OrderDirection.DESC ? -1 : 1) * 1
+              : (sortDirection === OrderDirection.DESC ? -1 : 1) * -1
+          }
+          return -1
+        })
       : []
-  }, [kickstarters.data, currentPage, sortDirection, sortField])
+  }, [kickstarters, sortDirection, sortField])
 
   const arrow = useCallback(
     (field: string) => {

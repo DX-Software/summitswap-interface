@@ -1,7 +1,7 @@
 import { useKickstarterFactoryById, useKickstartersByApprovalStatuses } from 'api/useKickstarterApi'
 import { KICKSTARTER_FACTORY_ADDRESS, PER_PAGE } from 'constants/kickstarter'
 import React, { useMemo, useState } from 'react'
-import {  KickstarterApprovalStatusId, OrderDirection, OrderKickstarterBy } from 'types/kickstarter'
+import { KickstarterApprovalStatusId, OrderDirection, OrderKickstarterBy } from 'types/kickstarter'
 import KickstarterTable from '../shared/KickstarterTable'
 
 type Props = {
@@ -22,8 +22,10 @@ function ApprovalHistory({ handleShowKickstarter }: Props) {
     return Math.ceil(totalItems / PER_PAGE)
   }, [kickstarterFactory.data])
 
-  const kickstarters = useKickstartersByApprovalStatuses([KickstarterApprovalStatusId.APPROVED, KickstarterApprovalStatusId.REJECTED], page)
-
+  const kickstarters = useKickstartersByApprovalStatuses(
+    [KickstarterApprovalStatusId.APPROVED, KickstarterApprovalStatusId.REJECTED],
+    page
+  )
   return (
     <KickstarterTable
       kickstarters={kickstarters}
