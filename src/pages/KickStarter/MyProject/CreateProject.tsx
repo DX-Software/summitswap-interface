@@ -7,8 +7,9 @@ import TransactionConfirmationModal, { TransactionErrorContent } from 'component
 import { INITIAL_PROJECT_CREATION } from 'constants/kickstarter'
 import { getUnixTime } from 'date-fns'
 import { parseUnits } from 'ethers/lib/utils'
+import { NULL_ADDRESS } from 'constants/index'
 import { FormikProps, FormikProvider, useFormik } from 'formik'
-import { useKickstarterFactoryContract } from 'hooks/useContract'
+import { useKickstarterFactoryContract, useTokenContract } from 'hooks/useContract'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { Divider } from '../shared'
@@ -77,6 +78,12 @@ function CreateProject({ isCreate, toggleIsCreate }: Prop) {
 
         const serviceFee = await kickstarterFactoryContract.serviceFee()
 
+        let decimals = 18
+        if (values.paymentToken !== NULL_ADDRESS) {
+          // eslint-disable-next-line @typescript-eslint/no-use-before-define
+          decimals = await tokenContract?.decimals()
+        }
+
         const project = {
           paymentToken: values.paymentToken,
           title: values.title,
@@ -84,8 +91,8 @@ function CreateProject({ isCreate, toggleIsCreate }: Prop) {
           imageUrl: uploadImageResult.url,
           projectDescription: values.projectDescription,
           rewardDescription: values.rewardDescription,
-          minContribution: parseUnits(values.minContribution, 18),
-          projectGoals: parseUnits(values.projectGoals, 18),
+          minContribution: parseUnits(values.minContribution, decimals),
+          projectGoals: parseUnits(values.projectGoals, decimals),
           rewardDistributionTimestamp: Math.floor(new Date(values.rewardDistributionTimestamp).getTime() / 1000),
           startTimestamp: getUnixTime(new Date()),
           endTimestamp: getUnixTime(new Date(values.endTimestamp)),
@@ -112,6 +119,8 @@ function CreateProject({ isCreate, toggleIsCreate }: Prop) {
       setSubmitting(false)
     },
   })
+
+  const tokenContract = useTokenContract(formik.values.paymentToken)
 
   useEffect(() => {
     if (isCreate) return
