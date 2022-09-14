@@ -682,7 +682,7 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
       contactMethod: getKickstarterContactMethodById(kickstarterContactMethod.data?.contactMethod),
       contactMethodValue: kickstarterContactMethod.data?.contactValue,
     },
-    onSubmit: async (values, { setSubmitting, setErrors }) => {
+    onSubmit: async (values, { setSubmitting }) => {
       if (!kickstarterContract || (kickstarter.data?.paymentToken !== NULL_ADDRESS && !tokenContract)) return
       setSubmitting(true)
       try {
@@ -764,7 +764,7 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
     await library.waitForTransaction(receipt.hash)
   }
 
-  const [showPayment] = useModal(
+  const [showRejectModal] = useModal(
     <RejectModal kickstarter={kickstarter.data} handleKickstarterId={handleKickstarterId} />
   )
 
@@ -809,7 +809,7 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
             <Button variant="awesome" onClick={() => formik.submitForm()} isLoading={formik.isSubmitting}>
               Approve Project
             </Button>
-            <Button variant="danger" isLoading={formik.isSubmitting} onClick={showPayment}>
+            <Button variant="danger" isLoading={formik.isSubmitting} onClick={showRejectModal}>
               Reject Project
             </Button>
           </Flex>

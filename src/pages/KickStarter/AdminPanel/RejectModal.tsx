@@ -1,13 +1,13 @@
-import { Button, Flex, InjectedModalProps, Modal, Text, TextArea } from "@koda-finance/summitswap-uikit"
-import { useWeb3React } from "@web3-react/core";
-import { FormikProps, useFormik } from "formik";
-import { useKickstarterContract } from "hooks/useContract";
-import React from "react"
-import styled from "styled-components"
-import { Kickstarter } from "types/kickstarter"
+import { Button, Flex, InjectedModalProps, Modal, Text, TextArea } from '@koda-finance/summitswap-uikit'
+import { useWeb3React } from '@web3-react/core'
+import { FormikProps, useFormik } from 'formik'
+import { useKickstarterContract } from 'hooks/useContract'
+import React from 'react'
+import styled from 'styled-components'
+import { Kickstarter } from 'types/kickstarter'
 
 interface RejectModalProps extends InjectedModalProps {
-  kickstarter?: Kickstarter;
+  kickstarter?: Kickstarter
   handleKickstarterId: (value: string) => void
 }
 
@@ -28,22 +28,22 @@ const InfoWrapper = styled(Flex)`
 `
 
 function RejectModal({ kickstarter, handleKickstarterId, onDismiss }: RejectModalProps) {
-  const {library} = useWeb3React()
+  const { library } = useWeb3React()
   const kickstarterContract = useKickstarterContract(kickstarter?.id)
   const formik: FormikProps<InputProps> = useFormik<InputProps>({
     enableReinitialize: true,
     initialValues: {
-      rejectReason: ""
+      rejectReason: '',
     },
-    onSubmit: async (values, { setSubmitting, setErrors }) => {
+    onSubmit: async (values, { setSubmitting }) => {
       if (!kickstarterContract || !onDismiss) return
       try {
         const receipt = await kickstarterContract.reject(values.rejectReason)
         await library.waitForTransaction(receipt.hash)
         onDismiss()
-        handleKickstarterId("")
+        handleKickstarterId('')
       } catch (e: any) {
-        console.error("Failed to Reject Kickstarter", e.message)
+        console.error('Failed to Reject Kickstarter', e.message)
       }
       setSubmitting(false)
     },
@@ -55,15 +55,25 @@ function RejectModal({ kickstarter, handleKickstarterId, onDismiss }: RejectModa
         <Text marginBottom="8px">You are about to reject below project</Text>
         <InfoWrapper marginBottom="24px">
           <Text bold>{kickstarter?.title}</Text>
-          <Text fontSize="14px" color="textSubtle">{kickstarter?.creator}</Text>
+          <Text fontSize="14px" color="textSubtle">
+            {kickstarter?.creator}
+          </Text>
         </InfoWrapper>
-        <Text fontSize="14px" color="textSubtle" marginBottom="8px">Enter Rejection Reason</Text>
+        <Text fontSize="14px" color="textSubtle" marginBottom="8px">
+          Enter Rejection Reason
+        </Text>
         <TextArea
           placeholder="Write the reason why you reject this presale request"
           name="rejectReason"
-          onChange={formik.handleChange} disabled={formik.isSubmitting}>{formik.values.rejectReason}</TextArea>
+          onChange={formik.handleChange}
+          disabled={formik.isSubmitting}
+        >
+          {formik.values.rejectReason}
+        </TextArea>
         <br />
-        <Button variant="danger" onClick={() => formik.submitForm()} isLoading={formik.isSubmitting}>Reject Project</Button>
+        <Button variant="danger" onClick={() => formik.submitForm()} isLoading={formik.isSubmitting}>
+          Reject Project
+        </Button>
       </Container>
     </Modal>
   )
