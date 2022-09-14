@@ -24,6 +24,7 @@ import { format } from 'date-fns'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { useKickstarterContract, useTokenContract } from 'hooks/useContract'
 import { useKickstarterContext } from 'pages/KickStarter/contexts/kickstarter'
+import { useToken } from 'hooks/Tokens'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import styled from 'styled-components'
@@ -146,7 +147,10 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
   const [pendingText, setPendingText] = useState<string>('')
   const [errorMessage, setErrorMessage] = useState<string | undefined>()
 
-  const paymentTokenContract = useTokenContract(kickstarter.paymentToken)
+  const paymentTokenContract = useTokenContract(
+    kickstarter.paymentToken !== NULL_ADDRESS ? kickstarter.paymentToken : undefined
+  )
+  const paymentToken = useToken(kickstarter.paymentToken !== NULL_ADDRESS ? kickstarter.paymentToken : undefined)
 
   useEffect(() => {
     async function fetchTokenBalance() {
@@ -156,7 +160,6 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
     }
     if (account && paymentTokenContract) fetchTokenBalance()
   }, [account, paymentTokenContract])
-
 
   const handleEmailChanged = (e) => {
     setEmail(e.target.value)
@@ -194,7 +197,7 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
       if (!kickstarterContract || !account || !backedAmount || !kickstarter) {
         return
       }
-      const transactionValue = parseUnits(backedAmount, 18).toString()
+      const transactionValue = parseUnits(backedAmount, paymentToken?.decimals).toString()
       const receipt = await kickstarterContract.contribute(transactionValue, {
         value: kickstarter.paymentToken === NULL_ADDRESS ? transactionValue : 0,
       })
@@ -221,6 +224,7 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
     transactionSubmitted,
     transactionFailed,
     email,
+    paymentToken,
   ])
 
   const [showPayment] = useModal(
@@ -235,8 +239,8 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
   )
   const [isMobilePaymentPage, setIsMobilePaymentPage] = useState(false)
 
-  const minContributionInEth = parseUnits(kickstarter.minContribution?.toString() || '0', 18)
-  const isGreaterThanMinContribution = parseUnits(backedAmount || '0', 18).gte(minContributionInEth)
+  const bigMinContribution = parseUnits(kickstarter.minContribution?.toString() || '0', paymentToken?.decimals)
+  const isGreaterThanMinContribution = parseUnits(backedAmount || '0', paymentToken?.decimals).gte(bigMinContribution)
 
   const handleBackedAmountChanged = useCallback((value: string) => {
     if (value !== '' && value.match('^[0-9]{0,9}(\\.[0-9]{0,18})?$') == null) return

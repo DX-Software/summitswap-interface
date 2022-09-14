@@ -16,6 +16,7 @@ import { parseUnits } from 'ethers/lib/utils'
 import { NULL_ADDRESS } from 'constants/index'
 import { useKickstarterContext } from 'pages/KickStarter/contexts/kickstarter'
 import React from 'react'
+import { useToken } from 'hooks/Tokens'
 import styled from 'styled-components'
 import { Kickstarter } from 'types/kickstarter'
 import { shortenAddress } from 'utils'
@@ -91,8 +92,10 @@ function MobilePayment({
 }: Props) {
   const { account, accountBalance, onPresentConnectModal } = useKickstarterContext()
 
-  const minContributionInEth = parseUnits(kickstarter.minContribution?.toString() || '0', 18)
-  const isGreaterThanMinContribution = parseUnits(totalPayment || '0', 18).gte(minContributionInEth)
+  const paymentToken = useToken(kickstarter.paymentToken !== NULL_ADDRESS ? kickstarter.paymentToken : undefined)
+
+  const bigMinContribution = parseUnits(kickstarter.minContribution?.toString() || '0', paymentToken?.decimals)
+  const isGreaterThanMinContribution = parseUnits(totalPayment || '0', paymentToken?.decimals).gte(bigMinContribution)
 
   return (
     <Flex flexDirection="column">
