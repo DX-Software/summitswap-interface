@@ -1,5 +1,9 @@
 import { Box, Flex, Heading, Input, Select, SortIcon } from '@koda-finance/summitswap-uikit'
-import { useKickstarterByEndTimeBetween, useKickstarterFactoryById, useKickstarters, useKickstartersByApprovalStatuses } from 'api/useKickstarterApi'
+import {
+  useKickstarterByEndTimeBetween,
+  useKickstarterFactoryById,
+  useKickstartersByApprovalStatuses,
+} from 'api/useKickstarterApi'
 import { KICKSTARTER_FACTORY_ADDRESS, PER_PAGE } from 'constants/kickstarter'
 import { add, getUnixTime } from 'date-fns'
 import useDebounce from 'hooks/useDebounce'
@@ -31,11 +35,22 @@ function BrowseProject() {
   const [searchKickstarter, setSearchKickstarter] = useState<string>('')
   const [showKickstarterId, setShowKickstarterId] = useState<string>()
 
-  const debouncedSearchTerm = useDebounce(searchKickstarter, 600);
+  const debouncedSearchTerm = useDebounce(searchKickstarter, 600)
 
   const parsedQs = useParsedQueryString()
-  const kickstarters = useKickstartersByApprovalStatuses([KickstarterApprovalStatusId.APPROVED], currentPage, PER_PAGE, OrderKickstarterBy.TITLE, sortBy, debouncedSearchTerm)
-  const almostEndedKickstarters = useKickstarterByEndTimeBetween([KickstarterApprovalStatusId.APPROVED], currentTimestamp, nextWeekTimestamp)
+  const kickstarters = useKickstartersByApprovalStatuses(
+    [KickstarterApprovalStatusId.APPROVED],
+    currentPage,
+    PER_PAGE,
+    OrderKickstarterBy.TITLE,
+    sortBy,
+    debouncedSearchTerm
+  )
+  const almostEndedKickstarters = useKickstarterByEndTimeBetween(
+    [KickstarterApprovalStatusId.APPROVED],
+    currentTimestamp,
+    nextWeekTimestamp
+  )
   const kickstarterFactory = useKickstarterFactoryById(KICKSTARTER_FACTORY_ADDRESS)
 
   const maxPage = useMemo(() => {
