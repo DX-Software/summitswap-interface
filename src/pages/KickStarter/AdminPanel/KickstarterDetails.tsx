@@ -24,6 +24,7 @@ import {
 } from 'api/useKickstarterApi'
 import { UploadImageResult, useUploadImageApi } from 'api/useUploadImageApi'
 import { getTokenImageBySymbol } from 'connectors'
+import TransactionConfirmationModal, { TransactionErrorContent } from 'components/TransactionConfirmationModal'
 import { NULL_ADDRESS } from 'constants/index'
 import { CONTACT_METHODS } from 'constants/kickstarter'
 import { format, fromUnixTime, getUnixTime } from 'date-fns'
@@ -630,12 +631,30 @@ const EditWithdrawalOption = ({
 function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }: KickstarterDetailsProps) {
   const { library } = useWeb3React()
   const [isEdit, setIsEdit] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [hash, setHash] = useState<string | undefined>()
+  const [errorMessage, setErrorMessage] = useState<string | undefined>()
+  const [isAttemptingTxn, setIsAttemptingTxn] = useState<boolean>(false)
   const kickstarter = useKickstarterById(kickstarterId)
   const kickstarterContract = useKickstarterContract(kickstarterId)
   const tokenContract = useTokenContract(kickstarter.data?.paymentToken)
   const uploadImageApi = useUploadImageApi()
   const kickstarterContactMethod = useKickstarterContactMethod(kickstarterId)
   const kickstarterContactMethodUpdate = useKickstarterContactMethodUpdate()
+
+  const transactionFailed = useCallback((messFromError: string) => {
+    setIsModalOpen(true)
+    setIsAttemptingTxn(false)
+    setHash(undefined)
+    setErrorMessage(messFromError)
+  }, [])
+
+  const onDismiss = () => {
+    setHash(undefined)
+    setErrorMessage('')
+    setIsAttemptingTxn(false)
+    setIsModalOpen(false)
+  }
 
   const formik: FormikProps<Project> = useFormik<Project>({
     enableReinitialize: true,
@@ -674,7 +693,9 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
         }
         handleKickstarterId('')
       } catch (e: any) {
-        console.error('Failed to Approve Kickstarter', e.message)
+        const callErrorMessage = e.reason ?? e.data?.message ?? e.message
+        console.error('Failed to Approve Kickstarter', callErrorMessage)
+        transactionFailed(callErrorMessage)
       }
       setSubmitting(false)
     },
@@ -794,6 +815,16 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
           </Flex>
         </>
       )}
+      <TransactionConfirmationModal
+        isOpen={isModalOpen}
+        onDismiss={onDismiss}
+        attemptingTxn={isAttemptingTxn}
+        hash={hash}
+        pendingText=""
+        content={() =>
+          errorMessage ? <TransactionErrorContent onDismiss={onDismiss} message={errorMessage || ''} /> : null
+        }
+      />
     </FormikProvider>
   )
 }
