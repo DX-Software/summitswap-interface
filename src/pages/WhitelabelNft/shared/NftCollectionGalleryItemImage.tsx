@@ -25,6 +25,7 @@ const StyledImage = styled.img`
   border-radius: 8px;
   z-index: 3;
   object-fit: cover;
+  background-color: black;
 `
 
 const Shadow1 = styled.div`

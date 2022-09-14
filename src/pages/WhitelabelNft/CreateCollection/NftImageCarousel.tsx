@@ -9,6 +9,7 @@ import Divider from '../shared/Divider'
 
 const StyledImageWrapper = styled.div`
   position: relative;
+  background-color: black;
 `
 
 const StyledImage = styled.img`

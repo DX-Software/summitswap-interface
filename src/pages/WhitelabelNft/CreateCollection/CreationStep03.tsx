@@ -6,14 +6,17 @@ import {
   Heading,
   ImageIcon,
   Text,
+  useModal,
 } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import { FormikProps } from 'formik'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { WhitelabelNft, WhitelabelNftFormField } from 'types/whitelabelNft'
+import { getDefaultConcealName, getPreviewImageUrl } from 'utils/whitelabelNft'
 import { NavStepButton } from '../shared/Button'
 import NftCollectionGalleryItemImage from '../shared/NftCollectionGalleryItemImage'
+import ConcealModal from './ConcealModal'
 import NftImageCarousel from './NftImageCarousel'
 
 const SummaryText = styled(Text)`
@@ -42,11 +45,13 @@ type Props = {
 }
 
 function CreationStep03({ setCurrentCreationStep, formik }: Props) {
+  const [onPresent] = useModal(<ConcealModal title="Conceal Image" src={formik.values.concealImage} />)
+
   const previewImage = useMemo(() => {
     if (formik.values.previewImage) {
       return URL.createObjectURL(formik.values.previewImage)
     }
-    return '/images/whitelabel-nfts/thumbnail_default.png'
+    return getPreviewImageUrl()
   }, [formik.values.previewImage])
 
   return (
@@ -78,13 +83,15 @@ function CreationStep03({ setCurrentCreationStep, formik }: Props) {
               <SummaryText>Conceal Name</SummaryText>
             </Grid>
             <Grid item xs={6}>
-              <SummaryText textAlign="right">{formik.values.concealName}</SummaryText>
+              <SummaryText textAlign="right">
+                {formik.values.concealName || getDefaultConcealName(formik.values.name)}
+              </SummaryText>
             </Grid>
             <Grid item xs={6}>
               <SummaryText>Conceal Image</SummaryText>
             </Grid>
             <Grid item xs={6}>
-              <SummaryText textAlign="right" color="linkColor">
+              <SummaryText textAlign="right" color="linkColor" onClick={onPresent} style={{ cursor: 'pointer' }}>
                 <StyledImageIcon color="linkColor" width={24} /> Preview Image
               </SummaryText>
             </Grid>
