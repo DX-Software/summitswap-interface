@@ -331,27 +331,31 @@ const EditProjectDetails = ({ formik, kickstarter }: EditSectionProps) => {
         </Flex>
       </ProjectDetailsContainer>
       <br />
-      <ChoosePaymentToken formik={formik} />
-      <br />
-      <Grid container spacing="16px">
-        <Grid item sm={12} md={6}>
-          <FundingInput
-            label="Project Goals"
-            tokenSymbol={getSymbolByAddress(formik.values.paymentToken)}
-            value={formik.values.projectGoals.toString()}
-            onChange={handleProjectGoalsChanged}
-          />
-        </Grid>
-        <Grid item sm={12} md={6}>
-          <FundingInput
-            label="Minimum Backing"
-            tokenSymbol={getSymbolByAddress(formik.values.paymentToken)}
-            value={formik.values.minContribution.toString()}
-            description="NB : This is the minimum amount for participate in donating the project"
-            onChange={handleMinimumBackingChanged}
-          />
-        </Grid>
-      </Grid>
+      {kickstarter?.approvalStatus === KickstarterApprovalStatus.WAITING_FOR_APPROVAL && (
+        <>
+          <ChoosePaymentToken formik={formik} />
+          <br />
+          <Grid container spacing="16px">
+            <Grid item sm={12} md={6}>
+              <FundingInput
+                label="Project Goals"
+                tokenSymbol={getSymbolByAddress(formik.values.paymentToken)}
+                value={formik.values.projectGoals.toString()}
+                onChange={handleProjectGoalsChanged}
+              />
+            </Grid>
+            <Grid item sm={12} md={6}>
+              <FundingInput
+                label="Minimum Backing"
+                tokenSymbol={getSymbolByAddress(formik.values.paymentToken)}
+                value={formik.values.minContribution.toString()}
+                description="NB : This is the minimum amount for participate in donating the project"
+                onChange={handleMinimumBackingChanged}
+              />
+            </Grid>
+          </Grid>
+        </>
+      )}
     </>
   )
 }
@@ -771,7 +775,7 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
           />
         )}
         <Divider />
-        {isEdit || kickstarter.data?.approvalStatus === KickstarterApprovalStatus.WAITING_FOR_APPROVAL ? (
+        {kickstarter.data?.approvalStatus === KickstarterApprovalStatus.WAITING_FOR_APPROVAL ? (
           <EditWithdrawal kickstarter={kickstarter.data} isEdit={isEdit} formik={formik} />
         ) : (
           <Withdrawal kickstarter={kickstarter.data} isLoading={kickstarter.isFetching} />
