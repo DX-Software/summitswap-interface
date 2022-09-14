@@ -8,10 +8,12 @@ import {
   Skeleton,
   Text,
   WalletIcon,
+  lightColors,
 } from '@koda-finance/summitswap-uikit'
 import AccountIcon from 'components/AccountIcon'
 import { getTokenImageBySymbol } from 'connectors'
 import { parseUnits } from 'ethers/lib/utils'
+import { NULL_ADDRESS } from 'constants/index'
 import { useKickstarterContext } from 'pages/KickStarter/contexts/kickstarter'
 import React from 'react'
 import styled from 'styled-components'
@@ -21,7 +23,8 @@ import { ImgCurrency } from '../shared'
 import FundingInput from '../shared/FundingInput'
 
 type Props = {
-  email: string,
+  paymentTokenBalance: string
+  email: string
   handleEmailChanged: (e) => void
   showPayment: () => void
   totalPayment: string
@@ -77,7 +80,15 @@ const OnlineDot = styled(Box)<{ isOnline: boolean }>`
   background-color: ${({ isOnline, theme }) => (isOnline ? theme.colors.linkColor : theme.colors.textDisabled)};
 `
 
-function MobilePayment({ email, handleEmailChanged, showPayment, totalPayment, kickstarter, handleBackedAmountChanged }: Props) {
+function MobilePayment({
+  email,
+  handleEmailChanged,
+  showPayment,
+  totalPayment,
+  kickstarter,
+  paymentTokenBalance,
+  handleBackedAmountChanged,
+}: Props) {
   const { account, accountBalance, onPresentConnectModal } = useKickstarterContext()
 
   const minContributionInEth = parseUnits(kickstarter.minContribution?.toString() || '0', 18)
@@ -97,7 +108,7 @@ function MobilePayment({ email, handleEmailChanged, showPayment, totalPayment, k
             <ImgCurrency image={getTokenImageBySymbol(kickstarter.tokenSymbol)} />
             <Text color="textSubtle">
               <b style={{ color: 'white' }}>{kickstarter.totalContribution?.toString()}</b> /{' '}
-              {kickstarter.projectGoals?.toString()} BNB
+              {kickstarter.projectGoals?.toString()} {kickstarter.tokenSymbol}
             </Text>
           </Flex>
         </Flex>
@@ -108,7 +119,10 @@ function MobilePayment({ email, handleEmailChanged, showPayment, totalPayment, k
       </Heading>
       <Text color="textSubtle" style={{ marginBottom: '24px' }}>
         You have to back with minimum amount of{' '}
-        <b style={{ color: '#00D4A4' }}>{kickstarter.minContribution?.toString()} BNB</b> to participate in this project
+        <b style={{ color: lightColors.linkColor }}>
+          {kickstarter.minContribution?.toString()} {kickstarter.tokenSymbol}
+        </b>{' '}
+        to participate in this project
       </Text>
       <FundingInput
         label="Enter Backing Amount"
@@ -131,11 +145,13 @@ function MobilePayment({ email, handleEmailChanged, showPayment, totalPayment, k
                 {shortenAddress(account)}
               </Text>
             </Flex>
-            {!accountBalance ? (
+            {!accountBalance || !paymentTokenBalance ? (
               <Skeleton width={100} height={28} />
             ) : (
               <Text fontWeight="bold" color="primaryDark">
-                {accountBalance} BNB
+                {`${kickstarter.paymentToken === NULL_ADDRESS ? accountBalance : paymentTokenBalance} ${
+                  kickstarter.tokenSymbol
+                }`}
               </Text>
             )}
           </Flex>
@@ -144,7 +160,9 @@ function MobilePayment({ email, handleEmailChanged, showPayment, totalPayment, k
       <br />
       <Text fontSize="14px">Enter E-mail Address</Text>
       <Input placeholder="e.g. summitswap@domain.com" value={email} onChange={handleEmailChanged} />
-      <Text fontSize="12px" color="textSubtle">We will keep you updated for this project by e-mail</Text>
+      <Text fontSize="12px" color="textSubtle">
+        We will keep you updated for this project by e-mail
+      </Text>
       {!account && (
         <Button
           variant="tertiary"

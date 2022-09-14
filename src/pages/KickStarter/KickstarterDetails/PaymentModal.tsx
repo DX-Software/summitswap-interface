@@ -1,7 +1,7 @@
 import { Button, Flex, InjectedModalProps, Modal, Skeleton, Text, WalletIcon } from '@koda-finance/summitswap-uikit'
 import AccountIcon from 'components/AccountIcon'
 import { getTokenImageBySymbol } from 'connectors'
-import { BUSD, MAX_UINT256, NULL_ADDRESS } from 'constants/index'
+import { MAX_UINT256, NULL_ADDRESS } from 'constants/index'
 import { useTokenContract } from 'hooks/useContract'
 import { BigNumber } from 'ethers'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -13,6 +13,7 @@ import { ImgCurrency } from '../shared'
 
 interface PaymentModalProps extends InjectedModalProps {
   account: string | null | undefined
+  paymentTokenBalance: string
   accountBalance: string | undefined
   totalPayment: string
   kickstarter: Kickstarter
@@ -58,6 +59,7 @@ function PaymentModal({
   account,
   accountBalance,
   totalPayment,
+  paymentTokenBalance,
   kickstarter,
   onDismiss,
   handlePayment,
@@ -129,11 +131,13 @@ function PaymentModal({
                   {shortenAddress(account)}
                 </Text>
               </Flex>
-              {!accountBalance ? (
+              {!accountBalance || !paymentTokenBalance ? (
                 <Skeleton width={100} height={28} />
               ) : (
                 <Text fontWeight="bold" color="primaryDark">
-                  {accountBalance} BNB
+                  {`${kickstarter.paymentToken === NULL_ADDRESS ? accountBalance : paymentTokenBalance} ${
+                    kickstarter.tokenSymbol
+                  }`}
                 </Text>
               )}
             </Flex>

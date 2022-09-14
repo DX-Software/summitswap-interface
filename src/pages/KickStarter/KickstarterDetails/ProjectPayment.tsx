@@ -12,6 +12,7 @@ import {
   Text,
   useModal,
   WalletIcon,
+  lightColors,
 } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import { useKickstarterContributorStore } from 'api/useKickstarterApi'
@@ -20,10 +21,10 @@ import TransactionConfirmationModal, { TransactionErrorContent } from 'component
 import { getTokenImageBySymbol } from 'connectors'
 import { NULL_ADDRESS } from 'constants/index'
 import { format } from 'date-fns'
-import { parseUnits } from 'ethers/lib/utils'
-import { useKickstarterContract } from 'hooks/useContract'
+import { formatUnits, parseUnits } from 'ethers/lib/utils'
+import { useKickstarterContract, useTokenContract } from 'hooks/useContract'
 import { useKickstarterContext } from 'pages/KickStarter/contexts/kickstarter'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import styled from 'styled-components'
 import { Kickstarter } from 'types/kickstarter'
@@ -138,11 +139,24 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
 
   const [email, setEmail] = useState('')
   const [backedAmount, setBackedAmount] = useState('')
+  const [paymentTokenBalance, setPaymentTokenBalance] = useState('')
   const [isOpen, setIsOpen] = useState(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false)
   const [hash, setHash] = useState<string | undefined>()
   const [pendingText, setPendingText] = useState<string>('')
   const [errorMessage, setErrorMessage] = useState<string | undefined>()
+
+  const paymentTokenContract = useTokenContract(kickstarter.paymentToken)
+
+  useEffect(() => {
+    async function fetchTokenBalance() {
+      const decimals = await paymentTokenContract?.decimals()
+      const balance = await paymentTokenContract?.balanceOf(account)
+      setPaymentTokenBalance(Number(formatUnits(balance, decimals)).toPrecision(6))
+    }
+    if (account && paymentTokenContract) fetchTokenBalance()
+  }, [account, paymentTokenContract])
+
 
   const handleEmailChanged = (e) => {
     setEmail(e.target.value)
@@ -182,14 +196,14 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
       }
       const transactionValue = parseUnits(backedAmount, 18).toString()
       const receipt = await kickstarterContract.contribute(transactionValue, {
-        value: kickstarter.paymentToken === NULL_ADDRESS ?  transactionValue : 0,
+        value: kickstarter.paymentToken === NULL_ADDRESS ? transactionValue : 0,
       })
       transactionSubmitted(receipt, 'The contribution has been submitted successfully')
       await kickstarterContributorStore.mutateAsync({
         kickstarterAddress: kickstarter.id,
         walletAddress: account,
-        currencyAddress: kickstarter.paymentToken || "",
-        currencySymbol: kickstarter.tokenSymbol || "",
+        currencyAddress: kickstarter.paymentToken || '',
+        currencySymbol: kickstarter.tokenSymbol || '',
         email,
         contributionAmount: backedAmount,
       })
@@ -198,11 +212,21 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
       const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message
       transactionFailed(callErrorMessage)
     }
-  }, [kickstarterContributorStore, kickstarterContract, account, backedAmount, kickstarter, transactionSubmitted, transactionFailed, email])
+  }, [
+    kickstarterContributorStore,
+    kickstarterContract,
+    account,
+    backedAmount,
+    kickstarter,
+    transactionSubmitted,
+    transactionFailed,
+    email,
+  ])
 
   const [showPayment] = useModal(
     <PaymentModal
       account={account}
+      paymentTokenBalance={paymentTokenBalance}
       accountBalance={accountBalance}
       totalPayment={backedAmount}
       kickstarter={kickstarter}
@@ -214,13 +238,10 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
   const minContributionInEth = parseUnits(kickstarter.minContribution?.toString() || '0', 18)
   const isGreaterThanMinContribution = parseUnits(backedAmount || '0', 18).gte(minContributionInEth)
 
-  const handleBackedAmountChanged = useCallback(
-    (value: string) => {
-      if (value !== '' && value.match('^[0-9]{0,9}(\\.[0-9]{0,18})?$') == null) return
-      setBackedAmount(value)
-    },
-    []
-  )
+  const handleBackedAmountChanged = useCallback((value: string) => {
+    if (value !== '' && value.match('^[0-9]{0,9}(\\.[0-9]{0,18})?$') == null) return
+    setBackedAmount(value)
+  }, [])
 
   return (
     <Flex flexDirection="column">
@@ -258,7 +279,7 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
                 <ImgCurrency image={getTokenImageBySymbol(kickstarter.tokenSymbol)} />
                 <Text fontSize="24px" color="textSubtle">
                   <b style={{ color: 'white' }}>{kickstarter.totalContribution?.toString()}</b> /{' '}
-                  {kickstarter.projectGoals?.toString()} BNB
+                  {`${kickstarter.projectGoals?.toString()} ${kickstarter.tokenSymbol}`}
                 </Text>
               </Flex>
             </Flex>
@@ -282,8 +303,10 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
             </Heading>
             <Text color="textSubtle" marginBottom="16px">
               You have to back with minimum amount of{' '}
-              <b style={{ color: '#00D4A4' }}>{kickstarter.minContribution?.toString()} BNB</b> to participate in this
-              project
+              <b style={{ color: lightColors.linkColor }}>{`${kickstarter.minContribution?.toString()} ${
+                kickstarter.tokenSymbol
+              }`}</b>{' '}
+              to participate in this project
             </Text>
             <FundingInput
               label="Enter Backing Amount"
@@ -294,7 +317,9 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
             <br />
             <Text fontSize="14px">Enter E-mail Address</Text>
             <Input placeholder="e.g. summitswap@domain.com" value={email} onChange={handleEmailChanged} />
-            <Text fontSize="12px" color="textSubtle">We will keep you updated for this project by e-mail</Text>
+            <Text fontSize="12px" color="textSubtle">
+              We will keep you updated for this project by e-mail
+            </Text>
             {!account && (
               <Button
                 variant="tertiary"
@@ -331,10 +356,14 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
                     {shortenAddress(account)}
                   </Text>
                 </Flex>
-                {!accountBalance ? (
+                {!accountBalance || !paymentTokenBalance ? (
                   <Skeleton width={100} height={28} />
                 ) : (
-                  <Text fontWeight="bold">{accountBalance} BNB</Text>
+                  <Text fontWeight="bold">
+                    {`${kickstarter.paymentToken === NULL_ADDRESS ? accountBalance : paymentTokenBalance} ${
+                      kickstarter.tokenSymbol
+                    }`}
+                  </Text>
                 )}
               </Flex>
             )}
@@ -344,6 +373,7 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
       {isMobilePaymentPage && (
         <MobilePayment
           email={email}
+          paymentTokenBalance={paymentTokenBalance}
           handleEmailChanged={handleEmailChanged}
           showPayment={showPayment}
           totalPayment={backedAmount}
