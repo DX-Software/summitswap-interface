@@ -1,24 +1,49 @@
-import { ArrowBackIcon, Breadcrumbs, Button, CheckmarkIcon, EditIcon, Flex, Heading, Input, Radio, Select, Skeleton, Text, TextArea, useModal } from "@koda-finance/summitswap-uikit"
-import { Grid } from "@mui/material"
-import { useWeb3React } from "@web3-react/core"
-import { useKickstarterById, useKickstarterContactMethod, useKickstarterContactMethodUpdate } from "api/useKickstarterApi"
-import { UploadImageResult, useUploadImageApi } from "api/useUploadImageApi"
-import { getTokenImageBySymbol } from "connectors"
-import { NULL_ADDRESS } from "constants/index"
-import { CONTACT_METHODS } from "constants/kickstarter"
-import { format, fromUnixTime, getUnixTime } from "date-fns"
-import { parseUnits } from "ethers/lib/utils"
-import { FormikProps, FormikProvider, useFormik } from "formik"
-import { useKickstarterContract, useTokenContract } from "hooks/useContract"
-import React, { useCallback, useRef, useState } from "react"
-import styled from "styled-components"
-import { ContactMethod, Kickstarter, KickstarterApprovalStatus, KickstarterApprovalStatusId, WithdrawalFeeMethod } from "types/kickstarter"
-import { getKickstarterContactMethodById, getSymbolByAddress } from "utils/kickstarter"
-import { CurrencyInfo, Divider, StatusInfo, TextInfo } from "../shared"
-import ChoosePaymentToken from "../shared/ChoosePaymentToken"
-import FundingInput from "../shared/FundingInput"
-import { Project, ProjectFormField } from "../types"
-import RejectModal from "./RejectModal"
+/* eslint-disable @typescript-eslint/no-use-before-define */
+import {
+  ArrowBackIcon,
+  Breadcrumbs,
+  Button,
+  CheckmarkIcon,
+  EditIcon,
+  Flex,
+  Heading,
+  Input,
+  Radio,
+  Select,
+  Skeleton,
+  Text,
+  TextArea,
+  useModal,
+} from '@koda-finance/summitswap-uikit'
+import { Grid } from '@mui/material'
+import { useWeb3React } from '@web3-react/core'
+import {
+  useKickstarterById,
+  useKickstarterContactMethod,
+  useKickstarterContactMethodUpdate,
+} from 'api/useKickstarterApi'
+import { UploadImageResult, useUploadImageApi } from 'api/useUploadImageApi'
+import { getTokenImageBySymbol } from 'connectors'
+import { NULL_ADDRESS } from 'constants/index'
+import { CONTACT_METHODS } from 'constants/kickstarter'
+import { format, fromUnixTime, getUnixTime } from 'date-fns'
+import { parseUnits } from 'ethers/lib/utils'
+import { FormikProps, FormikProvider, useFormik } from 'formik'
+import { useKickstarterContract, useTokenContract } from 'hooks/useContract'
+import React, { useCallback, useRef, useState } from 'react'
+import styled from 'styled-components'
+import {
+  Kickstarter,
+  KickstarterApprovalStatus,
+  KickstarterApprovalStatusId,
+  WithdrawalFeeMethod,
+} from 'types/kickstarter'
+import { getKickstarterContactMethodById, getSymbolByAddress } from 'utils/kickstarter'
+import { CurrencyInfo, Divider, StatusInfo, TextInfo } from '../shared'
+import ChoosePaymentToken from '../shared/ChoosePaymentToken'
+import FundingInput from '../shared/FundingInput'
+import { Project, ProjectFormField } from '../types'
+import RejectModal from './RejectModal'
 
 type KickstarterDetailsProps = {
   previousPage: string
@@ -42,6 +67,12 @@ type SectionProps = {
   formik?: FormikProps<Project>
   kickstarter?: Kickstarter
   isLoading?: boolean
+}
+
+type EditWithdrawalSectionProps = {
+  isEdit?: boolean
+  kickstarter?: Kickstarter
+  formik: FormikProps<Project>
 }
 
 type EditSectionProps = {
@@ -84,7 +115,7 @@ const Header = ({ previousPage, handleKickstarterId }: HeaderProps) => {
     <>
       <Flex borderBottom="1px solid" borderBottomColor="inputColor" paddingBottom="12px" marginBottom="32px">
         <Breadcrumbs>
-          <Text color="primaryDark" style={{ cursor: 'pointer' }} onClick={() => handleKickstarterId("")}>
+          <Text color="primaryDark" style={{ cursor: 'pointer' }} onClick={() => handleKickstarterId('')}>
             {previousPage}
           </Text>
           <Text color="borderColor" style={{ fontWeight: 700 }}>
@@ -92,9 +123,11 @@ const Header = ({ previousPage, handleKickstarterId }: HeaderProps) => {
           </Text>
         </Breadcrumbs>
       </Flex>
-      <Flex style={{ columnGap: '8px', cursor: 'pointer' }} onClick={() => handleKickstarterId("")}>
+      <Flex style={{ columnGap: '8px', cursor: 'pointer' }} onClick={() => handleKickstarterId('')}>
         <ArrowBackIcon color="linkColor" />
-        <Text color="linkColor" style={{ textDecoration: "underline" }}>back to Admin Panel</Text>
+        <Text color="linkColor" style={{ textDecoration: 'underline' }}>
+          back to Admin Panel
+        </Text>
       </Flex>
     </>
   )
@@ -102,37 +135,40 @@ const Header = ({ previousPage, handleKickstarterId }: HeaderProps) => {
 
 const EditButtons = ({ formik, isEdit, handleIsEdit, isDisabled }: EditButtonsProps) => {
   return (
-    <Flex style={{ columnGap: "8px" }}>
+    <Flex style={{ columnGap: '8px' }}>
       {!isEdit && (
         <Button
-        variant="tertiary"
-        scale="sm"
-        startIcon={<EditIcon />}
-        style={{fontFamily:'Poppins'}}
-        onClick={() => handleIsEdit(true)}
-        disabled={isDisabled}
-        isLoading={formik.isSubmitting}>
-        Edit Project
-      </Button>
+          variant="tertiary"
+          scale="sm"
+          startIcon={<EditIcon />}
+          style={{ fontFamily: 'Poppins' }}
+          onClick={() => handleIsEdit(true)}
+          disabled={isDisabled}
+          isLoading={formik.isSubmitting}
+        >
+          Edit Project
+        </Button>
       )}
       {isEdit && (
         <>
           <Button
             scale="sm"
             startIcon={<CheckmarkIcon color="default" />}
-            style={{fontFamily:'Poppins'}}
+            style={{ fontFamily: 'Poppins' }}
             disabled={isDisabled}
             isLoading={formik.isSubmitting}
-            onClick={() => formik.submitForm()}>
+            onClick={() => formik.submitForm()}
+          >
             Change & Approve
           </Button>
           <Button
             variant="tertiary"
             scale="sm"
-            style={{fontFamily:'Poppins'}}
+            style={{ fontFamily: 'Poppins' }}
             isLoading={formik.isSubmitting}
             onClick={() => handleIsEdit(false)}
-            disabled={isDisabled}>
+            disabled={isDisabled}
+          >
             Cancel Edit
           </Button>
         </>
@@ -144,15 +180,19 @@ const EditButtons = ({ formik, isEdit, handleIsEdit, isDisabled }: EditButtonsPr
 const ProjectDetails = ({ formik, kickstarter, isLoading }: SectionProps) => {
   return (
     <>
-      <Heading size='lg' marginBottom="16px" color="sidebarActiveColor">Project Details</Heading>
+      <Heading size="lg" marginBottom="16px" color="sidebarActiveColor">
+        Project Details
+      </Heading>
       <ProjectDetailsContainer>
-          <ImageWrapper>
-            {isLoading ? <Skeleton height={270} width={320} /> : (
-              <img src={kickstarter?.imageUrl || ""} alt="Kickstarter" />
-            )}
-          </ImageWrapper>
+        <ImageWrapper>
+          {isLoading ? (
+            <Skeleton height={270} width={320} />
+          ) : (
+            <img src={kickstarter?.imageUrl || ''} alt="Kickstarter" />
+          )}
+        </ImageWrapper>
         <br />
-        <Flex flexDirection="column" style={{ width: "100%" }}>
+        <Flex flexDirection="column" style={{ width: '100%' }}>
           <StatusInfo
             title="Project Status"
             approvalStatus={kickstarter?.approvalStatus || KickstarterApprovalStatus.WAITING_FOR_APPROVAL}
@@ -161,28 +201,18 @@ const ProjectDetails = ({ formik, kickstarter, isLoading }: SectionProps) => {
           {kickstarter?.approvalStatus === KickstarterApprovalStatus.REJECTED && (
             <>
               <br />
-              <Text fontSize="14px" color="textSubtle" marginBottom="4px">Rejection Reason</Text>
-              <Text color="failure">{kickstarter?.rejectedReason || "-"}</Text>
+              <Text fontSize="14px" color="textSubtle" marginBottom="4px">
+                Rejection Reason
+              </Text>
+              <Text color="failure">{kickstarter?.rejectedReason || '-'}</Text>
             </>
           )}
           <Divider />
-          <TextInfo
-            title="Project Title"
-            description={kickstarter?.title}
-            isLoading={isLoading}
-          />
+          <TextInfo title="Project Title" description={kickstarter?.title} isLoading={isLoading} />
           <br />
-          <TextInfo
-            title="Project Creator"
-            description={kickstarter?.creator}
-            isLoading={isLoading}
-          />
+          <TextInfo title="Project Creator" description={kickstarter?.creator} isLoading={isLoading} />
           <br />
-          <TextInfo
-            title="Project Description"
-            description={kickstarter?.projectDescription}
-            isLoading={isLoading}
-          />
+          <TextInfo title="Project Description" description={kickstarter?.projectDescription} isLoading={isLoading} />
           <br />
           <Grid container spacing="16px">
             <Grid item xs={12} sm={6} lg={4}>
@@ -245,10 +275,15 @@ const EditProjectDetails = ({ formik, kickstarter }: EditSectionProps) => {
 
   return (
     <>
-      <Heading size='lg' marginBottom="16px" color="sidebarActiveColor">Project Details</Heading>
+      <Heading size="lg" marginBottom="16px" color="sidebarActiveColor">
+        Project Details
+      </Heading>
       <ProjectDetailsContainer>
         <ImageWrapper onClick={handleChooseImage}>
-          <img src={formik.values.image ? URL.createObjectURL(formik.values.image) : (kickstarter?.imageUrl || "")} alt="Kickstarter" />
+          <img
+            src={formik.values.image ? URL.createObjectURL(formik.values.image) : kickstarter?.imageUrl || ''}
+            alt="Kickstarter"
+          />
         </ImageWrapper>
         <input
           ref={inputFileElement}
@@ -258,8 +293,10 @@ const EditProjectDetails = ({ formik, kickstarter }: EditSectionProps) => {
           style={{ display: 'none' }}
         />
         <br />
-        <Flex flexDirection="column" style={{ width: "100%" }}>
-          <Text fontSize="14px" color="textSubtle" marginBottom="4px">Project Title</Text>
+        <Flex flexDirection="column" style={{ width: '100%' }}>
+          <Text fontSize="14px" color="textSubtle" marginBottom="4px">
+            Project Title
+          </Text>
           <Input
             placeholder="Enter your project title"
             name={ProjectFormField.title}
@@ -268,7 +305,9 @@ const EditProjectDetails = ({ formik, kickstarter }: EditSectionProps) => {
             onBlur={formik.handleBlur}
           />
           <br />
-          <Text fontSize="14px" color="textSubtle" marginBottom="4px">Project Creator</Text>
+          <Text fontSize="14px" color="textSubtle" marginBottom="4px">
+            Project Creator
+          </Text>
           <Input
             placeholder="Enter your name"
             name={ProjectFormField.creator}
@@ -277,7 +316,9 @@ const EditProjectDetails = ({ formik, kickstarter }: EditSectionProps) => {
             onBlur={formik.handleBlur}
           />
           <br />
-          <Text fontSize="14px" color="textSubtle" marginBottom="4px">Project Description</Text>
+          <Text fontSize="14px" color="textSubtle" marginBottom="4px">
+            Project Description
+          </Text>
           <TextArea
             placeholder="Write something about your project"
             name={ProjectFormField.projectDescription}
@@ -318,18 +359,12 @@ const EditProjectDetails = ({ formik, kickstarter }: EditSectionProps) => {
 const FundAndRewardsSystem = ({ formik, kickstarter, isLoading }: SectionProps) => {
   return (
     <>
-      <Heading size='lg' marginBottom="16px" color="sidebarActiveColor">Fund & Reward System</Heading>
-      <TextInfo
-        title="Creator Wallet Address"
-        description={kickstarter?.owner?.id}
-        isLoading={isLoading}
-      />
+      <Heading size="lg" marginBottom="16px" color="sidebarActiveColor">
+        Fund & Reward System
+      </Heading>
+      <TextInfo title="Creator Wallet Address" description={kickstarter?.owner?.id} isLoading={isLoading} />
       <br />
-      <TextInfo
-        title="Reward Description"
-        description={kickstarter?.rewardDescription}
-        isLoading={isLoading}
-      />
+      <TextInfo title="Reward Description" description={kickstarter?.rewardDescription} isLoading={isLoading} />
       <br />
       <Grid container spacing="16px">
         <Grid item xs={12} sm={6}>
@@ -342,24 +377,19 @@ const FundAndRewardsSystem = ({ formik, kickstarter, isLoading }: SectionProps) 
         <Grid item xs={12} sm={6}>
           <TextInfo
             title="Reward Distribution"
-            description={format(new Date((kickstarter?.rewardDistributionTimestamp?.toNumber() || 0) * 1000), 'LLLL do, yyyy HH:mm')}
+            description={format(
+              new Date((kickstarter?.rewardDistributionTimestamp?.toNumber() || 0) * 1000),
+              'LLLL do, yyyy HH:mm'
+            )}
             tooltipText="This is only an estimated date. It might be possible for the reward to be distributed earlier or later from scheduled."
             isLoading={isLoading}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextInfo
-            title="Contact Method"
-            description={formik?.values.contactMethod}
-            isLoading={isLoading}
-          />
+          <TextInfo title="Contact Method" description={formik?.values.contactMethod} isLoading={isLoading} />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextInfo
-            title="Telegram ID"
-            description={formik?.values.contactMethodValue}
-            isLoading={isLoading}
-          />
+          <TextInfo title="Telegram ID" description={formik?.values.contactMethodValue} isLoading={isLoading} />
         </Grid>
       </Grid>
     </>
@@ -381,13 +411,14 @@ const EditFundAndRewardsSystem = ({ formik, kickstarter }: EditSectionProps) => 
 
   return (
     <>
-      <Heading size='lg' marginBottom="16px" color="sidebarActiveColor">Fund & Reward System</Heading>
-      <TextInfo
-        title="Creator Wallet Address"
-        description="0x653222feCf0C7a936C121832561f9DD8774eE496"
-      />
+      <Heading size="lg" marginBottom="16px" color="sidebarActiveColor">
+        Fund & Reward System
+      </Heading>
+      <TextInfo title="Creator Wallet Address" description={kickstarter?.owner?.id || ''} />
       <br />
-      <Text fontSize="14px" color="textSubtle" marginBottom="4px">Reward Description</Text>
+      <Text fontSize="14px" color="textSubtle" marginBottom="4px">
+        Reward Description
+      </Text>
       <TextArea
         placeholder="Describe the reward for this project"
         name={ProjectFormField.rewardDescription}
@@ -418,7 +449,9 @@ const EditFundAndRewardsSystem = ({ formik, kickstarter }: EditSectionProps) => 
           />
         </Grid>
         <Grid item sm={12} md={6}>
-          <Text fontSize="14px" color="textSubtle" marginBottom="4px">Chosen Contact Method</Text>
+          <Text fontSize="14px" color="textSubtle" marginBottom="4px">
+            Chosen Contact Method
+          </Text>
           <Select
             onValueChanged={handleContactMethodChange}
             options={CONTACT_METHODS}
@@ -444,43 +477,39 @@ const EditFundAndRewardsSystem = ({ formik, kickstarter }: EditSectionProps) => 
 }
 
 const Withdrawal = ({ formik, kickstarter, isLoading }: SectionProps) => {
-  let withdrawalFeeMethod = "Not Defined"
-  let fee = "0"
+  let withdrawalFeeMethod = 'Not Defined'
+  let fee = '0'
   if (kickstarter && !!kickstarter.fixFeeAmount?.toNumber()) {
-    withdrawalFeeMethod = "Fix Fee"
+    withdrawalFeeMethod = 'Fix Fee'
     fee = kickstarter.fixFeeAmount.times(100).div(10000).toString()
   } else if (kickstarter && !!kickstarter.percentageFeeAmount?.toNumber()) {
-    withdrawalFeeMethod = "Percentage Fee"
+    withdrawalFeeMethod = 'Percentage Fee'
     fee = `${kickstarter.percentageFeeAmount.times(100).div(10000).toString()}%`
   }
 
   return (
     <>
-      <Heading size='lg' marginBottom="16px" color="sidebarActiveColor">Withdrawal Fee Amount</Heading>
+      <Heading size="lg" marginBottom="16px" color="sidebarActiveColor">
+        Withdrawal Fee Amount
+      </Heading>
       <Grid container spacing="16px">
         <Grid item xs={12} sm={6} lg={4}>
-          <TextInfo
-            title="Fee Method"
-            description={withdrawalFeeMethod}
-            isLoading={isLoading}
-          />
+          <TextInfo title="Fee Method" description={withdrawalFeeMethod} isLoading={isLoading} />
         </Grid>
         <Grid item xs={12} sm={6} lg={4}>
-          <TextInfo
-            title="Fee Percentage"
-            description={fee}
-            isLoading={isLoading}
-          />
+          <TextInfo title="Fee Percentage" description={fee} isLoading={isLoading} />
         </Grid>
       </Grid>
     </>
   )
 }
 
-const EditWithdrawal = ({ formik, kickstarter }: EditSectionProps) => {
+const EditWithdrawal = ({ formik, kickstarter, isEdit }: EditWithdrawalSectionProps) => {
   return (
     <>
-      <Heading size='lg' marginBottom="8px" color="sidebarActiveColor">Withdrawal Fee Amount</Heading>
+      <Heading size="lg" marginBottom="8px" color="sidebarActiveColor">
+        Withdrawal Fee Amount
+      </Heading>
       <Text>Withdrawal fee is collected when project creator wants to withdraw their project fund</Text>
       <br />
       <Grid container spacing="24px">
@@ -493,8 +522,18 @@ const EditWithdrawal = ({ formik, kickstarter }: EditSectionProps) => {
             inputTitle="Enter Fee Percentage (%)"
             description={
               <>
-                If the project fund has total of 100 BNB, they will have to pay&nbsp;
-                <Text bold color="linkColor" style={{ display: "inline-block", fontSize: "inherit" }}>5 BNB (5%)</Text>
+                If the project fund has total of 100{' '}
+                {isEdit
+                  ? getSymbolByAddress(formik.values.paymentToken)
+                  : getSymbolByAddress(kickstarter?.paymentToken || '')}
+                , they will have to pay&nbsp;
+                <Text bold color="linkColor" style={{ display: 'inline-block', fontSize: 'inherit' }}>
+                  5{' '}
+                  {isEdit
+                    ? getSymbolByAddress(formik.values.paymentToken)
+                    : getSymbolByAddress(kickstarter?.paymentToken || '')}{' '}
+                  (5%)
+                </Text>
                 &nbsp;for the withdraw fee
               </>
             }
@@ -509,8 +548,15 @@ const EditWithdrawal = ({ formik, kickstarter }: EditSectionProps) => {
             inputTitle="Enter Fixed Amount"
             description={
               <>
-                If the project fund has total of 100 BNB, they will have to pay&nbsp;
-                <Text bold color="linkColor" style={{ display: "inline-block", fontSize: "inherit" }}>0 BNB</Text>
+                They will have to pay&nbsp;
+                <Text bold color="linkColor" style={{ display: 'inline-block', fontSize: 'inherit' }}>
+                  {formik.values.withdrawalFeeMethod === WithdrawalFeeMethod.FIXED_AMOUNT.toString()
+                    ? Number(formik.values.withdrawalFeeAmount)
+                    : '0'}{' '}
+                  {isEdit
+                    ? getSymbolByAddress(formik.values.paymentToken)
+                    : getSymbolByAddress(kickstarter?.paymentToken || '')}
+                </Text>
                 &nbsp;for the withdrawal fee
               </>
             }
@@ -538,7 +584,7 @@ const EditWithdrawalOption = ({
   )
   return (
     <>
-      <Flex alignItems="center" style={{ columnGap: "8px" }}>
+      <Flex alignItems="center" style={{ columnGap: '8px' }}>
         <Radio
           scale="sm"
           name={ProjectFormField.withdrawalFeeMethod}
@@ -548,28 +594,38 @@ const EditWithdrawalOption = ({
           checked={isSelected}
         />
         <div>
-          <Text bold color={isSelected ? "linkColor" : "default"} fontSize="14px">{title}</Text>
-          <Text color="textSubtle" fontSize="12px">User will have to pay withdraw fee from the X% project fund</Text>
+          <Text bold color={isSelected ? 'linkColor' : 'default'} fontSize="14px">
+            {title}
+          </Text>
+          <Text color="textSubtle" fontSize="12px">
+            User will have to pay withdraw fee from the X
+            {value === WithdrawalFeeMethod.PERCENTAGE.toString() ? '% ' : ' '}
+            project fund
+          </Text>
         </div>
       </Flex>
       <br />
-      <Text fontSize="14px" color={isSelected ? "default": "textDisabled"}>{inputTitle}</Text>
+      <Text fontSize="14px" color={isSelected ? 'default' : 'textDisabled'}>
+        {inputTitle}
+      </Text>
       <Input
         name={ProjectFormField.withdrawalFeeAmount}
-        value={isSelected ? formik.values.withdrawalFeeAmount : ""}
+        value={isSelected ? formik.values.withdrawalFeeAmount : ''}
         placeholder="0"
         onChange={(e) => handleFeePercentageChanged(e.target.value)}
-        style={{ margin: "4px 0" }}
+        style={{ margin: '4px 0' }}
         disabled={!isSelected}
       />
-      <Text fontSize="14px" color="textDisabled">{description}</Text>
+      <Text fontSize="14px" color="textDisabled">
+        {description}
+      </Text>
     </>
   )
 }
 
 function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }: KickstarterDetailsProps) {
   const { library } = useWeb3React()
-  const [isEdit, setIsEdit] = useState(false);
+  const [isEdit, setIsEdit] = useState(false)
   const kickstarter = useKickstarterById(kickstarterId)
   const kickstarterContract = useKickstarterContract(kickstarterId)
   const tokenContract = useTokenContract(kickstarter.data?.paymentToken)
@@ -580,60 +636,69 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
   const formik: FormikProps<Project> = useFormik<Project>({
     enableReinitialize: true,
     initialValues: {
-      title: kickstarter.data?.title || "",
-      creator: kickstarter.data?.creator || "",
+      title: kickstarter.data?.title || '',
+      creator: kickstarter.data?.creator || '',
       image: undefined,
       imageUrl: kickstarter.data?.imageUrl,
-      projectDescription: kickstarter.data?.projectDescription || "",
-      rewardDescription: kickstarter.data?.rewardDescription || "",
-      paymentToken: kickstarter.data?.paymentToken || "",
-      projectGoals: kickstarter.data?.projectGoals?.toString() || "",
-      minContribution: kickstarter.data?.minContribution?.toString() || "",
-      endTimestamp: format(fromUnixTime(kickstarter.data?.endTimestamp?.toNumber() || 0), 'yyyy-MM-dd\'T\'HH:mm'),
-      rewardDistributionTimestamp: format(fromUnixTime(kickstarter.data?.rewardDistributionTimestamp?.toNumber() || 0), 'yyyy-MM-dd\'T\'HH:mm'),
-      withdrawalFeeMethod: kickstarter.data?.fixFeeAmount?.toNumber() ? WithdrawalFeeMethod.FIXED_AMOUNT : WithdrawalFeeMethod.PERCENTAGE,
-      withdrawalFeeAmount: kickstarter.data?.fixFeeAmount?.toNumber() ? kickstarter.data?.fixFeeAmount?.toString() : (kickstarter.data?.percentageFeeAmount?.times(100).div(10000).toString() || ""),
+      projectDescription: kickstarter.data?.projectDescription || '',
+      rewardDescription: kickstarter.data?.rewardDescription || '',
+      paymentToken: kickstarter.data?.paymentToken || '',
+      projectGoals: kickstarter.data?.projectGoals?.toString() || '',
+      minContribution: kickstarter.data?.minContribution?.toString() || '',
+      endTimestamp: format(fromUnixTime(kickstarter.data?.endTimestamp?.toNumber() || 0), "yyyy-MM-dd'T'HH:mm"),
+      rewardDistributionTimestamp: format(
+        fromUnixTime(kickstarter.data?.rewardDistributionTimestamp?.toNumber() || 0),
+        "yyyy-MM-dd'T'HH:mm"
+      ),
+      withdrawalFeeMethod: kickstarter.data?.fixFeeAmount?.toNumber()
+        ? WithdrawalFeeMethod.FIXED_AMOUNT
+        : WithdrawalFeeMethod.PERCENTAGE,
+      withdrawalFeeAmount: kickstarter.data?.fixFeeAmount?.toNumber()
+        ? kickstarter.data?.fixFeeAmount?.toString()
+        : kickstarter.data?.percentageFeeAmount?.times(100).div(10000).toString() || '',
       contactMethod: getKickstarterContactMethodById(kickstarterContactMethod.data?.contactMethod),
-      contactMethodValue: kickstarterContactMethod.data?.contactValue
+      contactMethodValue: kickstarterContactMethod.data?.contactValue,
     },
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       if (!kickstarterContract || (kickstarter.data?.paymentToken !== NULL_ADDRESS && !tokenContract)) return
       setSubmitting(true)
       try {
-        if(!isEdit) {
+        if (!isEdit) {
           await handleApproveProject()
         } else {
           await handleEditAndApproveProject()
         }
-        handleKickstarterId("")
+        handleKickstarterId('')
       } catch (e: any) {
-        console.error("Failed to Approve Kickstarter", e.message)
+        console.error('Failed to Approve Kickstarter', e.message)
       }
       setSubmitting(false)
     },
   })
 
-  const getPercentageFeeAndFixFeeAmount = async () => {
-    let percentageFeeAmount = "0"
-    let fixFeeAmount = "0"
-    let decimals = 18
+  const formikTokenContract = useTokenContract(formik.values.paymentToken)
+
+  const getPercentageFeeAndFixFeeAmount = async (decimals: number) => {
+    let percentageFeeAmount = '0'
+    let fixFeeAmount = '0'
     if (formik.values.withdrawalFeeMethod === WithdrawalFeeMethod.PERCENTAGE) {
       percentageFeeAmount = (Number(formik.values.withdrawalFeeAmount || 0) * 100).toString()
     } else if (formik.values.withdrawalFeeMethod === WithdrawalFeeMethod.FIXED_AMOUNT) {
-      fixFeeAmount = formik.values.withdrawalFeeAmount?.toString() || "0"
-    }
-    if (kickstarter.data?.paymentToken !== NULL_ADDRESS) {
-      decimals = await tokenContract!.decimals()
+      fixFeeAmount = formik.values.withdrawalFeeAmount?.toString() || '0'
     }
     return {
       percentageFeeAmount,
-      fixFeeAmount: parseUnits(fixFeeAmount, decimals)
+      fixFeeAmount: parseUnits(fixFeeAmount, decimals),
     }
   }
 
   const handleApproveProject = async () => {
-    const withdrawalFee = await getPercentageFeeAndFixFeeAmount()
-    const receipt = kickstarterContract!.approve(withdrawalFee.percentageFeeAmount, withdrawalFee.fixFeeAmount)
+    let decimals = 18
+    if (kickstarter.data?.paymentToken !== NULL_ADDRESS) {
+      decimals = await tokenContract?.decimals()
+    }
+    const withdrawalFee = await getPercentageFeeAndFixFeeAmount(decimals)
+    const receipt = await kickstarterContract?.approve(withdrawalFee.percentageFeeAmount, withdrawalFee.fixFeeAmount)
     await library.waitForTransaction(receipt.hash)
   }
 
@@ -642,6 +707,12 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
     if (formik.values.image) {
       uploadImageResult = await uploadImageApi.mutateAsync(formik.values.image)
     }
+
+    let decimals = 18
+    if (formik.values.paymentToken !== NULL_ADDRESS) {
+      decimals = await formikTokenContract?.decimals()
+    }
+
     const project = {
       paymentToken: formik.values.paymentToken,
       title: formik.values.title,
@@ -649,22 +720,17 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
       imageUrl: formik.values.image ? uploadImageResult?.url : formik.values.imageUrl,
       projectDescription: formik.values.projectDescription,
       rewardDescription: formik.values.rewardDescription,
-      minContribution: parseUnits(formik.values.minContribution, 18).toString(),
-      projectGoals: parseUnits(formik.values.projectGoals, 18).toString(),
+      minContribution: parseUnits(formik.values.minContribution, decimals).toString(),
+      projectGoals: parseUnits(formik.values.projectGoals, decimals).toString(),
       rewardDistributionTimestamp: Math.floor(new Date(formik.values.rewardDistributionTimestamp).getTime() / 1000),
       startTimestamp: getUnixTime(new Date()),
       endTimestamp: getUnixTime(new Date(formik.values.endTimestamp)),
     }
 
-    const withdrawalFee = await getPercentageFeeAndFixFeeAmount()
+    const withdrawalFee = await getPercentageFeeAndFixFeeAmount(decimals)
     const receipt = await kickstarterContract![
-      "configProjectInfo((address,string,string,string,string,string,uint256,uint256,uint256,uint256,uint256),uint8,uint256,uint256)"
-    ](
-      project,
-      KickstarterApprovalStatusId.APPROVED,
-      withdrawalFee.percentageFeeAmount,
-      withdrawalFee.fixFeeAmount
-    )
+      'configProjectInfo((address,string,string,string,string,string,uint256,uint256,uint256,uint256,uint256),uint8,uint256,uint256)'
+    ](project, KickstarterApprovalStatusId.APPROVED, withdrawalFee.percentageFeeAmount, withdrawalFee.fixFeeAmount)
     await kickstarterContactMethodUpdate.mutateAsync({
       kickstarterAddress: kickstarterId,
       contactMethod: `${formik.values.contactMethod}`,
@@ -682,26 +748,21 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
       <Flex flexDirection="column">
         <Header previousPage={previousPage} handleKickstarterId={handleKickstarterId} />
         <br />
-        {kickstarter.data?.approvalStatus === KickstarterApprovalStatus.WAITING_FOR_APPROVAL && (
-          <EditButtons
-            formik={formik}
-            isEdit={isEdit}
-            handleIsEdit={setIsEdit}
-            isDisabled={kickstarter.isFetching || !kickstarter.data}
-          />
-        )}
+        <EditButtons
+          formik={formik}
+          isEdit={isEdit}
+          handleIsEdit={setIsEdit}
+          isDisabled={kickstarter.isFetching || !kickstarter.data}
+        />
         <br />
         {isEdit ? (
           <EditProjectDetails kickstarter={kickstarter.data} formik={formik} />
         ) : (
-          <ProjectDetails
-            kickstarter={kickstarter.data}
-            isLoading={kickstarter.isFetching}
-          />
+          <ProjectDetails kickstarter={kickstarter.data} isLoading={kickstarter.isFetching} />
         )}
         <Divider />
         {isEdit ? (
-          <EditFundAndRewardsSystem formik={formik} />
+          <EditFundAndRewardsSystem kickstarter={kickstarter.data} formik={formik} />
         ) : (
           <FundAndRewardsSystem
             formik={formik}
@@ -710,21 +771,22 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
           />
         )}
         <Divider />
-        {(isEdit || kickstarter.data?.approvalStatus === KickstarterApprovalStatus.WAITING_FOR_APPROVAL ) ? (
-          <EditWithdrawal formik={formik} />
+        {isEdit || kickstarter.data?.approvalStatus === KickstarterApprovalStatus.WAITING_FOR_APPROVAL ? (
+          <EditWithdrawal kickstarter={kickstarter.data} isEdit={isEdit} formik={formik} />
         ) : (
-          <Withdrawal
-            kickstarter={kickstarter.data}
-            isLoading={kickstarter.isFetching}
-          />
+          <Withdrawal kickstarter={kickstarter.data} isLoading={kickstarter.isFetching} />
         )}
       </Flex>
       {!isEdit && kickstarter.data?.approvalStatus === KickstarterApprovalStatus.WAITING_FOR_APPROVAL && (
         <>
           <Divider />
-          <Flex style={{ columnGap: "12px" }}>
-            <Button variant="awesome" onClick={() => formik.submitForm()} isLoading={formik.isSubmitting}>Approve Project</Button>
-            <Button variant="danger" isLoading={formik.isSubmitting} onClick={showPayment}>Reject Project</Button>
+          <Flex style={{ columnGap: '12px' }}>
+            <Button variant="awesome" onClick={() => formik.submitForm()} isLoading={formik.isSubmitting}>
+              Approve Project
+            </Button>
+            <Button variant="danger" isLoading={formik.isSubmitting} onClick={showPayment}>
+              Reject Project
+            </Button>
           </Flex>
         </>
       )}
