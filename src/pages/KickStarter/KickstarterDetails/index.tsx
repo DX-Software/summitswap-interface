@@ -1,5 +1,6 @@
 import {
-  ArrowBackIcon, Breadcrumbs,
+  ArrowBackIcon,
+  Breadcrumbs,
   Button,
   FacebookIcon,
   FileIcon,
@@ -9,15 +10,11 @@ import {
   ShareIcon,
   Skeleton,
   Text,
-  TwitterIcon
+  TwitterIcon,
 } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
-import {
-  useBackedKickstarterById,
-  useKickstarterById,
-  useKickstarterContributors
-} from 'api/useKickstarterApi'
+import { useBackedKickstarterById, useKickstarterById, useKickstarterContributors } from 'api/useKickstarterApi'
 import Tooltip from 'components/Tooltip'
 import { getTokenImageBySymbol } from 'connectors'
 import { format } from 'date-fns'
@@ -307,7 +304,9 @@ const Highlight = ({ kickstarter, backedKickstarter, handleIsPayment, isLoading 
             <Text fontWeight="bold" marginBottom="4px">
               You have backed this project
             </Text>
-            <Text>Backed amount&nbsp;&nbsp;&nbsp;&nbsp;{backedKickstarter.amount?.toString()} BNB</Text>
+            <Text>
+              Backed amount&nbsp;&nbsp;&nbsp;&nbsp;{backedKickstarter.amount?.toString()} {kickstarter?.tokenSymbol}
+            </Text>
           </BackedAmountWrapper>
         )}
 
@@ -527,7 +526,6 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
   const kickstarter = useKickstarterById(kickstarterId)
   const kickstarterContributors = useKickstarterContributors(kickstarterId)
   const backedKickstarter = useBackedKickstarterById(`${kickstarterId.toString()}-${account?.toString()}`)
-  console.log("toplesgelas", kickstarter)
 
   const [isPayment, setIsPayment] = useState(false)
   const [activeTabIndex, setActiveTabIndex] = useState(0)
@@ -586,19 +584,19 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
 
   useEffect(() => {
     if (kickstarter.isFetched && !kickstarter.data) {
-      handleKickstarterId("")
+      handleKickstarterId('')
     }
   }, [kickstarter, handleKickstarterId])
 
   useEffect(() => {
     if (kickstarter.data) {
       history.replace({
-        search: `?kickstarter=${kickstarter.data.id}`
+        search: `?kickstarter=${kickstarter.data.id}`,
       })
     }
     return () => {
       history.replace({
-        search: ""
+        search: '',
       })
     }
   }, [history, kickstarter])
@@ -651,7 +649,9 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
             isLoading={kickstarter.isFetching || backedKickstarter.isFetching}
           />
         )}
-        {selectedTab.code === TabCode.DONATORS && <Donators kickstarterContributors={kickstarterContributors.data || []} />}
+        {selectedTab.code === TabCode.DONATORS && (
+          <Donators kickstarterContributors={kickstarterContributors.data || []} />
+        )}
       </Flex>
 
       {account && kickstarter?.data && account.toLowerCase() === kickstarter.data.owner?.id && (
