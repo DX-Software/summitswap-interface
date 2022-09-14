@@ -1,17 +1,8 @@
-import {
-  ArrowBackIcon,
-  ArrowForwardIcon,
-  Box,
-  Button,
-  darkColors,
-  ExchangeIcon,
-  Text,
-} from '@koda-finance/summitswap-uikit'
+import { ArrowBackIcon, ArrowForwardIcon, Button, ExchangeIcon } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import { useWhitelabelNftApiValidate } from 'api/useWhitelabelNftApi'
 import { FormikProps } from 'formik'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import styled from 'styled-components'
 import { WhitelabelNft, WhitelabelNftFormField } from 'types/whitelabelNft'
 import { NavStepButton } from '../shared/Button'
 import Divider from '../shared/Divider'
