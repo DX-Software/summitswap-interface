@@ -1,4 +1,4 @@
-import { Button, Flex, Heading, useWalletModal } from '@koda-finance/summitswap-uikit'
+import { Button, Flex, Heading, useWalletModal, WalletIcon } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
 import React, { useCallback } from 'react'
 import login from 'utils/login'
@@ -18,9 +18,14 @@ function ConnectWalletSection() {
   return (
     <Flex mb={3} flexDirection="column" alignItems="center" justifyContent="center" height={300}>
       <Heading size="lg" color="primaryDark" style={{ fontWeight: 400 }} marginBottom={38} textAlign="center">
-        Please connect your wallet to view your projects
+        Please connect your wallet before continuing.
       </Heading>
-      <Button variant="tertiary" startIcon={<></>} style={{ fontFamily: 'Poppins' }} onClick={onPresentConnectModal}>
+      <Button
+        variant="tertiary"
+        startIcon={<WalletIcon />}
+        style={{ fontFamily: 'Poppins' }}
+        onClick={onPresentConnectModal}
+      >
         Connect Your Wallet
       </Button>
     </Flex>

@@ -1,8 +1,10 @@
 import { Flex, Heading, Text } from '@koda-finance/summitswap-uikit'
+import { useWeb3React } from '@web3-react/core'
 import { INITIAL_WHITELABEL_CREATION } from 'constants/whitelabel'
 import { FormikProps, FormikProvider, useFormik } from 'formik'
 import React, { useState } from 'react'
 import { WhitelabelNft } from 'types/whitelabelNft'
+import ConnectWalletSection from '../shared/ConnectWalletSection'
 import Divider from '../shared/Divider'
 import CreationStep01 from './CreationStep01'
 import CreationStep02 from './CreationStep02'
@@ -10,6 +12,7 @@ import CreationStep03 from './CreationStep03'
 import validationSchema from './validation'
 
 function CreateCollection() {
+  const { account } = useWeb3React()
   const [currentCreationStep, setCurrentCreationStep] = useState(0)
 
   const formik: FormikProps<WhitelabelNft> = useFormik<WhitelabelNft>({
@@ -35,6 +38,10 @@ function CreateCollection() {
       component: <CreationStep03 setCurrentCreationStep={setCurrentCreationStep} formik={formik} />,
     },
   ]
+
+  if (!account) {
+    return <ConnectWalletSection />
+  }
 
   return (
     <Flex flexDirection="column">
