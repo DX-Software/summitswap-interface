@@ -86,7 +86,6 @@ function PaymentModal({
 
     setIsApproved(true)
 
-    approve()
   }, [account, tokenContract, library, setIsLoading, kickstarter])
 
   useEffect(() => {
