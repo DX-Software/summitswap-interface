@@ -20,7 +20,13 @@ function WaitingForApproval({ handleShowKickstarter }: Props) {
     return Math.ceil(totalItems / PER_PAGE)
   }, [kickstarterFactory.data])
 
-  const kickstarters = useKickstartersByApprovalStatuses([KickstarterApprovalStatusId.WAITING_FOR_APPROVAL], page)
+  const kickstarters = useKickstartersByApprovalStatuses(
+    [KickstarterApprovalStatusId.WAITING_FOR_APPROVAL],
+    page,
+    PER_PAGE,
+    sortField,
+    sortDirection
+  )
 
   return (
     <KickstarterTable

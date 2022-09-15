@@ -24,7 +24,10 @@ function ApprovalHistory({ handleShowKickstarter }: Props) {
 
   const kickstarters = useKickstartersByApprovalStatuses(
     [KickstarterApprovalStatusId.APPROVED, KickstarterApprovalStatusId.REJECTED],
-    page
+    page,
+    PER_PAGE,
+    sortField,
+    sortDirection
   )
   return (
     <KickstarterTable

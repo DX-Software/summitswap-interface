@@ -2,7 +2,7 @@ import { ArrowBackIcon, ArrowForwardIcon, Skeleton, Text } from '@koda-finance/s
 import { Arrow, Break, ClickableColumnHeader, PageButtons, TableWrapper } from 'components/InfoTables/shared'
 import { PER_PAGE } from 'constants/kickstarter'
 import { format } from 'date-fns'
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { UseQueryResult } from 'react-query'
 import styled from 'styled-components'
@@ -137,19 +137,6 @@ function KickstarterTable({
     [sortDirection, sortField, handleSortFieldChanged, handleSortDirectionChanged]
   )
 
-  const sortedKickstarters = useMemo(() => {
-    return kickstarters.data
-      ? kickstarters.data.sort((a, b) => {
-          if (a && b) {
-            return a[sortField] > b[sortField]
-              ? (sortDirection === OrderDirection.DESC ? -1 : 1) * 1
-              : (sortDirection === OrderDirection.DESC ? -1 : 1) * -1
-          }
-          return -1
-        })
-      : []
-  }, [kickstarters, sortDirection, sortField])
-
   const arrow = useCallback(
     (field: string) => {
       const directionArrow = sortDirection === OrderDirection.DESC ? '↑' : '↓'
@@ -211,7 +198,8 @@ function KickstarterTable({
       <Break />
       {kickstarters.isFetching && <DataRowLoading />}
       {!kickstarters.isFetching &&
-        sortedKickstarters.map((kickstarter) => {
+        kickstarters.data &&
+        kickstarters.data.map((kickstarter) => {
           return (
             <React.Fragment key={kickstarter.id}>
               <DataRow kickstarter={kickstarter} handleShowKickstarter={handleShowKickstarter} />
