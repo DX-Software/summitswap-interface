@@ -33,9 +33,8 @@ import {
 // GRAPHQL
 export function useKickstarterFactoryById(kickstarterFactoryId: string) {
   return useQuery(['useKickstarterFactoryById', kickstarterFactoryId], async () => {
-    // TODO: do lower case for this after updating sub-graph
     const data = await kickstarterClient.request(KICKSTARTER_FACTORY_BY_ID, {
-      address: kickstarterFactoryId,
+      address: kickstarterFactoryId.toLowerCase(),
     })
     const kickstarter = convertToKickstarterFactory(data.summitKickstarterFactory)
     return kickstarter
