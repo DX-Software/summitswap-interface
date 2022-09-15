@@ -2,34 +2,25 @@ import {
   ArrowBackIcon,
   Breadcrumbs,
   Button,
-  FacebookIcon,
   FileIcon,
   Flex,
   NavTab,
-  Progress,
-  ShareIcon,
   Skeleton,
   Text,
-  TwitterIcon,
 } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { useBackedKickstarterById, useKickstarterById, useKickstarterContributors } from 'api/useKickstarterApi'
-import Tooltip from 'components/Tooltip'
 import { getTokenImageBySymbol } from 'connectors'
 import { format } from 'date-fns'
-import ImgCornerIllustration from 'img/corner-illustration.svg'
 import React, { useEffect, useMemo, useState } from 'react'
 import { CSVLink } from 'react-csv'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import { BackedKickstarter, Kickstarter, KickstarterContributor, KickstarterProgressStatus } from 'types/kickstarter'
-import copyText from 'utils/copyText'
-import { getKickstarterStatus, getKickstarterStatusLabel } from 'utils/kickstarter'
+import { BackedKickstarter, Kickstarter, KickstarterContributor } from 'types/kickstarter'
 import { Divider, ImgCurrency } from '../shared'
-import ProgressBox from '../shared/ProgressBox'
-import StatusLabel from '../shared/StatusLabel'
 import ProjectPayment from './ProjectPayment'
+import Highlight from './Highlight'
 
 type Tab = {
   label: string
@@ -51,13 +42,6 @@ type KickstarterDetailsProps = {
 type HeaderProps = {
   previousPage: string
   handleKickstarterId: (kickstarterId: string) => void
-}
-
-type HighlightProps = {
-  kickstarter?: Kickstarter
-  backedKickstarter?: BackedKickstarter
-  isLoading?: boolean
-  handleIsPayment: (value: boolean) => void
 }
 
 type ProjectDetailsProps = {
@@ -84,83 +68,6 @@ type DonatorCardProps = {
 const Link = styled.a`
   color: ${({ theme }) => theme.colors.linkColor};
   text-decoration: underline;
-`
-
-const WhiteDot = styled.div`
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background-color: white;
-`
-
-const ImgKickstarterDesktop = styled(Flex)<{ image: string }>`
-  width: 240px;
-  height: 230px;
-  border-radius: 8px;
-  flex-shrink: 0;
-
-  background: ${(props) => `url(${props.image}) gray`};
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-blend-mode: overlay;
-
-  @media (max-width: 768px) {
-    display: none;
-  }
-`
-
-const ImgKickstarterMobile = styled(Flex)<{ image: string }>`
-  width: 100%;
-  height: 230px;
-  border-radius: 8px;
-  flex-shrink: 0;
-  display: none;
-
-  background: ${(props) => `url(${props.image}) gray`};
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-blend-mode: overlay;
-
-  @media (max-width: 768px) {
-    display: block;
-  }
-`
-
-const BackedAmountWrapper = styled(Flex)`
-  position: relative;
-  padding: 12px 0;
-  padding-left: 54px;
-  padding-right: 16px;
-  background-color: ${({ theme }) => theme.colors.info};
-  border-radius: 8px;
-  overflow: hidden;
-`
-
-const ImgIllustration = styled.img`
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-`
-
-const SocialMedia = styled.a`
-  display: flex;
-  height: fit-content;
-  padding: 12px 18px;
-  background-color: white;
-  border-radius: 20px;
-`
-
-const HighlightContainer = styled(Flex)`
-  column-gap: 32px;
-  row-gap: 24px;
-  margin-bottom: 32px;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-  }
 `
 
 const DonatorWrapper = styled(Flex)`
@@ -191,168 +98,6 @@ const Header = ({ previousPage, handleKickstarterId }: HeaderProps) => {
         </Text>
       </Flex>
     </>
-  )
-}
-
-const Highlight = ({ kickstarter, backedKickstarter, handleIsPayment, isLoading = true }: HighlightProps) => {
-  const progressStatus = getKickstarterStatus(kickstarter?.endTimestamp?.toNumber() || 0)
-
-  const fundedPercentage = useMemo(() => {
-    if (
-      !kickstarter ||
-      !kickstarter.totalContribution ||
-      !kickstarter.projectGoals ||
-      kickstarter.totalContribution.eq(0) ||
-      kickstarter.projectGoals.eq(0)
-    ) {
-      return 0
-    }
-    return kickstarter?.totalContribution?.div(kickstarter.projectGoals).times(100).toNumber()
-  }, [kickstarter])
-
-  const currentPageLink = window.location.href
-
-  const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
-
-  const displayTooltip = () => {
-    setIsTooltipDisplayed(true)
-    setTimeout(() => {
-      setIsTooltipDisplayed(false)
-    }, 1000)
-  }
-
-  return (
-    <HighlightContainer>
-      {isLoading ? (
-        <Skeleton width={240} height={230} />
-      ) : (
-        <ImgKickstarterDesktop image={kickstarter?.imageUrl || ''} />
-      )}
-      <Flex flexDirection="column">
-        {isLoading ? (
-          <Flex style={{ columnGap: '8px' }} marginBottom="8px">
-            <Skeleton height={26} width={74} />
-            <Skeleton height={26} width={74} />
-            <Skeleton height={26} width={74} />
-          </Flex>
-        ) : (
-          <Flex style={{ columnGap: '8px' }} marginBottom="8px">
-            {backedKickstarter && (
-              <StatusLabel>
-                <b>BACKED</b>
-              </StatusLabel>
-            )}
-            <StatusLabel status={progressStatus}>
-              {getKickstarterStatusLabel(kickstarter?.endTimestamp?.toNumber() || 0)}
-            </StatusLabel>
-          </Flex>
-        )}
-        {isLoading ? (
-          <Skeleton height={36} width={300} marginBottom="24px" />
-        ) : (
-          <Text fontSize="40px" marginBottom="24px">
-            {kickstarter?.title}
-          </Text>
-        )}
-        {kickstarter && <ImgKickstarterMobile image={kickstarter.imageUrl || ''} marginBottom="24px" />}
-        <Flex style={{ columnGap: '8px', alignItems: 'center', marginBottom: '4px' }}>
-          {isLoading ? (
-            <Skeleton height={28} width={28} />
-          ) : (
-            <ImgCurrency image={getTokenImageBySymbol(kickstarter?.tokenSymbol)} />
-          )}
-          {isLoading ? (
-            <Skeleton height={28} width={42} />
-          ) : (
-            <Text fontWeight="bold" fontSize="24px">
-              {kickstarter?.totalContribution?.toString()}
-            </Text>
-          )}
-        </Flex>
-        {isLoading ? (
-          <Skeleton height={24} width={240} marginBottom="16px" />
-        ) : (
-          <Text color="textSubtle" marginBottom="16px">
-            backed of {kickstarter?.projectGoals?.toString() || 0} {kickstarter?.tokenSymbol} goal
-          </Text>
-        )}
-        {!isLoading && (
-          <ProgressBox maxWidth="400px" marginBottom="8px">
-            <Progress primaryStep={fundedPercentage} />
-          </ProgressBox>
-        )}
-        <Flex style={{ columnGap: '8px' }} alignItems="center" marginBottom="16px">
-          {isLoading ? (
-            <Skeleton width={200} />
-          ) : (
-            <>
-              {progressStatus !== KickstarterProgressStatus.COMPLETED && (
-                <>
-                  <Text fontWeight="bold">
-                    {getKickstarterStatusLabel(kickstarter?.endTimestamp?.toNumber() || 0, true)}
-                  </Text>
-                  <WhiteDot />
-                </>
-              )}
-              <Text>{kickstarter?.totalContributor?.toString() || '0'} backers</Text>
-            </>
-          )}
-        </Flex>
-        {backedKickstarter && (
-          <BackedAmountWrapper flexDirection="column" marginBottom="16px">
-            <ImgIllustration src={ImgCornerIllustration} />
-            <Text fontWeight="bold" marginBottom="4px">
-              You have backed this project
-            </Text>
-            <Text>
-              Backed amount&nbsp;&nbsp;&nbsp;&nbsp;{backedKickstarter.amount?.toString()} {kickstarter?.tokenSymbol}
-            </Text>
-          </BackedAmountWrapper>
-        )}
-
-        <Flex style={{ columnGap: '8px' }} alignItems="center">
-          {isLoading && <Skeleton width={162} height={38} />}
-          {!isLoading && progressStatus !== KickstarterProgressStatus.COMPLETED && (
-            <Button onClick={() => handleIsPayment(true)}>Back this project</Button>
-          )}
-          {isLoading ? (
-            <Skeleton width={50} height={38} />
-          ) : (
-            <Tooltip placement="top" text="Copied" show={isTooltipDisplayed}>
-              <SocialMedia
-                type="button"
-                style={{ cursor: 'pointer' }}
-                onClick={() => copyText(currentPageLink, displayTooltip)}
-              >
-                <ShareIcon width="14px" />
-              </SocialMedia>
-            </Tooltip>
-          )}
-          {isLoading ? (
-            <Skeleton width={50} height={38} />
-          ) : (
-            <SocialMedia
-              style={{ cursor: 'pointer' }}
-              href={`https://twitter.com/intent/tweet?text=Let's ontribute to "${kickstarter?.title}" Kickstarter ${currentPageLink}`}
-              target="_blank"
-            >
-              <TwitterIcon width="14px" />
-            </SocialMedia>
-          )}
-          {isLoading ? (
-            <Skeleton width={50} height={38} />
-          ) : (
-            <SocialMedia
-              style={{ cursor: 'pointer' }}
-              href={`https://www.facebook.com/sharer/sharer.php?u=${currentPageLink}`}
-              target="_blank"
-            >
-              <FacebookIcon width="14px" />
-            </SocialMedia>
-          )}
-        </Flex>
-      </Flex>
-    </HighlightContainer>
   )
 }
 
