@@ -106,7 +106,7 @@ function CreationStep02({ setCurrentCreationStep, formik }: Props) {
         </Grid>
       </Grid>
       <Grid container spacing="16px">
-        <Grid item xs={12} lg={6}>
+        <Grid item xs={12} sm={6}>
           <NavStepButton
             variant="secondary"
             onClick={() => setCurrentCreationStep((prev) => prev - 1)}
@@ -115,7 +115,7 @@ function CreationStep02({ setCurrentCreationStep, formik }: Props) {
             <b>Previous Step</b>
           </NavStepButton>
         </Grid>
-        <Grid item xs={12} lg={6} display="flex" justifyContent="flex-end">
+        <Grid item xs={12} sm={6} display="flex" justifyContent="flex-end">
           <NavStepButton
             variant="tertiary"
             onClick={handleNextPage}
