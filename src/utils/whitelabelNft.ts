@@ -4,9 +4,16 @@ export function getDefaultConcealName(name: string) {
 }
 
 export function getPreviewImageUrl() {
-  return `${process.env.PUBLIC_URL}/images/whitelabel-nfts/thumbnail_default.png`
+  return `${window.location.origin}/images/whitelabel-nfts/thumbnail_default.png`
 }
 
 export function getConcealImageUrl() {
-  return `${process.env.PUBLIC_URL}/images/whitelabel-nfts/conceal_default.png`
+  return `${window.location.origin}/images/whitelabel-nfts/conceal_default.png`
+}
+
+export async function convertImageUrlToFile(url: string, filename: string) {
+  const response = await fetch(url)
+  const blob = await response.blob()
+  const file = new File([blob], filename)
+  return file
 }

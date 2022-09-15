@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js'
+import { Phase } from 'constants/whitelabel'
 
 export enum Tabs {
   BROWSE_COLLECTION = 'browse_collection',
@@ -50,17 +51,44 @@ export type WhitelabelNft = {
   [WhitelabelNftFormField.spreadsheet]?: File
 }
 
-export type WhitelabelValidateParameter = {
+export type WhitelabelMetadataValidateDto = {
   spreadsheet: File
   nftImages: File[]
 }
 
-export type WhitelabelUploadParameter = WhitelabelValidateParameter & {
+export type WhitelabelMetadataUploadDto = WhitelabelMetadataValidateDto & {
   walletAddress: string
+}
+
+export type WhitelabelMetadataConcealDto = {
+  image: File
+  concealName: string
+}
+
+export type WhitelabelCollectionUpsertDto = {
+  whitelabelNftAddress: string
+  baseUrl: string
 }
 
 export type WhitelabelUploadResult = {
   rootCid: string
+}
+
+type WhitelabelNftCreateNftEventCreateNft = {
+  event: string
+  args: {
+    owner: string
+    nftAddress: string
+  }
+}
+
+export type WhitelabelNftTxReceipt = {
+  blockHash: string
+  blockNumber: number
+  events: [WhitelabelNftCreateNftEventCreateNft]
+  from: string
+  to: string
+  transactionHash: string
 }
 
 export type WhitelabelNftGraphql = {
@@ -75,4 +103,15 @@ export type WhitelabelNftGraphql = {
   publicMintPrice: BigNumber
   phase: number
   createdAt: number
+}
+
+export type TokenInfo = {
+  name: string
+  symbol: string
+  previewImageUrl: string
+  maxSupply: number
+  whitelistMintPrice: string
+  publicMintPrice: string
+  phase: Phase
+  isReveal: boolean
 }
