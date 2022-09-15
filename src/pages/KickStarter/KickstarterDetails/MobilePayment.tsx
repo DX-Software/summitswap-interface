@@ -29,7 +29,7 @@ type Props = {
   handleEmailChanged: (e) => void
   showPayment: () => void
   totalPayment: string
-  kickstarter: Kickstarter
+  kickstarter: Kickstarter | undefined
   handleBackedAmountChanged: (value: string) => void
 }
 
@@ -92,9 +92,9 @@ function MobilePayment({
 }: Props) {
   const { account, accountBalance, onPresentConnectModal } = useKickstarterContext()
 
-  const paymentToken = useToken(kickstarter.paymentToken !== NULL_ADDRESS ? kickstarter.paymentToken : undefined)
+  const paymentToken = useToken(kickstarter?.paymentToken !== NULL_ADDRESS ? kickstarter?.paymentToken : undefined)
 
-  const bigMinContribution = parseUnits(kickstarter.minContribution?.toString() || '0', paymentToken?.decimals)
+  const bigMinContribution = parseUnits(kickstarter?.minContribution?.toString() || '0', paymentToken?.decimals)
   const isGreaterThanMinContribution = parseUnits(totalPayment || '0', paymentToken?.decimals).gte(bigMinContribution)
 
   return (
@@ -103,15 +103,15 @@ function MobilePayment({
         Back Project
       </Heading>
       <Flex style={{ columnGap: '16px' }}>
-        <Banner image={kickstarter.imageUrl || ''} />
+        <Banner image={kickstarter?.imageUrl || ''} />
         <Flex flexDirection="column">
-          <Name>{kickstarter.creator}</Name>
-          <Title>{kickstarter.title}</Title>
+          <Name>{kickstarter?.creator}</Name>
+          <Title>{kickstarter?.title}</Title>
           <Flex style={{ columnGap: '8px' }}>
-            <ImgCurrency image={getTokenImageBySymbol(kickstarter.tokenSymbol)} />
+            <ImgCurrency image={getTokenImageBySymbol(kickstarter?.tokenSymbol)} />
             <Text color="textSubtle">
-              <b style={{ color: 'white' }}>{kickstarter.totalContribution?.toString()}</b> /{' '}
-              {kickstarter.projectGoals?.toString()} {kickstarter.tokenSymbol}
+              <b style={{ color: 'white' }}>{kickstarter?.totalContribution?.toString()}</b> /{' '}
+              {kickstarter?.projectGoals?.toString()} {kickstarter?.tokenSymbol}
             </Text>
           </Flex>
         </Flex>
@@ -123,7 +123,7 @@ function MobilePayment({
       <Text color="textSubtle" style={{ marginBottom: '24px' }}>
         You have to back with minimum amount of{' '}
         <b style={{ color: lightColors.linkColor }}>
-          {kickstarter.minContribution?.toString()} {kickstarter.tokenSymbol}
+          {kickstarter?.minContribution?.toString()} {kickstarter?.tokenSymbol}
         </b>{' '}
         to participate in this project
       </Text>
@@ -152,8 +152,8 @@ function MobilePayment({
               <Skeleton width={100} height={28} />
             ) : (
               <Text fontWeight="bold" color="primaryDark">
-                {`${kickstarter.paymentToken === NULL_ADDRESS ? accountBalance : paymentTokenBalance} ${
-                  kickstarter.tokenSymbol
+                {`${kickstarter?.paymentToken === NULL_ADDRESS ? accountBalance : paymentTokenBalance} ${
+                  kickstarter?.tokenSymbol
                 }`}
               </Text>
             )}

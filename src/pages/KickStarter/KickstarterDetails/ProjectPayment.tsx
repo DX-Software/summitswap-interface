@@ -26,9 +26,10 @@ import { useKickstarterContract, useTokenContract } from 'hooks/useContract'
 import { useKickstarterContext } from 'pages/KickStarter/contexts/kickstarter'
 import { useToken } from 'hooks/Tokens'
 import React, { useCallback, useEffect, useState } from 'react'
+import { UseQueryResult } from 'react-query'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import styled from 'styled-components'
-import { Kickstarter } from 'types/kickstarter'
+import { BackedKickstarter, Kickstarter } from 'types/kickstarter'
 import { shortenAddress } from 'utils'
 import { ImgCurrency } from '../shared'
 import FundingInput from '../shared/FundingInput'
@@ -37,7 +38,8 @@ import PaymentModal from './PaymentModal'
 
 type Props = {
   previousPage: string
-  kickstarter: Kickstarter
+  backedKickstarter: UseQueryResult<BackedKickstarter | undefined, unknown>
+  kickstarterQueryResult: UseQueryResult<Kickstarter | undefined, unknown>
   handleKickstarterId: (value: string) => void
   handleIsPayment: (value: boolean) => void
 }
@@ -132,10 +134,19 @@ const ButtonContinue = styled(Button)`
   }
 `
 
-function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handleIsPayment }: Props) {
+function ProjectPayment({
+  previousPage,
+  backedKickstarter,
+  kickstarterQueryResult,
+  handleKickstarterId,
+  handleIsPayment,
+}: Props) {
   const { account, accountBalance, onPresentConnectModal } = useKickstarterContext()
+
+  const { data: kickstarter } = kickstarterQueryResult
+
   const addTransaction = useTransactionAdder()
-  const kickstarterContract = useKickstarterContract(kickstarter.id)
+  const kickstarterContract = useKickstarterContract(kickstarter?.id)
   const kickstarterContributorStore = useKickstarterContributorStore()
 
   const [email, setEmail] = useState('')
@@ -148,9 +159,9 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
   const [errorMessage, setErrorMessage] = useState<string | undefined>()
 
   const paymentTokenContract = useTokenContract(
-    kickstarter.paymentToken !== NULL_ADDRESS ? kickstarter.paymentToken : undefined
+    kickstarter?.paymentToken !== NULL_ADDRESS ? kickstarter?.paymentToken : undefined
   )
-  const paymentToken = useToken(kickstarter.paymentToken !== NULL_ADDRESS ? kickstarter.paymentToken : undefined)
+  const paymentToken = useToken(kickstarter?.paymentToken !== NULL_ADDRESS ? kickstarter?.paymentToken : undefined)
 
   useEffect(() => {
     async function fetchTokenBalance() {
@@ -159,7 +170,7 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
       setPaymentTokenBalance(Number(formatUnits(balance, decimals)).toPrecision(6))
     }
     if (account && paymentTokenContract) fetchTokenBalance()
-  }, [account, paymentTokenContract])
+  }, [account, paymentTokenContract, kickstarter])
 
   const handleEmailChanged = (e) => {
     setEmail(e.target.value)
@@ -202,6 +213,7 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
         value: kickstarter.paymentToken === NULL_ADDRESS ? transactionValue : 0,
       })
       transactionSubmitted(receipt, 'The contribution has been submitted successfully')
+
       await kickstarterContributorStore.mutateAsync({
         kickstarterAddress: kickstarter.id,
         walletAddress: account,
@@ -210,12 +222,18 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
         email,
         contributionAmount: backedAmount,
       })
+
+      await receipt.wait()
+      await kickstarterQueryResult.refetch()
+      await backedKickstarter.refetch()
     } catch (err) {
       const callError = err as any
       const callErrorMessage = callError.reason ?? callError.data?.message ?? callError.message
       transactionFailed(callErrorMessage)
     }
   }, [
+    kickstarterQueryResult,
+    backedKickstarter,
     kickstarterContributorStore,
     kickstarterContract,
     account,
@@ -239,7 +257,7 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
   )
   const [isMobilePaymentPage, setIsMobilePaymentPage] = useState(false)
 
-  const bigMinContribution = parseUnits(kickstarter.minContribution?.toString() || '0', paymentToken?.decimals)
+  const bigMinContribution = parseUnits(kickstarter?.minContribution?.toString() || '0', paymentToken?.decimals)
   const isGreaterThanMinContribution = parseUnits(backedAmount || '0', paymentToken?.decimals).gte(bigMinContribution)
 
   const handleBackedAmountChanged = useCallback((value: string) => {
@@ -273,17 +291,17 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
           <Heading size="lg" marginBottom="8px">
             Back Project
           </Heading>
-          <MobileBanner image={kickstarter.imageUrl || ''} marginBottom="16px" />
+          <MobileBanner image={kickstarter?.imageUrl || ''} marginBottom="16px" />
           <Flex style={{ columnGap: '16px' }}>
-            <DesktopBanner image={kickstarter.imageUrl || ''} />
+            <DesktopBanner image={kickstarter?.imageUrl || ''} />
             <Flex flexDirection="column">
-              <Name>{kickstarter.creator}</Name>
-              <Title>{kickstarter.title}</Title>
+              <Name>{kickstarter?.creator}</Name>
+              <Title>{kickstarter?.title}</Title>
               <Flex style={{ columnGap: '8px' }} alignItems="center">
-                <ImgCurrency image={getTokenImageBySymbol(kickstarter.tokenSymbol)} />
+                <ImgCurrency image={getTokenImageBySymbol(kickstarter?.tokenSymbol)} />
                 <Text fontSize="24px" color="textSubtle">
-                  <b style={{ color: 'white' }}>{kickstarter.totalContribution?.toString()}</b> /{' '}
-                  {`${kickstarter.projectGoals?.toString()} ${kickstarter.tokenSymbol}`}
+                  <b style={{ color: 'white' }}>{kickstarter?.totalContribution?.toString()}</b> /{' '}
+                  {`${kickstarter?.projectGoals?.toString()} ${kickstarter?.tokenSymbol}`}
                 </Text>
               </Flex>
             </Flex>
@@ -292,12 +310,12 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
           <Text color="textSubtle" marginBottom="4px">
             Project Reward
           </Text>
-          <Text marginBottom="16px">{kickstarter.rewardDescription}</Text>
+          <Text marginBottom="16px">{kickstarter?.rewardDescription}</Text>
           <Text color="textSubtle" marginBottom="4px">
             Reward Distribution
           </Text>
           <Text>
-            {format(new Date((kickstarter.rewardDistributionTimestamp?.toNumber() || 0) * 1000), 'LLLL do, yyyy')}
+            {format(new Date((kickstarter?.rewardDistributionTimestamp?.toNumber() || 0) * 1000), 'LLLL do, yyyy')}
           </Text>
         </Grid>
         <SideItems item xs={12} md={5}>
@@ -307,8 +325,8 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
             </Heading>
             <Text color="textSubtle" marginBottom="16px">
               You have to back with minimum amount of{' '}
-              <b style={{ color: lightColors.linkColor }}>{`${kickstarter.minContribution?.toString()} ${
-                kickstarter.tokenSymbol
+              <b style={{ color: lightColors.linkColor }}>{`${kickstarter?.minContribution?.toString()} ${
+                kickstarter?.tokenSymbol
               }`}</b>{' '}
               to participate in this project
             </Text>
@@ -360,12 +378,12 @@ function ProjectPayment({ previousPage, kickstarter, handleKickstarterId, handle
                     {shortenAddress(account)}
                   </Text>
                 </Flex>
-                {!accountBalance || !paymentTokenBalance ? (
+                {!accountBalance || !(kickstarter?.paymentToken === NULL_ADDRESS || paymentTokenBalance) ? (
                   <Skeleton width={100} height={28} />
                 ) : (
                   <Text fontWeight="bold">
-                    {`${kickstarter.paymentToken === NULL_ADDRESS ? accountBalance : paymentTokenBalance} ${
-                      kickstarter.tokenSymbol
+                    {`${kickstarter?.paymentToken === NULL_ADDRESS ? accountBalance : paymentTokenBalance} ${
+                      kickstarter?.tokenSymbol
                     }`}
                   </Text>
                 )}

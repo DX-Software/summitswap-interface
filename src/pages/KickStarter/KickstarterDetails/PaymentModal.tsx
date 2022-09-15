@@ -16,7 +16,7 @@ interface PaymentModalProps extends InjectedModalProps {
   paymentTokenBalance: string
   accountBalance: string | undefined
   totalPayment: string
-  kickstarter: Kickstarter
+  kickstarter: Kickstarter | undefined
   handlePayment: () => void
 }
 
@@ -67,7 +67,9 @@ function PaymentModal({
   const { library } = useWeb3React()
   const [isLoading, setIsLoading] = useState(true)
   const [isApproved, setIsApproved] = useState(false)
-  const tokenContract = useTokenContract(kickstarter.paymentToken)
+  const tokenContract = useTokenContract(
+    kickstarter?.paymentToken !== NULL_ADDRESS ? kickstarter?.paymentToken : undefined
+  )
   const pay = useCallback(() => {
     handlePayment()
     if (onDismiss) onDismiss()
@@ -78,26 +80,25 @@ function PaymentModal({
       return
     }
 
-    const receipt = await tokenContract.approve(kickstarter.id, MAX_UINT256)
+    const receipt = await tokenContract.approve(kickstarter?.id, MAX_UINT256)
 
     setIsLoading(true)
     await library.waitForTransaction(receipt.hash)
     setIsLoading(false)
 
     setIsApproved(true)
-
   }, [account, tokenContract, library, setIsLoading, kickstarter])
 
   useEffect(() => {
     async function handleIsApproved() {
       let isApprovedTemp = false
-      if (kickstarter.paymentToken === NULL_ADDRESS) {
+      if (kickstarter?.paymentToken === NULL_ADDRESS) {
         isApprovedTemp = true
-      } else if (!kickstarter.paymentToken || !tokenContract || !account) {
+      } else if (!kickstarter?.paymentToken || !tokenContract || !account) {
         isApprovedTemp = false
       } else {
         const userBalance = (await tokenContract.balanceOf(account)) as BigNumber
-        const userApprovedAlready = (await tokenContract.allowance(account, kickstarter.id)) as BigNumber
+        const userApprovedAlready = (await tokenContract.allowance(account, kickstarter?.id)) as BigNumber
         isApprovedTemp = userApprovedAlready.gte(userBalance)
       }
       setIsApproved(isApprovedTemp)
@@ -110,12 +111,12 @@ function PaymentModal({
     <Modal title="Payment Process" bodyPadding="0" onDismiss={onDismiss}>
       <ContentWrapper>
         <Flex marginBottom="16px" style={{ columnGap: '8px' }}>
-          <Banner image={kickstarter.imageUrl || ''} />
+          <Banner image={kickstarter?.imageUrl || ''} />
           <Flex flexDirection="column">
             <Name color="textSubtle" marginBottom="4px">
-              {kickstarter.creator}
+              {kickstarter?.creator}
             </Name>
-            <Title style={{ maxWidth: '320px' }}>{kickstarter.title}</Title>
+            <Title style={{ maxWidth: '320px' }}>{kickstarter?.title}</Title>
           </Flex>
         </Flex>
         {account && (
@@ -130,12 +131,12 @@ function PaymentModal({
                   {shortenAddress(account)}
                 </Text>
               </Flex>
-              {!accountBalance || !paymentTokenBalance ? (
+              {!accountBalance || !(kickstarter?.paymentToken === NULL_ADDRESS || paymentTokenBalance) ? (
                 <Skeleton width={100} height={28} />
               ) : (
                 <Text fontWeight="bold" color="primaryDark">
-                  {`${kickstarter.paymentToken === NULL_ADDRESS ? accountBalance : paymentTokenBalance} ${
-                    kickstarter.tokenSymbol
+                  {`${kickstarter?.paymentToken === NULL_ADDRESS ? accountBalance : paymentTokenBalance} ${
+                    kickstarter?.tokenSymbol
                   }`}
                 </Text>
               )}
@@ -147,7 +148,7 @@ function PaymentModal({
             Total Payment
           </Text>
           <Flex style={{ columnGap: '5px' }}>
-            <ImgCurrency image={getTokenImageBySymbol(kickstarter.tokenSymbol)} />
+            <ImgCurrency image={getTokenImageBySymbol(kickstarter?.tokenSymbol)} />
             <Text small fontWeight="bold">
               {totalPayment}
             </Text>

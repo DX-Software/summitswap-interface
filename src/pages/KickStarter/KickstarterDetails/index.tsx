@@ -605,9 +605,10 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
     return (
       <ProjectPayment
         previousPage={previousPage}
+        backedKickstarter={backedKickstarter}
         handleKickstarterId={handleKickstarterId}
         handleIsPayment={setIsPayment}
-        kickstarter={kickstarter.data}
+        kickstarterQueryResult={kickstarter}
       />
     )
   }
