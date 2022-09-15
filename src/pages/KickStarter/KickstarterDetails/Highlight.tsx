@@ -215,6 +215,7 @@ const Highlight = ({ kickstarter, backedKickstarter, handleIsPayment, isLoading 
       closeWithdrawModal()
       await receipt.wait()
       setAttemptingTxn(false)
+      setContractHasEnoughtFunds(false)
       openSuccesModal()
     } catch (err) {
       const callError = err as any
