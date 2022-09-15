@@ -1,4 +1,4 @@
-import { Flex, Heading, Text } from '@koda-finance/summitswap-uikit'
+import { Flex, Heading, Text, useModal } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
 import { useUploadImageApi } from 'api/useUploadImageApi'
 import {
@@ -16,6 +16,7 @@ import { convertImageUrlToFile } from 'utils/converter'
 import { getConcealImageUrl, getDefaultConcealName, getPreviewImageUrl } from 'utils/whitelabelNft'
 import ConnectWalletSection from '../shared/ConnectWalletSection'
 import Divider from '../shared/Divider'
+import CreatedNftModal from './CreatedNftModal'
 import CreationStep01 from './CreationStep01'
 import CreationStep02 from './CreationStep02'
 import CreationStep03 from './CreationStep03'
@@ -24,6 +25,8 @@ import validationSchema from './validation'
 function CreateCollection() {
   const { account } = useWeb3React()
   const [currentCreationStep, setCurrentCreationStep] = useState(0)
+
+  const [onPresentCreatedModal] = useModal(<CreatedNftModal />)
 
   const whitelabelNftApiUpload = useWhitelabelNftApiUploadMetadata()
   const whitelabelNftApiUploadConceal = useWhitelabelNftApiUploadConceal()
@@ -81,6 +84,7 @@ function CreateCollection() {
       })
 
       setSubmitting(false)
+      onPresentCreatedModal()
     },
   })
 

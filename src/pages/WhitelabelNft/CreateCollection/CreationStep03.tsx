@@ -1,6 +1,7 @@
 import {
   ArrowBackIcon,
   ArrowForwardIcon,
+  AutoRenewIcon,
   Box,
   EtherIcon,
   Heading,
@@ -156,7 +157,8 @@ function CreationStep03({ setCurrentCreationStep, formik }: Props) {
           <NavStepButton
             variant="primary"
             onClick={formik.submitForm}
-            endIcon={<ArrowForwardIcon width={24} color="default" />}
+            startIcon={formik.isSubmitting && <AutoRenewIcon color="white" spin />}
+            endIcon={!formik.isSubmitting && <ArrowForwardIcon width={24} color="default" />}
             isLoading={formik.isSubmitting}
           >
             <b>Create New Collection</b>
