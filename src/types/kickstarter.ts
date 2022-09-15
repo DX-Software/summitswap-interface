@@ -1,6 +1,8 @@
 import BigNumber from "bignumber.js"
 
 export enum KickstarterProgressStatus {
+  WAITING_FOR_APPROVAL = "waiting_for_approval",
+  REJECTED = 'rejected',
   ONGOING = "ongoing",
   END_SOON = "end_soon",
   COMPLETED = "completed",

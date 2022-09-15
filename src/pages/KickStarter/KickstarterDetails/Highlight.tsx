@@ -133,7 +133,7 @@ const Highlight = ({ kickstarter, backedKickstarter, handleIsPayment, isLoading 
   const [hash, setHash] = useState<string | undefined>()
   const [errorMessage, setErrorMessage] = useState<string | undefined>()
   const [contractHasEnoughFunds, setContractHasEnoughtFunds] = useState<boolean>()
-  const progressStatus = getKickstarterStatus(kickstarter?.endTimestamp?.toNumber() || 0)
+  const progressStatus = getKickstarterStatus(kickstarter?.endTimestamp?.toNumber() || 0, kickstarter?.approvalStatus)
   const kickstarterContract = useKickstarterContract(kickstarter?.id)
   const paymentTokenContract = useTokenContract(
     kickstarter?.paymentToken !== NULL_ADDRESS ? kickstarter?.paymentToken : undefined
@@ -254,7 +254,7 @@ const Highlight = ({ kickstarter, backedKickstarter, handleIsPayment, isLoading 
               </StatusLabel>
             )}
             <StatusLabel status={progressStatus}>
-              {getKickstarterStatusLabel(kickstarter?.endTimestamp?.toNumber() || 0)}
+              {getKickstarterStatusLabel(kickstarter?.endTimestamp?.toNumber() || 0, kickstarter?.approvalStatus)}
             </StatusLabel>
           </Flex>
         )}
@@ -300,7 +300,11 @@ const Highlight = ({ kickstarter, backedKickstarter, handleIsPayment, isLoading 
               {progressStatus !== KickstarterProgressStatus.COMPLETED && (
                 <>
                   <Text fontWeight="bold">
-                    {getKickstarterStatusLabel(kickstarter?.endTimestamp?.toNumber() || 0, true)}
+                    {getKickstarterStatusLabel(
+                      kickstarter?.endTimestamp?.toNumber() || 0,
+                      kickstarter?.approvalStatus,
+                      true
+                    )}
                   </Text>
                   <WhiteDot />
                 </>

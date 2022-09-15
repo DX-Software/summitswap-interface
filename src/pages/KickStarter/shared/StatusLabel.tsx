@@ -12,6 +12,8 @@ const StatusLabel = styled(Text)<{ status?: KickstarterProgressStatus }>`
     if (status === KickstarterProgressStatus.COMPLETED) return theme.colors.dropdownBackground
     if (status === KickstarterProgressStatus.ONGOING) return theme.colors.primary
     if (status === KickstarterProgressStatus.END_SOON) return theme.colors.failure
+    if (status === KickstarterProgressStatus.WAITING_FOR_APPROVAL) return theme.colors.info
+    if (status === KickstarterProgressStatus.REJECTED) return theme.colors.textDisabled
     return theme.colors.default
   }};
   ${({ status, theme }) => !status && `color: ${theme.colors.dropdownBackground};`}

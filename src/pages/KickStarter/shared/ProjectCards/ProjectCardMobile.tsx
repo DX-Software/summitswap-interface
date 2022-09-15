@@ -55,9 +55,10 @@ const Title = styled(Text)`
 `
 
 function ProjectCardMobile({ kickstarter, showStatus, onClick }: Props) {
-  const status = useMemo(() => getKickstarterStatus(kickstarter.endTimestamp?.toNumber() || 0), [
-    kickstarter.endTimestamp,
-  ])
+  const status = useMemo(
+    () => getKickstarterStatus(kickstarter.endTimestamp?.toNumber() || 0, kickstarter.approvalStatus),
+    [kickstarter.endTimestamp, kickstarter.approvalStatus]
+  )
 
   const fundedPercentage = useMemo(() => {
     if (!kickstarter.totalContribution || !kickstarter.projectGoals || kickstarter.projectGoals.eq(0)) {

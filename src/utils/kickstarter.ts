@@ -82,18 +82,23 @@ export const getDayRemaining = (endTimestamp: number): number => {
   return Math.ceil(timeRemaining / oneDayTimestamp)
 }
 
-export const getKickstarterStatus = (endTimestamp: number): KickstarterProgressStatus => {
+export const getKickstarterStatus = (endTimestamp: number, approvalStatus?: KickstarterApprovalStatus): KickstarterProgressStatus => {
+  if (approvalStatus === KickstarterApprovalStatus.WAITING_FOR_APPROVAL) return KickstarterProgressStatus.WAITING_FOR_APPROVAL
+  if (approvalStatus === KickstarterApprovalStatus.REJECTED) return KickstarterProgressStatus.REJECTED
+ 
   const currentTimestamp = Math.floor(Date.now() / 1000)
   const dayRemaining = getDayRemaining(endTimestamp)
-
   if (currentTimestamp > endTimestamp) return KickstarterProgressStatus.COMPLETED
   if (dayRemaining <= 7) return KickstarterProgressStatus.END_SOON
   return KickstarterProgressStatus.ONGOING
 }
 
-export const getKickstarterStatusLabel = (endTimestamp: number, showInDays = false) => {
+export const getKickstarterStatusLabel = (endTimestamp: number, approvalStatus?: KickstarterApprovalStatus, showInDays = false) => {
   const dayRemaining = getDayRemaining(endTimestamp)
-  const kickstarterStatus = getKickstarterStatus(endTimestamp)
+  const kickstarterStatus = getKickstarterStatus(endTimestamp, approvalStatus)
+  if (kickstarterStatus === KickstarterProgressStatus.WAITING_FOR_APPROVAL) return "Waiting for Approval"
+  if (kickstarterStatus === KickstarterProgressStatus.REJECTED) return "Rejected"
+
   if (!showInDays && kickstarterStatus === KickstarterProgressStatus.COMPLETED) return "Completed"
   if (showInDays || dayRemaining <= 7) return `${dayRemaining} day${dayRemaining > 1 ? "s" : ""} left`
   return "Ongoing"

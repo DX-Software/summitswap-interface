@@ -42,7 +42,10 @@ const Banner = styled(Flex)<{ image: string }>`
 
 function ProjectCard({ kickstarter, onClick }: Props) {
   const endTimestamp = useMemo(() => kickstarter.endTimestamp?.toNumber() || 0, [kickstarter.endTimestamp])
-  const status = useMemo(() => getKickstarterStatus(endTimestamp), [endTimestamp])
+  const status = useMemo(() => getKickstarterStatus(endTimestamp, kickstarter.approvalStatus), [
+    endTimestamp,
+    kickstarter.approvalStatus,
+  ])
 
   const fundedPercentage = useMemo(() => {
     if (!kickstarter.totalContribution || !kickstarter.projectGoals) return '0'
@@ -55,7 +58,7 @@ function ProjectCard({ kickstarter, onClick }: Props) {
     <Card flexDirection="column" onClick={onClick}>
       <Banner flexDirection="column" image={kickstarter.imageUrl || ''}>
         <StatusLabel status={status} style={{ marginLeft: 'auto' }}>
-          {getKickstarterStatusLabel(endTimestamp)}
+          {getKickstarterStatusLabel(endTimestamp, kickstarter.approvalStatus)}
         </StatusLabel>
       </Banner>
       <Flex flexDirection="column" paddingTop="16px" paddingBottom="24px" paddingX="20px">
