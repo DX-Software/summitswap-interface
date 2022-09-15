@@ -26,7 +26,8 @@ function MyProject() {
 
   const toggleIsCreate = useCallback(() => {
     setIsCreate((prev) => !prev)
-  }, [])
+    kickstarters.refetch()
+  }, [kickstarters])
 
   if (!account) {
     return <ConnectWalletSection />
