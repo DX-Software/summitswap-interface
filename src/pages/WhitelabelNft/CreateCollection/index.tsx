@@ -12,12 +12,8 @@ import { FormikProps, FormikProvider, useFormik } from 'formik'
 import { useWhitelabelFactoryContract } from 'hooks/useContract'
 import React, { useState } from 'react'
 import { TokenInfo, WhitelabelNft, WhitelabelNftTxReceipt } from 'types/whitelabelNft'
-import {
-  convertImageUrlToFile,
-  getConcealImageUrl,
-  getDefaultConcealName,
-  getPreviewImageUrl,
-} from 'utils/whitelabelNft'
+import { convertImageUrlToFile } from 'utils/converter'
+import { getConcealImageUrl, getDefaultConcealName, getPreviewImageUrl } from 'utils/whitelabelNft'
 import ConnectWalletSection from '../shared/ConnectWalletSection'
 import Divider from '../shared/Divider'
 import CreationStep01 from './CreationStep01'
