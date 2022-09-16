@@ -177,7 +177,11 @@ const PresaleCard = ({ presaleAddress, viewPresaleHandler }: Props) => {
     async function checkIfAccountWhitelisted() {
       setIsAccountWhitelisted((await presaleContract?.getWhitelist()).includes(account))
     }
-    if (account && presaleContract) checkIfAccountWhitelisted()
+    if (account && presaleContract) {
+      checkIfAccountWhitelisted()
+    } else {
+      setIsAccountWhitelisted(false)
+    }
   }, [account, presaleContract])
 
   useEffect(() => {
@@ -283,7 +287,7 @@ const PresaleCard = ({ presaleAddress, viewPresaleHandler }: Props) => {
           <StyledText fontSize="14px">{presaleInfo?.liquidyLockTimeInMins.div(60).toString()}</StyledText>
         </RowBetween>
         <StyledText fontSize="10px" style={{ height: '16px' }} marginTop="2px" marginBottom="8px" color="warning">
-          {presaleInfo?.isClaimPhase && claimableTokens?.gt(0) ? 'You haven’t claimed your token yet' : ''}
+          {presaleInfo?.isClaimPhase && account && claimableTokens?.gt(0) ? 'You haven’t claimed your token yet' : ''}
         </StyledText>
       </Box>
       <Button
