@@ -4,9 +4,7 @@ import styled from 'styled-components'
 import CustomTag from './CustomTag'
 
 const BoxWrapper = styled(Box)`
-  @media (max-width: 576px) {
-    padding-right: 12px;
-  }
+  padding-right: 12px;
 `
 
 const ImageWrapper = styled.div`

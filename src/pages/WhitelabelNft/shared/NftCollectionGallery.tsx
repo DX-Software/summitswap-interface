@@ -31,7 +31,7 @@ function NftCollectionGallery({ queryResult, totalItem, page, onPageChange }: Pr
         <Grid container spacing="24px">
           {data &&
             data?.map((item) => (
-              <Grid item xs={6} md={4} sm={6} lg={3} key={`gallery-item-${item.id}`}>
+              <Grid item xs={6} sm={6} md={4} lg={3} key={`gallery-item-${item.id}`}>
                 <NftCollectionGalleryItem data={item} />
               </Grid>
             ))}
