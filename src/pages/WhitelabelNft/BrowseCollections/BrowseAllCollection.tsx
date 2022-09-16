@@ -1,11 +1,11 @@
 import { useWhitelabelNftCollections } from 'api/useWhitelabelNftApi'
 import React, { useState } from 'react'
 import { UseQueryResult } from 'react-query'
-import { WhitelabelNftFactoryQuery } from 'types/whitelabelNft'
+import { WhitelabelNftFactoryGql } from 'types/whitelabelNft'
 import NftCollectionGallery from '../shared/NftCollectionGallery'
 
 type Props = {
-  whitelabelNftFactory: UseQueryResult<WhitelabelNftFactoryQuery | undefined, unknown>
+  whitelabelNftFactory: UseQueryResult<WhitelabelNftFactoryGql | undefined, unknown>
 }
 
 function BrowseAllCollection({ whitelabelNftFactory }: Props) {

@@ -4,11 +4,11 @@ import Pagination from 'components/Pagination/Pagination'
 import { PER_PAGE } from 'constants/whitelabel'
 import React, { useMemo } from 'react'
 import { UseQueryResult } from 'react-query'
-import { WhitelabelNftQuery } from 'types/whitelabelNft'
+import { WhitelabelNftGql } from 'types/whitelabelNft'
 import NftCollectionGalleryItem from './NftCollectionGalleryItem'
 
 type Props = {
-  queryResult: UseQueryResult<WhitelabelNftQuery[], unknown>
+  queryResult: UseQueryResult<WhitelabelNftGql[], unknown>
   totalItem: number
   page: number
   onPageChange: React.Dispatch<React.SetStateAction<number>>

@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { WhitelabelNftFactoryQuery, WhitelabelNftQuery } from 'types/whitelabelNft'
+import { WhitelabelNftFactoryGql, WhitelabelNftGql } from 'types/whitelabelNft'
 
 // eslint-disable-next-line import/prefer-default-export
 export function getDefaultConcealName(name: string) {
@@ -16,7 +16,7 @@ export function getConcealImageUrl() {
 
 export function convertToWhitelabelNftFactory(
   data?: { [key: string]: any } | null
-): WhitelabelNftFactoryQuery | undefined {
+): WhitelabelNftFactoryGql | undefined {
   if (!data) return undefined
   return {
     id: data.id || '',
@@ -24,7 +24,7 @@ export function convertToWhitelabelNftFactory(
   }
 }
 
-export function convertToWhitelabelNft(data?: { [key: string]: any }): WhitelabelNftQuery | undefined {
+export function convertToWhitelabelNft(data?: { [key: string]: any }): WhitelabelNftGql | undefined {
   if (!data) return undefined
   return {
     id: data.id,

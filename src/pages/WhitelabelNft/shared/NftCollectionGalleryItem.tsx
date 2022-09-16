@@ -1,12 +1,12 @@
 import { Text } from '@koda-finance/summitswap-uikit'
 import { Phase } from 'constants/whitelabel'
 import React, { useMemo } from 'react'
-import { WhitelabelNftQuery } from 'types/whitelabelNft'
+import { WhitelabelNftGql } from 'types/whitelabelNft'
 import CustomTag from './CustomTag'
 import NftCollectionGalleryItemImage from './NftCollectionGalleryItemImage'
 
 type Props = {
-  data: WhitelabelNftQuery
+  data: WhitelabelNftGql
 }
 
 function NftCollectionGalleryItem({ data }: Props) {

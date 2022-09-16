@@ -91,19 +91,19 @@ export type WhitelabelNftTxReceipt = {
   transactionHash: string
 }
 
-export type WhitelabelNftAccountQuery = {
+export type WhitelabelNftAccountGql = {
   id: string
   totalWhitelabelNft?: BigNumber
 }
 
-export type WhitelabelNftFactoryQuery = {
+export type WhitelabelNftFactoryGql = {
   id: string
   totalWhitelabelNft?: BigNumber
 }
 
-export type WhitelabelNftQuery = {
+export type WhitelabelNftGql = {
   id: string
-  owner?: WhitelabelNftAccountQuery
+  owner?: WhitelabelNftAccountGql
   name?: string
   symbol?: string
   previewImageUrl?: string

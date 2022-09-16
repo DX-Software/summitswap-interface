@@ -6,7 +6,7 @@ import {
   WhitelabelMetadataConcealDto,
   WhitelabelMetadataUploadDto,
   WhitelabelMetadataValidateDto,
-  WhitelabelNftQuery,
+  WhitelabelNftGql,
   WhitelabelUploadResult,
 } from 'types/whitelabelNft'
 import { whitelabelNftClient } from 'utils/graphql'
@@ -40,7 +40,7 @@ export function useWhitelabelNftCollections(page = 1, perPage = PER_PAGE) {
         first: perPage,
         skip: (page - 1) * perPage,
       })
-      const whitelabelNftCollections: WhitelabelNftQuery[] = data.whitelabelNftCollections.map((whitelabel) =>
+      const whitelabelNftCollections: WhitelabelNftGql[] = data.whitelabelNftCollections.map((whitelabel) =>
         convertToWhitelabelNft(whitelabel)
       )
       return whitelabelNftCollections
