@@ -124,6 +124,12 @@ const LaunchPad = () => {
 
   const tabIndexHandler = (newIndex: number) => setTabIndex(newIndex)
   const viewPresaleHandler = (address: string) => setSelectedPresale(address)
+  const menuButtonHandler = (index: number) => {
+    setButtonIndex((prevIndex) => {
+      if (index !== prevIndex) setSelectedPresale('')
+      return index
+    })
+  }
 
   const sortLivePresales = useMemo(async () => {
     if (presaleContracts.length) {
@@ -272,7 +278,7 @@ const LaunchPad = () => {
     <>
       <Box marginTop="24px">
         {account && (
-          <ButtonMenu activeIndex={buttonIndex} onItemClick={(index) => setButtonIndex(index)}>
+          <ButtonMenu activeIndex={buttonIndex} onItemClick={menuButtonHandler}>
             {headingTexts.map((heading) => (
               <ButtonMenuItem key={heading}>{heading}</ButtonMenuItem>
             ))}
