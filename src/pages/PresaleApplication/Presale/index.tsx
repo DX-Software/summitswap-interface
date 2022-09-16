@@ -184,6 +184,8 @@ const Presale = ({ presaleAddress }: Props) => {
   useEffect(() => {
     if (account && presaleInfo) {
       setAccountIsOwner(presaleInfo.owner === account)
+    } else {
+      setAccountIsOwner(false)
     }
   }, [account, presaleInfo])
 
