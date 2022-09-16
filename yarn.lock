@@ -2922,9 +2922,10 @@
     tiny-warning "^1.0.3"
     toformat "^2.0.0"
 
-"@koda-finance/summitswap-uikit@https://github.com/Koda-Finance/summitswap-uikit.git#feat/kickstarter":
-  version "1.6.4"
-  resolved "https://github.com/Koda-Finance/summitswap-uikit.git#ab43f7d306c4c5480537213b7f063a1a3b1ed26c"
+"@koda-finance/summitswap-uikit@^1.6.5":
+  version "1.6.5"
+  resolved "https://registry.yarnpkg.com/@koda-finance/summitswap-uikit/-/summitswap-uikit-1.6.5.tgz#0c18a9a9e43c7528f62450662b732e1d532ab5b6"
+  integrity sha512-0j7gaQORRZ5kESnutCOVrdByXHFLg0/iyLhu+GN68QJs/J1UAObG/QcVxo9qXtK8VbbxeKklo2s65/7D5f7/Bw==
   dependencies:
     "@types/lodash" "^4.14.162"
     "@types/styled-system" "^5.1.10"
