@@ -1,5 +1,5 @@
 import { BACKEND_API } from 'constants/index'
-import { PER_PAGE } from 'constants/whitelabel'
+import { PER_PAGE, Phase } from 'constants/whitelabel'
 import { useMutation, useQuery } from 'react-query'
 import {
   WhitelabelCollectionUpsertDto,
@@ -12,7 +12,11 @@ import {
 import { whitelabelNftClient } from 'utils/graphql'
 import { convertToWhitelabelNft, convertToWhitelabelNftFactory } from 'utils/whitelabelNft'
 import httpClient from './http'
-import { WHITELABEL_NFT_COLLECTIONS_GQL, WHITELABEL_NFT_FACTORY_BY_ID_GQL } from './queries/whitelabelNftQueries'
+import {
+  WHITELABEL_NFT_COLLECTIONS_GQL,
+  WHITELABEL_NFT_COLLECTIONS_SEARCH_GQL,
+  WHITELABEL_NFT_FACTORY_BY_ID_GQL,
+} from './queries/whitelabelNftQueries'
 
 const URL = 'whitelabel-nft'
 export const DOWNLOAD_METADATA_URL = `${BACKEND_API}/${URL}/metadata/download`
@@ -32,17 +36,29 @@ export function useWhitelabelNftFactoryById(whitelabelFactoryId: string) {
   })
 }
 
-export function useWhitelabelNftCollections(page = 1, perPage = PER_PAGE) {
+export function useWhitelabelNftCollections(
+  page = 1,
+  perPage = PER_PAGE,
+  searchText: string | undefined,
+  phases: Phase[]
+) {
   return useQuery(
-    ['useWhitelabelNftCollections', page, perPage],
+    ['useWhitelabelNftCollections', page, perPage, searchText, phases],
     async () => {
-      const data = await whitelabelNftClient.request(WHITELABEL_NFT_COLLECTIONS_GQL, {
+      const query = searchText ? WHITELABEL_NFT_COLLECTIONS_SEARCH_GQL : WHITELABEL_NFT_COLLECTIONS_GQL
+      const key = searchText ? 'whitelabelNftCollectionSearch' : 'whitelabelNftCollections'
+
+      const filter = {
+        text: searchText,
         first: perPage,
         skip: (page - 1) * perPage,
-      })
-      const whitelabelNftCollections: WhitelabelNftGql[] = data.whitelabelNftCollections.map((whitelabel) =>
-        convertToWhitelabelNft(whitelabel)
-      )
+      }
+      if (!searchText) delete filter.text
+
+      const data = await whitelabelNftClient.request(query, filter)
+      const whitelabelNftCollections: WhitelabelNftGql[] = data[key]
+        .map((whitelabel) => convertToWhitelabelNft(whitelabel))
+        .filter((whitelabelNft) => phases.includes(whitelabelNft.phase))
       return whitelabelNftCollections
     },
     { refetchOnWindowFocus: false }

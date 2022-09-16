@@ -14,11 +14,22 @@ function NftCollectionGalleryItem({ data }: Props) {
     return Phase[data.phase || 0]
   }, [data.phase])
 
+  const tagVariant = useMemo(() => {
+    switch (data.phase) {
+      case Phase.Pause:
+        return 'textDisabled'
+      case Phase.Whitelist:
+        return 'info'
+      default:
+        return 'primary'
+    }
+  }, [data.phase])
+
   return (
     <>
       <NftCollectionGalleryItemImage src={data.previewImageUrl || ''} isReveal={data.isReveal} />
-      <CustomTag>
-        <Text textTransform="uppercase" fontFamily="Poppins" fontSize="10px" bold>
+      <CustomTag variant={tagVariant}>
+        <Text textTransform="uppercase" fontSize="10px" fontWeight={700}>
           {phase} PHASE
         </Text>
       </CustomTag>

@@ -99,6 +99,9 @@ export type WhitelabelNftAccountGql = {
 export type WhitelabelNftFactoryGql = {
   id: string
   totalWhitelabelNft?: BigNumber
+  totalWhitelabelNftPausedPhase?: BigNumber
+  totalWhitelabelNftPublicPhase?: BigNumber
+  totalWhitelabelNftWhitelistPhase?: BigNumber
 }
 
 export type WhitelabelNftGql = {

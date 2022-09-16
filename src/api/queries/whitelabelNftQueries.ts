@@ -10,7 +10,7 @@ export const WHITELABEL_NFT_FACTORY_BY_ID_GQL = gql`
 `
 
 export const WHITELABEL_NFT_COLLECTIONS_GQL = gql`
-  query whitelabelNftCollections($first: Int!, $skip: Int!) {
+  query whitelabelNftCollections($first: Int!, $skip: Int!, $phases: [Int!]) {
     whitelabelNftCollections(first: $first, skip: $skip, orderBy: createdAt, orderDirection: desc) {
       id
       owner {
@@ -29,19 +29,25 @@ export const WHITELABEL_NFT_COLLECTIONS_GQL = gql`
   }
 `
 
-// export const KICKSTARTER_FACTORY_BY_ID = gql`
-//   query kickstarterFactory($address: Bytes!) {
-//     summitKickstarterFactory(id: $address) {
-//       id
-//       totalWaitingForApprovalKickstarter
-//       totalApprovedKickstarter
-//       totalRejectedKickstarter
-//       totalKickstarter
-//       totalBackedKickstarter
-//       totalContribution
-//     }
-//   }
-// `
+export const WHITELABEL_NFT_COLLECTIONS_SEARCH_GQL = gql`
+  query whitelabelNftCollectionSearch($first: Int!, $skip: Int!, $text: Bytes!) {
+    whitelabelNftCollectionSearch(text: $text, first: $first, skip: $skip, orderBy: createdAt, orderDirection: desc) {
+      id
+      owner {
+        id
+      }
+      name
+      symbol
+      previewImageUrl
+      maxSupply
+      whitelistMintPrice
+      publicMintPrice
+      phase
+      isReveal
+      createdAt
+    }
+  }
+`
 
 // export const KICKSTARTER_BY_ID = gql`
 //   query kickstarter($address: Bytes!) {

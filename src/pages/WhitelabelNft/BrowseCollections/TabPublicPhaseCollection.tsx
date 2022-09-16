@@ -1,4 +1,6 @@
 import { useWhitelabelNftCollections } from 'api/useWhitelabelNftApi'
+import { PER_PAGE, Phase } from 'constants/whitelabel'
+import useDebounce from 'hooks/useDebounce'
 import React, { useState } from 'react'
 import { UseQueryResult } from 'react-query'
 import { WhitelabelNftFactoryGql } from 'types/whitelabelNft'
@@ -8,25 +10,29 @@ type Props = {
   whitelabelNftFactory: UseQueryResult<WhitelabelNftFactoryGql | undefined, unknown>
 }
 
-function BrowseAllCollection({ whitelabelNftFactory }: Props) {
+function TabPublicPhaseCollection({ whitelabelNftFactory }: Props) {
   const [page, setPage] = useState(1)
+  const [search, setSearch] = useState<string>()
+  const debouncedSearch = useDebounce(search, 1000)
 
-  const whitelabelNftCollections = useWhitelabelNftCollections(page)
+  const whitelabelNftCollections = useWhitelabelNftCollections(page, PER_PAGE, debouncedSearch, [Phase.Public])
 
   if (whitelabelNftFactory.isLoading) {
     return null
   }
 
-  const totalWhitelabelNft = whitelabelNftFactory.data?.totalWhitelabelNft?.toNumber() || 0
+  const totalWhitelabelNft = whitelabelNftFactory.data?.totalWhitelabelNftPublicPhase?.toNumber() || 0
 
   return (
     <NftCollectionGallery
       queryResult={whitelabelNftCollections}
       totalItem={totalWhitelabelNft}
       page={page}
+      search={search}
+      onSearchChange={setSearch}
       onPageChange={setPage}
     />
   )
 }
 
-export default React.memo(BrowseAllCollection)
+export default React.memo(TabPublicPhaseCollection)
