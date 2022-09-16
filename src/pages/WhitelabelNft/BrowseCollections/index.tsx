@@ -1,7 +1,6 @@
 import { Box, Heading, Input, NavTab, Text } from '@koda-finance/summitswap-uikit'
-import { Phase } from 'constants/whitelabel'
-import useWhitelabelNfts from 'hooks/useWhitelabelNfts'
-import useWhitelabelNftsByPhase from 'hooks/useWhitelabelNftsByPhase'
+import { useWhitelabelNftCollections } from 'api/useWhitelabelNftApi'
+// import useWhitelabelNftsByPhase from 'hooks/useWhitelabelNftsByPhase'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { CollectionTab, NavItem } from 'types/whitelabelNft'
@@ -14,12 +13,13 @@ const NavTabWrapper = styled(Box)`
 `
 
 function BrowseCollection() {
+  const [page, setPage] = useState(1)
   const [tabActiveIndex, setTabActiveIndex] = useState(0)
 
-  const whitelabelNfts = useWhitelabelNfts()
-  const publicPhaseWhitelabelNfts = useWhitelabelNftsByPhase(Phase.Public)
-  const whitelistPhaseWhitelabelNfts = useWhitelabelNftsByPhase(Phase.Whitelist)
-  const pausedPhaseWhitelabelNfts = useWhitelabelNftsByPhase(Phase.Pause)
+  const whitelabelNfts = useWhitelabelNftCollections(page)
+  // const publicPhaseWhitelabelNfts = useWhitelabelNftsByPhase(Phase.Public)
+  // const whitelistPhaseWhitelabelNfts = useWhitelabelNftsByPhase(Phase.Whitelist)
+  // const pausedPhaseWhitelabelNfts = useWhitelabelNftsByPhase(Phase.Pause)
 
   const collectionTabs: NavItem[] = [
     {
@@ -27,21 +27,21 @@ function BrowseCollection() {
       code: CollectionTab.ALL_COLLECTION,
       component: <NftCollectionGallery queryResult={whitelabelNfts} />,
     },
-    {
-      label: 'Public Phase',
-      code: CollectionTab.PUBLIC_PHASE,
-      component: <NftCollectionGallery queryResult={publicPhaseWhitelabelNfts} />,
-    },
-    {
-      label: 'Whitelist Phase',
-      code: CollectionTab.WHITELIST_PHASE,
-      component: <NftCollectionGallery queryResult={whitelistPhaseWhitelabelNfts} />,
-    },
-    {
-      label: 'Paused Phase',
-      code: CollectionTab.PAUSED_PHASE,
-      component: <NftCollectionGallery queryResult={pausedPhaseWhitelabelNfts} />,
-    },
+    // {
+    //   label: 'Public Phase',
+    //   code: CollectionTab.PUBLIC_PHASE,
+    //   component: <NftCollectionGallery queryResult={publicPhaseWhitelabelNfts} />,
+    // },
+    // {
+    //   label: 'Whitelist Phase',
+    //   code: CollectionTab.WHITELIST_PHASE,
+    //   component: <NftCollectionGallery queryResult={whitelistPhaseWhitelabelNfts} />,
+    // },
+    // {
+    //   label: 'Paused Phase',
+    //   code: CollectionTab.PAUSED_PHASE,
+    //   component: <NftCollectionGallery queryResult={pausedPhaseWhitelabelNfts} />,
+    // },
   ]
 
   return (
@@ -53,7 +53,7 @@ function BrowseCollection() {
       <NavTabWrapper marginBottom="24px">
         <NavTab activeIndex={tabActiveIndex} onItemClick={(index: number) => setTabActiveIndex(index)}>
           {collectionTabs.map((item) => {
-            return <Text>{item.label}</Text>
+            return <Text key={`tab-${item.label}`}>{item.label}</Text>
           })}
         </NavTab>
       </NavTabWrapper>

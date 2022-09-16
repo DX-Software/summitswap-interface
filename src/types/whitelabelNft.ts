@@ -91,18 +91,23 @@ export type WhitelabelNftTxReceipt = {
   transactionHash: string
 }
 
-export type WhitelabelNftGraphql = {
+export type WhitelabelNftAccountQuery = {
   id: string
-  owner: {
-    id: string
-  }
-  name: string
-  symbol: string
-  maxSupply: number
-  whitelistMintPrice: BigNumber
-  publicMintPrice: BigNumber
-  phase: number
-  createdAt: number
+  totalWhitelabelNft?: BigNumber
+}
+
+export type WhitelabelNftQuery = {
+  id: string
+  owner?: WhitelabelNftAccountQuery
+  name?: string
+  symbol?: string
+  previewImageUrl?: string
+  maxSupply?: BigNumber
+  whitelistMintPrice?: BigNumber
+  publicMintPrice?: BigNumber
+  phase?: number
+  isReveal?: boolean
+  createdAt?: BigNumber
 }
 
 export type TokenInfo = {

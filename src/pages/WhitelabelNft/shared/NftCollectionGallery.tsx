@@ -1,11 +1,12 @@
+import { Box } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import React from 'react'
 import { UseQueryResult } from 'react-query'
-import { WhitelabelNftGraphql } from 'types/whitelabelNft'
+import { WhitelabelNftQuery } from 'types/whitelabelNft'
 import NftCollectionGalleryItem from './NftCollectionGalleryItem'
 
 type Props = {
-  queryResult: UseQueryResult<WhitelabelNftGraphql[], unknown>
+  queryResult: UseQueryResult<WhitelabelNftQuery[], unknown>
 }
 
 function NftCollectionGallery({ queryResult }: Props) {
@@ -17,13 +18,14 @@ function NftCollectionGallery({ queryResult }: Props) {
 
   return (
     <Grid container spacing="24px">
-      {data?.map((item) => (
-        <>
-          <Grid item xs={6} md={4} sm={6} lg={3}>
-            <NftCollectionGalleryItem data={item} />
-          </Grid>
-        </>
-      ))}
+      {data &&
+        data?.map((item) => (
+          <Box key={`gallery-item-${item.id}`}>
+            <Grid item xs={6} md={4} sm={6} lg={3}>
+              <NftCollectionGalleryItem data={item} />
+            </Grid>
+          </Box>
+        ))}
     </Grid>
   )
 }

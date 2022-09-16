@@ -1,13 +1,18 @@
 import { BACKEND_API } from 'constants/index'
+import { PER_PAGE } from 'constants/whitelabel'
 import { useMutation, useQuery } from 'react-query'
 import {
   WhitelabelCollectionUpsertDto,
   WhitelabelMetadataConcealDto,
   WhitelabelMetadataUploadDto,
   WhitelabelMetadataValidateDto,
+  WhitelabelNftQuery,
   WhitelabelUploadResult,
 } from 'types/whitelabelNft'
+import { whitelabelNftClient } from 'utils/graphql'
+import { convertToWhitelabelNft } from 'utils/whitelabelNft'
 import httpClient from './http'
+import { WHITELABEL_NFT } from './queries/whitelabelNftQueries'
 
 const URL = 'whitelabel-nft'
 export const DOWNLOAD_METADATA_URL = `${BACKEND_API}/${URL}/metadata/download`
@@ -16,6 +21,19 @@ const METADATA_VALIDATE_URL = `${URL}/metadata/validate`
 const METADATA_CONCEAL_URL = `${URL}/metadata/conceal`
 const COLLECTION_GET_URL = `${URL}/collection/`
 const COLLECTION_UPSERT_URL = `${URL}/collection/`
+
+export function useWhitelabelNftCollections(page = 1, perPage = PER_PAGE) {
+  return useQuery(['useWhitelabelNftCollections', page, perPage], async () => {
+    const data = await whitelabelNftClient.request(WHITELABEL_NFT, {
+      first: perPage,
+      skip: (page - 1) * perPage,
+    })
+    const whitelabelNftCollections: WhitelabelNftQuery[] = data.whitelabelNftCollections.map((whitelabel) =>
+      convertToWhitelabelNft(whitelabel)
+    )
+    return whitelabelNftCollections
+  })
+}
 
 export function useWhitelabelNftApiUploadMetadata() {
   return useMutation(async (data: WhitelabelMetadataUploadDto) => {
