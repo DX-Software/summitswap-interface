@@ -1,10 +1,11 @@
 import { Box, Heading, Input, NavTab, Text } from '@koda-finance/summitswap-uikit'
-import { useWhitelabelNftCollections } from 'api/useWhitelabelNftApi'
+import { useWhitelabelNftFactoryById } from 'api/useWhitelabelNftApi'
+import { WHITELABEL_FACTORY_ADDRESS } from 'constants/whitelabel'
 // import useWhitelabelNftsByPhase from 'hooks/useWhitelabelNftsByPhase'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { CollectionTab, NavItem } from 'types/whitelabelNft'
-import NftCollectionGallery from '../shared/NftCollectionGallery'
+import BrowseAllCollection from './BrowseAllCollection'
 import InfoSection from './InfoSection'
 
 const NavTabWrapper = styled(Box)`
@@ -13,10 +14,10 @@ const NavTabWrapper = styled(Box)`
 `
 
 function BrowseCollection() {
-  const [page, setPage] = useState(1)
   const [tabActiveIndex, setTabActiveIndex] = useState(0)
 
-  const whitelabelNfts = useWhitelabelNftCollections(page)
+  const whitelabelNftFactory = useWhitelabelNftFactoryById(WHITELABEL_FACTORY_ADDRESS)
+  // const whitelabelNftCollections = useWhitelabelNftCollections(page)
   // const publicPhaseWhitelabelNfts = useWhitelabelNftsByPhase(Phase.Public)
   // const whitelistPhaseWhitelabelNfts = useWhitelabelNftsByPhase(Phase.Whitelist)
   // const pausedPhaseWhitelabelNfts = useWhitelabelNftsByPhase(Phase.Pause)
@@ -25,7 +26,7 @@ function BrowseCollection() {
     {
       label: 'All Collections',
       code: CollectionTab.ALL_COLLECTION,
-      component: <NftCollectionGallery queryResult={whitelabelNfts} />,
+      component: <BrowseAllCollection whitelabelNftFactory={whitelabelNftFactory} />,
     },
     // {
     //   label: 'Public Phase',

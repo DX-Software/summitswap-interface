@@ -1,7 +1,15 @@
 import { gql } from 'graphql-request'
 
-// eslint-disable-next-line import/prefer-default-export
-export const WHITELABEL_NFT = gql`
+export const WHITELABEL_NFT_FACTORY_BY_ID_GQL = gql`
+  query whitelabelNftFactory($address: Bytes!) {
+    whitelabelNftFactory(id: $address) {
+      id
+      totalWhitelabelNft
+    }
+  }
+`
+
+export const WHITELABEL_NFT_COLLECTIONS_GQL = gql`
   query whitelabelNftCollections($first: Int!, $skip: Int!) {
     whitelabelNftCollections(first: $first, skip: $skip, orderBy: createdAt, orderDirection: desc) {
       id

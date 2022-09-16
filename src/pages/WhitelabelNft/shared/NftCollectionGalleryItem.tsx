@@ -16,7 +16,7 @@ function NftCollectionGalleryItem({ data }: Props) {
 
   return (
     <>
-      <NftCollectionGalleryItemImage src={data.previewImageUrl || ''} />
+      <NftCollectionGalleryItemImage src={data.previewImageUrl || ''} isReveal={data.isReveal} />
       <CustomTag>
         <Text textTransform="uppercase" fontFamily="Poppins" fontSize="10px" bold>
           {phase} PHASE

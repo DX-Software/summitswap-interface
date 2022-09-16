@@ -96,6 +96,11 @@ export type WhitelabelNftAccountQuery = {
   totalWhitelabelNft?: BigNumber
 }
 
+export type WhitelabelNftFactoryQuery = {
+  id: string
+  totalWhitelabelNft?: BigNumber
+}
+
 export type WhitelabelNftQuery = {
   id: string
   owner?: WhitelabelNftAccountQuery
