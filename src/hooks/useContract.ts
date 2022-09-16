@@ -9,7 +9,7 @@ import { ERC20_BYTES32_ABI } from '../constants/abis/erc20'
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall'
 import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
-import { LOCKER_ADDRESS, REFERRAL_ADDRESS } from '../constants'
+import { LOCKER_ADDRESS, REFERRAL_ADDRESS, PANCAKESWAP_FACTORY_ADDRESS } from '../constants'
 import { TokenType, TOKEN_CREATOR_ADDRESS } from '../constants/createToken'
 import { PRESALE_FACTORY_ADDRESS } from '../constants/presale'
 import CREATE_STANDARD_TOKEN_ABI from '../constants/abis/createStandardToken.json'
@@ -67,6 +67,10 @@ export function useReferralContract(withSignerIfPossible?: boolean): Contract | 
 
 export function useFactoryContract(withSignerIfPossible?: boolean): Contract | null {
   return useContract(FACTORY_ADDRESS, FACTORY_ABI, withSignerIfPossible)
+}
+
+export function usePancakeswapFactoryContract(withSignerIfPossible?: boolean): Contract | null {
+  return useContract(PANCAKESWAP_FACTORY_ADDRESS, FACTORY_ABI, withSignerIfPossible)
 }
 
 export function useLockerContract(withSignerIfPossible?: boolean): Contract | null {
