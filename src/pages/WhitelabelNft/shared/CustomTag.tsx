@@ -4,6 +4,11 @@ import styled from 'styled-components'
 const CustomTag = styled(Tag)`
   margin-top: 16px;
   margin-bottom: 8px;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 10px;
+  height: auto;
+  padding: 2px 8px;
 
   @media (max-width: 576px) {
     margin-top: 8px;

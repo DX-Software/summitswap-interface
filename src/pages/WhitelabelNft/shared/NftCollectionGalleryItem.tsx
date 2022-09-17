@@ -50,14 +50,10 @@ function NftCollectionGalleryItem({ data }: Props) {
   return (
     <>
       <NftCollectionGalleryItemImage src={data.previewImageUrl || ''} isReveal={data.isReveal} />
-      <CustomTag variant={tagVariant}>
-        <Text textTransform="uppercase" fontSize="10px" fontWeight={700}>
-          {phase} PHASE
-        </Text>
-      </CustomTag>
+      <CustomTag variant={tagVariant}>{phase} PHASE</CustomTag>
       <NameText bold>{data.name}</NameText>
       <InfoText color="textDisabled">
-        <InfoText color="success" style={{ display: 'inline-block' }}>
+        <InfoText bold color="success" style={{ display: 'inline-block' }}>
           {data.maxSupply?.toString()}
         </InfoText>{' '}
         NFT Collections

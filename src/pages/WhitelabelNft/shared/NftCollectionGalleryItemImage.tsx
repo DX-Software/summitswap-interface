@@ -67,13 +67,7 @@ function NftCollectionGalleryItemImage({ src, isReveal }: Props) {
   return (
     <BoxWrapper>
       <ImageWrapper>
-        {isReveal && (
-          <RevealTag variant="dropdownBackground">
-            <Text textTransform="uppercase" fontFamily="Poppins" fontSize="10px" bold>
-              REVEALED
-            </Text>
-          </RevealTag>
-        )}
+        {isReveal && <RevealTag variant="dropdownBackground">REVEALED</RevealTag>}
         <StyledImage src={src} alt="NFT item" />
         <Shadow1 />
         <Shadow2 />
