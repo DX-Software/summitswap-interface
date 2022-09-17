@@ -1,9 +1,31 @@
 import { Text } from '@koda-finance/summitswap-uikit'
 import { Phase } from 'constants/whitelabel'
 import React, { useMemo } from 'react'
+import styled from 'styled-components'
 import { WhitelabelNftGql } from 'types/whitelabelNft'
 import CustomTag from './CustomTag'
 import NftCollectionGalleryItemImage from './NftCollectionGalleryItemImage'
+
+const NameText = styled(Text)`
+  font-size: 20px;
+  line-height: 22px;
+  margin-bottom: 4px;
+
+  @media (max-width: 576px) {
+    font-size: 16px;
+    line-height: 24px;
+    margin-bottom: 0;
+  }
+`
+
+const InfoText = styled(Text)`
+  line-height: 24px;
+
+  @media (max-width: 576px) {
+    font-size: 12px;
+    line-height: 18px;
+  }
+`
 
 type Props = {
   data: WhitelabelNftGql
@@ -33,15 +55,13 @@ function NftCollectionGalleryItem({ data }: Props) {
           {phase} PHASE
         </Text>
       </CustomTag>
-      <Text bold fontSize="20px" lineHeight="22px" marginBottom="4px">
-        {data.name}
-      </Text>
-      <Text color="textDisabled">
-        <Text color="success" style={{ display: 'inline-block' }}>
+      <NameText bold>{data.name}</NameText>
+      <InfoText color="textDisabled">
+        <InfoText color="success" style={{ display: 'inline-block' }}>
           {data.maxSupply?.toString()}
-        </Text>{' '}
+        </InfoText>{' '}
         NFT Collections
-      </Text>
+      </InfoText>
     </>
   )
 }

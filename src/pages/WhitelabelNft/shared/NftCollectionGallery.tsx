@@ -3,7 +3,6 @@ import { Grid } from '@mui/material'
 import Pagination from 'components/Pagination/Pagination'
 import { PER_PAGE } from 'constants/whitelabel'
 import React, { useMemo } from 'react'
-import { isMobile } from 'react-device-detect'
 import { UseQueryResult } from 'react-query'
 import { WhitelabelNftGql } from 'types/whitelabelNft'
 import EmptyCollection from '../BrowseCollections/EmptyCollection'
@@ -39,7 +38,7 @@ function NftCollectionGallery({ queryResult, totalItem, page, search, onSearchCh
         <Grid item xs={12}>
           <Grid container spacing="24px">
             {queryResult.isLoading ? (
-              <WhitelabelNftLoadingSection isMobile={isMobile} />
+              <WhitelabelNftLoadingSection />
             ) : queryResult.isFetched && queryResult.data?.length === 0 ? (
               <EmptyCollection />
             ) : (
