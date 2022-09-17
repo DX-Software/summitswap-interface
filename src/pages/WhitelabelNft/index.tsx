@@ -1,11 +1,12 @@
 import { Box, ButtonMenu, ButtonMenuItem } from '@koda-finance/summitswap-uikit'
-import React, { useState } from 'react'
+import React from 'react'
 import { NavItem, Tabs } from 'types/whitelabelNft'
 import BrowseCollections from './BrowseCollections'
+import { useWhitelabelNftContext, WhitelabelNftProvider } from './contexts/whitelabel'
 import CreateCollection from './CreateCollection'
 
 function WhitelabelNft() {
-  const [buttonIndex, setButtonIndex] = useState(0)
+  const { activeTab, setActiveTab } = useWhitelabelNftContext()
 
   const navItems: NavItem[] = [
     {
@@ -23,15 +24,23 @@ function WhitelabelNft() {
   return (
     <>
       <Box marginTop="30px">
-        <ButtonMenu activeIndex={buttonIndex} onItemClick={(index) => setButtonIndex(index)}>
+        <ButtonMenu activeIndex={activeTab} onItemClick={(index) => setActiveTab(index)}>
           {navItems.map((item) => (
             <ButtonMenuItem key={item.code}>{item.label}</ButtonMenuItem>
           ))}
         </ButtonMenu>
       </Box>
-      <div className="main-content">{navItems[buttonIndex].component}</div>
+      <div className="main-content">{navItems[activeTab].component}</div>
     </>
   )
 }
 
-export default React.memo(WhitelabelNft)
+function main() {
+  return (
+    <WhitelabelNftProvider>
+      <WhitelabelNft />
+    </WhitelabelNftProvider>
+  )
+}
+
+export default React.memo(main)
