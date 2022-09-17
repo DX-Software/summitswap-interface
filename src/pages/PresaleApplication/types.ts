@@ -188,7 +188,8 @@ export enum LoadingButtonTypes {
   ApproveCurrency,
   BuyTokens,
   AddWhitelist,
-  RemoveWhitelist
+  RemoveWhitelist,
+  WithdrawLpTokens
 }
 
 export interface LoadingForButton {
