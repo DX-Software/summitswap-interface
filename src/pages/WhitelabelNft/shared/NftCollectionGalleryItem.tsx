@@ -10,6 +10,9 @@ const NameText = styled(Text)`
   font-size: 20px;
   line-height: 22px;
   margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
   @media (max-width: 576px) {
     font-size: 16px;
