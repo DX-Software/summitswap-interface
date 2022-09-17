@@ -38,6 +38,7 @@ import FinalizePresaleModal from './FinalizePresaleModal'
 import WhitelistSection from './WhitelistSection'
 import ContributorsSection from './ContributorsSection'
 import PresaleCancelModal from './PresaleCancelModal'
+import PairInfo from './PairInfo'
 
 interface Props {
   presaleAddress: string
@@ -481,6 +482,18 @@ const Presale = ({ presaleAddress }: Props) => {
         <GoalSystem paymentDecimals={paymentToken?.decimals || 18} presaleInfo={presaleInfo} currency={currency} />
         <Box marginTop="24px" />
         <RouterDetails presaleInfo={presaleInfo} />
+        {account && (
+          <>
+            <Divider marginY="24px" infoDivider />
+            <PairInfo
+              setIsMainLoading={setIsLoading}
+              isMainLoading={isLoading}
+              presaleAddress={presaleAddress}
+              presaleFeeInfo={presaleFeeInfo}
+              presaleInfo={presaleInfo}
+            />
+          </>
+        )}
         {(isViewWhitelist || isViewContributors) && <Divider marginY="24px" infoDivider />}
         {isViewWhitelist && (
           <WhitelistSection
