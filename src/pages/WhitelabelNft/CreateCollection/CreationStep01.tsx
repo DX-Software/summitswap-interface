@@ -2,12 +2,22 @@ import { ArrowForwardIcon, darkColors, Flex, Heading, Text } from '@koda-finance
 import { Grid } from '@mui/material'
 import { FormikProps } from 'formik'
 import React, { useCallback } from 'react'
+import styled from 'styled-components'
 import { WhitelabelNft, WhitelabelNftFormField } from 'types/whitelabelNft'
 import { NavStepButton } from '../shared/Button'
 import CurrencyInput from '../shared/CurrencyInput'
 import InputField from '../shared/InputField'
 import { HelperText } from '../shared/Text'
 import UploadImageInput from './UploadImageInput'
+
+const DescriptionText = styled(Text)`
+  margin-bottom: 16px;
+
+  @media (max-width: 576px) {
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+`
 
 type Props = {
   setCurrentCreationStep: React.Dispatch<React.SetStateAction<number>>
@@ -34,7 +44,7 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
 
   return (
     <>
-      <Heading size="lg" fontFamily="Poppins" marginBottom="16px">
+      <Heading size="lg" marginBottom="16px">
         Collection Details
       </Heading>
 
@@ -98,7 +108,7 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
           <Heading size="md" color="sidebarActiveColor" marginBottom="8px">
             Whitelist Mint Price
           </Heading>
-          <Text marginBottom="16px">Whitelist Mint Price is the NFT mint price when it’s on whitelist phase</Text>
+          <DescriptionText>Whitelist Mint Price is the NFT mint price when it’s on whitelist phase</DescriptionText>
 
           <CurrencyInput
             label="Whitelist Mint Price"
@@ -111,7 +121,7 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
           <Heading size="md" color="sidebarActiveColor" marginBottom="8px">
             Public Mint Price
           </Heading>
-          <Text marginBottom="16px">Public Mint Price is the NFT mint price when it’s on public phase</Text>
+          <DescriptionText>Public Mint Price is the NFT mint price when it’s on public phase</DescriptionText>
 
           <CurrencyInput
             label="Public Mint Price"

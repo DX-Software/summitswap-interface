@@ -31,6 +31,12 @@ const SpreadSheetIconWrapper = styled.div`
   }
 `
 
+const SpreadSheetDescriptionText = styled(HelperText)`
+  @media (max-width: 576px) {
+    font-size: 12px;
+  }
+`
+
 const ExchangeIconResponsive = styled(ExchangeIcon)`
   width: 64px;
   height: 64px;
@@ -61,23 +67,23 @@ function SpreadsheetInfoBox() {
       </Heading>
 
       <Grid container>
-        <Grid item xs={4}>
+        <Grid item xs={4} display="flex" flexDirection="column" justifyContent="flex-end">
           <NftCollectionGalleryItemImage src="/images/whitelabel-nfts/nft-image-placeholder.png" />
         </Grid>
-        <Grid item xs={4} display="flex" justifyContent="flex-end" alignItems="center">
-          <ExchangeIconResponsive />
+        <Grid item xs={4} display="flex" justifyContent="center" alignItems="center">
+          <ExchangeIconResponsive color="sidebarActiveColor" />
         </Grid>
-        <Grid item xs={4} display="flex" justifyContent="flex-end" alignItems="center">
+        <Grid item xs={4} display="flex" alignItems="center">
           <SpreadSheetIconWrapper>
             <SpreadsheetIcon width={44} height={44} color="default" />
           </SpreadSheetIconWrapper>
         </Grid>
       </Grid>
 
-      <HelperText marginY="16px">
+      <SpreadSheetDescriptionText marginY="16px">
         Viverra elementum in egestas consequat est. Nisl est sit ac elit, at dui ornare sapien. Nam ultrices bibendum
         cursus pretium id mollis. Molestie id tortor, eget eu sed tortor.
-      </HelperText>
+      </SpreadSheetDescriptionText>
       <a ref={downloadLinkRef} href={DOWNLOAD_METADATA_URL} style={{ display: 'none' }}>
         Download
       </a>
