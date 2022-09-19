@@ -24,6 +24,7 @@ import ROUTER_ABI from '../constants/abis/summitswap-router.json'
 import PRESALE_FACOTRY_ABI from '../constants/abis/summit-factory-presale.json'
 import PRESALE_ABI from '../constants/abis/summit-custom-presale.json'
 import WHITELABEL_FACTORY_ABI from '../constants/abis/summitWhitelabelNftFactory.json'
+import WHITELABEL_ABI from '../constants/abis/summitWhitelabelNft.json'
 
 // returns null on errors
 function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {
@@ -121,4 +122,8 @@ export function usePresaleContract(presaleAddress: string): Contract | null {
 
 export function useWhitelabelFactoryContract() {
   return useContract(WHITELABEL_FACTORY_ADDRESS, WHITELABEL_FACTORY_ABI)
+}
+
+export function useWhitelabelNftContract(whitelabelNftAddress: string): Contract | null {
+  return useContract(whitelabelNftAddress, WHITELABEL_ABI)
 }
