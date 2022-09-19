@@ -1,13 +1,16 @@
-import { ArrowBackIcon, Box, Breadcrumbs, Flex, Heading, Skeleton, Text } from '@koda-finance/summitswap-uikit'
-import { Grid } from '@mui/material'
+import { ArrowBackIcon, Box, Breadcrumbs, Flex, Text } from '@koda-finance/summitswap-uikit'
+import { Grid, useMediaQuery } from '@mui/material'
 import { useWhitelabelNftCollectionById } from 'api/useWhitelabelNftApi'
 import React from 'react'
+import styled from 'styled-components'
 import { useWhitelabelNftContext } from '../contexts/whitelabel'
-import { PhaseTag } from '../shared/CustomTag'
-import ImageSkeleton from '../shared/ImageSkeleton'
-import NftCollectionGalleryItemImage from '../shared/NftCollectionGalleryItemImage'
-import { DescriptionText, HelperText } from '../shared/Text'
 import MetadataSection from './MetadataSection'
+
+const Divider = styled(Box)`
+  width: 100%;
+  height: 8px;
+  background-color: ${({ theme }) => theme.colors.inputColor};
+`
 
 type WhitelabelNftDetailsProps = {
   previousPage: string
@@ -43,24 +46,19 @@ const Header = ({ previousPage, nftName }: HeaderProps) => {
 }
 
 function CollectionDetails({ previousPage }: WhitelabelNftDetailsProps) {
+  const isMobileView = useMediaQuery('(max-width: 576px)')
   const { whitelabelNftId } = useWhitelabelNftContext()
   const whitelabelNft = useWhitelabelNftCollectionById(whitelabelNftId)
 
   return (
     <>
       <Header previousPage={previousPage} nftName={whitelabelNft.data?.name} />
-      <Grid container marginTop="24px" columnSpacing="40px" rowGap="24px">
-        <Grid item xs={12} sm={5}>
-          <Box marginTop="12px">
-            {!whitelabelNft.data?.previewImageUrl ? (
-              <ImageSkeleton />
-            ) : (
-              <NftCollectionGalleryItemImage src={whitelabelNft.data.previewImageUrl} />
-            )}
-          </Box>
-        </Grid>
-        <Grid item xs={12} sm={7}>
+      <Grid container marginTop="24px">
+        <Grid item xs={12}>
           <MetadataSection whitelabelNft={whitelabelNft} />
+        </Grid>
+        <Grid item xs={12} marginTop={isMobileView ? '32px' : '44px'}>
+          <Divider />
         </Grid>
       </Grid>
     </>
