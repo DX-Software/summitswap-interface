@@ -70,12 +70,12 @@ function MetadataSection({ whitelabelNft }: MetadataProps) {
 
   return (
     <Grid container columnSpacing="40px" rowGap="24px">
-      <Grid item xs={12} sm={5}>
+      <Grid item xs={12} md={5}>
         <Box marginTop="12px">
           <NftCollectionGalleryItemImage src={whitelabelNft.data?.previewImageUrl || ''} />
         </Box>
       </Grid>
-      <Grid item xs={12} sm={7}>
+      <Grid item xs={12} md={7}>
         <Heading size="xl">{whitelabelNft.data?.name}</Heading>
         <PhaseTag phase={whitelabelNft.data?.phase} />
         <DescriptionText color="textSubtle" marginTop="16px">

@@ -1,11 +1,13 @@
 import { Box, Heading, NavTab, Text } from '@koda-finance/summitswap-uikit'
 import { useWhitelabelNftFactoryById } from 'api/useWhitelabelNftApi'
 import { WHITELABEL_FACTORY_ADDRESS } from 'constants/whitelabel'
-import React, { useState } from 'react'
+import { isAddress } from 'ethers/lib/utils'
+import useParsedQueryString from 'hooks/useParsedQueryString'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { CollectionTab, NavItem } from 'types/whitelabelNft'
-import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import CollectionDetails from '../CollectionDetails'
+import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import InfoSection from './InfoSection'
 import TabBrowseAllCollection from './TabBrowseAllCollection'
 import TabPausedPhaseCollection from './TabPausedPhaseCollection'
@@ -18,8 +20,9 @@ const NavTabWrapper = styled(Box)`
 `
 
 function BrowseCollection() {
+  const parsedQs = useParsedQueryString()
   const [tabActiveIndex, setTabActiveIndex] = useState(0)
-  const { whitelabelNftId } = useWhitelabelNftContext()
+  const { whitelabelNftId, setWhitelabelNtId } = useWhitelabelNftContext()
   const whitelabelNftFactory = useWhitelabelNftFactoryById(WHITELABEL_FACTORY_ADDRESS)
 
   const collectionTabs: NavItem[] = [
@@ -44,6 +47,11 @@ function BrowseCollection() {
       component: <TabPausedPhaseCollection whitelabelNftFactory={whitelabelNftFactory} />,
     },
   ]
+
+  useEffect(() => {
+    if (!parsedQs['whitelabel-nft'] || !isAddress(parsedQs['whitelabel-nft'].toString())) return
+    setWhitelabelNtId(parsedQs['whitelabel-nft'].toString())
+  }, [parsedQs, setWhitelabelNtId])
 
   if (whitelabelNftId) {
     return <CollectionDetails previousPage="Browse Collections" />

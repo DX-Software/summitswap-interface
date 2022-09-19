@@ -1,7 +1,8 @@
 import { ArrowBackIcon, Box, Breadcrumbs, Flex, Text } from '@koda-finance/summitswap-uikit'
 import { Grid, useMediaQuery } from '@mui/material'
 import { useWhitelabelNftCollectionById } from 'api/useWhitelabelNftApi'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import MetadataSection from './MetadataSection'
@@ -46,9 +47,29 @@ const Header = ({ previousPage, nftName }: HeaderProps) => {
 }
 
 function CollectionDetails({ previousPage }: WhitelabelNftDetailsProps) {
+  const history = useHistory()
   const isMobileView = useMediaQuery('(max-width: 576px)')
-  const { whitelabelNftId } = useWhitelabelNftContext()
+  const { whitelabelNftId, setWhitelabelNtId } = useWhitelabelNftContext()
   const whitelabelNft = useWhitelabelNftCollectionById(whitelabelNftId)
+
+  useEffect(() => {
+    if (whitelabelNft.isFetched && !whitelabelNft.data) {
+      setWhitelabelNtId('')
+    }
+  }, [whitelabelNft, setWhitelabelNtId])
+
+  useEffect(() => {
+    if (whitelabelNft.data) {
+      history.replace({
+        search: `?whitelabel-nft=${whitelabelNft.data.id}`,
+      })
+    }
+    return () => {
+      history.replace({
+        search: '',
+      })
+    }
+  }, [history, whitelabelNft.data])
 
   return (
     <>
@@ -59,6 +80,9 @@ function CollectionDetails({ previousPage }: WhitelabelNftDetailsProps) {
         </Grid>
         <Grid item xs={12} marginTop={isMobileView ? '32px' : '44px'}>
           <Divider />
+        </Grid>
+        <Grid item xs={12}>
+          helo
         </Grid>
       </Grid>
     </>
