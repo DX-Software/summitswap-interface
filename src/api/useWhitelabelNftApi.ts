@@ -15,6 +15,7 @@ import httpClient from './http'
 import {
   WHITELABEL_NFT_COLLECTIONS_GQL,
   WHITELABEL_NFT_COLLECTIONS_SEARCH_GQL,
+  WHITELABEL_NFT_COLLECTION_BY_ID_GQL,
   WHITELABEL_NFT_FACTORY_BY_ID_GQL,
 } from './queries/whitelabelNftQueries'
 
@@ -33,6 +34,16 @@ export function useWhitelabelNftFactoryById(whitelabelFactoryId: string) {
     })
     const whitelabelFactory = convertToWhitelabelNftFactory(data.whitelabelNftFactory)
     return whitelabelFactory
+  })
+}
+
+export function useWhitelabelNftCollectionById(whitelabelNftAddress: string) {
+  return useQuery(['useWhitelabelNftCollectionById', whitelabelNftAddress], async () => {
+    const data = await whitelabelNftClient.request(WHITELABEL_NFT_COLLECTION_BY_ID_GQL, {
+      address: whitelabelNftAddress.toLowerCase(),
+    })
+    const whitelabelNft = convertToWhitelabelNft(data.whitelabelNftCollection)
+    return whitelabelNft
   })
 }
 

@@ -16,9 +16,18 @@ type Props = {
   search: string | undefined
   onSearchChange: React.Dispatch<React.SetStateAction<string | undefined>>
   onPageChange: React.Dispatch<React.SetStateAction<number>>
+  handleShowWhitelabelNft: React.Dispatch<React.SetStateAction<string>>
 }
 
-function NftCollectionGallery({ queryResult, totalItem, page, search, onSearchChange, onPageChange }: Props) {
+function NftCollectionGallery({
+  queryResult,
+  totalItem,
+  page,
+  search,
+  onSearchChange,
+  onPageChange,
+  handleShowWhitelabelNft,
+}: Props) {
   const maxPage = useMemo(() => {
     return Math.ceil(totalItem / PER_PAGE)
   }, [totalItem])
@@ -44,7 +53,7 @@ function NftCollectionGallery({ queryResult, totalItem, page, search, onSearchCh
             ) : (
               queryResult.data?.map((item) => (
                 <Grid item xs={6} sm={6} md={4} lg={3} key={`gallery-item-${item.id}`}>
-                  <NftCollectionGalleryItem data={item} />
+                  <NftCollectionGalleryItem data={item} onClick={() => handleShowWhitelabelNft(item.id)} />
                 </Grid>
               ))
             )}

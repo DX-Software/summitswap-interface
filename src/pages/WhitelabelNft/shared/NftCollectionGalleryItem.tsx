@@ -1,10 +1,13 @@
-import { Text } from '@koda-finance/summitswap-uikit'
-import { Phase } from 'constants/whitelabel'
-import React, { useMemo } from 'react'
+import { Box, Text } from '@koda-finance/summitswap-uikit'
+import React from 'react'
 import styled from 'styled-components'
 import { WhitelabelNftGql } from 'types/whitelabelNft'
-import CustomTag from './CustomTag'
+import { PhaseTag } from './CustomTag'
 import NftCollectionGalleryItemImage from './NftCollectionGalleryItemImage'
+
+const Card = styled(Box)`
+  cursor: pointer;
+`
 
 const NameText = styled(Text)`
   font-size: 20px;
@@ -32,28 +35,14 @@ const InfoText = styled(Text)`
 
 type Props = {
   data: WhitelabelNftGql
+  onClick: () => void
 }
 
-function NftCollectionGalleryItem({ data }: Props) {
-  const phase = useMemo(() => {
-    return Phase[data.phase || 0]
-  }, [data.phase])
-
-  const tagVariant = useMemo(() => {
-    switch (data.phase) {
-      case Phase.Pause:
-        return 'textDisabled'
-      case Phase.Whitelist:
-        return 'info'
-      default:
-        return 'primary'
-    }
-  }, [data.phase])
-
+function NftCollectionGalleryItem({ data, onClick }: Props) {
   return (
-    <>
+    <Card onClick={onClick}>
       <NftCollectionGalleryItemImage src={data.previewImageUrl || ''} isReveal={data.isReveal} />
-      <CustomTag variant={tagVariant}>{phase} PHASE</CustomTag>
+      <PhaseTag phase={data.phase} />
       <NameText bold>{data.name}</NameText>
       <InfoText color="textDisabled">
         <InfoText bold color="success" style={{ display: 'inline-block' }}>
@@ -61,7 +50,7 @@ function NftCollectionGalleryItem({ data }: Props) {
         </InfoText>{' '}
         NFT Collections
       </InfoText>
-    </>
+    </Card>
   )
 }
 

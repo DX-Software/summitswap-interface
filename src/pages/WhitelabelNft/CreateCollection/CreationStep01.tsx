@@ -1,23 +1,13 @@
-import { ArrowForwardIcon, darkColors, Flex, Heading, Text } from '@koda-finance/summitswap-uikit'
+import { ArrowForwardIcon, darkColors, Flex, Heading } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import { FormikProps } from 'formik'
 import React, { useCallback } from 'react'
-import styled from 'styled-components'
 import { WhitelabelNft, WhitelabelNftFormField } from 'types/whitelabelNft'
 import { NavStepButton } from '../shared/Button'
 import CurrencyInput from '../shared/CurrencyInput'
 import InputField from '../shared/InputField'
-import { HelperText } from '../shared/Text'
+import { DescriptionText, HelperText } from '../shared/Text'
 import UploadImageInput from './UploadImageInput'
-
-const DescriptionText = styled(Text)`
-  margin-bottom: 16px;
-
-  @media (max-width: 576px) {
-    margin-bottom: 8px;
-    font-size: 14px;
-  }
-`
 
 type Props = {
   setCurrentCreationStep: React.Dispatch<React.SetStateAction<number>>

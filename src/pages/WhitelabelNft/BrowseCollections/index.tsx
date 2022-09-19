@@ -4,6 +4,8 @@ import { WHITELABEL_FACTORY_ADDRESS } from 'constants/whitelabel'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { CollectionTab, NavItem } from 'types/whitelabelNft'
+import { useWhitelabelNftContext } from '../contexts/whitelabel'
+import CollectionDetails from '../CollectionDetails'
 import InfoSection from './InfoSection'
 import TabBrowseAllCollection from './TabBrowseAllCollection'
 import TabPausedPhaseCollection from './TabPausedPhaseCollection'
@@ -17,7 +19,7 @@ const NavTabWrapper = styled(Box)`
 
 function BrowseCollection() {
   const [tabActiveIndex, setTabActiveIndex] = useState(0)
-
+  const { whitelabelNftId } = useWhitelabelNftContext()
   const whitelabelNftFactory = useWhitelabelNftFactoryById(WHITELABEL_FACTORY_ADDRESS)
 
   const collectionTabs: NavItem[] = [
@@ -42,6 +44,10 @@ function BrowseCollection() {
       component: <TabPausedPhaseCollection whitelabelNftFactory={whitelabelNftFactory} />,
     },
   ]
+
+  if (whitelabelNftId) {
+    return <CollectionDetails previousPage="Browse Collections" />
+  }
 
   return (
     <>

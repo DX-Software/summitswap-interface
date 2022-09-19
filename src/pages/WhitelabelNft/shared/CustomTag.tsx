@@ -1,7 +1,9 @@
 import { Tag } from '@koda-finance/summitswap-uikit'
+import { Phase } from 'constants/whitelabel'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 
-const CustomTag = styled(Tag)`
+export const CustomTag = styled(Tag)`
   margin-top: 16px;
   margin-bottom: 8px;
   text-transform: uppercase;
@@ -16,4 +18,25 @@ const CustomTag = styled(Tag)`
   }
 `
 
-export default CustomTag
+type PhaseTagProps = {
+  phase?: Phase
+}
+
+export function PhaseTag({ phase }: PhaseTagProps) {
+  const phaseString = React.useMemo(() => {
+    return Phase[phase || 0]
+  }, [phase])
+
+  const tagVariant = useMemo(() => {
+    switch (phase) {
+      case Phase.Pause:
+        return 'textDisabled'
+      case Phase.Whitelist:
+        return 'info'
+      default:
+        return 'primary'
+    }
+  }, [phase])
+
+  return <CustomTag variant={tagVariant}>{phaseString} PHASE</CustomTag>
+}

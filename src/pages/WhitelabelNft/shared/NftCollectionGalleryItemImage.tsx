@@ -1,7 +1,7 @@
-import { Box, darkColors, Text } from '@koda-finance/summitswap-uikit'
+import { Box, darkColors } from '@koda-finance/summitswap-uikit'
 import React from 'react'
 import styled from 'styled-components'
-import CustomTag from './CustomTag'
+import { CustomTag } from './CustomTag'
 
 const BoxWrapper = styled(Box)`
   padding-right: 12px;

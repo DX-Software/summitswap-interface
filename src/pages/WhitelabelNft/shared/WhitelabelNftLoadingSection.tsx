@@ -1,12 +1,8 @@
-import React from 'react'
 import { Skeleton } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import { PER_PAGE } from 'constants/whitelabel'
-import styled from 'styled-components'
-
-const ImageSkeleton = styled(Skeleton)`
-  aspect-ratio: 207/173;
-`
+import React from 'react'
+import ImageSkeleton from './ImageSkeleton'
 
 function WhitelabelNftLoadingSection() {
   const skeletons = Array.from(Array(PER_PAGE).keys())
@@ -25,4 +21,4 @@ function WhitelabelNftLoadingSection() {
   )
 }
 
-export default WhitelabelNftLoadingSection
+export default React.memo(WhitelabelNftLoadingSection)
