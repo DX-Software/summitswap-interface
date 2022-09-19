@@ -5,6 +5,7 @@ import {
   Heading,
   LockIcon,
   Text,
+  useModal,
   useWalletModal,
   WalletIcon,
 } from '@koda-finance/summitswap-uikit'
@@ -13,6 +14,7 @@ import { useWeb3React } from '@web3-react/core'
 import { useWhitelabelNftApiSignature } from 'api/useWhitelabelNftApi'
 import { Phase } from 'constants/whitelabel'
 import { BigNumber } from 'ethers'
+import { formatUnits, parseEther } from 'ethers/lib/utils'
 import { FormikProps, FormikProvider, useFormik } from 'formik'
 import { useWhitelabelNftContract } from 'hooks/useContract'
 import React, { useCallback, useMemo } from 'react'
@@ -24,6 +26,7 @@ import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import { mintCollectionValidationSchema } from '../CreateCollection/validation'
 import InputField from '../shared/InputField'
 import { HelperText, StockText } from '../shared/Text'
+import MintSummaryModal from './MintSummaryModal'
 
 type MintSectionProps = {
   whitelabelNft: UseQueryResult<WhitelabelNftGql | undefined>
@@ -58,8 +61,10 @@ function MintSection({ whitelabelNft }: MintSectionProps) {
 
   const mintPrice = useMemo(() => {
     let price = whitelabelNft.data?.publicMintPrice?.toNumber()
-    if (whitelabelNft.data?.phase === Phase.Whitelist) price = whitelabelNft.data?.whitelistMintPrice?.toNumber()
-    return price || 0
+    if (whitelabelNft.data?.phase === Phase.Whitelist) {
+      price = whitelabelNft.data?.whitelistMintPrice?.toNumber()
+    }
+    return parseEther(price ? price.toString() : '0')
   }, [whitelabelNft.data])
 
   const phase = useMemo(() => {
@@ -84,6 +89,7 @@ function MintSection({ whitelabelNft }: MintSectionProps) {
       if (!whitelabelNftContract || !account || !whitelabelNftApiSignature.data) {
         return
       }
+      setSubmitting(true)
 
       const nftOwner = await whitelabelNftContract.owner()
       const tokenInfo = await whitelabelNftContract.tokenInfo()
@@ -111,6 +117,10 @@ function MintSection({ whitelabelNft }: MintSectionProps) {
     [formik]
   )
 
+  const [onPresentModal] = useModal(
+    <MintSummaryModal whitelabelNft={whitelabelNft} mintPrice={mintPrice} formik={formik} />
+  )
+
   return (
     <>
       <Heading color="linkColor" marginBottom={isMobileView ? '8px' : '16px'}>
@@ -123,7 +133,7 @@ function MintSection({ whitelabelNft }: MintSectionProps) {
           </Text>
           <EtherIcon color="linkColor" />
           <Text color="linkColor" bold fontSize={isMobileView ? '14px' : '16px'}>
-            {mintPrice}
+            {formatUnits(mintPrice, 18)}
           </Text>
         </MinterWrapper>
       </Flex>
@@ -164,7 +174,7 @@ function MintSection({ whitelabelNft }: MintSectionProps) {
             startIcon={!canMint && <LockIcon width={12} color="textDisabled" />}
             variant={canMint ? 'primary' : 'awesome'}
             disabled={!canMint}
-            onClick={formik.submitForm}
+            onClick={onPresentModal}
           >
             {canMint ? 'Mint NFT Collection' : 'You are not in whitelist'}
           </Button>
