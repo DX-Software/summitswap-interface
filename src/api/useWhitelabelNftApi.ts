@@ -26,6 +26,7 @@ const METADATA_VALIDATE_URL = `${URL}/metadata/validate`
 const METADATA_CONCEAL_URL = `${URL}/metadata/conceal`
 const COLLECTION_GET_URL = `${URL}/collection/`
 const COLLECTION_UPSERT_URL = `${URL}/collection/`
+const SIGNATURE_GET_URL = `${URL}/signature/`
 
 export function useWhitelabelNftFactoryById(whitelabelFactoryId: string) {
   return useQuery(['useWhitelabelNftFactoryById', whitelabelFactoryId], async () => {
@@ -121,6 +122,19 @@ export function useWhitelabelNftApiCollection(whitelabelNftAddress: string) {
 export function useWhitelabelNftApiCollectionUpsert() {
   return useMutation(async (data: WhitelabelCollectionUpsertDto) => {
     const res = await httpClient.post(COLLECTION_UPSERT_URL, data)
+    return res
+  })
+}
+
+export function useWhitelabelNftApiSignature(ownerAddress: string, contractAddress: string, whitelistAddress: string) {
+  return useQuery(['useWhitelabelNftApiSignature', ownerAddress, contractAddress, whitelistAddress], async () => {
+    const res = await httpClient.get(SIGNATURE_GET_URL, {
+      params: {
+        ownerAddress,
+        contractAddress,
+        whitelistAddress,
+      },
+    })
     return res
   })
 }

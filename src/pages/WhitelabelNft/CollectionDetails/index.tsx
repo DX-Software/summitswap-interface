@@ -1,11 +1,13 @@
 import { ArrowBackIcon, Box, Breadcrumbs, Flex, Text } from '@koda-finance/summitswap-uikit'
 import { Grid, useMediaQuery } from '@mui/material'
 import { useWhitelabelNftCollectionById } from 'api/useWhitelabelNftApi'
+import { useWhitelabelNftContract } from 'hooks/useContract'
 import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import MetadataSection from './MetadataSection'
+import MintSection from './MintSection'
 
 const Divider = styled(Box)`
   width: 100%;
@@ -78,11 +80,14 @@ function CollectionDetails({ previousPage }: WhitelabelNftDetailsProps) {
         <Grid item xs={12}>
           <MetadataSection whitelabelNft={whitelabelNft} />
         </Grid>
-        <Grid item xs={12} marginTop={isMobileView ? '32px' : '44px'}>
+        <Grid item xs={12} marginTop={isMobileView ? '32px' : '44px'} marginBottom={isMobileView ? '32px' : '40px'}>
           <Divider />
         </Grid>
         <Grid item xs={12}>
-          helo
+          <MintSection whitelabelNft={whitelabelNft} />
+        </Grid>
+        <Grid item xs={12} marginTop={isMobileView ? '32px' : '44px'} marginBottom={isMobileView ? '32px' : '40px'}>
+          <Divider />
         </Grid>
       </Grid>
     </>

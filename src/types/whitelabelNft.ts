@@ -128,3 +128,11 @@ export type TokenInfo = {
   phase: Phase
   isReveal: boolean
 }
+
+export enum WhitelabelNftMintField {
+  mintQuantity = 'mintQuantity',
+}
+
+export type WhitelabelMintDto = {
+  [WhitelabelNftMintField.mintQuantity]: number
+}

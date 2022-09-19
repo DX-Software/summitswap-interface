@@ -20,7 +20,7 @@ import CreatedNftModal from './CreatedNftModal'
 import CreationStep01 from './CreationStep01'
 import CreationStep02 from './CreationStep02'
 import CreationStep03 from './CreationStep03'
-import validationSchema from './validation'
+import { createCollectionValidationSchema } from './validation'
 
 function CreateCollection() {
   const { account } = useWeb3React()
@@ -37,7 +37,7 @@ function CreateCollection() {
   const formik: FormikProps<WhitelabelNft> = useFormik<WhitelabelNft>({
     enableReinitialize: true,
     initialValues: INITIAL_WHITELABEL_CREATION,
-    validationSchema,
+    validationSchema: createCollectionValidationSchema,
     onSubmit: async (values, { setSubmitting }) => {
       const metadataResult = await whitelabelNftApiUpload.mutateAsync({
         walletAddress: account!,

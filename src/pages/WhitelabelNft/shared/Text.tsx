@@ -1,8 +1,9 @@
 import { Text } from '@koda-finance/summitswap-uikit'
+import React from 'react'
 import styled from 'styled-components'
 
 export const HelperText = styled(Text)`
-  color: ${({ theme, color }) => theme.colors[color || "textSubtle"]};
+  color: ${({ theme, color }) => theme.colors[color || 'textSubtle']};
   font-size: ${({ fontSize }) => fontSize};
   font-family: 'Poppins';
 `
@@ -20,3 +21,19 @@ export const DescriptionText = styled(Text)`
     font-size: 14px;
   }
 `
+
+type StockTextProps = {
+  children: React.ReactNode
+}
+
+export function StockText({ children }: StockTextProps) {
+  return (
+    <HelperText>
+      Stock of{' '}
+      <HelperText bold color="linkColor" style={{ display: 'inline-block' }}>
+        {children}
+      </HelperText>{' '}
+      NFT(s) available
+    </HelperText>
+  )
+}

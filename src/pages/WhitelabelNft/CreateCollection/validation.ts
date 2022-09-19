@@ -17,7 +17,7 @@ const phase = yup.mixed().oneOf(Object.values(Phase))
 const nftImages = yup.array().required().min(1)
 const spreadsheet = yup.mixed().required()
 
-const validationSchema = yup.object().shape({
+export const createCollectionValidationSchema = yup.object().shape({
   name,
   symbol,
   previewImage,
@@ -29,4 +29,6 @@ const validationSchema = yup.object().shape({
   spreadsheet,
 })
 
-export default validationSchema
+export const mintCollectionValidationSchema = yup.object().shape({
+  mintQuantity: yup.number().min(1).required(),
+})
