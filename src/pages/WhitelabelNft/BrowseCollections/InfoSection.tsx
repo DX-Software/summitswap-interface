@@ -2,6 +2,7 @@ import { CloseIcon, Flex, Text } from '@koda-finance/summitswap-uikit'
 import React, { useEffect, useMemo, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import styled from 'styled-components'
+import { useWhitelabelNftContext } from '../contexts/whitelabel'
 
 const Wrapper = styled(Flex)`
   position: relative;
@@ -48,7 +49,7 @@ const Info = styled(Text)`
 `
 
 function InfoSection() {
-  const [hide, setHide] = useState(false)
+  const { hideBrowseInfoSection, setHideBrowseInfoSection } = useWhitelabelNftContext()
   const [isExpanded, setIsExpanded] = useState(false)
 
   const infoRaw = `Ac in bibendum lectus eget maecenas quis dolor, sociis dignissim. Viverra a elementum vitae elementum, porta
@@ -83,7 +84,7 @@ function InfoSection() {
     }
   }, [])
 
-  if (hide) {
+  if (hideBrowseInfoSection) {
     return null
   }
 
@@ -95,7 +96,13 @@ function InfoSection() {
           <Text bold color="linkColor">
             What is Whitelabel NFT?
           </Text>
-          <CloseIcon color="failure" marginLeft="auto" onClick={() => setHide(true)} cursor="pointer" width="24px" />
+          <CloseIcon
+            color="failure"
+            marginLeft="auto"
+            onClick={() => setHideBrowseInfoSection(true)}
+            cursor="pointer"
+            width="24px"
+          />
         </Flex>
         <Info>
           {info}
