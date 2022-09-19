@@ -31,6 +31,7 @@ export function convertToWhitelabelNft(data?: { [key: string]: any }): Whitelabe
     owner: data.owner,
     name: data.name,
     symbol: data.symbol,
+    description: data.description,
     previewImageUrl: data.previewImageUrl,
     maxSupply: data.maxSupply ? new BigNumber(data.maxSupply) : undefined,
     whitelistMintPrice: data.whitelistMintPrice ? new BigNumber(data.whitelistMintPrice) : undefined,

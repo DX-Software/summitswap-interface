@@ -82,9 +82,7 @@ function MetadataSection({ whitelabelNft }: MetadataProps) {
         <Heading size="xl">{whitelabelNft.data?.name}</Heading>
         <PhaseTag phase={whitelabelNft.data?.phase} />
         <DescriptionText color="textSubtle" marginTop="16px">
-          Placerat eget egestas enim, lectus sem ante mi accumsan elit. Neque, nulla nulla laoreet pharetra nibh nisi
-          faucibus. Ut hendrerit sed nam vitae posuere aliquet rhoncus gravida nulla. Accumsan nibh adipiscing ultrices
-          ut egestas sit sit.
+          {whitelabelNft.data?.description}
         </DescriptionText>
         <Grid container spacing={isMobileView ? '8px' : '16px'}>
           <Grid item xs={6} lg={4}>

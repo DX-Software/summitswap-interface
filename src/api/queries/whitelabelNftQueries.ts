@@ -18,6 +18,7 @@ export const WHITELABEL_NFT_COLLECTION_BY_ID_GQL = gql`
       }
       name
       symbol
+      description
       previewImageUrl
       maxSupply
       whitelistMintPrice
@@ -38,6 +39,7 @@ export const WHITELABEL_NFT_COLLECTIONS_GQL = gql`
       }
       name
       symbol
+      description
       previewImageUrl
       maxSupply
       whitelistMintPrice
@@ -58,6 +60,7 @@ export const WHITELABEL_NFT_COLLECTIONS_SEARCH_GQL = gql`
       }
       name
       symbol
+      description
       previewImageUrl
       maxSupply
       whitelistMintPrice

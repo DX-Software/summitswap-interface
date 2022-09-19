@@ -111,6 +111,7 @@ export type WhitelabelNftGql = {
   owner?: WhitelabelNftAccountGql
   name?: string
   symbol?: string
+  description?: string
   previewImageUrl?: string
   maxSupply?: BigNumber
   whitelistMintPrice?: BigNumber
