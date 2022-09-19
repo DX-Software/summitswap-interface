@@ -1,4 +1,4 @@
-import { ArrowForwardIcon, darkColors, Flex, Heading } from '@koda-finance/summitswap-uikit'
+import { ArrowForwardIcon, darkColors, Flex, Heading, TextArea } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import { FormikProps } from 'formik'
 import React, { useCallback } from 'react'
@@ -7,6 +7,7 @@ import { NavStepButton } from '../shared/Button'
 import CurrencyInput from '../shared/CurrencyInput'
 import InputField from '../shared/InputField'
 import { DescriptionText, HelperText } from '../shared/Text'
+import TextareaField from '../shared/TextareaField'
 import UploadImageInput from './UploadImageInput'
 
 type Props = {
@@ -39,50 +40,64 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
       </Heading>
 
       <Grid container spacing="16px">
-        <Grid item xs={12} lg={6}>
-          <Grid container spacing="16px" marginBottom="16px">
-            <Grid item xs={12} sm={6} lg={6}>
-              <UploadImageInput
-                name={WhitelabelNftFormField.previewImage}
-                selectedPlaceholder="Thumbnail Image"
-                formik={formik}
-              >
-                Upload Your Thumbnail Image
-              </UploadImageInput>
-            </Grid>
-            <Grid item xs={12} sm={6} lg={6}>
-              <UploadImageInput
-                name={WhitelabelNftFormField.concealImage}
-                selectedPlaceholder="Conceal Image"
-                color={darkColors.primaryDark}
-                formik={formik}
-              >
-                Upload Your Conceal Image
-              </UploadImageInput>
-            </Grid>
+        <Grid item xs={12} container spacing="16px" marginBottom="16px">
+          <Grid item xs={12} sm={6} lg={6}>
+            <UploadImageInput
+              name={WhitelabelNftFormField.previewImage}
+              selectedPlaceholder="Thumbnail Image"
+              formik={formik}
+            >
+              Upload Your Thumbnail Image
+            </UploadImageInput>
           </Grid>
-          <HelperText>NB: If you don&#39;t upload the images, we will set it as default image</HelperText>
+          <Grid item xs={12} sm={6} lg={6}>
+            <UploadImageInput
+              name={WhitelabelNftFormField.concealImage}
+              selectedPlaceholder="Conceal Image"
+              color={darkColors.primaryDark}
+              formik={formik}
+            >
+              Upload Your Conceal Image
+            </UploadImageInput>
+          </Grid>
+          <Grid item xs={12} sm={6} lg={6}>
+            <HelperText>NB: If you don&#39;t upload the images, we will set it as default image</HelperText>
+          </Grid>
         </Grid>
-        <Grid item xs={12} lg={6}>
-          <InputField
-            label="NFT Collection Name"
-            name={WhitelabelNftFormField.name}
-            placeholder="e.g. Summit NFT"
-            formik={formik}
-          />
-          <InputField
-            label="NFT Collection Symbol"
-            name={WhitelabelNftFormField.symbol}
-            placeholder="e.g. SFT"
-            formik={formik}
-          />
-          <InputField
-            label="NFT Conceal Name (optional)"
-            name={WhitelabelNftFormField.concealName}
-            placeholder="e.g. Unknown Summit"
-            helperText="This name will be shown when you haven’t revealed your collection"
-            formik={formik}
-          />
+        <Grid item container xs={12} columnSpacing="16px">
+          <Grid item xs={12} lg={6}>
+            <InputField
+              label="NFT Collection Name"
+              name={WhitelabelNftFormField.name}
+              placeholder="e.g. Summit NFT"
+              formik={formik}
+            />
+          </Grid>
+          <Grid item xs={12} lg={6}>
+            <InputField
+              label="NFT Collection Symbol"
+              name={WhitelabelNftFormField.symbol}
+              placeholder="e.g. SFT"
+              formik={formik}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextareaField
+              label="NFT Collection Description"
+              name={WhitelabelNftFormField.description}
+              placeholder="This is all about my NFT"
+              formik={formik}
+            />
+          </Grid>
+          <Grid item xs={12} lg={6}>
+            <InputField
+              label="NFT Conceal Name (optional)"
+              name={WhitelabelNftFormField.concealName}
+              placeholder="e.g. Unknown Summit"
+              helperText="This name will be shown when you haven’t revealed your collection"
+              formik={formik}
+            />
+          </Grid>
         </Grid>
       </Grid>
 

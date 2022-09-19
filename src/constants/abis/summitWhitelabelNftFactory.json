@@ -44,6 +44,11 @@
           },
           {
             "internalType": "string",
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
             "name": "previewImageUrl",
             "type": "string"
           },
@@ -126,6 +131,11 @@
           {
             "internalType": "string",
             "name": "symbol",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
             "type": "string"
           },
           {

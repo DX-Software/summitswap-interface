@@ -22,6 +22,7 @@ export type NavItem = {
 export enum WhitelabelNftFormField {
   name = 'name',
   symbol = 'symbol',
+  description = 'description',
   concealName = 'concealName',
   previewImage = 'previewImage',
   concealImage = 'concealImage',
@@ -38,6 +39,7 @@ export enum WhitelabelNftFormField {
 export type WhitelabelNft = {
   [WhitelabelNftFormField.name]: string
   [WhitelabelNftFormField.symbol]: string
+  [WhitelabelNftFormField.description]: string
   [WhitelabelNftFormField.concealName]?: string
   [WhitelabelNftFormField.previewImage]?: File
   [WhitelabelNftFormField.concealImage]?: File
@@ -121,6 +123,7 @@ export type WhitelabelNftGql = {
 export type TokenInfo = {
   name: string
   symbol: string
+  description: string
   previewImageUrl: string
   maxSupply: number
   whitelistMintPrice: string

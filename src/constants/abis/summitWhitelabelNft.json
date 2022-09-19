@@ -15,6 +15,11 @@
           },
           {
             "internalType": "string",
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
             "name": "previewImageUrl",
             "type": "string"
           },
@@ -186,7 +191,13 @@
       {
         "indexed": false,
         "internalType": "enum Phase",
-        "name": "phase",
+        "name": "previousPhase",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum Phase",
+        "name": "updatedPhase",
         "type": "uint8"
       }
     ],
@@ -739,6 +750,11 @@
       {
         "internalType": "string",
         "name": "symbol",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "description",
         "type": "string"
       },
       {

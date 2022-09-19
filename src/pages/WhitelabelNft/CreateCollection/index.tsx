@@ -61,6 +61,7 @@ function CreateCollection() {
       const tokenInfo: TokenInfo = {
         name: values.name,
         symbol: values.symbol,
+        description: values.description,
         previewImageUrl,
         maxSupply: values.nftImages.length,
         whitelistMintPrice: parseEther(values.whitelistMintPrice).toString(),
