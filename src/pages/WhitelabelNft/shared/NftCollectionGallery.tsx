@@ -7,7 +7,7 @@ import { UseQueryResult } from 'react-query'
 import { WhitelabelNftCollectionGql } from 'types/whitelabelNft'
 import EmptyCollection from '../BrowseCollections/EmptyCollection'
 import NftCollectionGalleryItem from './NftCollectionGalleryItem'
-import WhitelabelNftLoadingSection from './WhitelabelNftLoadingSection'
+import NftCollectionGalleryLoadingSection from './NftCollectionGalleryLoadingSection'
 
 type Props = {
   queryResult: UseQueryResult<WhitelabelNftCollectionGql[], unknown>
@@ -47,7 +47,7 @@ function NftCollectionGallery({
         <Grid item xs={12}>
           <Grid container spacing="24px">
             {queryResult.isLoading ? (
-              <WhitelabelNftLoadingSection />
+              <NftCollectionGalleryLoadingSection />
             ) : queryResult.isFetched && queryResult.data?.length === 0 ? (
               <EmptyCollection />
             ) : (
