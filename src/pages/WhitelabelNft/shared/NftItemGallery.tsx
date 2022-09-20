@@ -6,6 +6,7 @@ import React, { useMemo } from 'react'
 import { UseQueryResult } from 'react-query'
 import { WhitelabelNftItemGql } from 'types/whitelabelNft'
 import NftItemGalleryItem from './NftItemGalleryItem'
+import NftItemGalleryLoadingSection from './NftItemGalleryLoadingSection'
 import { HelperText } from './Text'
 
 type Props = {
@@ -25,7 +26,9 @@ function NftItemGallery({ queryResult, totalItem, page, onPageChange }: Props) {
       <Grid container spacing="40px">
         <Grid item xs={12}>
           <Grid container spacing="24px">
-            {queryResult.isLoading ? null : queryResult.isFetched && queryResult.data?.length === 0 ? ( // <WhitelabelNftLoadingSection />
+            {queryResult.isLoading ? (
+              <NftItemGalleryLoadingSection />
+            ) : queryResult.isFetched && queryResult.data?.length === 0 ? (
               <HelperText>No NFT Collections adopted yet. Let’s adopt one now!</HelperText>
             ) : (
               queryResult.data?.map((item) => (
