@@ -44,7 +44,9 @@ function NftItemGallery({ queryResult, totalItem, page, onPageChange }: Props) {
             {queryResult.isLoading ? (
               <NftItemGalleryLoadingSection />
             ) : queryResult.isFetched && queryResult.data?.length === 0 ? (
-              <HelperText>No NFT Collections adopted yet. Let’s adopt one now!</HelperText>
+              <Grid item xs={12}>
+                <HelperText>No NFT Collections adopted yet. Let’s adopt one now!</HelperText>
+              </Grid>
             ) : (
               queryResult.data?.map((item) => (
                 <Grid item xs={6} sm={6} md={4} lg={3} key={`nft-item-${item.id}`}>
