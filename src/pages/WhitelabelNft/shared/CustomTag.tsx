@@ -2,6 +2,7 @@ import { Tag } from '@koda-finance/summitswap-uikit'
 import { Phase } from 'constants/whitelabel'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
+import { getPhaseString } from 'utils/whitelabelNft'
 
 export const CustomTag = styled(Tag)`
   margin-top: 16px;
@@ -23,9 +24,7 @@ type PhaseTagProps = {
 }
 
 export function PhaseTag({ phase }: PhaseTagProps) {
-  const phaseString = React.useMemo(() => {
-    return Phase[phase || 0]
-  }, [phase])
+  const phaseString = getPhaseString(phase || 0)
 
   const tagVariant = useMemo(() => {
     switch (phase) {

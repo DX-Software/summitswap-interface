@@ -1,15 +1,29 @@
-import { Box, Heading, lightColors, Skeleton, Text } from '@koda-finance/summitswap-uikit'
+import {
+  AutoRenewIcon,
+  Box,
+  Button,
+  Flex,
+  Heading,
+  lightColors,
+  Select,
+  Skeleton,
+  Text,
+} from '@koda-finance/summitswap-uikit'
 import { Grid, useMediaQuery } from '@mui/material'
+import { useWeb3React } from '@web3-react/core'
+import { INITIAL_WHITELABEL_UPDATE_PHASE, PHASE_OPTIONS } from 'constants/whitelabel'
 import { BigNumber } from 'ethers'
+import { FormikProps, FormikProvider, useFormik } from 'formik'
 import { useWhitelabelNftContract } from 'hooks/useContract'
 import React, { useCallback, useEffect, useState } from 'react'
 import { UseQueryResult } from 'react-query'
-import { WhitelabelNftCollectionGql } from 'types/whitelabelNft'
+import { WhitelabelNftCollectionGql, WhitelabelNftFormField, WhitelabelNftUpdatePhase } from 'types/whitelabelNft'
+import { getPhaseString } from 'utils/whitelabelNft'
 import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import { PhaseTag } from '../shared/CustomTag'
 import ImageSkeleton from '../shared/ImageSkeleton'
 import NftCollectionGalleryItemImage from '../shared/NftCollectionGalleryItemImage'
-import { DescriptionText } from '../shared/Text'
+import { DescriptionText, HelperText } from '../shared/Text'
 
 type MetadataProps = {
   whitelabelNft: UseQueryResult<WhitelabelNftCollectionGql | undefined>
@@ -36,8 +50,10 @@ function StatsCard({ label, value = 0 }: StatsCardProps) {
 }
 
 function MetadataSection({ whitelabelNft }: MetadataProps) {
-  const [totalSupply, setTotalSupply] = useState(0)
   const isMobileView = useMediaQuery('(max-width: 576px)')
+  const { account } = useWeb3React()
+  const [totalSupply, setTotalSupply] = useState(0)
+  const [isOwner, setIsOwner] = useState(false)
   const { whitelabelNftId } = useWhitelabelNftContext()
   const whitelabelNftContract = useWhitelabelNftContract(whitelabelNftId)
 
@@ -47,9 +63,33 @@ function MetadataSection({ whitelabelNft }: MetadataProps) {
     setTotalSupply(_totalSupply.toNumber())
   }, [whitelabelNftContract])
 
+  const getCollectionOwner = useCallback(async () => {
+    if (!whitelabelNftContract) return
+    const _owner = (await whitelabelNftContract?.owner()) as string
+    setIsOwner(_owner.toLowerCase() === account?.toLowerCase())
+  }, [whitelabelNftContract, account])
+
   useEffect(() => {
     getTotalSupply()
-  }, [getTotalSupply])
+    getCollectionOwner()
+  }, [getTotalSupply, getCollectionOwner])
+
+  const formikUpdatePhase: FormikProps<WhitelabelNftUpdatePhase> = useFormik<WhitelabelNftUpdatePhase>({
+    enableReinitialize: true,
+    initialValues: INITIAL_WHITELABEL_UPDATE_PHASE,
+    onSubmit: async (values, { setSubmitting }) => {
+      if (!account || !whitelabelNftContract) return
+
+      const tx = await whitelabelNftContract[`enter${getPhaseString(values.phase)}Phase`]()
+      await tx.wait()
+
+      setSubmitting(false)
+    },
+  })
+
+  const handlePhaseChange = (value: string) => {
+    formikUpdatePhase.setFieldValue(WhitelabelNftFormField.phase, value)
+  }
 
   if (whitelabelNft.isLoading) {
     return (
@@ -91,8 +131,47 @@ function MetadataSection({ whitelabelNft }: MetadataProps) {
         </Box>
       </Grid>
       <Grid item xs={12} md={7}>
-        <Heading size="xl">{whitelabelNft.data?.name}</Heading>
-        <PhaseTag phase={whitelabelNft.data?.phase} />
+        <Heading size="xl" marginBottom={isOwner ? '16px' : ''}>
+          {whitelabelNft.data?.name}
+        </Heading>
+        {!isOwner && <PhaseTag phase={whitelabelNft.data?.phase} />}
+        {isOwner && (
+          <FormikProvider value={formikUpdatePhase}>
+            <Box marginBottom="16px">
+              <Grid container spacing="8px">
+                <Grid item xs={12} lg={8}>
+                  <Text color="#E2E2E2" fontSize="14px" marginBottom="4px">
+                    Switch Phase
+                  </Text>
+                  <Select
+                    options={PHASE_OPTIONS}
+                    onValueChanged={handlePhaseChange}
+                    style={{ flex: 1 }}
+                    marginBottom="4px"
+                  />
+                  <HelperText fontSize="12px">
+                    Current Phase:{' '}
+                    <HelperText color="primary" fontSize="12px" style={{ display: 'inline-block' }}>
+                      {getPhaseString(whitelabelNft.data?.phase || 0)} Phase
+                    </HelperText>
+                  </HelperText>
+                </Grid>
+                <Grid item xs={6} lg={4} display="flex" alignItems="center">
+                  <Button
+                    variant="awesome"
+                    scale="xs"
+                    width="100%"
+                    startIcon={<AutoRenewIcon color="default" spin={formikUpdatePhase.isSubmitting} />}
+                    isLoading={formikUpdatePhase.isSubmitting}
+                    onClick={formikUpdatePhase.submitForm}
+                  >
+                    Change
+                  </Button>
+                </Grid>
+              </Grid>
+            </Box>
+          </FormikProvider>
+        )}
         <DescriptionText color="textSubtle" marginTop="16px">
           {whitelabelNft.data?.description}
         </DescriptionText>

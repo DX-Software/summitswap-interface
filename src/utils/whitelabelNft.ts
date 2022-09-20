@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js'
+import { Phase } from 'constants/whitelabel'
 import { WhitelabelNftFactoryGql, WhitelabelNftCollectionGql, WhitelabelNftItemGql } from 'types/whitelabelNft'
 
 // eslint-disable-next-line import/prefer-default-export
@@ -52,4 +53,9 @@ export function convertToWhitelabelNftItem(data?: { [key: string]: any }): White
     tokenId: data.tokenId,
     owner: data.owner,
   }
+}
+
+export function getPhaseString(phase: Phase) {
+  const phaseString = Phase[phase || 0]
+  return phaseString
 }

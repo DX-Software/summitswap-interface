@@ -58,6 +58,10 @@ export type WhitelabelNft = {
   [WhitelabelNftFormField.spreadsheet]?: File
 }
 
+export type WhitelabelNftUpdatePhase = {
+  [WhitelabelNftFormField.phase]: number
+}
+
 export type WhitelabelMetadataValidateDto = {
   spreadsheet: File
   nftImages: File[]

@@ -28,3 +28,22 @@ export const INITIAL_WHITELABEL_CREATION = {
 
 export const SUPPORTED_IMAGE_FORMAT = ['image/jpg', 'image/jpeg', 'image/png']
 export const SUPPORTED_METADATA_FORMAT = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+
+export const INITIAL_WHITELABEL_UPDATE_PHASE = {
+  [WhitelabelNftFormField.phase]: Phase.Pause,
+}
+
+export const PHASE_OPTIONS = [
+  {
+    label: 'Phase Paused',
+    value: Phase.Pause.toString(),
+  },
+  {
+    label: 'Phase Whitelist',
+    value: Phase.Whitelist.toString(),
+  },
+  {
+    label: 'Phase Public',
+    value: Phase.Public.toString(),
+  },
+]
