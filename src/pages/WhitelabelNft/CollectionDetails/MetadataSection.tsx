@@ -2,11 +2,13 @@ import {
   AutoRenewIcon,
   Box,
   Button,
+  Flex,
   Heading,
   lightColors,
   Select,
   Skeleton,
   Text,
+  WalletIcon,
 } from '@koda-finance/summitswap-uikit'
 import { Grid, useMediaQuery } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
@@ -16,6 +18,7 @@ import { FormikProps, FormikProvider, useFormik } from 'formik'
 import { useWhitelabelNftContract } from 'hooks/useContract'
 import React, { useCallback, useEffect, useState } from 'react'
 import { UseQueryResult } from 'react-query'
+import styled from 'styled-components'
 import { WhitelabelNftCollectionGql, WhitelabelNftFormField, WhitelabelNftUpdatePhase } from 'types/whitelabelNft'
 import { getPhaseString } from 'utils/whitelabelNft'
 import { useWhitelabelNftContext } from '../contexts/whitelabel'
@@ -23,6 +26,16 @@ import { PhaseTag } from '../shared/CustomTag'
 import ImageSkeleton from '../shared/ImageSkeleton'
 import NftCollectionGalleryItemImage from '../shared/NftCollectionGalleryItemImage'
 import { DescriptionText, HelperText } from '../shared/Text'
+
+const ActionWrapper = styled(Flex)`
+  margin-bottom: 16px;
+  gap: 8px;
+  flex-direction: row;
+
+  @media (max-width: 576px) {
+    flex-direction: column;
+  }
+`
 
 type MetadataProps = {
   whitelabelNft: UseQueryResult<WhitelabelNftCollectionGql | undefined>
@@ -37,7 +50,7 @@ function StatsCard({ label, value = 0 }: StatsCardProps) {
   const isMobileView = useMediaQuery('(max-width: 576px)')
 
   return (
-    <Box padding="16px" background={lightColors.inputColor} borderRadius="4px">
+    <Box padding="16px" background={lightColors.inputColor} borderRadius="4px" height="100%">
       <Heading size="lg" color={value === 0 ? 'textSubtle' : 'sidebarColor'}>
         {value}
       </Heading>
@@ -174,6 +187,16 @@ function MetadataSection({ whitelabelNft }: MetadataProps) {
         <DescriptionText color="textSubtle" marginTop="16px">
           {whitelabelNft.data?.description}
         </DescriptionText>
+        {isOwner && (
+          <ActionWrapper>
+            <Button startIcon={<WalletIcon color="default" />}>
+              <b>Withdraw Fund</b>
+            </Button>
+            <Button variant="tertiary">
+              <b>Reveal Collection</b>
+            </Button>
+          </ActionWrapper>
+        )}
         <Grid container spacing={isMobileView ? '8px' : '16px'}>
           <Grid item xs={6} lg={4}>
             <StatsCard label="Items" value={whitelabelNft.data?.maxSupply?.toNumber()} />
