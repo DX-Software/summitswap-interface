@@ -5,7 +5,7 @@ import { isAddress } from 'ethers/lib/utils'
 import useParsedQueryString from 'hooks/useParsedQueryString'
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { CollectionTab, NavItem } from 'types/whitelabelNft'
+import { BrowseCollectionTab, NavItem } from 'types/whitelabelNft'
 import CollectionDetails from '../CollectionDetails'
 import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import InfoSection from './InfoSection'
@@ -28,22 +28,22 @@ function BrowseCollection() {
   const collectionTabs: NavItem[] = [
     {
       label: 'All Collections',
-      code: CollectionTab.ALL_COLLECTION,
+      code: BrowseCollectionTab.ALL_COLLECTION,
       component: <TabBrowseAllCollection whitelabelNftFactory={whitelabelNftFactory} />,
     },
     {
       label: 'Public Phase',
-      code: CollectionTab.PUBLIC_PHASE,
+      code: BrowseCollectionTab.PUBLIC_PHASE,
       component: <TabPublicPhaseCollection whitelabelNftFactory={whitelabelNftFactory} />,
     },
     {
       label: 'Whitelist Phase',
-      code: CollectionTab.WHITELIST_PHASE,
+      code: BrowseCollectionTab.WHITELIST_PHASE,
       component: <TabWhitelistPhaseCollection whitelabelNftFactory={whitelabelNftFactory} />,
     },
     {
       label: 'Paused Phase',
-      code: CollectionTab.PAUSED_PHASE,
+      code: BrowseCollectionTab.PAUSED_PHASE,
       component: <TabPausedPhaseCollection whitelabelNftFactory={whitelabelNftFactory} />,
     },
   ]

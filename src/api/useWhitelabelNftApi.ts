@@ -6,17 +6,23 @@ import {
   WhitelabelMetadataConcealDto,
   WhitelabelMetadataUploadDto,
   WhitelabelMetadataValidateDto,
-  WhitelabelNftGql,
+  WhitelabelNftCollectionGql,
+  WhitelabelNftItemGql,
   WhitelabelUploadResult,
 } from 'types/whitelabelNft'
 import { whitelabelNftClient } from 'utils/graphql'
-import { convertToWhitelabelNft, convertToWhitelabelNftFactory } from 'utils/whitelabelNft'
+import {
+  convertToWhitelabelNftCollection,
+  convertToWhitelabelNftFactory,
+  convertToWhitelabelNftItem,
+} from 'utils/whitelabelNft'
 import httpClient from './http'
 import {
   WHITELABEL_NFT_COLLECTIONS_GQL,
   WHITELABEL_NFT_COLLECTIONS_SEARCH_GQL,
   WHITELABEL_NFT_COLLECTION_BY_ID_GQL,
   WHITELABEL_NFT_FACTORY_BY_ID_GQL,
+  WHITELABEL_NFT_ITEMS_GQL,
 } from './queries/whitelabelNftQueries'
 
 const URL = 'whitelabel-nft'
@@ -43,7 +49,7 @@ export function useWhitelabelNftCollectionById(whitelabelNftAddress: string) {
     const data = await whitelabelNftClient.request(WHITELABEL_NFT_COLLECTION_BY_ID_GQL, {
       address: whitelabelNftAddress.toLowerCase(),
     })
-    const whitelabelNft = convertToWhitelabelNft(data.whitelabelNftCollection)
+    const whitelabelNft = convertToWhitelabelNftCollection(data.whitelabelNftCollection)
     return whitelabelNft
   })
 }
@@ -68,9 +74,27 @@ export function useWhitelabelNftCollections(
       if (!searchText) delete filter.text
 
       const data = await whitelabelNftClient.request(query, filter)
-      const whitelabelNftCollections: WhitelabelNftGql[] = data[key]
-        .map((whitelabel) => convertToWhitelabelNft(whitelabel))
+      const whitelabelNftCollections: WhitelabelNftCollectionGql[] = data[key]
+        .map((whitelabel) => convertToWhitelabelNftCollection(whitelabel))
         .filter((whitelabelNft) => phases.includes(whitelabelNft.phase))
+      return whitelabelNftCollections
+    },
+    { refetchOnWindowFocus: false }
+  )
+}
+
+export function useWhitelabelNftItems(page = 1, perPage = PER_PAGE, collectionAddress: string) {
+  return useQuery(
+    ['useWhitelabelNftItems', page, perPage, collectionAddress],
+    async () => {
+      const data = await whitelabelNftClient.request(WHITELABEL_NFT_ITEMS_GQL, {
+        first: perPage,
+        skip: (page - 1) * perPage,
+        collectionAddress,
+      })
+      const whitelabelNftCollections: WhitelabelNftItemGql[] = data.whitelabelNftItems.map((whitelabel) =>
+        convertToWhitelabelNftItem(whitelabel)
+      )
       return whitelabelNftCollections
     },
     { refetchOnWindowFocus: false }

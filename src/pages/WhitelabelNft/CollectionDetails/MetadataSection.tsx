@@ -3,7 +3,7 @@ import { Grid, useMediaQuery } from '@mui/material'
 import { useWhitelabelNftContract } from 'hooks/useContract'
 import React from 'react'
 import { UseQueryResult } from 'react-query'
-import { WhitelabelNftGql } from 'types/whitelabelNft'
+import { WhitelabelNftCollectionGql } from 'types/whitelabelNft'
 import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import { PhaseTag } from '../shared/CustomTag'
 import ImageSkeleton from '../shared/ImageSkeleton'
@@ -11,7 +11,7 @@ import NftCollectionGalleryItemImage from '../shared/NftCollectionGalleryItemIma
 import { DescriptionText } from '../shared/Text'
 
 type MetadataProps = {
-  whitelabelNft: UseQueryResult<WhitelabelNftGql | undefined>
+  whitelabelNft: UseQueryResult<WhitelabelNftCollectionGql | undefined>
 }
 
 type StatsCardProps = {

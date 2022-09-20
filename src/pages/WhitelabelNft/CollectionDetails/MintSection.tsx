@@ -20,7 +20,7 @@ import { useWhitelabelNftContract } from 'hooks/useContract'
 import React, { useCallback, useMemo } from 'react'
 import { UseQueryResult } from 'react-query'
 import styled from 'styled-components'
-import { WhitelabelMintDto, WhitelabelNftGql, WhitelabelNftMintField } from 'types/whitelabelNft'
+import { WhitelabelMintDto, WhitelabelNftCollectionGql, WhitelabelNftMintField } from 'types/whitelabelNft'
 import login from 'utils/login'
 import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import { mintCollectionValidationSchema } from '../CreateCollection/validation'
@@ -29,7 +29,7 @@ import { HelperText, StockText } from '../shared/Text'
 import MintSummaryModal from './MintSummaryModal'
 
 type MintSectionProps = {
-  whitelabelNft: UseQueryResult<WhitelabelNftGql | undefined>
+  whitelabelNft: UseQueryResult<WhitelabelNftCollectionGql | undefined>
 }
 
 const MinterWrapper = styled(Flex)`

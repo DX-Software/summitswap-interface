@@ -6,16 +6,21 @@ export enum Tabs {
   CREATE_COLLECTION = 'create_collection',
 }
 
-export enum CollectionTab {
+export enum BrowseCollectionTab {
   ALL_COLLECTION = 'all_collection',
   PUBLIC_PHASE = 'public_phase',
   WHITELIST_PHASE = 'whitelist_phase',
   PAUSED_PHASE = 'paused_phase',
 }
 
+export enum NftItemCollectionTab {
+  ALL_COLLECTION = 'all_collection',
+  MY_COLLECTION = 'my_collection',
+}
+
 export type NavItem = {
   label: string
-  code: Tabs | CollectionTab
+  code: Tabs | BrowseCollectionTab | NftItemCollectionTab
   component: React.ReactNode
 }
 
@@ -106,7 +111,7 @@ export type WhitelabelNftFactoryGql = {
   totalWhitelabelNftWhitelistPhase?: BigNumber
 }
 
-export type WhitelabelNftGql = {
+export type WhitelabelNftCollectionGql = {
   id: string
   owner?: WhitelabelNftAccountGql
   name?: string
@@ -119,6 +124,13 @@ export type WhitelabelNftGql = {
   phase?: number
   isReveal?: boolean
   createdAt?: BigNumber
+}
+
+export type WhitelabelNftItemGql = {
+  id: string
+  collection?: WhitelabelNftCollectionGql
+  tokenId?: string
+  owner?: WhitelabelNftAccountGql
 }
 
 export type TokenInfo = {

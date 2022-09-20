@@ -1,7 +1,7 @@
 import { Box, Text } from '@koda-finance/summitswap-uikit'
 import React from 'react'
 import styled from 'styled-components'
-import { WhitelabelNftGql } from 'types/whitelabelNft'
+import { WhitelabelNftCollectionGql } from 'types/whitelabelNft'
 import { PhaseTag } from './CustomTag'
 import NftCollectionGalleryItemImage from './NftCollectionGalleryItemImage'
 
@@ -34,7 +34,7 @@ const InfoText = styled(Text)`
 `
 
 type Props = {
-  data: WhitelabelNftGql
+  data: WhitelabelNftCollectionGql
   onClick: () => void
 }
 

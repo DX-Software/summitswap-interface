@@ -17,7 +17,7 @@ import { FormikProps } from 'formik'
 import React from 'react'
 import { UseQueryResult } from 'react-query'
 import styled from 'styled-components'
-import { WhitelabelMintDto, WhitelabelNftGql } from 'types/whitelabelNft'
+import { WhitelabelMintDto, WhitelabelNftCollectionGql } from 'types/whitelabelNft'
 import { HelperText } from '../shared/Text'
 
 const Decorator = styled(Box)`
@@ -31,7 +31,7 @@ const Decorator = styled(Box)`
 `
 
 interface MintSummaryModalProps extends InjectedModalProps {
-  whitelabelNft: UseQueryResult<WhitelabelNftGql | undefined>
+  whitelabelNft: UseQueryResult<WhitelabelNftCollectionGql | undefined>
   mintPrice: BigNumberish
   formik: FormikProps<WhitelabelMintDto>
 }
