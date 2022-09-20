@@ -152,3 +152,15 @@ export enum WhitelabelNftMintField {
 export type WhitelabelMintDto = {
   [WhitelabelNftMintField.mintQuantity]: number
 }
+
+export type NftMetadata = {
+  tokenId: number | string
+  name: string
+  description: string
+  image: string
+  attributes?: Array<{
+    trait_type: string
+    value: number | string
+    display_type?: string
+  }>
+}
