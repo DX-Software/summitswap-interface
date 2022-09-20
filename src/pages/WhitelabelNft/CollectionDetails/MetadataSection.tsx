@@ -2,7 +2,6 @@ import {
   AutoRenewIcon,
   Box,
   Button,
-  Flex,
   Heading,
   lightColors,
   Select,
