@@ -83,7 +83,7 @@ export function useWhitelabelNftCollections(
   )
 }
 
-export function useWhitelabelNftItems(page = 1, perPage = PER_PAGE, collectionAddress: string) {
+export function useWhitelabelNftItems(collectionAddress: string, page = 1, perPage = PER_PAGE) {
   return useQuery(
     ['useWhitelabelNftItems', page, perPage, collectionAddress],
     async () => {
@@ -95,6 +95,29 @@ export function useWhitelabelNftItems(page = 1, perPage = PER_PAGE, collectionAd
       const whitelabelNftCollections: WhitelabelNftItemGql[] = data.whitelabelNftItems.map((whitelabel) =>
         convertToWhitelabelNftItem(whitelabel)
       )
+      return whitelabelNftCollections
+    },
+    { refetchOnWindowFocus: false }
+  )
+}
+
+export function useWhitelabelNftItemsByOwner(
+  collectionAddress: string,
+  ownerAddress: string,
+  page = 1,
+  perPage = PER_PAGE
+) {
+  return useQuery(
+    ['useWhitelabelNftItems', page, perPage, ownerAddress, collectionAddress],
+    async () => {
+      const data = await whitelabelNftClient.request(WHITELABEL_NFT_ITEMS_GQL, {
+        first: perPage,
+        skip: (page - 1) * perPage,
+        collectionAddress,
+      })
+      const whitelabelNftCollections: WhitelabelNftItemGql[] = data.whitelabelNftItems
+        .map((whitelabel) => convertToWhitelabelNftItem(whitelabel))
+        .filter((item) => item.owner.id === ownerAddress.toLowerCase())
       return whitelabelNftCollections
     },
     { refetchOnWindowFocus: false }

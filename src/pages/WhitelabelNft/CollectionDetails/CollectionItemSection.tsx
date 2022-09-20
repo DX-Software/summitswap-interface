@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { UseQueryResult } from 'react-query'
 import { NavItem, NftItemCollectionTab, WhitelabelNftCollectionGql } from 'types/whitelabelNft'
 import TabAllCollection from './TabAllCollection'
+import TabMyCollection from './TabMyCollection'
 
 type Props = {
   whitelabelNft: UseQueryResult<WhitelabelNftCollectionGql | undefined>
@@ -22,7 +23,7 @@ function CollectionItemSection({ whitelabelNft }: Props) {
     {
       label: 'My Collections',
       code: NftItemCollectionTab.MY_COLLECTION,
-      component: null,
+      component: <TabMyCollection />,
     },
   ]
 

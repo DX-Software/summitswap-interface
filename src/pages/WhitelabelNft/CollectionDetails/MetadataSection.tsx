@@ -1,7 +1,8 @@
 import { Box, Heading, lightColors, Skeleton, Text } from '@koda-finance/summitswap-uikit'
 import { Grid, useMediaQuery } from '@mui/material'
+import { BigNumber } from 'ethers'
 import { useWhitelabelNftContract } from 'hooks/useContract'
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { UseQueryResult } from 'react-query'
 import { WhitelabelNftCollectionGql } from 'types/whitelabelNft'
 import { useWhitelabelNftContext } from '../contexts/whitelabel'
@@ -35,9 +36,20 @@ function StatsCard({ label, value = 0 }: StatsCardProps) {
 }
 
 function MetadataSection({ whitelabelNft }: MetadataProps) {
+  const [totalSupply, setTotalSupply] = useState(0)
   const isMobileView = useMediaQuery('(max-width: 576px)')
   const { whitelabelNftId } = useWhitelabelNftContext()
   const whitelabelNftContract = useWhitelabelNftContract(whitelabelNftId)
+
+  const getTotalSupply = useCallback(async () => {
+    if (!whitelabelNftContract) return
+    const _totalSupply = (await whitelabelNftContract?.totalSupply()) as BigNumber
+    setTotalSupply(_totalSupply.toNumber())
+  }, [whitelabelNftContract])
+
+  useEffect(() => {
+    getTotalSupply()
+  }, [getTotalSupply])
 
   if (whitelabelNft.isLoading) {
     return (
@@ -92,7 +104,7 @@ function MetadataSection({ whitelabelNft }: MetadataProps) {
             <StatsCard label="Owners" value={0} />
           </Grid>
           <Grid item xs={6} lg={4}>
-            <StatsCard label="NFT(s) minted" value={0} />
+            <StatsCard label="NFT(s) minted" value={totalSupply} />
           </Grid>
         </Grid>
       </Grid>
