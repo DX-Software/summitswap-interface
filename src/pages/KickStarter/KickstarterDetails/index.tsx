@@ -323,7 +323,7 @@ function KickstarterDetails({ previousPage, kickstarterId, handleKickstarterId }
         email: data.email,
         currencyAddress: data.currencyAddress,
         currencySymbol: data.currencySymbol,
-        amount: data.contributionAmount,
+        contributionAmount: data.contributionAmount,
         createdAt: format(new Date(data.createdAt || 0), 'yyyy-MM-dd HH:mm:ss'),
       }))
 
