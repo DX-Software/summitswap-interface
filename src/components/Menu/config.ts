@@ -34,7 +34,7 @@ const config: MenuEntry[] = [
   },
   {
     label: 'Whitelabel NFT',
-    icon: 'SunIcon',
+    icon: 'WhitelabelNftIcon',
     href: '/whitelabel-nft',
   },
   // {
