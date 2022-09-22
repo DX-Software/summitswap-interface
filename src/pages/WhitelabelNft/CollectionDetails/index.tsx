@@ -1,7 +1,9 @@
-import { ArrowBackIcon, Box, Breadcrumbs, Flex, Heading, Text } from '@koda-finance/summitswap-uikit'
+import { ArrowBackIcon, Box, Breadcrumbs, Flex, Text } from '@koda-finance/summitswap-uikit'
 import { Grid, useMediaQuery } from '@mui/material'
 import { useWhitelabelNftCollectionById } from 'api/useWhitelabelNftApi'
-import React, { useEffect } from 'react'
+import { BigNumber } from 'ethers'
+import { useWhitelabelNftContract } from 'hooks/useContract'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { useWhitelabelNftContext } from '../contexts/whitelabel'
@@ -53,6 +55,19 @@ function CollectionDetails({ previousPage }: WhitelabelNftDetailsProps) {
   const isMobileView = useMediaQuery('(max-width: 576px)')
   const { whitelabelNftId, setWhitelabelNtId } = useWhitelabelNftContext()
   const whitelabelNft = useWhitelabelNftCollectionById(whitelabelNftId)
+  const whitelabelNftContract = useWhitelabelNftContract(whitelabelNftId)
+
+  const [totalSupply, setTotalSupply] = useState(0)
+
+  const getTotalSupply = useCallback(async () => {
+    if (!whitelabelNftContract) return
+    const _totalSupply = (await whitelabelNftContract?.totalSupply()) as BigNumber
+    setTotalSupply(_totalSupply.toNumber())
+  }, [whitelabelNftContract])
+
+  useEffect(() => {
+    getTotalSupply()
+  }, [getTotalSupply])
 
   useEffect(() => {
     if (whitelabelNft.isFetched && !whitelabelNft.data) {
@@ -78,13 +93,13 @@ function CollectionDetails({ previousPage }: WhitelabelNftDetailsProps) {
       <Header previousPage={previousPage} nftName={whitelabelNft.data?.name} />
       <Grid container marginTop="24px">
         <Grid item xs={12}>
-          <MetadataSection whitelabelNft={whitelabelNft} />
+          <MetadataSection totalSupply={totalSupply} whitelabelNft={whitelabelNft} />
         </Grid>
         <Grid item xs={12} marginTop={isMobileView ? '32px' : '44px'} marginBottom={isMobileView ? '32px' : '40px'}>
           <Divider />
         </Grid>
         <Grid item xs={12}>
-          <MintSection whitelabelNft={whitelabelNft} />
+          <MintSection totalSupply={totalSupply} whitelabelNft={whitelabelNft} />
         </Grid>
         <Grid item xs={12} marginTop={isMobileView ? '32px' : '44px'} marginBottom={isMobileView ? '32px' : '40px'}>
           <Divider />

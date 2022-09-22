@@ -29,6 +29,7 @@ import { HelperText, StockText } from '../shared/Text'
 import MintSummaryModal from './MintSummaryModal'
 
 type MintSectionProps = {
+  totalSupply: number
   whitelabelNft: UseQueryResult<WhitelabelNftCollectionGql | undefined>
 }
 
@@ -38,7 +39,7 @@ const MinterWrapper = styled(Flex)`
   border-left: 8px solid ${({ theme }) => theme.colors.linkColor};
 `
 
-function MintSection({ whitelabelNft }: MintSectionProps) {
+function MintSection({ totalSupply, whitelabelNft }: MintSectionProps) {
   const isMobileView = useMediaQuery('(max-width: 576px)')
   const { account, activate, deactivate } = useWeb3React()
   const { whitelabelNftId } = useWhitelabelNftContext()
@@ -71,7 +72,10 @@ function MintSection({ whitelabelNft }: MintSectionProps) {
     return whitelabelNft.data?.phase || Phase.Pause
   }, [whitelabelNft.data?.phase])
 
-  const stock = 25
+  const stock = useMemo(() => {
+    if (!whitelabelNft.data?.maxSupply) return 0
+    return whitelabelNft.data.maxSupply.minus(totalSupply).toNumber()
+  }, [whitelabelNft.data?.maxSupply, totalSupply])
 
   const isWhitelisted = useMemo(() => {
     return whitelabelNftApiSignature.data?.data.signature

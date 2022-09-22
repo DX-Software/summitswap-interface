@@ -9,12 +9,11 @@ import {
   Skeleton,
   Text,
   useModal,
-  WalletIcon,
+  WalletIcon
 } from '@koda-finance/summitswap-uikit'
 import { Grid, useMediaQuery } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { Phase, PHASE_OPTIONS } from 'constants/whitelabel'
-import { BigNumber } from 'ethers'
 import { getAddress } from 'ethers/lib/utils'
 import { FormikProps, FormikProvider, FormikValues, useFormik } from 'formik'
 import { useWhitelabelNftContract } from 'hooks/useContract'
@@ -42,6 +41,7 @@ const ActionWrapper = styled(Flex)`
 `
 
 type MetadataProps = {
+  totalSupply: number
   whitelabelNft: UseQueryResult<WhitelabelNftCollectionGql | undefined>
 }
 
@@ -65,10 +65,9 @@ function StatsCard({ label, value = 0 }: StatsCardProps) {
   )
 }
 
-function MetadataSection({ whitelabelNft }: MetadataProps) {
+function MetadataSection({ totalSupply, whitelabelNft }: MetadataProps) {
   const isMobileView = useMediaQuery('(max-width: 576px)')
   const { account } = useWeb3React()
-  const [totalSupply, setTotalSupply] = useState(0)
   const [isOwner, setIsOwner] = useState(false)
   const { whitelabelNftId } = useWhitelabelNftContext()
   const whitelabelNftContract = useWhitelabelNftContract(whitelabelNftId)
@@ -79,12 +78,6 @@ function MetadataSection({ whitelabelNft }: MetadataProps) {
     return contractBalance?.toExact() === '0'
   }, [contractBalance])
 
-  const getTotalSupply = useCallback(async () => {
-    if (!whitelabelNftContract) return
-    const _totalSupply = (await whitelabelNftContract?.totalSupply()) as BigNumber
-    setTotalSupply(_totalSupply.toNumber())
-  }, [whitelabelNftContract])
-
   const getCollectionOwner = useCallback(async () => {
     if (!whitelabelNftContract) return
     const _owner = (await whitelabelNftContract?.owner()) as string
@@ -92,9 +85,8 @@ function MetadataSection({ whitelabelNft }: MetadataProps) {
   }, [whitelabelNftContract, account])
 
   useEffect(() => {
-    getTotalSupply()
     getCollectionOwner()
-  }, [getTotalSupply, getCollectionOwner])
+  }, [getCollectionOwner])
 
   const formikUpdatePhase: FormikProps<WhitelabelNftUpdatePhase> = useFormik<WhitelabelNftUpdatePhase>({
     enableReinitialize: true,
