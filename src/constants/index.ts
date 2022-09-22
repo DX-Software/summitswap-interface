@@ -1,5 +1,7 @@
 import { ChainId, JSBI, Percent, Token, WETH } from '@koda-finance/summitswap-sdk'
 
+export const BACKEND_API = `${process.env.REACT_APP_BACKEND_API}`
+
 export const MAX_QUERYING_BLOCK_AMOUNT = 5000;
 export const NETWORK_URL = `${process.env.REACT_APP_NETWORK_URL}`
 export const ROUTER_ADDRESS = `${process.env.REACT_APP_ROUTER_ADDRESS}`
@@ -61,7 +63,6 @@ export const USDT = {
   [ChainId.MAINNET]:  new Token(ChainId.MAINNET, '0x55d398326f99059fF775485246999027B3197955', 18, 'USDT', 'Tether USD'),
   [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0x337610d27c682E347C9cD60BD4b3b107C9d34dDd', 18, 'USDT', 'Tether USD'),
 }[CHAIN_ID] as Token;
-
 
 export const KAPEX = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0x11441AFb1D10E3Ce4E39666FC4F4A2A5d6d8C0Da', 18, 'KAPEX', 'KAPEX Token'),

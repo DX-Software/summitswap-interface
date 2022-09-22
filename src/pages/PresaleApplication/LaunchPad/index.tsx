@@ -348,7 +348,7 @@ const LaunchPad = () => {
                     width="226px"
                     startIcon={<FilterIcon width="15px" color="info" />}
                     options={[ALL_PRESALE_OPTION, PUBLIC_ONLY_OPTION, WHITELIST_ONLY]}
-                    onChange={(e: any) => setFilter(e.target.value)}
+                    onValueChanged={(value: any) => setFilter(value)}
                   />
                 </SelectWrapper>
               </Flex>

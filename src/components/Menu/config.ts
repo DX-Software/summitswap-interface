@@ -44,6 +44,11 @@ const config: MenuEntry[] = [
     icon: 'InfoIcon',
     href: '/presale-application',
   },
+  {
+    label: 'Kick Starter',
+    icon: 'RubicIcon',
+    href: '/kickstarter',
+  }
   // {
   //  label: 'Create Token',
   //   icon: 'SunIcon',

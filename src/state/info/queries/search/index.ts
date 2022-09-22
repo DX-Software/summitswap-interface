@@ -1,4 +1,4 @@
-import { MINIMUM_SEARCH_CHARACTERS } from 'constants/info'
+import { TOKEN_BLACKLIST , MINIMUM_SEARCH_CHARACTERS } from 'constants/info'
 import { gql } from 'graphql-request'
 import { useEffect, useState } from 'react'
 import { usePoolDatas, useTokenDatas } from 'state/info/hooks'
@@ -6,28 +6,28 @@ import { PoolData, TokenData } from 'state/info/types'
 import { infoClient } from 'utils/graphql'
 
 const TOKEN_SEARCH = gql`
-  query tokens($symbol: String, $name: String, $id: String) {
-    asSymbol: tokens(first: 10, where: { symbol_contains: $symbol }, orderBy: tradeVolumeUSD, orderDirection: desc) {
+  query tokens($blacklist: [String!], $symbol: String, $name: String, $id: String) {
+    asSymbol: tokens(first: 10, where: { symbol_contains: $symbol, id_not_in: $blacklist }, orderBy: tradeVolumeUSD, orderDirection: desc) {
       id
     }
-    asName: tokens(first: 10, where: { name_contains: $name }, orderBy: tradeVolumeUSD, orderDirection: desc) {
+    asName: tokens(first: 10, where: { name_contains: $name, id_not_in: $blacklist }, orderBy: tradeVolumeUSD, orderDirection: desc) {
       id
     }
-    asAddress: tokens(first: 1, where: { id: $id }, orderBy: tradeVolumeUSD, orderDirection: desc) {
+    asAddress: tokens(first: 1, where: { id: $id, id_not_in: $blacklist }, orderBy: tradeVolumeUSD, orderDirection: desc) {
       id
     }
   }
 `
 
 const POOL_SEARCH = gql`
-  query pools($tokens: [Bytes]!, $id: String) {
-    as0: pairs(first: 10, where: { token0_in: $tokens }) {
+  query pools($blacklist: [String!], $tokens: [Bytes]!, $id: String) {
+    as0: pairs(first: 10, where: { token0_in: $tokens, token0_not_in: $blacklist }) {
       id
     }
-    as1: pairs(first: 10, where: { token1_in: $tokens }) {
+    as1: pairs(first: 10, where: { token1_in: $tokens, token1_not_in: $blacklist }) {
       id
     }
-    asAddress: pairs(first: 1, where: { id: $id }) {
+    asAddress: pairs(first: 1, where: { id: $id, id_not_in: $blacklist }) {
       id
     }
   }
@@ -88,6 +88,7 @@ const useFetchSearchResults = (
       try {
         const tokens = await infoClient.request<TokenSearchResponse>(TOKEN_SEARCH, {
           symbol: searchString.toUpperCase(),
+          blacklist: TOKEN_BLACKLIST,
           // Most well known tokens have first letter capitalized
           name: searchString.charAt(0).toUpperCase() + searchString.slice(1),
           id: searchString.toLowerCase(),
@@ -95,6 +96,7 @@ const useFetchSearchResults = (
         const tokenIds = getIds([tokens.asAddress, tokens.asSymbol, tokens.asName])
         const pools = await infoClient.request<PoolSearchResponse>(POOL_SEARCH, {
           tokens: tokenIds,
+          blacklist: TOKEN_BLACKLIST,
           id: searchString.toLowerCase(),
         })
         setSearchResults({
@@ -117,7 +119,7 @@ const useFetchSearchResults = (
       search()
     }
   }, [searchString, searchStringTooShort])
-
+  
   // Save ids to Redux
   // Token and Pool updater will then go fetch full data for these addresses
   // These hooks in turn will return data of tokens that have been fetched

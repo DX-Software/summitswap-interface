@@ -5,6 +5,7 @@ import { useWalletModal } from '@koda-finance/summitswap-uikit'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import InvalidReferralLinkModal from 'components/InvalidReferralLinkModal'
 import { utils } from 'ethers'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import login from '../utils/login'
 import Banner from '../components/Banner'
 import Popups from '../components/Popups'
@@ -25,6 +26,7 @@ import SummitInfoPools from './Info/Pools'
 import SummitInfoTokens from './Info/Tokens'
 import SummitInfoPool from './Info/Pools/PoolPage'
 import SummitInfoToken from './Info/Tokens/TokenPage'
+import KickStarter from './KickStarter'
 import { EN, allLanguages } from '../constants/localisation/languageCodes'
 import { LanguageContext } from '../hooks/LanguageContext'
 import { TranslationsContext } from '../hooks/TranslationsContext'
@@ -74,6 +76,14 @@ const BodyWrapper = styled.div`
 const Marginer = styled.div`
   margin-top: 5rem;
 `
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+})
 
 export default function App() {
   const { account, deactivate, activate, error } = useWeb3React()
@@ -157,45 +167,48 @@ export default function App() {
             <SupportChatWidget />
             <Popups />
             <Web3ReactManager>
-              <Switch>
-                <Route exact strict path={['/', '/send']}>
-                  <Redirect to={`/swap${location.search}`} />
-                </Route>
-                <Menu>
-                  <BodyWrapper>
-                    <AppHeader />
-                    <Banner />
-                    <Route exact path="/swap" component={Swap} />
-                    <Route exact path="/create-token" component={CreateToken} />
-                    <Route exact path="/cross-chain-swap" component={CrossChainSwap} />
-                    <Route exact path="/swap?ref=:ref" component={Referral} />
-                    <Route exact path="/referral" component={Referral} />
-                    <Route exact path="/onboarding" component={Onboarding} />
-                    <Route exact strict path="/find" component={PoolFinder} />
-                    <Route exact strict path="/pool" component={Pool} />
-                    <Route exact path="/add" component={AddLiquidity} />
-                    <Route exact path="/info" component={SummitInfoOverview} />
-                    <Route exact path="/info/pools" component={SummitInfoPools} />
-                    <Route exact path="/info/tokens" component={SummitInfoTokens} />
-                    <Route exact path="/info/token/:address" component={SummitInfoToken} />
-                    <Route exact path="/info/pool/:address" component={SummitInfoPool} />
-                    <Route exact path="/staking/deposit" component={DepositPage} />
-                    <Route exact path="/staking/claim" component={ClaimPage} />
-                    <Route exact path="/staking/withdraw" component={WithdrawPage} />
-                    <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
-                    <Route exact path="/presale-application" component={PresaleApplication} />
-                    <Route exact path="/launchpad" component={LaunchPad} />
+              <QueryClientProvider client={queryClient}>
+                <Switch>
+                  <Route exact strict path={['/', '/send']}>
+                    <Redirect to={`/swap${location.search}`} />
+                  </Route>
+                  <Menu>
+                    <BodyWrapper>
+                      <AppHeader />
+                      <Banner />
+                      <Route exact path="/swap" component={Swap} />
+                      <Route exact path="/create-token" component={CreateToken} />
+                      <Route exact path="/cross-chain-swap" component={CrossChainSwap} />
+                      <Route exact path="/swap?ref=:ref" component={Referral} />
+                      <Route exact path="/referral" component={Referral} />
+                      <Route exact path="/onboarding" component={Onboarding} />
+                      <Route exact strict path="/find" component={PoolFinder} />
+                      <Route exact strict path="/pool" component={Pool} />
+                      <Route exact path="/add" component={AddLiquidity} />
+                      <Route exact path="/info" component={SummitInfoOverview} />
+                      <Route exact path="/info/pools" component={SummitInfoPools} />
+                      <Route exact path="/info/tokens" component={SummitInfoTokens} />
+                      <Route exact path="/info/token/:address" component={SummitInfoToken} />
+                      <Route exact path="/info/pool/:address" component={SummitInfoPool} />
+                      <Route exact path="/staking/deposit" component={DepositPage} />
+                      <Route exact path="/staking/claim" component={ClaimPage} />
+                      <Route exact path="/staking/withdraw" component={WithdrawPage} />
+                      <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
+                      <Route exact path="/presale-application" component={PresaleApplication} />
+                      <Route exact path="/launchpad" component={LaunchPad} />
+                      <Route exact path="/kickstarter" component={KickStarter} />
 
-                    {/* Redirection: These old routes are still used in the code base */}
-                    <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
-                    <Route exact path="/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
-                    <Route exact strict path="/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
-                    <Route exact path="/summitcheck" component={SummitCheck} />
+                      {/* Redirection: These old routes are still used in the code base */}
+                      <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
+                      <Route exact path="/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
+                      <Route exact strict path="/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
+                      <Route exact path="/summitcheck" component={SummitCheck} />
 
-                    {/* <Route component={RedirectPathToSwapOnly} /> */}
-                  </BodyWrapper>
-                </Menu>
-              </Switch>
+                      {/* <Route component={RedirectPathToSwapOnly} /> */}
+                    </BodyWrapper>
+                  </Menu>
+                </Switch>
+              </QueryClientProvider>
             </Web3ReactManager>
             <Marginer />
           </TranslationsContext.Provider>

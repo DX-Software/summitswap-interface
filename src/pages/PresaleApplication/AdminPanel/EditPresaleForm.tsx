@@ -374,7 +374,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
               </StyledText>
               <Select
                 id={FieldNames.listingChoice}
-                onChange={(e: any) => formik.setFieldValue(FieldNames.listingChoice, e.target.value)}
+                onValueChanged={(value: any) => formik.setFieldValue(FieldNames.listingChoice, value)}
                 selected={`${formik.values.listingChoice}`}
                 scale="sm"
                 options={ROUTER_OPTIONS}
@@ -506,7 +506,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
                       scale="sm"
                       options={DAY_OPTIONS}
                       id={FieldNames.claimIntervalDay}
-                      onChange={(e: any) => formik.setFieldValue(FieldNames.claimIntervalDay, e.target.value)}
+                      onValueChanged={(value: any) => formik.setFieldValue(FieldNames.claimIntervalDay, value)}
                       selected={`${formik.values.claimIntervalDay}`}
                     />
                   </InputWrapper>
@@ -518,7 +518,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
                       scale="sm"
                       options={HOUR_OPTIONS}
                       id={FieldNames.claimIntervalHour}
-                      onChange={(e: any) => formik.setFieldValue(FieldNames.claimIntervalHour, e.target.value)}
+                      onValueChanged={(value: any) => formik.setFieldValue(FieldNames.claimIntervalHour, value)}
                       selected={`${formik.values.claimIntervalHour}`}
                     />
                   </InputWrapper>
@@ -710,7 +710,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
             <Select
               id={FieldNames.contactMethod}
               selected={formik.values.contactMethod}
-              onChange={(e: any) => formik.setFieldValue(FieldNames.contactMethod, e.target.value)}
+              onValueChanged={(value: any) => formik.setFieldValue(FieldNames.contactMethod, value)}
               options={CONTACT_METHOD_OPTIONS}
               scale="sm"
             />

@@ -295,7 +295,7 @@ const CreationStep04 = ({ formik, changeStepNumber }: Props) => {
                     <StyledSelect
                       options={DAY_OPTIONS}
                       id={FieldNames.claimIntervalDay}
-                      onChange={(e: any) => formik.setFieldValue(FieldNames.claimIntervalDay, e.target.value)}
+                      onValueChanged={(value: any) => formik.setFieldValue(FieldNames.claimIntervalDay, value)}
                       selected={`${formik.values.claimIntervalDay}`}
                     />
                   </StyledInputWrapper>
@@ -306,7 +306,7 @@ const CreationStep04 = ({ formik, changeStepNumber }: Props) => {
                     <StyledSelect
                       options={HOUR_OPTIONS}
                       id={FieldNames.claimIntervalHour}
-                      onChange={(e: any) => formik.setFieldValue(FieldNames.claimIntervalHour, e.target.value)}
+                      onValueChanged={(value: any) => formik.setFieldValue(FieldNames.claimIntervalHour, value)}
                       selected={`${formik.values.claimIntervalHour}`}
                     />
                   </StyledInputWrapper>

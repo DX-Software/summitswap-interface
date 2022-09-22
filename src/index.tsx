@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import { ResetCSS } from '@koda-finance/summitswap-uikit'
 import { HashRouter } from 'react-router-dom'
 import { StyledEngineProvider } from '@mui/material'
+import BigNumber from 'bignumber.js'
 import GlobalStyle from './style/Global'
 import App from './pages/App'
 import ApplicationUpdater from './state/application/updater'
@@ -23,6 +24,8 @@ window.addEventListener('error', () => {
 })
 
 const ClearCacheAppComponent = withClearCache(App)
+
+BigNumber.config({ EXPONENTIAL_AT: 20 })
 
 ReactDOM.render(
   <StrictMode>

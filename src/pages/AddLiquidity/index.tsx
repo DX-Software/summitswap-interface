@@ -203,7 +203,7 @@ export default function AddLiquidity({
                 {currencies[Field.CURRENCY_B]?.symbol}
               </UIKitText>
             </RowFlatCenter>
-            
+
             <DoubleCurrencyLogo
               currency0={currencies[Field.CURRENCY_A]}
               currency1={currencies[Field.CURRENCY_B]}
@@ -339,7 +339,7 @@ export default function AddLiquidity({
                 showCommonBases={false}
               />
               <ColumnCenter>
-                <AddIcon color="textSubtle" />
+                <AddIcon color="primary" />
               </ColumnCenter>
               <CurrencyInputPanel
                 value={formattedAmounts[Field.CURRENCY_B]}

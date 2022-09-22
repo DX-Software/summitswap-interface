@@ -209,7 +209,7 @@ const CreationStep05 = ({ formikPresale, formikProject, changeStepNumber }: Prop
               <StyledSelect
                 id={FieldNames.contactMethod}
                 options={CONTACT_METHOD_OPTIONS}
-                onChange={(e: any) => formikProject.setFieldValue(FieldNames.contactMethod, e.target.value)}
+                onValueChanged={(value: any) => formikProject.setFieldValue(FieldNames.contactMethod, value)}
               />
             </StyledInputWrapper>
           </Flex>
