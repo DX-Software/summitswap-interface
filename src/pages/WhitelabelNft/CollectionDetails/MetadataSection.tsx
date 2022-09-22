@@ -8,16 +8,19 @@ import {
   Select,
   Skeleton,
   Text,
-  WalletIcon
+  useModal,
+  WalletIcon,
 } from '@koda-finance/summitswap-uikit'
 import { Grid, useMediaQuery } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { Phase, PHASE_OPTIONS } from 'constants/whitelabel'
 import { BigNumber } from 'ethers'
-import { FormikProps, FormikProvider, useFormik } from 'formik'
+import { getAddress } from 'ethers/lib/utils'
+import { FormikProps, FormikProvider, FormikValues, useFormik } from 'formik'
 import { useWhitelabelNftContract } from 'hooks/useContract'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { UseQueryResult } from 'react-query'
+import { useETHBalances } from 'state/wallet/hooks'
 import styled from 'styled-components'
 import { WhitelabelNftCollectionGql, WhitelabelNftFormField, WhitelabelNftUpdatePhase } from 'types/whitelabelNft'
 import { getPhaseString } from 'utils/whitelabelNft'
@@ -26,6 +29,7 @@ import { PhaseTag } from '../shared/CustomTag'
 import ImageSkeleton from '../shared/ImageSkeleton'
 import NftCollectionGalleryItemImage from '../shared/NftCollectionGalleryItemImage'
 import { DescriptionText, HelperText } from '../shared/Text'
+import WithdrawModal from './WithdrawModal'
 
 const ActionWrapper = styled(Flex)`
   margin-bottom: 16px;
@@ -33,7 +37,7 @@ const ActionWrapper = styled(Flex)`
   flex-direction: row;
 
   @media (max-width: 576px) {
-    flex-direction: column;
+    flex-direction: column-reverse;
   }
 `
 
@@ -68,6 +72,12 @@ function MetadataSection({ whitelabelNft }: MetadataProps) {
   const [isOwner, setIsOwner] = useState(false)
   const { whitelabelNftId } = useWhitelabelNftContext()
   const whitelabelNftContract = useWhitelabelNftContract(whitelabelNftId)
+
+  const contractBalance = useETHBalances([whitelabelNftId])[getAddress(whitelabelNftId)]
+
+  const isWithdrawButtonDisabled = useMemo(() => {
+    return contractBalance?.toExact() !== '0'
+  }, [contractBalance])
 
   const getTotalSupply = useCallback(async () => {
     if (!whitelabelNftContract) return
@@ -104,6 +114,14 @@ function MetadataSection({ whitelabelNft }: MetadataProps) {
   const handlePhaseChange = (value: string) => {
     formikUpdatePhase.setFieldValue(WhitelabelNftFormField.phase, value)
   }
+
+  const [onPresentWithdrawModal] = useModal(
+    <WithdrawModal
+      whitelabelNftId={whitelabelNftId}
+      whitelabelNft={whitelabelNft}
+      collectedFunds={contractBalance?.toSignificant(6) || '0'}
+    />
+  )
 
   if (whitelabelNft.isLoading) {
     return (
@@ -192,9 +210,25 @@ function MetadataSection({ whitelabelNft }: MetadataProps) {
         </DescriptionText>
         {isOwner && (
           <ActionWrapper>
-            <Button startIcon={<WalletIcon color="default" />}>
-              <b>Withdraw Fund</b>
-            </Button>
+            <Box>
+              <Button
+                variant={isWithdrawButtonDisabled ? 'awesome' : 'primary'}
+                startIcon={<WalletIcon color={isWithdrawButtonDisabled ? 'textDisabled' : 'default'} />}
+                marginBottom="4px"
+                width="100%"
+                disabled={isWithdrawButtonDisabled}
+                onClick={onPresentWithdrawModal}
+              >
+                <b>Withdraw Fund</b>
+              </Button>
+              <HelperText>
+                Total{' '}
+                <HelperText color="linkColor" fontWeight={700} style={{ display: 'inline-block' }}>
+                  {contractBalance?.toSignificant(6) || 0} ETH
+                </HelperText>{' '}
+                collected
+              </HelperText>
+            </Box>
             <Button variant="tertiary">
               <b>Reveal Collection</b>
             </Button>

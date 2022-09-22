@@ -16,19 +16,9 @@ import { formatUnits } from 'ethers/lib/utils'
 import { FormikProps } from 'formik'
 import React from 'react'
 import { UseQueryResult } from 'react-query'
-import styled from 'styled-components'
 import { WhitelabelMintDto, WhitelabelNftCollectionGql } from 'types/whitelabelNft'
+import Decorator from '../shared/Decorator'
 import { HelperText } from '../shared/Text'
-
-const Decorator = styled(Box)`
-  width: 96px;
-  height: 7px;
-  background: ${({ theme }) => theme.colors.primary};
-
-  @media (max-width: 576px) {
-    width: 64px;
-  }
-`
 
 interface MintSummaryModalProps extends InjectedModalProps {
   whitelabelNft: UseQueryResult<WhitelabelNftCollectionGql | undefined>
