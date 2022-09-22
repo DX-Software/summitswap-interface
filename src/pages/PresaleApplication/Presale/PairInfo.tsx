@@ -1,23 +1,23 @@
 import { WETH } from '@koda-finance/summitswap-sdk'
-import { Box, Button, Flex, darkColors, AutoRenewIcon } from '@koda-finance/summitswap-uikit'
+import { AutoRenewIcon, Box, Button, darkColors, Flex } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
-import differenceInMinutes from 'date-fns/differenceInMinutes'
-import { formatUnits, isAddress } from 'ethers/lib/utils'
-import React, { useEffect, useState, useMemo, useCallback } from 'react'
-import styled from 'styled-components'
 import { NULL_ADDRESS } from 'constants/index'
-import { TOKEN_CHOICES, RADIO_VALUES } from 'constants/presale'
+import { RADIO_VALUES, TOKEN_CHOICES } from 'constants/presale'
+import differenceInMinutes from 'date-fns/differenceInMinutes'
+import differenceInSeconds from 'date-fns/differenceInSeconds'
+import { formatUnits, isAddress } from 'ethers/lib/utils'
+import { useToken } from 'hooks/Tokens'
 import {
   useFactoryContract,
-  usePancakeswapFactoryContract,
   usePairContract,
+  usePancakeswapFactoryContract,
   usePresaleContract,
 } from 'hooks/useContract'
-import { useToken } from 'hooks/Tokens'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import styled from 'styled-components'
 import { shortenAddress } from 'utils'
-import differenceInSeconds from 'date-fns/differenceInSeconds'
-import { LoadingButtonTypes, LoadingForButton, FeeInfo, PresaleInfo } from '../types'
-import { DetailText, StyledText, Divider, DetailTextValue } from './Shared'
+import { FeeInfo, LoadingButtonTypes, LoadingForButton, PresaleInfo } from '../types'
+import { DetailText, DetailTextValue, Divider, StyledText } from './Shared'
 
 interface Props {
   presaleAddress: string
