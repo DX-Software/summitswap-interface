@@ -51,7 +51,7 @@ const WithdrawModal: React.FC<Props> = ({ whitelabelNftId, whitelabelNft, collec
 
   const getWithdrawFee = useCallback(async () => {
     if (!whitelabelNftFactoryContract) return
-    const _withdrawFee = (await whitelabelNftFactoryContract?.serviceFee()) as BigNumber
+    const _withdrawFee = (await whitelabelNftFactoryContract?.withdrawFee()) as BigNumber
     setWithdrawFee(_withdrawFee.toNumber())
   }, [whitelabelNftFactoryContract])
 
