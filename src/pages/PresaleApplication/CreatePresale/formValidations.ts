@@ -32,7 +32,7 @@ export const validatePresaleDetails = (values: PresaleDetails) => {
     errors.minBuy = 'Required*'
   } else if (values.minBuy <= 0) {
     errors.minBuy = 'Min buy should be a positive number'
-  } else if (values.maxBuy && values.minBuy >= values.maxBuy) {
+  } else if (values.maxBuy && values.minBuy > values.maxBuy) {
     errors.minBuy = 'Min buy <= Max buy'
   }
 
@@ -173,8 +173,8 @@ export const validateProjectDetails = (values: ProjectDetails) => {
     errors.logoUrl = 'Required*'
   } else if (!checkUrl(values.logoUrl)) {
     errors.logoUrl = 'Not a valid Url'
-  } 
-  
+  }
+
   if (!values.discordId && values.contactMethod === CONTACT_METHOD_OPTIONS[1].value) {
     errors.discordId = 'Required*'
   } else if (values.discordId && !checkUrl(values.discordId || '')) {
