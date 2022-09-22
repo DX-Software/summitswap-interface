@@ -10,10 +10,11 @@ import { ERC20_BYTES32_ABI } from '../constants/abis/erc20'
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall'
 import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
-import { LOCKER_ADDRESS, REFERRAL_ADDRESS } from '../constants'
+import { LOCKER_ADDRESS, REFERRAL_ADDRESS, PANCAKESWAP_FACTORY_ADDRESS } from '../constants'
 import { TokenType, TOKEN_CREATOR_ADDRESS } from '../constants/createToken'
-import CREATE_STANDARD_TOKEN_ABI from '../constants/abis/createStandardToken.json';
-import CREATE_LIQUIDITY_TOKEN_ABI from '../constants/abis/createLiquidityToken.json';
+import { PRESALE_FACTORY_ADDRESS } from '../constants/presale'
+import CREATE_STANDARD_TOKEN_ABI from '../constants/abis/createStandardToken.json'
+import CREATE_LIQUIDITY_TOKEN_ABI from '../constants/abis/createLiquidityToken.json'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import WETH_ABI from '../constants/abis/weth.json'
 import REFERRAL_ABI from '../constants/abis/summitReferral.json'
@@ -41,6 +42,24 @@ function useContract(address: string | undefined, ABI: any, withSignerIfPossible
   }, [address, ABI, library, withSignerIfPossible, account])
 }
 
+function useContracts(addresses: string[] | undefined, ABI: any, withSignerIfPossible = true): (Contract | null)[] {
+  const { library, account } = useActiveWeb3React()
+  return useMemo(() => {
+    if (!addresses) {
+      return [null]
+    }
+    return addresses?.map((address) => {
+      if (!address || !ABI || !library) return null
+      try {
+        return getContract(address, ABI, library, withSignerIfPossible && account ? account : undefined)
+      } catch (error) {
+        console.error('Failed to get contract', error)
+        return null
+      }
+    })
+  }, [addresses, ABI, library, withSignerIfPossible, account])
+}
+
 export function useStakingContract(withSignerIfPossible?: boolean): Contract | null {
   return useContract(STAKING_ADDRESS, STAKING_ABI, withSignerIfPossible)
 }
@@ -51,6 +70,10 @@ export function useReferralContract(withSignerIfPossible?: boolean): Contract | 
 
 export function useFactoryContract(withSignerIfPossible?: boolean): Contract | null {
   return useContract(FACTORY_ADDRESS, FACTORY_ABI, withSignerIfPossible)
+}
+
+export function usePancakeswapFactoryContract(withSignerIfPossible?: boolean): Contract | null {
+  return useContract(PANCAKESWAP_FACTORY_ADDRESS, FACTORY_ABI, withSignerIfPossible)
 }
 
 export function useLockerContract(withSignerIfPossible?: boolean): Contract | null {
@@ -109,7 +132,7 @@ export function useRouterContract(routerAddress: string): Contract | null {
 
 export function useTokenCreatorContract(tokenType: TokenType): Contract | null {
   let createTokenAbi
-  switch(tokenType) {
+  switch (tokenType) {
     case TokenType.Standard:
       createTokenAbi = CREATE_STANDARD_TOKEN_ABI
       break
@@ -120,10 +143,14 @@ export function useTokenCreatorContract(tokenType: TokenType): Contract | null {
   return useContract(TOKEN_CREATOR_ADDRESS[tokenType], createTokenAbi)
 }
 
-export function useFactoryPresaleContract(factoryAddress: string): Contract | null {
-  return useContract(factoryAddress,PRESALE_FACOTRY_ABI)
+export function useFactoryPresaleContract(): Contract | null {
+  return useContract(PRESALE_FACTORY_ADDRESS, PRESALE_FACOTRY_ABI)
 }
 
 export function usePresaleContract(presaleAddress: string): Contract | null {
   return useContract(presaleAddress, PRESALE_ABI)
+}
+
+export function usePresaleContracts(presaleAddresses: string[]): (Contract | null)[] {
+  return useContracts(presaleAddresses, PRESALE_ABI)
 }
