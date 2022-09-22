@@ -9,7 +9,7 @@ import {
   Skeleton,
   Text,
   useModal,
-  WalletIcon
+  WalletIcon,
 } from '@koda-finance/summitswap-uikit'
 import { Grid, useMediaQuery } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
@@ -250,7 +250,7 @@ function MetadataSection({ totalSupply, whitelabelNft }: MetadataProps) {
             <StatsCard label="Items" value={whitelabelNft.data?.maxSupply?.toNumber()} />
           </Grid>
           <Grid item xs={6} lg={4}>
-            <StatsCard label="Owners" value={0} />
+            <StatsCard label="Owners" value={whitelabelNft.data?.totalOwner?.toNumber()} />
           </Grid>
           <Grid item xs={6} lg={4}>
             <StatsCard label="NFT(s) minted" value={totalSupply} />

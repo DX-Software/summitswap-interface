@@ -127,6 +127,7 @@ export type WhitelabelNftCollectionGql = {
   publicMintPrice?: BigNumber
   phase?: number
   isReveal?: boolean
+  totalOwner?: BigNumber
   createdAt?: BigNumber
 }
 

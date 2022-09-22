@@ -25,6 +25,7 @@ export const WHITELABEL_NFT_COLLECTION_BY_ID_GQL = gql`
       publicMintPrice
       phase
       isReveal
+      totalOwner
       createdAt
     }
   }
@@ -46,6 +47,7 @@ export const WHITELABEL_NFT_COLLECTIONS_GQL = gql`
       publicMintPrice
       phase
       isReveal
+      totalOwner
       createdAt
     }
   }
@@ -67,6 +69,7 @@ export const WHITELABEL_NFT_COLLECTIONS_SEARCH_GQL = gql`
       publicMintPrice
       phase
       isReveal
+      totalOwner
       createdAt
     }
   }
@@ -96,6 +99,7 @@ export const WHITELABEL_NFT_ITEMS_GQL = gql`
         publicMintPrice
         phase
         isReveal
+        totalOwner
         createdAt
       }
       tokenId

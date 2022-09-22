@@ -41,6 +41,7 @@ export function convertToWhitelabelNftCollection(data?: {
     publicMintPrice: data.publicMintPrice ? new BigNumber(data.publicMintPrice) : undefined,
     phase: data.phase,
     isReveal: data.isReveal,
+    totalOwner: data.publicMintPrice ? new BigNumber(data.totalOwner) : undefined,
     createdAt: data.createdAt ? new BigNumber(data.createdAt) : undefined,
   }
 }
