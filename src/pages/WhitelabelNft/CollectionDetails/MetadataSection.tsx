@@ -76,7 +76,7 @@ function MetadataSection({ whitelabelNft }: MetadataProps) {
   const contractBalance = useETHBalances([whitelabelNftId])[getAddress(whitelabelNftId)]
 
   const isWithdrawButtonDisabled = useMemo(() => {
-    return contractBalance?.toExact() !== '0'
+    return contractBalance?.toExact() === '0'
   }, [contractBalance])
 
   const getTotalSupply = useCallback(async () => {
