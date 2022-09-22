@@ -228,7 +228,11 @@ const BuyTokens = ({
     } else {
       balance = Number(formatUnits(paymentTokenBalance, paymentToken?.decimals))
     }
-    const canBuyAmount = Number(formatUnits(presaleInfo?.maxBuy.sub(boughtAmount) || 0, paymentToken?.decimals))
+    const remainingAvailableToBuy = Number(
+      formatUnits(presaleInfo?.hardcap.sub(presaleInfo?.totalBought) || 0, paymentToken?.decimals)
+    )
+    const canBuyAmountTemp = Number(formatUnits(presaleInfo?.maxBuy.sub(boughtAmount) || 0, paymentToken?.decimals))
+    const canBuyAmount = Math.min(canBuyAmountTemp, remainingAvailableToBuy)
     if (balance < canBuyAmount) {
       setBuyAmount({ value: balance.toString(), error: '' })
     } else {
