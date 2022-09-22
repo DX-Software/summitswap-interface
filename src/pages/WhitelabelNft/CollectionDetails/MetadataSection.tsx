@@ -8,11 +8,11 @@ import {
   Select,
   Skeleton,
   Text,
-  WalletIcon,
+  WalletIcon
 } from '@koda-finance/summitswap-uikit'
 import { Grid, useMediaQuery } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
-import { INITIAL_WHITELABEL_UPDATE_PHASE, PHASE_OPTIONS } from 'constants/whitelabel'
+import { Phase, PHASE_OPTIONS } from 'constants/whitelabel'
 import { BigNumber } from 'ethers'
 import { FormikProps, FormikProvider, useFormik } from 'formik'
 import { useWhitelabelNftContract } from 'hooks/useContract'
@@ -88,7 +88,9 @@ function MetadataSection({ whitelabelNft }: MetadataProps) {
 
   const formikUpdatePhase: FormikProps<WhitelabelNftUpdatePhase> = useFormik<WhitelabelNftUpdatePhase>({
     enableReinitialize: true,
-    initialValues: INITIAL_WHITELABEL_UPDATE_PHASE,
+    initialValues: {
+      phase: whitelabelNft.data?.phase || Phase.Pause,
+    },
     onSubmit: async (values, { setSubmitting }) => {
       if (!account || !whitelabelNftContract) return
 
@@ -157,6 +159,7 @@ function MetadataSection({ whitelabelNft }: MetadataProps) {
                   </Text>
                   <Select
                     options={PHASE_OPTIONS}
+                    selected={formikUpdatePhase.values.phase.toString()}
                     onValueChanged={handlePhaseChange}
                     style={{ flex: 1 }}
                     marginBottom="4px"
