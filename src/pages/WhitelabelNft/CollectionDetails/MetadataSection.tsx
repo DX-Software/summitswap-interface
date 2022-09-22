@@ -115,6 +115,19 @@ function MetadataSection({ whitelabelNft }: MetadataProps) {
     formikUpdatePhase.setFieldValue(WhitelabelNftFormField.phase, value)
   }
 
+  const formikReveal: FormikProps<FormikValues> = useFormik<FormikValues>({
+    initialValues: {},
+    onSubmit: async (values, { setSubmitting }) => {
+      if (!account || !whitelabelNftContract) return
+
+      const tx = await whitelabelNftContract.toggleIsReveal()
+      await tx.wait()
+
+      whitelabelNft.refetch()
+      setSubmitting(false)
+    },
+  })
+
   const [onPresentWithdrawModal] = useModal(
     <WithdrawModal
       whitelabelNftId={whitelabelNftId}
@@ -229,7 +242,13 @@ function MetadataSection({ whitelabelNft }: MetadataProps) {
                 collected
               </HelperText>
             </Box>
-            <Button variant="tertiary">
+            <Button
+              variant="tertiary"
+              startIcon={formikReveal.isSubmitting && <AutoRenewIcon spin color="default" />}
+              isLoading={formikReveal.isSubmitting}
+              disabled={whitelabelNft.data?.isReveal || false}
+              onClick={formikReveal.submitForm}
+            >
               <b>Reveal Collection</b>
             </Button>
           </ActionWrapper>
