@@ -15,6 +15,7 @@ import {
 } from 'hooks/useContract'
 import { useToken } from 'hooks/Tokens'
 import { shortenAddress } from 'utils'
+import differenceInSeconds from 'date-fns/differenceInSeconds'
 import { LoadingButtonTypes, LoadingForButton, FeeInfo, PresaleInfo } from '../types'
 import { DetailText, StyledText, Divider, DetailTextValue } from './Shared'
 
@@ -295,7 +296,7 @@ const PairInfo = ({ setIsMainLoading, isMainLoading, presaleAddress, presaleInfo
                 <DetailTextValue>{unLockDate.toUTCString()}</DetailTextValue>
               </Flex>
               <Flex justifyContent="end">
-                {differenceInMinutes(unLockDate, new Date()) > 0 ? (
+                {differenceInSeconds(unLockDate, new Date()) > 0 ? (
                   <StyledText textAlign="right" fontSize="12px" style={{ minWidth: '100%' }} color="failure">
                     {`(in ${differenceInMinutes(unLockDate, new Date())} minutes)`}
                   </StyledText>
@@ -312,7 +313,7 @@ const PairInfo = ({ setIsMainLoading, isMainLoading, presaleAddress, presaleInfo
                   isLoading={isMainLoading || isLoadingButton.isClicked}
                   disabled={
                     !!isLoadingButton.error ||
-                    differenceInMinutes(unLockDate, new Date()) > 0 ||
+                    differenceInSeconds(unLockDate, new Date()) > 0 ||
                     (amountSummit === 0 && amountPancake === 0)
                   }
                   endIcon={
