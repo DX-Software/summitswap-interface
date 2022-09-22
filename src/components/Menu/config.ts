@@ -34,14 +34,12 @@ const config: MenuEntry[] = [
   },
   {
     label: 'Launchpad',
-    // icon: 'LaunchpadIcon',
-    icon: 'InfoIcon',
+    icon: 'LaunchpadIcon',
     href: '/launchpad',
   },
   {
     label: 'Presale-App',
-    // icon: 'CoinBagIcon',
-    icon: 'InfoIcon',
+    icon: 'CoinBagIcon',
     href: '/presale-application',
   },
   {
