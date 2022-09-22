@@ -139,8 +139,12 @@ const WithdrawModal: React.FC<Props> = ({ whitelabelNftId, whitelabelNft, collec
                   </Grid>
                 </Grid>
               </Grid>
-              <Button onClick={formik.submitForm} isLoading={formik.isSubmitting}>
-                {formik.isSubmitting ? <AutoRenewIcon spin color="default" /> : 'Withdraw Fund'}
+              <Button
+                onClick={formik.submitForm}
+                isLoading={formik.isSubmitting}
+                startIcon={formik.isSubmitting && <AutoRenewIcon spin color="textDisabled" />}
+              >
+                Withdraw Fund
               </Button>
             </>
           )}
