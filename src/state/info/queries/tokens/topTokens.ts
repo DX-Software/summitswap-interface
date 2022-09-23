@@ -21,7 +21,7 @@ const fetchTopTokens = async (timestamp24hAgo: number): Promise<string[]> => {
       query topTokens($blacklist: [String!], $timestamp24hAgo: Int) {
         tokenDayDatas(
           first: 1000
-          where: { dailyTxns_gt: 0, id_not_in: $blacklist, date_gt: 0 }
+          where: { dailyTxns_gt: 0, token_not_in: $blacklist, date_gt: 0 }
           orderBy: dailyVolumeUSD
           orderDirection: desc
         ) {

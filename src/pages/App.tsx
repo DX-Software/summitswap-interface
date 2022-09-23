@@ -26,7 +26,7 @@ import SummitInfoPools from './Info/Pools'
 import SummitInfoTokens from './Info/Tokens'
 import SummitInfoPool from './Info/Pools/PoolPage'
 import SummitInfoToken from './Info/Tokens/TokenPage'
-import CustomPresale from './CustomPresale'
+import KickStarter from './KickStarter'
 import { EN, allLanguages } from '../constants/localisation/languageCodes'
 import { LanguageContext } from '../hooks/LanguageContext'
 import { TranslationsContext } from '../hooks/TranslationsContext'
@@ -39,6 +39,8 @@ import DepositPage from './Staking/DepositPage'
 import WithdrawPage from './Staking/WithdrawPage'
 import ClaimPage from './Staking/ClaimPage'
 import WhitelabelNft from './WhitelabelNft'
+import PresaleApplication from './PresaleApplication'
+import LaunchPad from './PresaleApplication/LaunchPad'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -76,7 +78,13 @@ const Marginer = styled.div`
   margin-top: 5rem;
 `
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+})
 
 export default function App() {
   const { account, deactivate, activate, error } = useWeb3React()
@@ -187,7 +195,9 @@ export default function App() {
                       <Route exact path="/staking/claim" component={ClaimPage} />
                       <Route exact path="/staking/withdraw" component={WithdrawPage} />
                       <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
-                      <Route exact path="/presale" component={CustomPresale} />
+                      <Route exact path="/presale-application" component={PresaleApplication} />
+                      <Route exact path="/launchpad" component={LaunchPad} />
+                      <Route exact path="/kickstarter" component={KickStarter} />
                       <Route exact path="/whitelabel-nft" component={WhitelabelNft} />
 
                       {/* Redirection: These old routes are still used in the code base */}

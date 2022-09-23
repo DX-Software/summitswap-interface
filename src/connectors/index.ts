@@ -87,6 +87,11 @@ export const getTokenImageByAddress = (token: Token) => {
   return `https://raw.githubusercontent.com/Koda-Finance/summitswap-data/${branch}/images/coins/${token.symbol?.toLowerCase()}.png`
 }
 
+export const getTokenImageBySymbol = (symbol?: string) => {
+  const branch = CHAIN_ID === 56 ? 'main' : 'develop'
+  return `https://raw.githubusercontent.com/Koda-Finance/summitswap-data/${branch}/images/coins/${symbol?.toLowerCase()}.png`
+}
+
 export const registerToken = async (token: Token) => {
   const provider = window.ethereum
   const tokenAdded = await (provider as any).request({
