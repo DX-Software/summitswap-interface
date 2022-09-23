@@ -32,11 +32,6 @@ const config: MenuEntry[] = [
     icon: 'InfoIcon',
     href: '/info',
   },
-  {
-    label: 'Whitelabel NFT',
-    icon: 'WhitelabelNftIcon',
-    href: '/whitelabel-nft',
-  },
   // {
   //   label: 'Launchpad',
   //   icon: 'LaunchpadIcon',
@@ -51,6 +46,11 @@ const config: MenuEntry[] = [
     label: 'Kick Starter',
     icon: 'RubicIcon',
     href: '/kickstarter',
+  },
+  {
+    label: 'Whitelabel NFT',
+    icon: 'WhitelabelNftIcon',
+    href: '/whitelabel-nft',
   }
   // {
   //  label: 'Create Token',
