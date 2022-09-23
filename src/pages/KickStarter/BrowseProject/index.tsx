@@ -40,7 +40,7 @@ function BrowseProject() {
   const parsedQs = useParsedQueryString()
   const kickstarters = useKickstartersByApprovalStatuses(
     [KickstarterApprovalStatusId.APPROVED],
-    currentPage,
+    debouncedSearchTerm ? 1 : currentPage,
     PER_PAGE,
     OrderKickstarterBy.TITLE,
     sortBy,
@@ -56,7 +56,7 @@ function BrowseProject() {
   const maxPage = useMemo(() => {
     if (searchKickstarter) return 1
 
-    const totalItems = kickstarterFactory?.data?.totalKickstarter?.toNumber() || 1
+    const totalItems = kickstarterFactory?.data?.totalApprovedKickstarter?.toNumber() || 1
     return Math.ceil(totalItems / PER_PAGE)
   }, [kickstarterFactory?.data, searchKickstarter])
 
