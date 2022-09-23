@@ -6,7 +6,6 @@ import Pagination from 'components/Pagination/Pagination'
 import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { useWhitelabelNftContext } from '../contexts/whitelabel'
-import { HelperText } from '../shared/Text'
 
 const ContentWrapper = styled.div`
   max-width: 570px;
@@ -17,13 +16,16 @@ const WhitelistCaption = styled(Text)`
   border-left: 4px solid ${({ theme }) => theme.colors.primaryDark};
   font-weight: 700;
   padding-left: 8px;
-  margin-bottom: 8px;
 `
 
 const RemoveSelectedButton = styled(Flex)`
   cursor: pointer;
   align-items: center;
   column-gap: 4px;
+`
+
+const ClearSelectionButton = styled(Text)`
+  cursor: pointer;
 `
 
 const WhitelistAddressWrapper = styled(Flex)`
@@ -77,6 +79,10 @@ function WhitelistSection() {
     await whitelist.refetch()
   }
 
+  const handleRemoveAll = async () => {
+    handleRemoveWhitelist(whitelist.data?.signatures.map((item) => item.whitelistAddress) || [])
+  }
+
   const handleSelectAddress = (whitelistAddress: string) => {
     const isSelected = selectedWhitelistAddress.includes(whitelistAddress)
     if (isSelected) {
@@ -95,13 +101,18 @@ function WhitelistSection() {
         Add or Import Whitelist
       </Button>
       <ContentWrapper>
-        <Flex justifyContent="space-between">
+        <Flex justifyContent="space-between" alignItems="center" marginBottom="8px">
           <WhitelistCaption>Whitelist Participants ({whitelist.data?.totalSignature || 0})</WhitelistCaption>
-          {selectedWhitelistAddress.length > 0 && (
-            <RemoveSelectedButton onClick={() => handleRemoveWhitelist(selectedWhitelistAddress)}>
+          {selectedWhitelistAddress.length === 0 && (whitelist.data?.signatures.length || 0) > 0 && (
+            <RemoveSelectedButton onClick={handleRemoveAll}>
               <TrashIcon width={16} color="failure" />
-              <Text color="failure">Remove Selected</Text>
+              <Text color="failure">Remove All</Text>
             </RemoveSelectedButton>
+          )}
+          {selectedWhitelistAddress.length > 0 && (
+            <ClearSelectionButton onClick={() => setSelectedWhitelistAddress([])}>
+              Cancel Selection
+            </ClearSelectionButton>
           )}
         </Flex>
         <WhitelistAddressWrapper>
@@ -127,9 +138,19 @@ function WhitelistSection() {
             </WhitelistAddressItemWrapper>
           ))}
           {selectedWhitelistAddress.length > 0 && (
-            <HelperText fontSize="12px">
-              Selected {selectedWhitelistAddress.length} address{selectedWhitelistAddress.length > 1 && 'es'}
-            </HelperText>
+            <Flex marginTop="12px" justifyContent="flex-end" style={{ columnGap: '8px' }}>
+              <Button scale="sm" variant="tertiary">
+                View Selected ({selectedWhitelistAddress.length})
+              </Button>
+              <Button
+                scale="sm"
+                variant="danger"
+                startIcon={<TrashIcon width={16} color="default" />}
+                onClick={() => handleRemoveWhitelist(selectedWhitelistAddress)}
+              >
+                Remove ({selectedWhitelistAddress.length})
+              </Button>
+            </Flex>
           )}
         </WhitelistAddressWrapper>
         {maxPage > 1 && <Pagination maxPage={maxPage} page={page} onPageChange={setPage} />}
