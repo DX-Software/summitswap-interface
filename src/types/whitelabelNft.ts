@@ -88,6 +88,7 @@ export type WhitelabelSignaturesDeleteDto = {
 }
 
 export type WhitelabelSignatureResult = {
+  _id: string
   contractAddress: string
   ownerAddress: string
   signature: string

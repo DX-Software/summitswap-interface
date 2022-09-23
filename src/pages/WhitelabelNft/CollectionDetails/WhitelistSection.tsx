@@ -1,4 +1,4 @@
-import { AddIcon, Box, Button, CloseIcon, Flex, Heading, Radio, Text, TrashIcon } from '@koda-finance/summitswap-uikit'
+import { AddIcon, Button, CloseIcon, Flex, Heading, Radio, Text, TrashIcon } from '@koda-finance/summitswap-uikit'
 import { useMediaQuery } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { useWhitelabelNftApiDeleteSignatures, useWhitelabelNftApiSignatures } from 'api/useWhitelabelNftApi'
@@ -106,15 +106,18 @@ function WhitelistSection() {
         </Flex>
         <WhitelistAddressWrapper>
           {whitelist.data?.signatures.map((item) => (
-            <WhitelistAddressItemWrapper>
-              <Flex alignItems="center" style={{ columnGap: '16px' }}>
-                <Radio
-                  scale="sm"
-                  checked={selectedWhitelistAddress.includes(item.whitelistAddress)}
-                  onClick={() => handleSelectAddress(item.whitelistAddress)}
-                />
-                <WhitelistAddress>{item.whitelistAddress}</WhitelistAddress>
-              </Flex>
+            <WhitelistAddressItemWrapper key={item._id}>
+              <label htmlFor={item._id}>
+                <Flex alignItems="center" style={{ columnGap: '16px' }}>
+                  <Radio
+                    id={item._id}
+                    scale="sm"
+                    checked={selectedWhitelistAddress.includes(item.whitelistAddress)}
+                    onClick={() => handleSelectAddress(item.whitelistAddress)}
+                  />
+                  <WhitelistAddress>{item.whitelistAddress}</WhitelistAddress>
+                </Flex>
+              </label>
               <CloseIcon
                 width={24}
                 color="default"
