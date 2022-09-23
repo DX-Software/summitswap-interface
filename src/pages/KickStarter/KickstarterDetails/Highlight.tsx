@@ -152,7 +152,7 @@ const Highlight = ({ kickstarter, backedKickstarter, handleIsPayment, isLoading 
     return kickstarter?.totalContribution?.div(kickstarter.projectGoals).times(100).toNumber()
   }, [kickstarter])
 
-  const currentPageLink = window.location.href
+  const currentPageLink = encodeURIComponent(window.location.href)
 
   const [isTooltipDisplayed, setIsTooltipDisplayed] = useState(false)
 
@@ -367,7 +367,7 @@ const Highlight = ({ kickstarter, backedKickstarter, handleIsPayment, isLoading 
             ) : (
               <SocialMedia
                 style={{ cursor: 'pointer' }}
-                href={`https://twitter.com/intent/tweet?text=Let's ontribute to "${kickstarter?.title}" Kickstarter ${currentPageLink}`}
+                href={`https://twitter.com/intent/tweet?text=Let's contribute to "${kickstarter?.title}" Kickstarter ${currentPageLink}`}
                 target="_blank"
               >
                 <TwitterIcon width="14px" />
