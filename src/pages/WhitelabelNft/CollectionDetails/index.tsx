@@ -11,6 +11,7 @@ import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import CollectionItemSection from './CollectionItemSection'
 import MetadataSection from './MetadataSection'
 import MintSection from './MintSection'
+import WhitelistSection from './WhitelistSection'
 
 const Divider = styled(Box)`
   width: 100%;
@@ -107,15 +108,17 @@ function CollectionDetails({ previousPage }: WhitelabelNftDetailsProps) {
       <Grid container marginTop="24px">
         <Grid item xs={12}>
           <MetadataSection isOwner={isOwner} totalSupply={totalSupply} whitelabelNft={whitelabelNft} />
+          <Divider marginTop={isMobileView ? '32px' : '44px'} marginBottom={isMobileView ? '32px' : '40px'} />
         </Grid>
-        <Grid item xs={12} marginTop={isMobileView ? '32px' : '44px'} marginBottom={isMobileView ? '32px' : '40px'}>
-          <Divider />
-        </Grid>
+        {isOwner && (
+          <Grid item xs={12}>
+            <WhitelistSection />
+            <Divider marginTop={isMobileView ? '32px' : '44px'} marginBottom={isMobileView ? '32px' : '40px'} />
+          </Grid>
+        )}
         <Grid item xs={12}>
           <MintSection totalSupply={totalSupply} whitelabelNft={whitelabelNft} />
-        </Grid>
-        <Grid item xs={12} marginTop={isMobileView ? '32px' : '44px'} marginBottom={isMobileView ? '32px' : '40px'}>
-          <Divider />
+          <Divider marginTop={isMobileView ? '32px' : '44px'} marginBottom={isMobileView ? '32px' : '40px'} />
         </Grid>
         <Grid item xs={12}>
           <CollectionItemSection whitelabelNft={whitelabelNft} />

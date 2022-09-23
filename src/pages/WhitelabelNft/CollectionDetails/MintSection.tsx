@@ -78,8 +78,8 @@ function MintSection({ totalSupply, whitelabelNft }: MintSectionProps) {
   }, [whitelabelNft.data?.maxSupply, totalSupply])
 
   const isWhitelisted = useMemo(() => {
-    return whitelabelNftApiSignature.data?.data.signature
-  }, [whitelabelNftApiSignature.data?.data.signature])
+    return whitelabelNftApiSignature.data?.signature
+  }, [whitelabelNftApiSignature.data?.signature])
 
   const canMint = useMemo(() => {
     return isWhitelisted || phase === Phase.Public
@@ -102,7 +102,7 @@ function MintSection({ totalSupply, whitelabelNft }: MintSectionProps) {
       const mintMethod = tokenInfoPhase === Phase.Whitelist ? 'mint(uint256,bytes)' : 'mint(uint256)'
       const args: (number | string)[] = [values.mintQuantity]
       if (tokenInfoPhase === Phase.Whitelist) {
-        args.push(whitelabelNftApiSignature.data.data.signature)
+        args.push(whitelabelNftApiSignature.data.signature)
       }
 
       await whitelabelNftContract[mintMethod](...args, {

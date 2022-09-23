@@ -8,6 +8,9 @@ import {
   WhitelabelMetadataValidateDto,
   WhitelabelNftCollectionGql,
   WhitelabelNftItemGql,
+  WhitelabelSignatureResult,
+  WhitelabelSignaturesDeleteDto,
+  WhitelabelSignaturesResult,
   WhitelabelUploadResult,
 } from 'types/whitelabelNft'
 import { whitelabelNftClient } from 'utils/graphql'
@@ -33,6 +36,8 @@ const METADATA_CONCEAL_URL = `${URL}/metadata/conceal`
 const COLLECTION_GET_URL = `${URL}/collection/`
 const COLLECTION_UPSERT_URL = `${URL}/collection/`
 const SIGNATURE_GET_URL = `${URL}/signature/`
+const SIGNATURES_GET_URL = `${URL}/signatures/`
+const SIGNATURES_DELETE_URL = `${URL}/signatures/`
 
 export function useWhitelabelNftFactoryById(whitelabelFactoryId: string) {
   return useQuery(['useWhitelabelNftFactoryById', whitelabelFactoryId], async () => {
@@ -181,6 +186,34 @@ export function useWhitelabelNftApiSignature(ownerAddress: string, contractAddre
         contractAddress,
         whitelistAddress,
       },
+    })
+    return res.data as WhitelabelSignatureResult
+  })
+}
+
+export function useWhitelabelNftApiSignatures(
+  ownerAddress: string,
+  contractAddress: string,
+  page: number,
+  perPage: number
+) {
+  return useQuery(['useWhitelabelNftApiSignatures', ownerAddress, contractAddress, page, perPage], async () => {
+    const res = await httpClient.get(SIGNATURES_GET_URL, {
+      params: {
+        ownerAddress,
+        contractAddress,
+        page,
+        perPage,
+      },
+    })
+    return res.data as WhitelabelSignaturesResult
+  })
+}
+
+export function useWhitelabelNftApiDeleteSignatures() {
+  return useMutation(async (data: WhitelabelSignaturesDeleteDto) => {
+    const res = await httpClient.delete(SIGNATURES_DELETE_URL, {
+      data,
     })
     return res
   })

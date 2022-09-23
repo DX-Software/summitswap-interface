@@ -81,6 +81,24 @@ export type WhitelabelCollectionUpsertDto = {
   baseUrl: string
 }
 
+export type WhitelabelSignaturesDeleteDto = {
+  ownerAddress: string
+  contractAddress: string
+  whitelistAddresses: string[]
+}
+
+export type WhitelabelSignatureResult = {
+  contractAddress: string
+  ownerAddress: string
+  signature: string
+  whitelistAddress: string
+}
+
+export type WhitelabelSignaturesResult = {
+  signatures: WhitelabelSignatureResult[]
+  totalSignature: number
+}
+
 export type WhitelabelUploadResult = {
   rootCid: string
 }
