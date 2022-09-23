@@ -33,15 +33,26 @@ const config: MenuEntry[] = [
     href: '/info',
   },
   // {
+  //   label: 'Launchpad',
+  //   icon: 'LaunchpadIcon',
+  //   href: '/launchpad',
+  // },
+  // {
+  //   label: 'Presale-App',
+  //   icon: 'CoinBagIcon',
+  //   href: '/presale-application',
+  // },
+  {
+    label: 'Kick Starter',
+    icon: 'RubicIcon',
+    href: '/kickstarter',
+  }
+  // {
   //  label: 'Create Token',
   //   icon: 'SunIcon',
   //   href: '/create-token',
   // },
   // {
-  //   label: 'Pre-sale',
-  //   icon: 'RubicIcon', // TODO:: will be changed after Ui-kit is updated
-  //   href: '/presale',
-  // },
   // {
   //   label: "Onboarding",
   //   icon: "OnboardingIcon",

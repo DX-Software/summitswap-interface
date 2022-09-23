@@ -1,56 +1,5 @@
 [
   {
-    "inputs": [
-      {
-        "internalType": "address[4]",
-        "name": "_addresses",
-        "type": "address[4]"
-      },
-      {
-        "internalType": "uint256[4]",
-        "name": "_tokenDetails",
-        "type": "uint256[4]"
-      },
-      {
-        "internalType": "uint256[4]",
-        "name": "_bnbAmounts",
-        "type": "uint256[4]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_liquidityLockTime",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_startPresaleTime",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_endPresaleTime",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_feeType",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_refundType",
-        "type": "uint8"
-      },
-      {
-        "internalType": "bool",
-        "name": "_isWhiteListPhase",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
     "anonymous": false,
     "inputs": [
       {
@@ -97,28 +46,22 @@
   },
   {
     "inputs": [],
-    "name": "bnbFeeType0",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
+    "name": "approvePresale",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "bnbFeeType1",
-    "outputs": [
+    "inputs": [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
+        "internalType": "address[]",
+        "name": "_admins",
+        "type": "address[]"
       }
     ],
-    "stateMutability": "view",
+    "name": "assignAdmins",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -145,6 +88,19 @@
     "name": "buy",
     "outputs": [],
     "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "contributionAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "buyCustomCurrency",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -179,7 +135,13 @@
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "requestedAmount",
+        "type": "uint256"
+      }
+    ],
     "name": "claim",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -206,14 +168,40 @@
   },
   {
     "inputs": [],
-    "name": "emergencyWithdrawBNB",
+    "name": "defaultAdmin",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "emergencyWithdrawPaymentToken",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [],
-    "name": "emergencyWithdrawFee",
+    "name": "finalize",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_address",
+        "type": "address"
+      }
+    ],
+    "name": "getAvailableTokenToClaim",
     "outputs": [
       {
         "internalType": "uint256",
@@ -222,13 +210,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "finalize",
-    "outputs": [],
-    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -246,7 +227,42 @@
   },
   {
     "inputs": [],
-    "name": "getInfo",
+    "name": "getFeeInfo",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "paymentToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "feePaymentToken",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "feePresaleToken",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "feeEmergencyWithdraw",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PresaleFeeInfo",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getPresaleInfo",
     "outputs": [
       {
         "components": [
@@ -257,7 +273,17 @@
           },
           {
             "internalType": "address",
-            "name": "router",
+            "name": "router0",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "router1",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "listingToken",
             "type": "address"
           },
           {
@@ -277,12 +303,12 @@
           },
           {
             "internalType": "uint256",
-            "name": "minBuyBnb",
+            "name": "minBuy",
             "type": "uint256"
           },
           {
             "internalType": "uint256",
-            "name": "maxBuyBnb",
+            "name": "maxBuy",
             "type": "uint256"
           },
           {
@@ -312,17 +338,32 @@
           },
           {
             "internalType": "uint256",
+            "name": "claimIntervalDay",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "claimIntervalHour",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
             "name": "totalBought",
             "type": "uint256"
           },
           {
-            "internalType": "uint8",
-            "name": "feeType",
-            "type": "uint8"
+            "internalType": "uint256",
+            "name": "maxClaimPercentage",
+            "type": "uint256"
           },
           {
             "internalType": "uint8",
             "name": "refundType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "listingChoice",
             "type": "uint8"
           },
           {
@@ -344,11 +385,34 @@
             "internalType": "bool",
             "name": "isWithdrawCancelledTokens",
             "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isVestingEnabled",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isApproved",
+            "type": "bool"
           }
         ],
-        "internalType": "struct SummitCustomPresale.PresaleInfo",
+        "internalType": "struct PresaleInfo",
         "name": "",
         "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getProjectsDetails",
+    "outputs": [
+      {
+        "internalType": "string[8]",
+        "name": "",
+        "type": "string[8]"
       }
     ],
     "stateMutability": "view",
@@ -370,12 +434,218 @@
   {
     "inputs": [
       {
+        "internalType": "string[8]",
+        "name": "_projectDetails",
+        "type": "string[8]"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "presaleToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "router0",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "router1",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "listingToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "presalePrice",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "listingPrice",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "liquidityLockTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "minBuy",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxBuy",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "softCap",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "hardCap",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "liquidityPercentage",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "startPresaleTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "endPresaleTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "claimIntervalDay",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "claimIntervalHour",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalBought",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxClaimPercentage",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint8",
+            "name": "refundType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "listingChoice",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bool",
+            "name": "isWhiteListPhase",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isClaimPhase",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isPresaleCancelled",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isWithdrawCancelledTokens",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isVestingEnabled",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isApproved",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct PresaleInfo",
+        "name": "_presale",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "paymentToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "feePaymentToken",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "feePresaleToken",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "feeEmergencyWithdraw",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PresaleFeeInfo",
+        "name": "_feeInfo",
+        "type": "tuple"
+      },
+      {
+        "internalType": "address",
+        "name": "_serviceFeeReceiver",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_owner",
+        "type": "address"
+      }
+    ],
+    "name": "initialize",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "",
         "type": "address"
       }
     ],
-    "name": "isTokenClaimed",
+    "name": "isAdmin",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "isOwner",
     "outputs": [
       {
         "internalType": "bool",
@@ -388,12 +658,12 @@
   },
   {
     "inputs": [],
-    "name": "liquidity",
+    "name": "isPresaleCancelled",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "bool",
         "name": "",
-        "type": "uint256"
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -433,8 +703,21 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "_admins",
+        "type": "address[]"
+      }
+    ],
+    "name": "revokeAdmins",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
-    "name": "serviceFeeReciever",
+    "name": "serviceFeeReceiver",
     "outputs": [
       {
         "internalType": "address",
@@ -449,13 +732,26 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_feeReciever",
+        "name": "_feeReceiver",
         "type": "address"
       }
     ],
-    "name": "setServiceFeeReciver",
+    "name": "setServiceFeeReceiver",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "startDateClaim",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -466,8 +762,14 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "tokenFeeType1",
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "totalClaimToken",
     "outputs": [
       {
         "internalType": "uint256",
@@ -494,6 +796,183 @@
   {
     "inputs": [
       {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "presaleToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "router0",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "router1",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "listingToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "presalePrice",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "listingPrice",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "liquidityLockTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "minBuy",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxBuy",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "softCap",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "hardCap",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "liquidityPercentage",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "startPresaleTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "endPresaleTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "claimIntervalDay",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "claimIntervalHour",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalBought",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxClaimPercentage",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint8",
+            "name": "refundType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "listingChoice",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bool",
+            "name": "isWhiteListPhase",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isClaimPhase",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isPresaleCancelled",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isWithdrawCancelledTokens",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isVestingEnabled",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isApproved",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct PresaleInfo",
+        "name": "_presale",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "paymentToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "feePaymentToken",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "feePresaleToken",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "feeEmergencyWithdraw",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PresaleFeeInfo",
+        "name": "_feeInfo",
+        "type": "tuple"
+      },
+      {
+        "internalType": "string[8]",
+        "name": "_projectDetails",
+        "type": "string[8]"
+      }
+    ],
+    "name": "updatePresaleAndApprove",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
@@ -508,13 +987,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "withdrawBNB",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -541,5 +1013,52 @@
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[2]",
+        "name": "addresses",
+        "type": "address[2]"
+      },
+      {
+        "internalType": "address",
+        "name": "_receiver",
+        "type": "address"
+      }
+    ],
+    "name": "withdrawLpTokens",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "withdrawPaymentToken",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_receiver",
+        "type": "address"
+      }
+    ],
+    "name": "withdrawPaymentTokenOwner",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "stateMutability": "payable",
+    "type": "receive"
   }
 ]
