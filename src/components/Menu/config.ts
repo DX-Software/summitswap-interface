@@ -44,7 +44,7 @@ const config: MenuEntry[] = [
   // },
   {
     label: 'Kick Starter',
-    icon: 'RubicIcon',
+    icon: 'KickStarterIcon',
     href: '/kickstarter',
   }
   // {
