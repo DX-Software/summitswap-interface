@@ -356,7 +356,7 @@ const Highlight = ({ kickstarter, backedKickstarter, handleIsPayment, isLoading 
                 <SocialMedia
                   type="button"
                   style={{ cursor: 'pointer' }}
-                  onClick={() => copyText(currentPageLink, displayTooltip)}
+                  onClick={() => copyText(decodeURIComponent(currentPageLink), displayTooltip)}
                 >
                   <ShareIcon width="14px" />
                 </SocialMedia>
