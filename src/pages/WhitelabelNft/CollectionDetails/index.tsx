@@ -1,5 +1,6 @@
 import { ArrowBackIcon, Box, Breadcrumbs, Flex, Text } from '@koda-finance/summitswap-uikit'
 import { Grid, useMediaQuery } from '@mui/material'
+import { useWeb3React } from '@web3-react/core'
 import { useWhitelabelNftCollectionById } from 'api/useWhitelabelNftApi'
 import { BigNumber } from 'ethers'
 import { useWhitelabelNftContract } from 'hooks/useContract'
@@ -52,12 +53,14 @@ const Header = ({ previousPage, nftName }: HeaderProps) => {
 
 function CollectionDetails({ previousPage }: WhitelabelNftDetailsProps) {
   const history = useHistory()
+  const { account } = useWeb3React()
   const isMobileView = useMediaQuery('(max-width: 576px)')
   const { whitelabelNftId, setWhitelabelNtId } = useWhitelabelNftContext()
   const whitelabelNft = useWhitelabelNftCollectionById(whitelabelNftId)
   const whitelabelNftContract = useWhitelabelNftContract(whitelabelNftId)
 
   const [totalSupply, setTotalSupply] = useState(0)
+  const [isOwner, setIsOwner] = useState(false)
 
   const getTotalSupply = useCallback(async () => {
     if (!whitelabelNftContract) return
@@ -65,9 +68,19 @@ function CollectionDetails({ previousPage }: WhitelabelNftDetailsProps) {
     setTotalSupply(_totalSupply.toNumber())
   }, [whitelabelNftContract])
 
+  const getCollectionOwner = useCallback(async () => {
+    if (!whitelabelNftContract) return
+    const _owner = (await whitelabelNftContract?.owner()) as string
+    setIsOwner(_owner.toLowerCase() === account?.toLowerCase())
+  }, [whitelabelNftContract, account])
+
   useEffect(() => {
     getTotalSupply()
   }, [getTotalSupply])
+
+  useEffect(() => {
+    getCollectionOwner()
+  }, [getCollectionOwner])
 
   useEffect(() => {
     if (whitelabelNft.isFetched && !whitelabelNft.data) {
@@ -93,7 +106,7 @@ function CollectionDetails({ previousPage }: WhitelabelNftDetailsProps) {
       <Header previousPage={previousPage} nftName={whitelabelNft.data?.name} />
       <Grid container marginTop="24px">
         <Grid item xs={12}>
-          <MetadataSection totalSupply={totalSupply} whitelabelNft={whitelabelNft} />
+          <MetadataSection isOwner={isOwner} totalSupply={totalSupply} whitelabelNft={whitelabelNft} />
         </Grid>
         <Grid item xs={12} marginTop={isMobileView ? '32px' : '44px'} marginBottom={isMobileView ? '32px' : '40px'}>
           <Divider />

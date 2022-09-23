@@ -41,6 +41,7 @@ const ActionWrapper = styled(Flex)`
 `
 
 type MetadataProps = {
+  isOwner: boolean
   totalSupply: number
   whitelabelNft: UseQueryResult<WhitelabelNftCollectionGql | undefined>
 }
@@ -65,10 +66,9 @@ function StatsCard({ label, value = 0 }: StatsCardProps) {
   )
 }
 
-function MetadataSection({ totalSupply, whitelabelNft }: MetadataProps) {
+function MetadataSection({ isOwner, totalSupply, whitelabelNft }: MetadataProps) {
   const isMobileView = useMediaQuery('(max-width: 576px)')
   const { account } = useWeb3React()
-  const [isOwner, setIsOwner] = useState(false)
   const { whitelabelNftId } = useWhitelabelNftContext()
   const whitelabelNftContract = useWhitelabelNftContract(whitelabelNftId)
 
@@ -77,16 +77,6 @@ function MetadataSection({ totalSupply, whitelabelNft }: MetadataProps) {
   const isWithdrawButtonDisabled = useMemo(() => {
     return contractBalance?.toExact() === '0'
   }, [contractBalance])
-
-  const getCollectionOwner = useCallback(async () => {
-    if (!whitelabelNftContract) return
-    const _owner = (await whitelabelNftContract?.owner()) as string
-    setIsOwner(_owner.toLowerCase() === account?.toLowerCase())
-  }, [whitelabelNftContract, account])
-
-  useEffect(() => {
-    getCollectionOwner()
-  }, [getCollectionOwner])
 
   const formikUpdatePhase: FormikProps<WhitelabelNftUpdatePhase> = useFormik<WhitelabelNftUpdatePhase>({
     enableReinitialize: true,
