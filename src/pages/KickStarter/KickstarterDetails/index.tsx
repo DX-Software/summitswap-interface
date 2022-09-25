@@ -18,6 +18,7 @@ import { CSVLink } from 'react-csv'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { BackedKickstarter, Kickstarter, KickstarterContributor } from 'types/kickstarter'
+import { formatNumber } from 'utils/formatInfoNumbers'
 import { Divider, ImgCurrency } from '../shared'
 import ProjectPayment from './ProjectPayment'
 import Highlight from './Highlight'
@@ -158,7 +159,7 @@ const ProjectDetails = ({ kickstarter, isLoading }: ProjectDetailsProps) => {
                 {isLoading ? (
                   <Skeleton height={28} width={30} marginBottom="24px" />
                 ) : (
-                  <Text>{kickstarter?.minContribution?.toString()}</Text>
+                  <Text>{formatNumber(kickstarter?.minContribution?.toString())}</Text>
                 )}
               </Flex>
             )}

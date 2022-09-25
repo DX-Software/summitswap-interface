@@ -31,6 +31,7 @@ import { useTransactionAdder } from 'state/transactions/hooks'
 import styled from 'styled-components'
 import { BackedKickstarter, Kickstarter } from 'types/kickstarter'
 import { shortenAddress } from 'utils'
+import { formatNumber } from 'utils/formatInfoNumbers'
 import { ImgCurrency } from '../shared'
 import FundingInput from '../shared/FundingInput'
 import MobilePayment from './MobilePayment'
@@ -300,8 +301,8 @@ function ProjectPayment({
               <Flex style={{ columnGap: '8px' }} alignItems="center">
                 <ImgCurrency image={getTokenImageBySymbol(kickstarter?.tokenSymbol)} />
                 <Text fontSize="24px" color="textSubtle">
-                  <b style={{ color: 'white' }}>{kickstarter?.totalContribution?.toString()}</b> /{' '}
-                  {`${kickstarter?.projectGoals?.toString()} ${kickstarter?.tokenSymbol}`}
+                  <b style={{ color: 'white' }}>{formatNumber(kickstarter?.totalContribution?.toString())}</b> /{' '}
+                  {`${formatNumber(kickstarter?.projectGoals?.toString())} ${kickstarter?.tokenSymbol}`}
                 </Text>
               </Flex>
             </Flex>
@@ -325,7 +326,7 @@ function ProjectPayment({
             </Heading>
             <Text color="textSubtle" marginBottom="16px">
               You have to back with minimum amount of{' '}
-              <b style={{ color: lightColors.linkColor }}>{`${kickstarter?.minContribution?.toString()} ${
+              <b style={{ color: lightColors.linkColor }}>{`${formatNumber(kickstarter?.minContribution?.toString())} ${
                 kickstarter?.tokenSymbol
               }`}</b>{' '}
               to participate in this project

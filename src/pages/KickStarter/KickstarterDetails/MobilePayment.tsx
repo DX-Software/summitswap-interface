@@ -20,6 +20,7 @@ import { useToken } from 'hooks/Tokens'
 import styled from 'styled-components'
 import { Kickstarter } from 'types/kickstarter'
 import { shortenAddress } from 'utils'
+import { formatNumber } from 'utils/formatInfoNumbers'
 import { ImgCurrency } from '../shared'
 import FundingInput from '../shared/FundingInput'
 
@@ -110,8 +111,8 @@ function MobilePayment({
           <Flex style={{ columnGap: '8px' }}>
             <ImgCurrency image={getTokenImageBySymbol(kickstarter?.tokenSymbol)} />
             <Text color="textSubtle">
-              <b style={{ color: 'white' }}>{kickstarter?.totalContribution?.toString()}</b> /{' '}
-              {kickstarter?.projectGoals?.toString()} {kickstarter?.tokenSymbol}
+              <b style={{ color: 'white' }}>{formatNumber(kickstarter?.totalContribution?.toString())}</b> /{' '}
+              {formatNumber(kickstarter?.projectGoals?.toString())} {kickstarter?.tokenSymbol}
             </Text>
           </Flex>
         </Flex>
@@ -123,7 +124,7 @@ function MobilePayment({
       <Text color="textSubtle" style={{ marginBottom: '24px' }}>
         You have to back with minimum amount of{' '}
         <b style={{ color: lightColors.linkColor }}>
-          {kickstarter?.minContribution?.toString()} {kickstarter?.tokenSymbol}
+          {formatNumber(kickstarter?.minContribution?.toString())} {kickstarter?.tokenSymbol}
         </b>{' '}
         to participate in this project
       </Text>
