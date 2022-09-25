@@ -63,18 +63,12 @@ const ImgKickstarterDesktop = styled(Flex)<{ image: string }>`
   }
 `
 
-const ImgKickstarterMobile = styled(Flex)<{ image: string }>`
+const ImgKickstarterMobile = styled.img`
   width: 100%;
-  height: 230px;
+  height: 100%;
   border-radius: 8px;
-  flex-shrink: 0;
+  margin-bottom: 24px;
   display: none;
-
-  background: ${(props) => `url(${props.image}) gray`};
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-blend-mode: overlay;
 
   @media (max-width: 768px) {
     display: block;
@@ -267,7 +261,7 @@ const Highlight = ({ kickstarter, backedKickstarter, handleIsPayment, isLoading 
             {kickstarter?.title}
           </Text>
         )}
-        {kickstarter && <ImgKickstarterMobile image={kickstarter.imageUrl || ''} marginBottom="24px" />}
+        {kickstarter && <ImgKickstarterMobile src={kickstarter.imageUrl || ''} />}
         <Flex style={{ columnGap: '8px', alignItems: 'center', marginBottom: '4px' }}>
           {isLoading ? (
             <Skeleton height={28} width={28} />
