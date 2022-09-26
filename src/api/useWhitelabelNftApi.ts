@@ -9,6 +9,7 @@ import {
   WhitelabelNftCollectionGql,
   WhitelabelNftItemGql,
   WhitelabelSignatureResult,
+  WhitelabelSignaturesAddDto,
   WhitelabelSignaturesDeleteAllDto,
   WhitelabelSignaturesDeleteDto,
   WhitelabelSignaturesResult,
@@ -38,6 +39,7 @@ const COLLECTION_GET_URL = `${URL}/collection/`
 const COLLECTION_UPSERT_URL = `${URL}/collection/`
 const SIGNATURE_GET_URL = `${URL}/signature/`
 const SIGNATURES_GET_URL = `${URL}/signatures/`
+const SIGNATURES_STORE_URL = `${URL}/signatures/`
 const SIGNATURES_DELETE_URL = `${URL}/signatures/`
 const SIGNATURES_DELETE_ALL_URL = `${URL}/signatures/all`
 
@@ -180,6 +182,7 @@ export function useWhitelabelNftApiCollectionUpsert() {
   })
 }
 
+// find one
 export function useWhitelabelNftApiSignature(ownerAddress: string, contractAddress: string, whitelistAddress: string) {
   return useQuery(['useWhitelabelNftApiSignature', ownerAddress, contractAddress, whitelistAddress], async () => {
     const res = await httpClient.get(SIGNATURE_GET_URL, {
@@ -193,6 +196,7 @@ export function useWhitelabelNftApiSignature(ownerAddress: string, contractAddre
   })
 }
 
+// find all pagination
 export function useWhitelabelNftApiSignatures(
   ownerAddress: string,
   contractAddress: string,
@@ -212,6 +216,15 @@ export function useWhitelabelNftApiSignatures(
   })
 }
 
+// store
+export function useWhitelabelNftApiStoreSignatures() {
+  return useMutation(async (data: WhitelabelSignaturesAddDto) => {
+    const res = await httpClient.post(SIGNATURES_STORE_URL, data)
+    return res
+  })
+}
+
+// delete selected
 export function useWhitelabelNftApiDeleteSignatures() {
   return useMutation(async (data: WhitelabelSignaturesDeleteDto) => {
     const res = await httpClient.delete(SIGNATURES_DELETE_URL, {
@@ -221,6 +234,7 @@ export function useWhitelabelNftApiDeleteSignatures() {
   })
 }
 
+// delete all
 export function useWhitelabelNftApiDeleteAllSignatures() {
   return useMutation(async (data: WhitelabelSignaturesDeleteAllDto) => {
     const res = await httpClient.delete(SIGNATURES_DELETE_ALL_URL, {

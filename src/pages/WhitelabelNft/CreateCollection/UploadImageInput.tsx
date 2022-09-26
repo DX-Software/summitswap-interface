@@ -3,7 +3,6 @@ import { SUPPORTED_IMAGE_FORMAT } from 'constants/whitelabel'
 import { FormikProps } from 'formik'
 import React, { useRef } from 'react'
 import styled from 'styled-components'
-import { WhitelabelNft } from 'types/whitelabelNft'
 
 const ImageWrapper = styled(Flex)`
   position: relative;
@@ -54,7 +53,7 @@ type Props = {
   name: string
   selectedPlaceholder?: string
   color?: string
-  formik: FormikProps<WhitelabelNft>
+  formik: FormikProps<any>
   children: React.ReactNode
 }
 

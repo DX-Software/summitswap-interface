@@ -1,4 +1,4 @@
-import { ArrowForwardIcon, darkColors, Flex, Heading, TextArea } from '@koda-finance/summitswap-uikit'
+import { ArrowForwardIcon, darkColors, Flex, Heading } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import { FormikProps } from 'formik'
 import React, { useCallback } from 'react'

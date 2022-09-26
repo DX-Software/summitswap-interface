@@ -1,7 +1,6 @@
 import { Box, Text, TextArea } from '@koda-finance/summitswap-uikit'
 import { ErrorMessage, FormikProps } from 'formik'
 import React from 'react'
-import { WhitelabelNft } from 'types/whitelabelNft'
 import { HelperText } from './Text'
 
 type Props = {
@@ -9,7 +8,7 @@ type Props = {
   name: string
   placeholder: string
   helperText?: string | React.ReactNode
-  formik: FormikProps<WhitelabelNft>
+  formik: FormikProps<any>
 }
 
 function TextareaField({ label, name, placeholder, helperText, formik }: Props) {
@@ -24,9 +23,8 @@ function TextareaField({ label, name, placeholder, helperText, formik }: Props) 
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
         style={{ resize: 'vertical' }}
-      >
-        {formik.values[name]}
-      </TextArea>
+        value={formik.values[name]}
+      />
       {helperText && (
         <HelperText fontSize="12px" marginTop="4px">
           {helperText}

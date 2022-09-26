@@ -1,7 +1,6 @@
 import { Box, Input, Text } from '@koda-finance/summitswap-uikit'
 import { ErrorMessage, FormikProps } from 'formik'
 import React from 'react'
-import { WhitelabelMintDto, WhitelabelNft } from 'types/whitelabelNft'
 import { HelperText } from './Text'
 
 type Props = {
@@ -10,7 +9,7 @@ type Props = {
   placeholder: string
   helperText?: string | React.ReactNode
   onChange?: (value: string) => void
-  formik: FormikProps<WhitelabelNft> | FormikProps<WhitelabelMintDto>
+  formik: FormikProps<any>
 }
 
 function InputField({ label, name, placeholder, helperText, onChange, formik }: Props) {

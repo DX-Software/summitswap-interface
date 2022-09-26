@@ -20,6 +20,7 @@ import Pagination from 'components/Pagination/Pagination'
 import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { useWhitelabelNftContext } from '../contexts/whitelabel'
+import AddWhitelistModal from './AddWhitelistModal'
 import RemoveAllWhitelistModal from './RemoveAllWhitelistModal'
 import RemoveSelectedWhitelistModal from './RemoveSelectedWhitelistModal'
 import SelectedWhitelistModal from './SelectedWhitelistModal'
@@ -120,6 +121,9 @@ function WhitelistSection() {
     }
   }
 
+  const [onPresentModalAddWhitelist] = useModal(
+    <AddWhitelistModal whitelabelNftId={whitelabelNftId} onRefresh={whitelist.refetch} />
+  )
   const [onPresentModalDeleteAll] = useModal(<RemoveAllWhitelistModal onDelete={handleRemoveAll} />)
   const [onPresentModalDeleteSelected] = useModal(
     <RemoveSelectedWhitelistModal
@@ -139,7 +143,13 @@ function WhitelistSection() {
       <Heading color="linkColor" marginBottom={isMobileView ? '8px' : '16px'}>
         Whitelist
       </Heading>
-      <Button variant="awesome" scale="sm" startIcon={<AddIcon color="default" width={14} />} marginBottom="24px">
+      <Button
+        variant="awesome"
+        scale="sm"
+        startIcon={<AddIcon color="default" width={14} />}
+        marginBottom="24px"
+        onClick={onPresentModalAddWhitelist}
+      >
         Add or Import Whitelist
       </Button>
       <ContentWrapper>
@@ -165,6 +175,7 @@ function WhitelistSection() {
                   <Radio
                     id={item._id}
                     scale="sm"
+                    onChange={() => null}
                     checked={selectedWhitelistAddress.includes(item.whitelistAddress)}
                     onClick={() => handleSelectAddress(item.whitelistAddress)}
                   />
