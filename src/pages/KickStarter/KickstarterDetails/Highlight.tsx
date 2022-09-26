@@ -26,6 +26,7 @@ import styled from 'styled-components'
 import { BackedKickstarter, Kickstarter, KickstarterProgressStatus } from 'types/kickstarter'
 import copyText from 'utils/copyText'
 import { getKickstarterStatus, getKickstarterStatusLabel } from 'utils/kickstarter'
+import { formatNumber } from 'utils/formatInfoNumbers'
 import { ImgCurrency } from '../shared'
 import ProgressBox from '../shared/ProgressBox'
 import StatusLabel from '../shared/StatusLabel'
@@ -277,7 +278,7 @@ const Highlight = ({ kickstarter, backedKickstarter, handleIsPayment, isLoading 
             <Skeleton height={28} width={42} />
           ) : (
             <Text fontWeight="bold" fontSize="24px">
-              {kickstarter?.totalContribution?.toString()}
+              {formatNumber(kickstarter?.totalContribution?.toString())}
             </Text>
           )}
         </Flex>
@@ -285,7 +286,7 @@ const Highlight = ({ kickstarter, backedKickstarter, handleIsPayment, isLoading 
           <Skeleton height={24} width={240} marginBottom="16px" />
         ) : (
           <Text color="textSubtle" marginBottom="16px">
-            backed of {kickstarter?.projectGoals?.toString() || 0} {kickstarter?.tokenSymbol} goal
+            backed of {formatNumber(kickstarter?.projectGoals?.toString())} {kickstarter?.tokenSymbol} goal
           </Text>
         )}
         {!isLoading && (

@@ -40,6 +40,7 @@ import {
   WithdrawalFeeMethod,
 } from 'types/kickstarter'
 import { getKickstarterContactMethodById, getSymbolByAddress } from 'utils/kickstarter'
+import { formatNumber } from 'utils/formatInfoNumbers'
 import { CurrencyInfo, Divider, StatusInfo, TextInfo } from '../shared'
 import ChoosePaymentToken from '../shared/ChoosePaymentToken'
 import FundingInput from '../shared/FundingInput'
@@ -227,7 +228,7 @@ const ProjectDetails = ({ formik, kickstarter, isLoading }: SectionProps) => {
             <Grid item xs={12} sm={6} lg={4}>
               <CurrencyInfo
                 title="Project Goals"
-                description={kickstarter?.projectGoals?.toString()}
+                description={formatNumber(kickstarter?.projectGoals?.toString())}
                 iconUrl={getTokenImageBySymbol(kickstarter?.tokenSymbol)}
                 isLoading={isLoading}
               />
@@ -235,7 +236,7 @@ const ProjectDetails = ({ formik, kickstarter, isLoading }: SectionProps) => {
             <Grid item xs={12} sm={6} lg={4}>
               <CurrencyInfo
                 title="Minimum Backing"
-                description={kickstarter?.minContribution?.toString()}
+                description={formatNumber(kickstarter?.minContribution?.toString())}
                 iconUrl={getTokenImageBySymbol(kickstarter?.tokenSymbol)}
                 isLoading={isLoading}
               />
