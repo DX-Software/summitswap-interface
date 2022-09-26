@@ -19,6 +19,7 @@ import {
 import Pagination from 'components/Pagination/Pagination'
 import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
+import { shortenAddress } from 'utils'
 import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import AddWhitelistModal from './AddWhitelistModal'
 import RemoveAllWhitelistModal from './RemoveAllWhitelistModal'
@@ -27,6 +28,18 @@ import SelectedWhitelistModal from './SelectedWhitelistModal'
 
 const ContentWrapper = styled.div`
   max-width: 570px;
+`
+
+const WhitelistHeader = styled(Flex)`
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+
+  @media (max-width: 576px) {
+    flex-direction: column;
+    align-items: flex-start;
+    row-gap: 16px;
+  }
 `
 
 const WhitelistCaption = styled(Text)`
@@ -39,11 +52,13 @@ const WhitelistCaption = styled(Text)`
 const RemoveSelectedButton = styled(Flex)`
   cursor: pointer;
   align-items: center;
+  align-self: flex-end;
   column-gap: 4px;
 `
 
 const ClearSelectionButton = styled(Text)`
   cursor: pointer;
+  align-self: flex-end;
 `
 
 const WhitelistAddressWrapper = styled(Flex)`
@@ -62,9 +77,17 @@ const WhitelistAddressItemWrapper = styled(Flex)`
 const WhitelistAddress = styled(Text)`
   color: ${({ theme }) => theme.colors.textSubtle};
   font-size: 14px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+`
+
+const ActionWrapper = styled(Flex)`
+  margin-top: 12px;
+  justify-content: flex-end;
+  column-gap: 8px;
+
+  @media (max-width: 576px) {
+    flex-direction: column;
+    row-gap: 8px;
+  }
 `
 
 const PER_PAGE = 5
@@ -153,12 +176,14 @@ function WhitelistSection() {
         Add or Import Whitelist
       </Button>
       <ContentWrapper>
-        <Flex justifyContent="space-between" alignItems="center" marginBottom="8px">
+        <WhitelistHeader>
           <WhitelistCaption>Whitelist Participants ({whitelist.data?.totalSignature || 0})</WhitelistCaption>
           {selectedWhitelistAddress.length === 0 && (whitelist.data?.signatures.length || 0) > 0 && (
             <RemoveSelectedButton onClick={onPresentModalDeleteAll}>
               <TrashIcon width={16} color="failure" />
-              <Text color="failure">Remove All</Text>
+              <Text color="failure" fontSize={isMobileView ? '14px' : '16px'}>
+                Remove All
+              </Text>
             </RemoveSelectedButton>
           )}
           {selectedWhitelistAddress.length > 0 && (
@@ -166,7 +191,7 @@ function WhitelistSection() {
               Cancel Selection
             </ClearSelectionButton>
           )}
-        </Flex>
+        </WhitelistHeader>
         <WhitelistAddressWrapper>
           {whitelist.data?.signatures.map((item) => (
             <WhitelistAddressItemWrapper key={item._id}>
@@ -179,7 +204,9 @@ function WhitelistSection() {
                     checked={selectedWhitelistAddress.includes(item.whitelistAddress)}
                     onClick={() => handleSelectAddress(item.whitelistAddress)}
                   />
-                  <WhitelistAddress>{item.whitelistAddress}</WhitelistAddress>
+                  <WhitelistAddress>
+                    {isMobileView ? shortenAddress(item.whitelistAddress, 8) : item.whitelistAddress}
+                  </WhitelistAddress>
                 </Flex>
               </label>
               <CloseIcon
@@ -191,7 +218,7 @@ function WhitelistSection() {
             </WhitelistAddressItemWrapper>
           ))}
           {selectedWhitelistAddress.length > 0 && (
-            <Flex marginTop="12px" justifyContent="flex-end" style={{ columnGap: '8px' }}>
+            <ActionWrapper>
               <Button scale="sm" variant="tertiary" onClick={onPresentModalSelected}>
                 View Selected ({selectedWhitelistAddress.length})
               </Button>
@@ -203,7 +230,7 @@ function WhitelistSection() {
               >
                 Remove ({selectedWhitelistAddress.length})
               </Button>
-            </Flex>
+            </ActionWrapper>
           )}
         </WhitelistAddressWrapper>
         {maxPage > 1 && <Pagination maxPage={maxPage} page={page} onPageChange={setPage} />}

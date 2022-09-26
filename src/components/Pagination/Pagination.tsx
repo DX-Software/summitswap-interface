@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { Pagination as PaginationMui } from '@mui/material'
+import { Pagination as PaginationMui, useMediaQuery } from '@mui/material'
 import { useTheme } from 'styled-components'
 import { darkColors } from '@koda-finance/summitswap-uikit'
 
@@ -11,6 +11,8 @@ type Props = {
 
 function Pagination({ maxPage, page, onPageChange }: Props) {
   const theme = useTheme()
+  const isMobileView = useMediaQuery('(max-width: 576px)')
+
   const paginationStyle = useMemo(
     () => ({
       '& .MuiPaginationItem-root': {
@@ -41,6 +43,7 @@ function Pagination({ maxPage, page, onPageChange }: Props) {
       sx={paginationStyle}
       count={maxPage}
       page={page}
+      size={isMobileView ? 'small' : 'medium'}
       onChange={(_, value: number) => onPageChange(value)}
     />
   )
