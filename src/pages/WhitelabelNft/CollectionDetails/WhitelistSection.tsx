@@ -5,6 +5,7 @@ import {
   Flex,
   Heading,
   Radio,
+  Skeleton,
   Text,
   TrashIcon,
   useModal,
@@ -21,6 +22,7 @@ import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { shortenAddress } from 'utils'
 import { useWhitelabelNftContext } from '../contexts/whitelabel'
+import { HelperText } from '../shared/Text'
 import AddWhitelistModal from './AddWhitelistModal'
 import RemoveAllWhitelistModal from './RemoveAllWhitelistModal'
 import RemoveSelectedWhitelistModal from './RemoveSelectedWhitelistModal'
@@ -91,6 +93,18 @@ const ActionWrapper = styled(Flex)`
 `
 
 const PER_PAGE = 5
+
+function WhitelistLoadingSection() {
+  const skeletons = Array.from(Array(PER_PAGE).keys())
+
+  return (
+    <>
+      {skeletons.map((skeleton) => (
+        <Skeleton width="100%" height={48} key={skeleton} />
+      ))}
+    </>
+  )
+}
 
 function WhitelistSection() {
   const isMobileView = useMediaQuery('(max-width: 576px)')
@@ -193,30 +207,36 @@ function WhitelistSection() {
           )}
         </WhitelistHeader>
         <WhitelistAddressWrapper>
-          {whitelist.data?.signatures.map((item) => (
-            <WhitelistAddressItemWrapper key={item._id}>
-              <label htmlFor={item._id}>
-                <Flex alignItems="center" style={{ columnGap: '16px' }}>
-                  <Radio
-                    id={item._id}
-                    scale="sm"
-                    onChange={() => null}
-                    checked={selectedWhitelistAddress.includes(item.whitelistAddress)}
-                    onClick={() => handleSelectAddress(item.whitelistAddress)}
-                  />
-                  <WhitelistAddress>
-                    {isMobileView ? shortenAddress(item.whitelistAddress, 8) : item.whitelistAddress}
-                  </WhitelistAddress>
-                </Flex>
-              </label>
-              <CloseIcon
-                width={24}
-                color="default"
-                style={{ cursor: 'pointer' }}
-                onClick={() => handleRemoveWhitelist([item.whitelistAddress])}
-              />
-            </WhitelistAddressItemWrapper>
-          ))}
+          {whitelist.isLoading ? (
+            <WhitelistLoadingSection />
+          ) : whitelist.isFetched && whitelist.data?.signatures.length === 0 ? (
+            <HelperText>You haven’t added any whitelist participants</HelperText>
+          ) : (
+            whitelist.data?.signatures.map((item) => (
+              <WhitelistAddressItemWrapper key={item._id}>
+                <label htmlFor={item._id}>
+                  <Flex alignItems="center" style={{ columnGap: '16px' }}>
+                    <Radio
+                      id={item._id}
+                      scale="sm"
+                      onChange={() => null}
+                      checked={selectedWhitelistAddress.includes(item.whitelistAddress)}
+                      onClick={() => handleSelectAddress(item.whitelistAddress)}
+                    />
+                    <WhitelistAddress>
+                      {isMobileView ? shortenAddress(item.whitelistAddress, 8) : item.whitelistAddress}
+                    </WhitelistAddress>
+                  </Flex>
+                </label>
+                <CloseIcon
+                  width={24}
+                  color="default"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => handleRemoveWhitelist([item.whitelistAddress])}
+                />
+              </WhitelistAddressItemWrapper>
+            ))
+          )}
           {selectedWhitelistAddress.length > 0 && (
             <ActionWrapper>
               <Button scale="sm" variant="tertiary" onClick={onPresentModalSelected}>
