@@ -20,17 +20,17 @@ function KickStarter() {
   const generalTabs: NavItem[] = useMemo(
     () => [
       {
-        label: 'My Project',
+        label: 'My Projects',
         code: Tabs.MY_PROJECT,
         component: <MyProject />,
       },
       {
-        label: 'Browse Project',
+        label: 'Browse Projects',
         code: Tabs.BROWSE_PROJECT,
         component: <BrowseProject />,
       },
       {
-        label: 'Backed Project',
+        label: 'Backed Projects',
         code: Tabs.BACKED_PROJECT,
         component: <BackedKickstarter goToBrowseTab={() => setButtonIndex(1)} />,
       },

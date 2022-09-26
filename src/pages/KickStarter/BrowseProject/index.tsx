@@ -78,7 +78,7 @@ function BrowseProject() {
   return (
     <Flex flexDirection="column">
       <Heading size="xl" marginBottom="24px">
-        Browse Project
+        Browse Projects
       </Heading>
       {!!almostEndedKickstarters.data?.length && (
         <Box marginBottom="60px">
