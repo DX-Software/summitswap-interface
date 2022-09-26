@@ -173,7 +173,7 @@ function WhitelistSection() {
         marginBottom="24px"
         onClick={onPresentModalAddWhitelist}
       >
-        Add or Import Whitelist
+        Add Whitelist
       </Button>
       <ContentWrapper>
         <WhitelistHeader>
