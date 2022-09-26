@@ -9,6 +9,7 @@ import {
   WhitelabelNftCollectionGql,
   WhitelabelNftItemGql,
   WhitelabelSignatureResult,
+  WhitelabelSignaturesDeleteAllDto,
   WhitelabelSignaturesDeleteDto,
   WhitelabelSignaturesResult,
   WhitelabelUploadResult,
@@ -38,6 +39,7 @@ const COLLECTION_UPSERT_URL = `${URL}/collection/`
 const SIGNATURE_GET_URL = `${URL}/signature/`
 const SIGNATURES_GET_URL = `${URL}/signatures/`
 const SIGNATURES_DELETE_URL = `${URL}/signatures/`
+const SIGNATURES_DELETE_ALL_URL = `${URL}/signatures/all`
 
 export function useWhitelabelNftFactoryById(whitelabelFactoryId: string) {
   return useQuery(['useWhitelabelNftFactoryById', whitelabelFactoryId], async () => {
@@ -213,6 +215,15 @@ export function useWhitelabelNftApiSignatures(
 export function useWhitelabelNftApiDeleteSignatures() {
   return useMutation(async (data: WhitelabelSignaturesDeleteDto) => {
     const res = await httpClient.delete(SIGNATURES_DELETE_URL, {
+      data,
+    })
+    return res
+  })
+}
+
+export function useWhitelabelNftApiDeleteAllSignatures() {
+  return useMutation(async (data: WhitelabelSignaturesDeleteAllDto) => {
+    const res = await httpClient.delete(SIGNATURES_DELETE_ALL_URL, {
       data,
     })
     return res
