@@ -117,7 +117,7 @@ function CollectionDetails({ previousPage }: WhitelabelNftDetailsProps) {
           </Grid>
         )}
         <Grid item xs={12}>
-          <MintSection totalSupply={totalSupply} whitelabelNft={whitelabelNft} />
+          <MintSection isOwner={isOwner} totalSupply={totalSupply} whitelabelNft={whitelabelNft} />
           <Divider marginTop={isMobileView ? '32px' : '44px'} marginBottom={isMobileView ? '32px' : '40px'} />
         </Grid>
         <Grid item xs={12}>

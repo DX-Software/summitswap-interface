@@ -18,3 +18,8 @@ export const whitelistValidationSchema = yup.object().shape({
     })
     .required(),
 })
+
+export const editMintPriceValidationSchema = yup.object().shape({
+  whitelistMintPrice: yup.number().required().moreThan(0),
+  publicMintPrice: yup.number().required().moreThan(0),
+})

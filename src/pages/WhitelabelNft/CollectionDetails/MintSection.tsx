@@ -1,5 +1,6 @@
 import {
   Button,
+  EditIcon,
   EtherIcon,
   Flex,
   Heading,
@@ -26,9 +27,11 @@ import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import { mintCollectionValidationSchema } from '../CreateCollection/validation'
 import InputField from '../shared/InputField'
 import { HelperText, StockText } from '../shared/Text'
+import EditMintPriceModal from './EditMintPriceModal'
 import MintSummaryModal from './MintSummaryModal'
 
 type MintSectionProps = {
+  isOwner: boolean
   totalSupply: number
   whitelabelNft: UseQueryResult<WhitelabelNftCollectionGql | undefined>
 }
@@ -39,7 +42,16 @@ const MinterWrapper = styled(Flex)`
   border-left: 8px solid ${({ theme }) => theme.colors.linkColor};
 `
 
-function MintSection({ totalSupply, whitelabelNft }: MintSectionProps) {
+const ActionButtonWrapper = styled(Flex)`
+  column-gap: 8px;
+
+  @media (max-width: 576px) {
+    flex-direction: column;
+    row-gap: 8px;
+  }
+`
+
+function MintSection({ isOwner, totalSupply, whitelabelNft }: MintSectionProps) {
   const isMobileView = useMediaQuery('(max-width: 576px)')
   const { account, activate, deactivate } = useWeb3React()
   const { whitelabelNftId } = useWhitelabelNftContext()
@@ -66,7 +78,7 @@ function MintSection({ totalSupply, whitelabelNft }: MintSectionProps) {
       price = whitelabelNft.data?.whitelistMintPrice?.toNumber()
     }
     return parseEther(price ? price.toString() : '0')
-  }, [whitelabelNft.data])
+  }, [whitelabelNft.data?.publicMintPrice, whitelabelNft.data?.whitelistMintPrice, whitelabelNft.data?.phase])
 
   const phase = useMemo(() => {
     return whitelabelNft.data?.phase || Phase.Pause
@@ -121,9 +133,10 @@ function MintSection({ totalSupply, whitelabelNft }: MintSectionProps) {
     [formik]
   )
 
-  const [onPresentModal] = useModal(
+  const [onPresentMintModal] = useModal(
     <MintSummaryModal whitelabelNft={whitelabelNft} mintPrice={mintPrice} formik={formik} />
   )
+  const [onPresentEditMintModal] = useModal(<EditMintPriceModal whitelabelNft={whitelabelNft} />)
 
   return (
     <>
@@ -173,15 +186,22 @@ function MintSection({ totalSupply, whitelabelNft }: MintSectionProps) {
               />
             </Grid>
           </Grid>
-          <Button
-            scale="sm"
-            startIcon={!canMint && <LockIcon width={12} color="textDisabled" />}
-            variant={canMint ? 'primary' : 'awesome'}
-            disabled={!canMint}
-            onClick={onPresentModal}
-          >
-            {canMint ? 'Mint NFT Collection' : 'You are not in whitelist'}
-          </Button>
+          <ActionButtonWrapper>
+            <Button
+              scale="sm"
+              startIcon={!canMint && <LockIcon width={12} color="textDisabled" />}
+              variant={canMint ? 'primary' : 'awesome'}
+              disabled={!canMint}
+              onClick={onPresentMintModal}
+            >
+              {canMint ? 'Mint NFT Collection' : 'You are not in whitelist'}
+            </Button>
+            {isOwner && (
+              <Button scale="sm" variant="tertiary" startIcon={<EditIcon />} onClick={onPresentEditMintModal}>
+                Edit Mint Price
+              </Button>
+            )}
+          </ActionButtonWrapper>
         </FormikProvider>
       )}
     </>

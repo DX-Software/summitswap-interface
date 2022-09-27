@@ -54,13 +54,17 @@ export function useWhitelabelNftFactoryById(whitelabelFactoryId: string) {
 }
 
 export function useWhitelabelNftCollectionById(whitelabelNftAddress: string) {
-  return useQuery(['useWhitelabelNftCollectionById', whitelabelNftAddress], async () => {
-    const data = await whitelabelNftClient.request(WHITELABEL_NFT_COLLECTION_BY_ID_GQL, {
-      address: whitelabelNftAddress.toLowerCase(),
-    })
-    const whitelabelNft = convertToWhitelabelNftCollection(data.whitelabelNftCollection)
-    return whitelabelNft
-  })
+  return useQuery(
+    ['useWhitelabelNftCollectionById', whitelabelNftAddress],
+    async () => {
+      const data = await whitelabelNftClient.request(WHITELABEL_NFT_COLLECTION_BY_ID_GQL, {
+        address: whitelabelNftAddress.toLowerCase(),
+      })
+      const whitelabelNft = convertToWhitelabelNftCollection(data.whitelabelNftCollection)
+      return whitelabelNft
+    },
+    { refetchOnWindowFocus: true }
+  )
 }
 
 export function useWhitelabelNftCollections(

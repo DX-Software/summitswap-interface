@@ -67,6 +67,11 @@
         "internalType": "address",
         "name": "_signer",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_factory",
+        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
@@ -656,6 +661,24 @@
       }
     ],
     "name": "setBaseTokenURI",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_whitelistMintPrice",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_publicMintPrice",
+        "type": "uint256"
+      }
+    ],
+    "name": "setMintPrices",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
