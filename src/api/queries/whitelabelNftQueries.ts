@@ -113,3 +113,33 @@ export const WHITELABEL_NFT_ITEMS_GQL = gql`
     }
   }
 `
+
+export const WHITELABEL_NFT_ITEM_GQL = gql`
+  query whitelabelNftItem($nftAddress: Bytes!) {
+    whitelabelNftItem(id: $nftAddress) {
+      id
+      collection {
+        id
+        owner {
+          id
+        }
+        name
+        symbol
+        description
+        previewImageUrl
+        baseTokenURI
+        maxSupply
+        whitelistMintPrice
+        publicMintPrice
+        phase
+        isReveal
+        totalOwner
+        createdAt
+      }
+      tokenId
+      owner {
+        id
+      }
+    }
+  }
+`

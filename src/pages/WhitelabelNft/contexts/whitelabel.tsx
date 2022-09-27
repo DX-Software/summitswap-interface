@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 
 type WhitelabelNftContextProps = {
   activeTab: number
@@ -29,6 +30,7 @@ const WhitelabelNftContext = createContext<WhitelabelNftContextProps>({
 })
 
 export function WhitelabelNftProvider({ children }: { children: React.ReactNode }) {
+  const history = useHistory()
   const [activeTab, setActiveTab] = useState<number>(0)
   const [hideBrowseInfoSection, setHideBrowseInfoSection] = useState(false)
   const [whitelabelNftId, setWhitelabelNtId] = useState<string>('')
@@ -36,9 +38,20 @@ export function WhitelabelNftProvider({ children }: { children: React.ReactNode 
 
   useEffect(() => {
     if (whitelabelNftId === '') {
+      history.replace({
+        search: '',
+      })
       setTokenId('')
     }
-  }, [whitelabelNftId])
+  }, [history, whitelabelNftId])
+
+  useEffect(() => {
+    if (whitelabelNftId !== '' && tokenId === '') {
+      history.replace({
+        search: `?whitelabel-nft=${whitelabelNftId}`,
+      })
+    }
+  }, [history, whitelabelNftId, tokenId])
 
   return (
     <WhitelabelNftContext.Provider

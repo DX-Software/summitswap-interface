@@ -29,6 +29,7 @@ import {
   WHITELABEL_NFT_COLLECTION_BY_ID_GQL,
   WHITELABEL_NFT_FACTORY_BY_ID_GQL,
   WHITELABEL_NFT_ITEMS_GQL,
+  WHITELABEL_NFT_ITEM_GQL,
 } from './queries/whitelabelNftQueries'
 
 const URL = 'whitelabel-nft'
@@ -110,6 +111,22 @@ export function useWhitelabelNftItems(collectionAddress: string, page = 1, perPa
         convertToWhitelabelNftItem(whitelabel)
       )
       return whitelabelNftCollections
+    },
+    { refetchOnWindowFocus: true }
+  )
+}
+
+export function useWhitelabelNftItem(nftAddress: string) {
+  return useQuery(
+    ['useWhitelabelNftItem', nftAddress],
+    async () => {
+      const data = await whitelabelNftClient.request(WHITELABEL_NFT_ITEM_GQL, {
+        nftAddress,
+      })
+      const whitelabelNftItem: WhitelabelNftItemGql | undefined = convertToWhitelabelNftItem(
+        data.whitelabelNftItem
+      )
+      return whitelabelNftItem
     },
     { refetchOnWindowFocus: true }
   )

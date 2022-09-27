@@ -8,6 +8,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { useWhitelabelNftContext } from '../contexts/whitelabel'
+import NftDetails from '../NftDetails'
 import Header, { HeaderLevel } from '../shared/Header'
 import CollectionItemSection from './CollectionItemSection'
 import MetadataSection from './MetadataSection'
@@ -28,7 +29,7 @@ function CollectionDetails({ previousPage }: WhitelabelNftDetailsProps) {
   const history = useHistory()
   const { account } = useWeb3React()
   const isMobileView = useMediaQuery('(max-width: 576px)')
-  const { whitelabelNftId, setWhitelabelNtId } = useWhitelabelNftContext()
+  const { whitelabelNftId, setWhitelabelNtId, tokenId } = useWhitelabelNftContext()
   const whitelabelNft = useWhitelabelNftCollectionById(whitelabelNftId)
   const whitelabelNftContract = useWhitelabelNftContract(whitelabelNftId)
 
@@ -73,17 +74,16 @@ function CollectionDetails({ previousPage }: WhitelabelNftDetailsProps) {
   }, [whitelabelNft, setWhitelabelNtId])
 
   useEffect(() => {
-    if (whitelabelNft.data) {
+    if (whitelabelNft.data && !tokenId) {
       history.replace({
         search: `?whitelabel-nft=${whitelabelNft.data.id}`,
       })
     }
-    return () => {
-      history.replace({
-        search: '',
-      })
-    }
-  }, [history, whitelabelNft.data])
+  }, [history, whitelabelNft.data, tokenId])
+
+  if (tokenId) {
+    return <NftDetails previousHeaderLevels={headerLevel} whitelabelNft={whitelabelNft} />
+  }
 
   return (
     <>
