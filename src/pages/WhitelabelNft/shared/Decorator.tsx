@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 const Decorator = styled(Box)`
   width: 96px;
-  height: 7px;
+  height: 8px;
   background: ${({ theme }) => theme.colors.primary};
 
   @media (max-width: 576px) {

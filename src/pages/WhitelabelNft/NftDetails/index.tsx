@@ -11,6 +11,7 @@ import uriToHttp from 'utils/uriToHttp'
 import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import Header, { HeaderLevel } from '../shared/Header'
 import IntroductionSection from './IntroductionSection'
+import TraitSection from './TraitAndAboutSection'
 
 const Divider = styled(Box)`
   width: 100%;
@@ -63,8 +64,15 @@ function NftDetails({ previousHeaderLevels, whitelabelNft }: NftDetailsProps) {
     <>
       <Header levels={headerLevels} />
       <Grid container marginTop="24px">
-        <IntroductionSection metadata={metadata} whitelabelNftItem={whitelabelNftItem} />
-        <Divider marginTop={isMobileView ? '32px' : '44px'} marginBottom={isMobileView ? '32px' : '40px'} />
+        <Grid item xs={12}>
+          <IntroductionSection metadata={metadata} whitelabelNftItem={whitelabelNftItem} />
+          <Divider marginTop={isMobileView ? '32px' : '44px'} marginBottom={isMobileView ? '32px' : '40px'} />
+        </Grid>
+        <Grid container item xs={12}>
+          <Grid item xs={12} lg={8}>
+            <TraitSection metadata={metadata} />
+          </Grid>
+        </Grid>
       </Grid>
     </>
   )
