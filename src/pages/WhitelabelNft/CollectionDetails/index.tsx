@@ -1,7 +1,7 @@
 import { ArrowBackIcon, Box, Breadcrumbs, Flex, Text } from '@koda-finance/summitswap-uikit'
 import { Grid, useMediaQuery } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
-import { useWhitelabelNftCollectionById } from 'api/useWhitelabelNftApi'
+import { useWhitelabelNftApiSignature, useWhitelabelNftCollectionById } from 'api/useWhitelabelNftApi'
 import { BigNumber } from 'ethers'
 import { useWhitelabelNftContract } from 'hooks/useContract'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -63,6 +63,12 @@ function CollectionDetails({ previousPage }: WhitelabelNftDetailsProps) {
   const [totalSupply, setTotalSupply] = useState(0)
   const [isOwner, setIsOwner] = useState(false)
 
+  const whitelabelNftApiSignature = useWhitelabelNftApiSignature(
+    whitelabelNft.data?.owner?.id || '',
+    whitelabelNftId || '',
+    account || ''
+  )
+
   const getTotalSupply = useCallback(async () => {
     if (!whitelabelNftContract) return
     const _totalSupply = (await whitelabelNftContract?.totalSupply()) as BigNumber
@@ -112,12 +118,17 @@ function CollectionDetails({ previousPage }: WhitelabelNftDetailsProps) {
         </Grid>
         {isOwner && (
           <Grid item xs={12}>
-            <WhitelistSection />
+            <WhitelistSection whitelabelNftApiSignature={whitelabelNftApiSignature} />
             <Divider marginTop={isMobileView ? '32px' : '44px'} marginBottom={isMobileView ? '32px' : '40px'} />
           </Grid>
         )}
         <Grid item xs={12}>
-          <MintSection isOwner={isOwner} totalSupply={totalSupply} whitelabelNft={whitelabelNft} />
+          <MintSection
+            isOwner={isOwner}
+            totalSupply={totalSupply}
+            whitelabelNft={whitelabelNft}
+            whitelabelNftApiSignature={whitelabelNftApiSignature}
+          />
           <Divider marginTop={isMobileView ? '32px' : '44px'} marginBottom={isMobileView ? '32px' : '40px'} />
         </Grid>
         <Grid item xs={12}>

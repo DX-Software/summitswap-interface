@@ -12,7 +12,6 @@ import {
 } from '@koda-finance/summitswap-uikit'
 import { Grid, useMediaQuery } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
-import { useWhitelabelNftApiSignature } from 'api/useWhitelabelNftApi'
 import { Phase } from 'constants/whitelabel'
 import { BigNumber } from 'ethers'
 import { formatUnits, parseEther } from 'ethers/lib/utils'
@@ -21,7 +20,12 @@ import { useWhitelabelNftContract } from 'hooks/useContract'
 import React, { useCallback, useMemo } from 'react'
 import { UseQueryResult } from 'react-query'
 import styled from 'styled-components'
-import { WhitelabelMintDto, WhitelabelNftCollectionGql, WhitelabelNftMintField } from 'types/whitelabelNft'
+import {
+  WhitelabelMintDto,
+  WhitelabelNftCollectionGql,
+  WhitelabelNftMintField,
+  WhitelabelSignatureResult,
+} from 'types/whitelabelNft'
 import login from 'utils/login'
 import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import { mintCollectionValidationSchema } from '../CreateCollection/validation'
@@ -34,6 +38,7 @@ type MintSectionProps = {
   isOwner: boolean
   totalSupply: number
   whitelabelNft: UseQueryResult<WhitelabelNftCollectionGql | undefined>
+  whitelabelNftApiSignature: UseQueryResult<WhitelabelSignatureResult | undefined>
 }
 
 const MinterWrapper = styled(Flex)`
@@ -51,17 +56,11 @@ const ActionButtonWrapper = styled(Flex)`
   }
 `
 
-function MintSection({ isOwner, totalSupply, whitelabelNft }: MintSectionProps) {
+function MintSection({ isOwner, totalSupply, whitelabelNft, whitelabelNftApiSignature }: MintSectionProps) {
   const isMobileView = useMediaQuery('(max-width: 576px)')
   const { account, activate, deactivate } = useWeb3React()
   const { whitelabelNftId } = useWhitelabelNftContext()
   const whitelabelNftContract = useWhitelabelNftContract(whitelabelNftId)
-
-  const whitelabelNftApiSignature = useWhitelabelNftApiSignature(
-    whitelabelNft.data?.owner?.id || '',
-    whitelabelNftId || '',
-    account || ''
-  )
 
   const handleLogin = useCallback(
     (connectorId: string) => {
@@ -102,19 +101,19 @@ function MintSection({ isOwner, totalSupply, whitelabelNft }: MintSectionProps) 
     initialValues: { mintQuantity: 1 },
     validationSchema: mintCollectionValidationSchema,
     onSubmit: async (values, { setSubmitting }) => {
-      if (!whitelabelNftContract || !account || !whitelabelNftApiSignature.data) {
+      if (!whitelabelNftContract || !account || (!whitelabelNftApiSignature.data && phase === Phase.Whitelist)) {
         return
       }
       setSubmitting(true)
 
-      const nftOwner = await whitelabelNftContract.owner()
       const tokenInfo = await whitelabelNftContract.tokenInfo()
       const { phase: tokenInfoPhase, whitelistMintPrice, publicMintPrice } = tokenInfo
+      const nftOwner = await whitelabelNftContract.owner()
       const price = tokenInfoPhase === Phase.Whitelist ? whitelistMintPrice : publicMintPrice
       const mintMethod = tokenInfoPhase === Phase.Whitelist ? 'mint(uint256,bytes)' : 'mint(uint256)'
       const args: (number | string)[] = [values.mintQuantity]
       if (tokenInfoPhase === Phase.Whitelist) {
-        args.push(whitelabelNftApiSignature.data.signature)
+        args.push(whitelabelNftApiSignature.data?.signature || '')
       }
 
       await whitelabelNftContract[mintMethod](...args, {

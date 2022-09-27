@@ -19,7 +19,9 @@ import {
 } from 'api/useWhitelabelNftApi'
 import Pagination from 'components/Pagination/Pagination'
 import React, { useMemo, useState } from 'react'
+import { UseQueryResult } from 'react-query'
 import styled from 'styled-components'
+import { WhitelabelSignatureResult } from 'types/whitelabelNft'
 import { shortenAddress } from 'utils'
 import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import { HelperText } from '../shared/Text'
@@ -106,7 +108,11 @@ function WhitelistLoadingSection() {
   )
 }
 
-function WhitelistSection() {
+type WhitelistSectionProps = {
+  whitelabelNftApiSignature: UseQueryResult<WhitelabelSignatureResult | undefined>
+}
+
+function WhitelistSection({ whitelabelNftApiSignature }: WhitelistSectionProps) {
   const isMobileView = useMediaQuery('(max-width: 576px)')
   const { account } = useWeb3React()
   const { whitelabelNftId } = useWhitelabelNftContext()
@@ -121,6 +127,12 @@ function WhitelistSection() {
     return Math.ceil((whitelist.data?.totalSignature || 0) / PER_PAGE)
   }, [whitelist])
 
+  const handleRefreshData = () => {
+    whitelist.refetch()
+    whitelabelNftApiSignature.refetch()
+    setPage(1)
+  }
+
   const handleRemoveAll = async () => {
     if (!whitelabelNftId || !account) return
 
@@ -130,8 +142,7 @@ function WhitelistSection() {
     })
 
     setSelectedWhitelistAddress([])
-
-    await whitelist.refetch()
+    handleRefreshData()
   }
 
   const handleRemoveWhitelist = async (whitelistAddresses: string[]) => {
@@ -144,9 +155,7 @@ function WhitelistSection() {
     })
 
     setSelectedWhitelistAddress((prev) => prev.filter((value) => !selectedWhitelistAddress.includes(value)))
-
-    await whitelist.refetch()
-    setPage(1)
+    handleRefreshData()
   }
 
   const handleSelectAddress = (whitelistAddress: string) => {
@@ -159,7 +168,7 @@ function WhitelistSection() {
   }
 
   const [onPresentModalAddWhitelist] = useModal(
-    <AddWhitelistModal whitelabelNftId={whitelabelNftId} onRefresh={whitelist.refetch} />
+    <AddWhitelistModal whitelabelNftId={whitelabelNftId} onRefresh={handleRefreshData} />
   )
   const [onPresentModalDeleteAll] = useModal(<RemoveAllWhitelistModal onDelete={handleRemoveAll} />)
   const [onPresentModalDeleteSelected] = useModal(
