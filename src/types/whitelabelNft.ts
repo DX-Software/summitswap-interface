@@ -150,6 +150,7 @@ export type WhitelabelNftCollectionGql = {
   symbol?: string
   description?: string
   previewImageUrl?: string
+  baseTokenURI?: string
   maxSupply?: BigNumber
   whitelistMintPrice?: BigNumber
   publicMintPrice?: BigNumber

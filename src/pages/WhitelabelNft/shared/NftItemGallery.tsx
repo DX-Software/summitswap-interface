@@ -2,8 +2,7 @@ import { Flex, useModal } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import Pagination from 'components/Pagination/Pagination'
 import { PER_PAGE } from 'constants/whitelabel'
-import { useWhitelabelNftContract } from 'hooks/useContract'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { UseQueryResult } from 'react-query'
 import { WhitelabelNftItemGql } from 'types/whitelabelNft'
 import { useWhitelabelNftContext } from '../contexts/whitelabel'
@@ -19,13 +18,8 @@ type Props = {
   onPageChange: React.Dispatch<React.SetStateAction<number>>
 }
 
-// const WHITELABEL_ABI = new Interface(WhitelabelAbi)
-
 function NftItemGallery({ queryResult, totalItem, page, onPageChange }: Props) {
-  const [baseUrl, setBaseUrl] = useState('')
-  const { whitelabelNftId, setTokenId } = useWhitelabelNftContext()
-  const whitelabelNftContract = useWhitelabelNftContract(whitelabelNftId)
-
+  const { setTokenId } = useWhitelabelNftContext()
   const [onPresentConcealModal] = useModal(<NftItemGalleryItemConcealModal />)
 
   const maxPage = useMemo(() => {
@@ -43,15 +37,6 @@ function NftItemGallery({ queryResult, totalItem, page, onPageChange }: Props) {
     [setTokenId, onPresentConcealModal]
   )
 
-  const getBaseUrl = useCallback(async () => {
-    const baseTokenUrl = (await whitelabelNftContract?.baseTokenURI()) as string
-    setBaseUrl(baseTokenUrl)
-  }, [whitelabelNftContract])
-
-  useEffect(() => {
-    getBaseUrl()
-  }, [getBaseUrl])
-
   return (
     <>
       <Grid container spacing="40px">
@@ -66,7 +51,11 @@ function NftItemGallery({ queryResult, totalItem, page, onPageChange }: Props) {
             ) : (
               queryResult.data?.map((item) => (
                 <Grid item xs={6} sm={6} md={4} lg={3} key={`nft-item-${item.id}`}>
-                  <NftItemGalleryItem data={item} baseUrl={baseUrl} onClick={() => handleItemOnClick(item)} />
+                  <NftItemGalleryItem
+                    data={item}
+                    baseUrl={item.collection?.baseTokenURI || ''}
+                    onClick={() => handleItemOnClick(item)}
+                  />
                 </Grid>
               ))
             )}

@@ -36,6 +36,7 @@ export function convertToWhitelabelNftCollection(data?: {
     symbol: data.symbol,
     description: data.description,
     previewImageUrl: data.previewImageUrl,
+    baseTokenURI: data.baseTokenURI,
     maxSupply: data.maxSupply ? new BigNumber(data.maxSupply) : undefined,
     whitelistMintPrice: data.whitelistMintPrice ? new BigNumber(data.whitelistMintPrice) : undefined,
     publicMintPrice: data.publicMintPrice ? new BigNumber(data.publicMintPrice) : undefined,

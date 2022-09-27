@@ -87,6 +87,12 @@
         "internalType": "struct TokenInfo",
         "name": "tokenInfo",
         "type": "tuple"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "initialURI",
+        "type": "string"
       }
     ],
     "name": "CreateNft",

@@ -20,6 +20,7 @@ export const WHITELABEL_NFT_COLLECTION_BY_ID_GQL = gql`
       symbol
       description
       previewImageUrl
+      baseTokenURI
       maxSupply
       whitelistMintPrice
       publicMintPrice
@@ -42,6 +43,7 @@ export const WHITELABEL_NFT_COLLECTIONS_GQL = gql`
       symbol
       description
       previewImageUrl
+      baseTokenURI
       maxSupply
       whitelistMintPrice
       publicMintPrice
@@ -64,6 +66,7 @@ export const WHITELABEL_NFT_COLLECTIONS_SEARCH_GQL = gql`
       symbol
       description
       previewImageUrl
+      baseTokenURI
       maxSupply
       whitelistMintPrice
       publicMintPrice
@@ -94,6 +97,7 @@ export const WHITELABEL_NFT_ITEMS_GQL = gql`
         symbol
         description
         previewImageUrl
+        baseTokenURI
         maxSupply
         whitelistMintPrice
         publicMintPrice
