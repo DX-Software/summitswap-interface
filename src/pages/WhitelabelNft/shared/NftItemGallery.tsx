@@ -1,4 +1,4 @@
-import { Flex } from '@koda-finance/summitswap-uikit'
+import { Flex, useModal } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import Pagination from 'components/Pagination/Pagination'
 import { PER_PAGE } from 'constants/whitelabel'
@@ -8,6 +8,7 @@ import { UseQueryResult } from 'react-query'
 import { WhitelabelNftItemGql } from 'types/whitelabelNft'
 import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import NftItemGalleryItem from './NftItemGalleryItem'
+import NftItemGalleryItemConcealModal from './NftItemGalleryItemConcealModal'
 import NftItemGalleryLoadingSection from './NftItemGalleryLoadingSection'
 import { HelperText } from './Text'
 
@@ -18,14 +19,29 @@ type Props = {
   onPageChange: React.Dispatch<React.SetStateAction<number>>
 }
 
+// const WHITELABEL_ABI = new Interface(WhitelabelAbi)
+
 function NftItemGallery({ queryResult, totalItem, page, onPageChange }: Props) {
   const [baseUrl, setBaseUrl] = useState('')
-  const { whitelabelNftId } = useWhitelabelNftContext()
+  const { whitelabelNftId, setTokenId } = useWhitelabelNftContext()
   const whitelabelNftContract = useWhitelabelNftContract(whitelabelNftId)
+
+  const [onPresentConcealModal] = useModal(<NftItemGalleryItemConcealModal />)
 
   const maxPage = useMemo(() => {
     return Math.ceil(totalItem / PER_PAGE)
   }, [totalItem])
+
+  const handleItemOnClick = useCallback(
+    (item: WhitelabelNftItemGql) => {
+      if (!item.collection?.isReveal) {
+        onPresentConcealModal()
+      } else {
+        setTokenId(item.tokenId!)
+      }
+    },
+    [setTokenId, onPresentConcealModal]
+  )
 
   const getBaseUrl = useCallback(async () => {
     const baseTokenUrl = (await whitelabelNftContract?.baseTokenURI()) as string
@@ -50,7 +66,7 @@ function NftItemGallery({ queryResult, totalItem, page, onPageChange }: Props) {
             ) : (
               queryResult.data?.map((item) => (
                 <Grid item xs={6} sm={6} md={4} lg={3} key={`nft-item-${item.id}`}>
-                  <NftItemGalleryItem data={item} baseUrl={baseUrl} onClick={() => null} />
+                  <NftItemGalleryItem data={item} baseUrl={baseUrl} onClick={() => handleItemOnClick(item)} />
                 </Grid>
               ))
             )}

@@ -92,7 +92,7 @@ export function useWhitelabelNftCollections(
         .filter((whitelabelNft) => phases.includes(whitelabelNft.phase))
       return whitelabelNftCollections
     },
-    { refetchOnWindowFocus: false }
+    { refetchOnWindowFocus: true }
   )
 }
 
@@ -110,7 +110,7 @@ export function useWhitelabelNftItems(collectionAddress: string, page = 1, perPa
       )
       return whitelabelNftCollections
     },
-    { refetchOnWindowFocus: false }
+    { refetchOnWindowFocus: true }
   )
 }
 

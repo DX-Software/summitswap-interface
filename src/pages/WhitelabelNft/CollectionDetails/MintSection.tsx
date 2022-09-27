@@ -189,8 +189,8 @@ function MintSection({ isOwner, totalSupply, whitelabelNft, whitelabelNftApiSign
             <Button
               scale="sm"
               startIcon={!canMint && <LockIcon width={12} color="textDisabled" />}
-              variant={canMint ? 'primary' : 'awesome'}
-              disabled={!canMint}
+              variant={canMint && stock !== 0 ? 'primary' : 'awesome'}
+              disabled={!canMint || stock === 0}
               onClick={onPresentMintModal}
             >
               {canMint ? 'Mint NFT Collection' : 'You are not in whitelist'}

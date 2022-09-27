@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 
 type WhitelabelNftContextProps = {
   activeTab: number
@@ -9,6 +9,9 @@ type WhitelabelNftContextProps = {
 
   whitelabelNftId: string
   setWhitelabelNtId: React.Dispatch<React.SetStateAction<string>>
+
+  tokenId: string
+  setTokenId: React.Dispatch<React.SetStateAction<string>>
 }
 
 const WhitelabelNftContext = createContext<WhitelabelNftContextProps>({
@@ -20,12 +23,22 @@ const WhitelabelNftContext = createContext<WhitelabelNftContextProps>({
 
   whitelabelNftId: '',
   setWhitelabelNtId: () => null,
+
+  tokenId: '',
+  setTokenId: () => null,
 })
 
 export function WhitelabelNftProvider({ children }: { children: React.ReactNode }) {
   const [activeTab, setActiveTab] = useState<number>(0)
   const [hideBrowseInfoSection, setHideBrowseInfoSection] = useState(false)
   const [whitelabelNftId, setWhitelabelNtId] = useState<string>('')
+  const [tokenId, setTokenId] = useState<string>('')
+
+  useEffect(() => {
+    if (whitelabelNftId === '') {
+      setTokenId('')
+    }
+  }, [whitelabelNftId])
 
   return (
     <WhitelabelNftContext.Provider
@@ -38,6 +51,9 @@ export function WhitelabelNftProvider({ children }: { children: React.ReactNode 
 
         whitelabelNftId,
         setWhitelabelNtId,
+
+        tokenId,
+        setTokenId,
       }}
     >
       {children}
