@@ -2,7 +2,7 @@ import { AutoRenewIcon, Button, Flex, Heading, InjectedModalProps, Modal } from 
 import { parseEther } from 'ethers/lib/utils'
 import { FormikProvider, useFormik } from 'formik'
 import { useWhitelabelNftContract } from 'hooks/useContract'
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { UseQueryResult } from 'react-query'
 import { WhitelabelNftCollectionGql, WhitelabelNftFormField } from 'types/whitelabelNft'
 import InputField from '../shared/InputField'
@@ -42,6 +42,21 @@ function EditMintPriceModal({ whitelabelNft, onDismiss }: EditMintPriceModalProp
     },
   })
 
+  const handlePublicPriceChanged = useCallback(
+    (value: string) => {
+      if (value !== '' && value.match('^[0-9]*$') == null) return
+      formik.setFieldValue(WhitelabelNftFormField.publicMintPrice, value)
+    },
+    [formik]
+  )
+  const handleWhitelistPriceChanged = useCallback(
+    (value: string) => {
+      if (value !== '' && value.match('^[0-9]*$') == null) return
+      formik.setFieldValue(WhitelabelNftFormField.whitelistMintPrice, value)
+    },
+    [formik]
+  )
+
   const canSubmit = useMemo(() => {
     if (
       whitelabelNft.data?.whitelistMintPrice?.toString() === formik.values.whitelistMintPrice?.toString() &&
@@ -70,6 +85,7 @@ function EditMintPriceModal({ whitelabelNft, onDismiss }: EditMintPriceModalProp
             name={WhitelabelNftFormField.publicMintPrice}
             placeholder="10"
             formik={formik}
+            onChange={handlePublicPriceChanged}
             helperText={
               <>
                 Current Price:{' '}
@@ -85,6 +101,7 @@ function EditMintPriceModal({ whitelabelNft, onDismiss }: EditMintPriceModalProp
             name={WhitelabelNftFormField.whitelistMintPrice}
             placeholder="10"
             formik={formik}
+            onChange={handleWhitelistPriceChanged}
             helperText={
               <>
                 Current Price:{' '}
