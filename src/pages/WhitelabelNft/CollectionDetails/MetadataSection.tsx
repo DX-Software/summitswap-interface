@@ -13,6 +13,7 @@ import {
 } from '@koda-finance/summitswap-uikit'
 import { Grid, useMediaQuery } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
+import { useWhitelabelNftApiCollection } from 'api/useWhitelabelNftApi'
 import { Phase, PHASE_OPTIONS } from 'constants/whitelabel'
 import { getAddress } from 'ethers/lib/utils'
 import { FormikProps, FormikProvider, FormikValues, useFormik } from 'formik'
@@ -71,6 +72,7 @@ function MetadataSection({ isOwner, totalSupply, whitelabelNft }: MetadataProps)
   const { account } = useWeb3React()
   const { whitelabelNftId } = useWhitelabelNftContext()
   const whitelabelNftContract = useWhitelabelNftContract(whitelabelNftId)
+  const whitelabelNftApiCollection = useWhitelabelNftApiCollection(whitelabelNftId)
 
   const contractBalance = useETHBalances([whitelabelNftId])[getAddress(whitelabelNftId)]
 
@@ -100,9 +102,9 @@ function MetadataSection({ isOwner, totalSupply, whitelabelNft }: MetadataProps)
   const formikReveal: FormikProps<FormikValues> = useFormik<FormikValues>({
     initialValues: {},
     onSubmit: async (values, { setSubmitting }) => {
-      if (!account || !whitelabelNftContract) return
+      if (!account || !whitelabelNftContract || !whitelabelNftApiCollection.data) return
 
-      const tx = await whitelabelNftContract.toggleIsReveal()
+      const tx = await whitelabelNftContract.revealMetadata(whitelabelNftApiCollection.data.baseUrl)
       await tx.wait()
 
       whitelabelNft.refetch()

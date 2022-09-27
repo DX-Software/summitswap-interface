@@ -55,7 +55,7 @@ function NftItemGalleryItem({ data, baseUrl, onClick }: Props) {
     return 'concealed'
   }, [isRevealed, data.tokenId])
 
-  const metadataUrl = uriToHttp(`${baseUrl}${tokenId}.json`).pop()
+  const metadataUrl = uriToHttp(`${baseUrl}${baseUrl.endsWith('/') ? '' : '/'}${tokenId}.json`).pop()
 
   const getMetadata = useCallback(async () => {
     if (!metadataUrl) return

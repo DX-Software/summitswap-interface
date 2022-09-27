@@ -2,6 +2,7 @@ import { BACKEND_API } from 'constants/index'
 import { PER_PAGE, Phase } from 'constants/whitelabel'
 import { useMutation, useQuery } from 'react-query'
 import {
+  WhitelabelCollectionResult,
   WhitelabelCollectionUpsertDto,
   WhitelabelMetadataConcealDto,
   WhitelabelMetadataUploadDto,
@@ -174,8 +175,8 @@ export function useWhitelabelNftApiValidate() {
 
 export function useWhitelabelNftApiCollection(whitelabelNftAddress: string) {
   return useQuery(['useWhitelabelNftApiCollection', whitelabelNftAddress], async () => {
-    const res = await httpClient.get(`${COLLECTION_GET_URL}/${whitelabelNftAddress}`)
-    return res
+    const res = await httpClient.get(`${COLLECTION_GET_URL}${whitelabelNftAddress}`)
+    return res.data as WhitelabelCollectionResult
   })
 }
 

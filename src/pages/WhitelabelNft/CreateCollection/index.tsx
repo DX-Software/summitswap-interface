@@ -80,7 +80,7 @@ function CreateCollection() {
       const whitelabelNftAddress = createNftEvent!.args.nftAddress
 
       await whitelabelNftApiCollectionUpsert.mutateAsync({
-        baseUrl: `ipfs://${metadataResult.rootCid}`,
+        baseUrl: `ipfs://${metadataResult.rootCid}/`,
         whitelabelNftAddress,
       })
 
