@@ -13,9 +13,10 @@ const Card = styled(Box)`
 
 const StyledImg = styled.img`
   width: 100%;
-  aspect-ratio: 225/190;
+  aspect-ratio: 1/1;
   margin-bottom: 8px;
   object-fit: cover;
+  background-color: black;
 `
 
 const StyledImgSkeleton = styled(Skeleton)`
