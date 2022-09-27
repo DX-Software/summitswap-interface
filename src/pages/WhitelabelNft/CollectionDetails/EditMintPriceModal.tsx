@@ -38,6 +38,7 @@ function EditMintPriceModal({ whitelabelNft, onDismiss }: EditMintPriceModalProp
       await tx.wait()
 
       setSubmitting(false)
+      if (onDismiss) onDismiss()
     },
   })
 
