@@ -1,4 +1,4 @@
-import { ArrowBackIcon, Box, Breadcrumbs, Flex, Text } from '@koda-finance/summitswap-uikit'
+import { Box } from '@koda-finance/summitswap-uikit'
 import { Grid, useMediaQuery } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { useWhitelabelNftApiSignature, useWhitelabelNftCollectionById } from 'api/useWhitelabelNftApi'
@@ -8,6 +8,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { useWhitelabelNftContext } from '../contexts/whitelabel'
+import Header, { HeaderLevel } from '../shared/Header'
 import CollectionItemSection from './CollectionItemSection'
 import MetadataSection from './MetadataSection'
 import MintSection from './MintSection'
@@ -23,35 +24,6 @@ type WhitelabelNftDetailsProps = {
   previousPage: string
 }
 
-type HeaderProps = {
-  previousPage: string
-  nftName: string | undefined
-}
-
-const Header = ({ previousPage, nftName }: HeaderProps) => {
-  const { setWhitelabelNtId } = useWhitelabelNftContext()
-  return (
-    <>
-      <Flex borderBottom="1px solid" borderBottomColor="inputColor" paddingBottom="8px" marginBottom="24px">
-        <Breadcrumbs>
-          <Text color="primaryDark" style={{ cursor: 'pointer' }} onClick={() => setWhitelabelNtId('')}>
-            {previousPage}
-          </Text>
-          <Text color="borderColor" style={{ fontWeight: 700 }}>
-            {nftName}
-          </Text>
-        </Breadcrumbs>
-      </Flex>
-      <Flex style={{ columnGap: '8px', cursor: 'pointer' }} onClick={() => setWhitelabelNtId('')}>
-        <ArrowBackIcon color="linkColor" />
-        <Text color="linkColor" style={{ textDecoration: 'underline' }}>
-          back to {previousPage}
-        </Text>
-      </Flex>
-    </>
-  )
-}
-
 function CollectionDetails({ previousPage }: WhitelabelNftDetailsProps) {
   const history = useHistory()
   const { account } = useWeb3React()
@@ -62,6 +34,11 @@ function CollectionDetails({ previousPage }: WhitelabelNftDetailsProps) {
 
   const [totalSupply, setTotalSupply] = useState(0)
   const [isOwner, setIsOwner] = useState(false)
+
+  const headerLevel: HeaderLevel[] = [
+    { label: previousPage, onBack: () => setWhitelabelNtId('') },
+    { label: whitelabelNft.data?.name },
+  ]
 
   const whitelabelNftApiSignature = useWhitelabelNftApiSignature(
     whitelabelNft.data?.owner?.id || '',
@@ -110,7 +87,7 @@ function CollectionDetails({ previousPage }: WhitelabelNftDetailsProps) {
 
   return (
     <>
-      <Header previousPage={previousPage} nftName={whitelabelNft.data?.name} />
+      <Header levels={headerLevel} />
       <Grid container marginTop="24px">
         <Grid item xs={12}>
           <MetadataSection isOwner={isOwner} totalSupply={totalSupply} whitelabelNft={whitelabelNft} />
