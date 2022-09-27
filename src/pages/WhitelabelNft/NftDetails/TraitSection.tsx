@@ -21,7 +21,7 @@ function TraitSection({ metadata }: TraitSectionProps) {
 
   return (
     <>
-      <Heading color="linkColor" marginBottom={isMobileView ? '8px' : '16px'}>
+      <Heading color="primary" marginBottom={isMobileView ? '8px' : '16px'}>
         Traits of {metadata?.name}
       </Heading>
       <Decorator marginBottom="18px" />

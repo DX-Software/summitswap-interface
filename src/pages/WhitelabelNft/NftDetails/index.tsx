@@ -10,8 +10,9 @@ import { NftMetadata, WhitelabelNftCollectionGql } from 'types/whitelabelNft'
 import uriToHttp from 'utils/uriToHttp'
 import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import Header, { HeaderLevel } from '../shared/Header'
+import AboutSection from './AboutSection'
 import IntroductionSection from './IntroductionSection'
-import TraitSection from './TraitAndAboutSection'
+import TraitSection from './TraitSection'
 
 const Divider = styled(Box)`
   width: 100%;
@@ -71,6 +72,9 @@ function NftDetails({ previousHeaderLevels, whitelabelNft }: NftDetailsProps) {
         <Grid container item xs={12}>
           <Grid item xs={12} lg={8}>
             <TraitSection metadata={metadata} />
+          </Grid>
+          <Grid item xs={12} lg={4}>
+            <AboutSection metadata={metadata} whitelabelNftItem={whitelabelNftItem} />
           </Grid>
         </Grid>
       </Grid>
