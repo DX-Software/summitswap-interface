@@ -127,9 +127,10 @@ function MintSection({ isOwner, totalSupply, whitelabelNft, whitelabelNftApiSign
   const handleMintQuantityChanged = useCallback(
     (value: string) => {
       if (value !== '' && value.match('^[0-9]*$') == null) return
+      if (Number(value) > stock) return
       formik.setFieldValue(WhitelabelNftMintField.mintQuantity, value)
     },
-    [formik]
+    [formik, stock]
   )
 
   const [onPresentMintModal] = useModal(
