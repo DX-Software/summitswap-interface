@@ -1,4 +1,4 @@
-import { Box } from '@koda-finance/summitswap-uikit'
+import { Box, Text } from '@koda-finance/summitswap-uikit'
 import { Grid, useMediaQuery } from '@mui/material'
 import { useWhitelabelNftItem } from 'api/useWhitelabelNftApi'
 import axios from 'axios'
@@ -18,6 +18,43 @@ const Divider = styled(Box)`
   width: 100%;
   height: 8px;
   background-color: ${({ theme }) => theme.colors.inputColor};
+`
+
+const PersuasionWrapper = styled(Box)`
+  background-color: ${({ theme }) => theme.colors.dropdownBackground};
+  padding: 16px;
+  padding-left: 15%;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+
+  @media (max-width: 576px) {
+    padding: 12px 16px;
+  }
+`
+
+const KodaMascot = styled.img`
+  position: absolute;
+  top: -10px;
+  left: -20px;
+  z-index: -30;
+  transform: rotate(20deg);
+  width: 192px;
+  height: auto;
+
+  @media (max-width: 1200px) {
+    opacity: 0.4;
+  }
+`
+
+const StyledText = styled(Text)`
+  display: inline-block;
+  font-size: 14px;
+
+  @media (max-width: 576px) {
+    font-size: 12px;
+  }
 `
 
 type NftDetailsProps = {
@@ -75,6 +112,21 @@ function NftDetails({ previousHeaderLevels, whitelabelNft }: NftDetailsProps) {
           </Grid>
           <Grid item xs={12} lg={5}>
             <AboutSection whitelabelNftItem={whitelabelNftItem} />
+          </Grid>
+          <Grid item xs={12}>
+            <PersuasionWrapper>
+              <KodaMascot src="/images/whitelabel-nfts/koda-mascot.png" />
+              <Text color="warning" fontWeight={700} fontSize={isMobileView ? '14px' : '16px'} marginBottom="4px">
+                Get Your Own NFT Now
+              </Text>
+              <StyledText>
+                Want to have your own NFT?{' '}
+                <StyledText color="linkColor" onClick={() => setTokenId('')} style={{ cursor: 'pointer' }}>
+                  <u>Mint yours now</u>
+                </StyledText>{' '}
+                before it runs out of stock!
+              </StyledText>
+            </PersuasionWrapper>
           </Grid>
         </Grid>
       </Grid>
