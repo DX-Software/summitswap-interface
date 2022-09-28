@@ -7,15 +7,9 @@ import { UseQueryResult } from 'react-query'
 import styled from 'styled-components'
 import { NftMetadata, WhitelabelNftItemGql } from 'types/whitelabelNft'
 import { shortenAddress } from 'utils'
-import {
-  getConcealImageUrl,
-  getLooksRareNftUrl,
-  getOpenSeaNftUrl,
-  getRaribleNftUrl,
-  getX2Y2NftUrl,
-} from 'utils/whitelabelNft'
+import { getLooksRareNftUrl, getOpenSeaNftUrl, getRaribleNftUrl, getX2Y2NftUrl } from 'utils/whitelabelNft'
+import NftImage from '../shared/NftImage'
 import { HelperText } from '../shared/Text'
-import NftImage from './NftImage'
 
 type IntroductionSectionProps = {
   metadata: NftMetadata | undefined
@@ -60,8 +54,8 @@ function IntroductionSection({ metadata, whitelabelNftItem }: IntroductionSectio
     <Grid container columnSpacing="40px" rowGap="24px">
       <Grid item xs={12} md={5}>
         <NftImage
-          src={metadata?.image ? `data:image/png;base64,${metadata.image}` : getConcealImageUrl()}
-          // isOwner={whitelabelNft.data?.isReveal || false}
+          base64={metadata?.image}
+          isOwner={whitelabelNftItem.data?.owner?.id.toLowerCase() === account?.toLowerCase()}
         />
       </Grid>
       <Grid item xs={12} md={7}>

@@ -1,28 +1,15 @@
-import { Box, Skeleton, Text } from '@koda-finance/summitswap-uikit'
+import { Box, Text } from '@koda-finance/summitswap-uikit'
+import { useWeb3React } from '@web3-react/core'
 import axios from 'axios'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { NftMetadata, WhitelabelNftItemGql } from 'types/whitelabelNft'
 import truncateHash from 'utils/truncateHash'
 import uriToHttp from 'utils/uriToHttp'
-import { getConcealImageUrl } from 'utils/whitelabelNft'
+import NftImage from './NftImage'
 
 const Card = styled(Box)`
   cursor: pointer;
-`
-
-const StyledImg = styled.img`
-  width: 100%;
-  aspect-ratio: 1/1;
-  margin-bottom: 8px;
-  object-fit: cover;
-  background-color: black;
-`
-
-const StyledImgSkeleton = styled(Skeleton)`
-  width: 100%;
-  aspect-ratio: 1/1;
-  margin-bottom: 8px;
 `
 
 const NameText = styled(Text)`
@@ -45,6 +32,7 @@ type Props = {
 }
 
 function NftItemGalleryItem({ data, baseUrl, onClick }: Props) {
+  const { account } = useWeb3React()
   const [metadata, setMetadata] = useState<NftMetadata | undefined>()
 
   const isRevealed = useMemo(() => {
@@ -70,11 +58,9 @@ function NftItemGalleryItem({ data, baseUrl, onClick }: Props) {
 
   return (
     <Card onClick={onClick}>
-      {!metadata?.image ? (
-        <StyledImgSkeleton />
-      ) : (
-        <StyledImg src={metadata.image ? `data:image/png;base64,${metadata.image}` : getConcealImageUrl()} />
-      )}
+      <Box marginBottom="8px">
+        <NftImage base64={metadata?.image} isOwner={data.owner?.id.toLowerCase() === account?.toLowerCase()} />
+      </Box>
       <Text color="linkColor" fontSize="12px">
         #{data.tokenId}
       </Text>
