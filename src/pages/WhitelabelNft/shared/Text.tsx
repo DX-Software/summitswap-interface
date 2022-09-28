@@ -15,6 +15,7 @@ HelperText.defaultProps = {
 
 export const DescriptionText = styled(Text)`
   margin-bottom: 16px;
+  white-space: break-spaces;
 
   @media (max-width: 576px) {
     margin-bottom: 8px;
