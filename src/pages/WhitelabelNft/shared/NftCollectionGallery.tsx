@@ -13,8 +13,9 @@ type Props = {
   queryResult: UseQueryResult<WhitelabelNftCollectionGql[], unknown>
   totalItem: number
   page: number
-  search: string | undefined
-  onSearchChange: React.Dispatch<React.SetStateAction<string | undefined>>
+  search?: string
+  withSearch?: boolean
+  onSearchChange?: React.Dispatch<React.SetStateAction<string | undefined>>
   onPageChange: React.Dispatch<React.SetStateAction<number>>
   handleShowWhitelabelNft: React.Dispatch<React.SetStateAction<string>>
 }
@@ -24,6 +25,7 @@ function NftCollectionGallery({
   totalItem,
   page,
   search,
+  withSearch,
   onSearchChange,
   onPageChange,
   handleShowWhitelabelNft,
@@ -34,13 +36,15 @@ function NftCollectionGallery({
 
   return (
     <>
-      <Input
-        placeholder="Seach collection by collection name"
-        scale="lg"
-        style={{ marginBottom: '32px' }}
-        value={search}
-        onChange={(event) => onSearchChange(event.target.value)}
-      />
+      {withSearch && (
+        <Input
+          placeholder="Seach collection by collection name"
+          scale="lg"
+          style={{ marginBottom: '32px' }}
+          value={search}
+          onChange={(event) => (onSearchChange ? onSearchChange(event.target.value) : null)}
+        />
+      )}
       <Grid container spacing="40px">
         <Grid item xs={12}>
           <Grid container spacing="24px">
@@ -70,3 +74,7 @@ function NftCollectionGallery({
 }
 
 export default React.memo(NftCollectionGallery)
+
+NftCollectionGallery.defaultProps = {
+  withSearch: false,
+}

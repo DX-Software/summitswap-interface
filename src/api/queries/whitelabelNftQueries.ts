@@ -32,6 +32,29 @@ export const WHITELABEL_NFT_COLLECTION_BY_ID_GQL = gql`
   }
 `
 
+export const WHITELABEL_NFT_COLLECTION_BY_OWNER_GQL = gql`
+  query whitelabelNftCollections($first: Int!, $skip: Int!, $ownerAddress: Bytes!) {
+    whitelabelNftCollections(first: $first, skip: $skip, where: { owner: $ownerAddress }) {
+      id
+      owner {
+        id
+      }
+      name
+      symbol
+      description
+      previewImageUrl
+      baseTokenURI
+      maxSupply
+      whitelistMintPrice
+      publicMintPrice
+      phase
+      isReveal
+      totalOwner
+      createdAt
+    }
+  }
+`
+
 export const WHITELABEL_NFT_COLLECTIONS_GQL = gql`
   query whitelabelNftCollections($first: Int!, $skip: Int!, $phases: [Int!]) {
     whitelabelNftCollections(first: $first, skip: $skip, orderBy: createdAt, orderDirection: desc) {
