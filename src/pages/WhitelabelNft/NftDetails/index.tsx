@@ -69,11 +69,11 @@ function NftDetails({ previousHeaderLevels, whitelabelNft }: NftDetailsProps) {
           <IntroductionSection metadata={metadata} whitelabelNftItem={whitelabelNftItem} />
           <Divider marginTop={isMobileView ? '32px' : '44px'} marginBottom={isMobileView ? '32px' : '40px'} />
         </Grid>
-        <Grid container item xs={12}>
-          <Grid item xs={12} lg={8}>
+        <Grid container item xs={12} spacing="24px">
+          <Grid item xs={12} lg={7}>
             <TraitSection metadata={metadata} />
           </Grid>
-          <Grid item xs={12} lg={4}>
+          <Grid item xs={12} lg={5}>
             <AboutSection metadata={metadata} whitelabelNftItem={whitelabelNftItem} />
           </Grid>
         </Grid>
