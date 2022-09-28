@@ -94,7 +94,7 @@ function CreationStep03({ setCurrentCreationStep, formik }: Props) {
           <Text color="textSubtle" marginBottom="4px">
             Project Description
           </Text>
-          <Text>{formik.values.projectDescription}</Text>
+          <Text style={{ whiteSpace: 'break-spaces' }}>{formik.values.projectDescription}</Text>
           <br />
           <CriteriaWrapper>
             <Flex flexDirection="column" marginRight="auto">
@@ -153,7 +153,7 @@ function CreationStep03({ setCurrentCreationStep, formik }: Props) {
         <Text color="textSubtle" marginBottom="4px">
           Reward Description
         </Text>
-        <Text marginBottom="24px">{formik.values.rewardDescription}</Text>
+        <Text marginBottom="24px" style={{ whiteSpace: 'break-spaces' }}>{formik.values.rewardDescription}</Text>
         <Grid container spacing="16px">
           <Grid item xs={12} sm={6}>
             <TextInfo
