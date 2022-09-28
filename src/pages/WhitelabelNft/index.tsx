@@ -8,7 +8,7 @@ import CreateCollection from './CreateCollection'
 
 function WhitelabelNft() {
   const parsedQs = useParsedQueryString()
-  const { activeTab, setActiveTab } = useWhitelabelNftContext()
+  const { activeTab, setActiveTab, setWhitelabelNtId } = useWhitelabelNftContext()
 
   const navItems: NavItem[] = useMemo(
     () => [
@@ -32,10 +32,15 @@ function WhitelabelNft() {
     setActiveTab(browseTabIndex)
   }, [parsedQs, navItems, setActiveTab])
 
+  const handleSetActiveTab = (index: number) => {
+    setActiveTab(index)
+    setWhitelabelNtId('')
+  }
+
   return (
     <>
       <Box marginTop="30px">
-        <ButtonMenu activeIndex={activeTab} onItemClick={(index) => setActiveTab(index)}>
+        <ButtonMenu activeIndex={activeTab} onItemClick={handleSetActiveTab}>
           {navItems.map((item) => (
             <ButtonMenuItem key={item.code}>{item.label}</ButtonMenuItem>
           ))}
