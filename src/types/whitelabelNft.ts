@@ -4,6 +4,7 @@ import { Phase } from 'constants/whitelabel'
 export enum Tabs {
   BROWSE_COLLECTION = 'browse_collection',
   MINTED_NFTS = 'minted_nfts',
+  MY_NFT_COLLECTION = 'my_nft_collection',
   CREATE_COLLECTION = 'create_collection',
 }
 
