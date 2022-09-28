@@ -22,7 +22,7 @@ const NavTabWrapper = styled(Box)`
 function BrowseCollection() {
   const parsedQs = useParsedQueryString()
   const [tabActiveIndex, setTabActiveIndex] = useState(0)
-  const { whitelabelNftId, setWhitelabelNtId } = useWhitelabelNftContext()
+  const { whitelabelNftId, setWhitelabelNtId, setTokenId } = useWhitelabelNftContext()
   const whitelabelNftFactory = useWhitelabelNftFactoryById(WHITELABEL_FACTORY_ADDRESS)
 
   const collectionTabs: NavItem[] = [
@@ -52,6 +52,11 @@ function BrowseCollection() {
     if (!parsedQs['whitelabel-nft'] || !isAddress(parsedQs['whitelabel-nft'].toString())) return
     setWhitelabelNtId(parsedQs['whitelabel-nft'].toString())
   }, [parsedQs, setWhitelabelNtId])
+
+  useEffect(() => {
+    if (!parsedQs['token-id']) return
+    setTokenId(parsedQs['token-id'].toString())
+  }, [parsedQs, setTokenId])
 
   if (whitelabelNftId) {
     return <CollectionDetails previousPage="Browse Collections" />

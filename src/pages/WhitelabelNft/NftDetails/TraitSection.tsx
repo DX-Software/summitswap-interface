@@ -27,7 +27,7 @@ function TraitSection({ metadata }: TraitSectionProps) {
       <Decorator marginBottom="18px" />
       <Grid container spacing="8px">
         {metadata?.attributes?.map((attribute) => (
-          <Grid item xs={6} lg={4}>
+          <Grid item xs={6} lg={4} key={attribute.trait_type}>
             <AttributeCard>
               <Text color="primary" fontSize="12px">
                 {attribute.trait_type}

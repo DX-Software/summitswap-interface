@@ -37,11 +37,16 @@ export function WhitelabelNftProvider({ children }: { children: React.ReactNode 
   const [tokenId, setTokenId] = useState<string>('')
 
   useEffect(() => {
+    if (whitelabelNftId === '' && tokenId !== '') {
+      setTokenId('')
+    }
+  }, [whitelabelNftId, tokenId])
+
+  useEffect(() => {
     if (whitelabelNftId === '') {
       history.replace({
         search: '',
       })
-      setTokenId('')
     }
   }, [history, whitelabelNftId])
 
