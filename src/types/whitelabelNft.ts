@@ -3,6 +3,7 @@ import { Phase } from 'constants/whitelabel'
 
 export enum Tabs {
   BROWSE_COLLECTION = 'browse_collection',
+  MINTED_NFTS = 'minted_nfts',
   CREATE_COLLECTION = 'create_collection',
 }
 
@@ -18,9 +19,14 @@ export enum NftItemCollectionTab {
   MY_COLLECTION = 'my_collection',
 }
 
+export enum MintedNftTab {
+  ALL_COLLECTION = 'all_collection',
+  NFT_COLLECTION_ALBUMS = 'nft_collection_albums',
+}
+
 export type NavItem = {
   label: string
-  code: Tabs | BrowseCollectionTab | NftItemCollectionTab
+  code: Tabs | BrowseCollectionTab | NftItemCollectionTab | MintedNftTab
   component: React.ReactNode
 }
 

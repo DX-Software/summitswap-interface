@@ -5,6 +5,7 @@ import { NavItem, Tabs } from 'types/whitelabelNft'
 import BrowseCollections from './BrowseCollections'
 import { useWhitelabelNftContext, WhitelabelNftProvider } from './contexts/whitelabel'
 import CreateCollection from './CreateCollection'
+import MintedNfts from './MintedNfts'
 
 function WhitelabelNft() {
   const parsedQs = useParsedQueryString()
@@ -16,6 +17,11 @@ function WhitelabelNft() {
         label: 'Browse Collections',
         code: Tabs.BROWSE_COLLECTION,
         component: <BrowseCollections />,
+      },
+      {
+        label: 'Minted NFTs',
+        code: Tabs.MINTED_NFTS,
+        component: <MintedNfts />,
       },
       {
         label: 'Create NFT Collection',
