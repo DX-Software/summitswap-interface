@@ -1,7 +1,7 @@
-import { ArrowBackIcon, ArrowForwardIcon, Button, ExchangeIcon } from '@koda-finance/summitswap-uikit'
+import { ArrowBackIcon, ArrowForwardIcon, AutoRenewIcon, Button, ExchangeIcon } from '@koda-finance/summitswap-uikit'
 import { Grid } from '@mui/material'
 import { useWhitelabelNftApiValidate } from 'api/useWhitelabelNftApi'
-import { FormikProps } from 'formik'
+import { FormikProps, useFormik } from 'formik'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { WhitelabelNft, WhitelabelNftFormField } from 'types/whitelabelNft'
 import { NavStepButton } from '../shared/Button'
@@ -44,27 +44,33 @@ function CreationStep02({ setCurrentCreationStep, formik }: Props) {
     return false
   }, [formik])
 
-  const handleOnClickValidate = useCallback(async () => {
-    try {
-      if (!(await hasFormFilled())) return
-      setValidatedMessage('')
-      setValidatedError([])
-      setIsValidated(false)
+  const formikValidate = useFormik({
+    enableReinitialize: true,
+    initialValues: {},
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        if (!(await hasFormFilled())) return
+        setValidatedMessage('')
+        setValidatedError([])
+        setIsValidated(false)
 
-      const res = await whitelabelNftApiValidate.mutateAsync({
-        spreadsheet: formik.values.spreadsheet!,
-        nftImages: formik.values.nftImages,
-      })
-      if (res.status === 201) {
-        setValidatedMessage(res.data.message)
-        setIsValidated(true)
+        const res = await whitelabelNftApiValidate.mutateAsync({
+          spreadsheet: formik.values.spreadsheet!,
+          nftImages: formik.values.nftImages,
+        })
+        if (res.status === 201) {
+          setValidatedMessage(res.data.message)
+          setIsValidated(true)
+        }
+      } catch (error: any) {
+        const errorData = error.response.data
+        setValidatedMessage(errorData.error)
+        setValidatedError(errorData.message)
       }
-    } catch (error: any) {
-      const errorData = error.response.data
-      setValidatedMessage(errorData.error)
-      setValidatedError(errorData.message)
-    }
-  }, [hasFormFilled, formik.values.spreadsheet, formik.values.nftImages, whitelabelNftApiValidate])
+
+      setSubmitting(false)
+    },
+  })
 
   const handleNextPage = useCallback(async () => {
     if ((await hasFormFilled()) && isValidated) {
@@ -91,10 +97,17 @@ function CreationStep02({ setCurrentCreationStep, formik }: Props) {
           <Divider />
 
           <Button
-            variant={isValidateDisabled ? 'awesome' : 'primary'}
-            startIcon={<ExchangeIcon color="default" />}
-            onClick={handleOnClickValidate}
+            variant={isValidateDisabled || formikValidate.isSubmitting ? 'awesome' : 'primary'}
+            startIcon={
+              formikValidate.isSubmitting ? (
+                <AutoRenewIcon spin color="textDisabled" />
+              ) : (
+                <ExchangeIcon color="default" />
+              )
+            }
+            onClick={formikValidate.submitForm}
             disabled={isValidateDisabled}
+            isLoading={formikValidate.isSubmitting}
           >
             Validate NFT Collection
           </Button>
