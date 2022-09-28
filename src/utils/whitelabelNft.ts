@@ -61,3 +61,23 @@ export function getPhaseString(phase: Phase) {
   const phaseString = Phase[phase || 0]
   return phaseString
 }
+
+export function getOpenSeaNftUrl(contractAddress: string, tokenId: string) {
+  const url = `https://opensea.io/assets/ethereum/${contractAddress}/${tokenId}`
+  return url
+}
+
+export function getRaribleNftUrl(contractAddress: string, tokenId: string) {
+  const url = `https://rarible.com/token/${contractAddress}:${tokenId}`
+  return url
+}
+
+export function getLooksRareNftUrl(contractAddress: string, tokenId: string) {
+  const url = `https://looksrare.org/collections/${contractAddress}/${tokenId}`
+  return url
+}
+
+export function getX2Y2NftUrl(contractAddress: string, tokenId: string) {
+  const url = `https://x2y2.io/eth/${contractAddress}/${tokenId}`
+  return url
+}

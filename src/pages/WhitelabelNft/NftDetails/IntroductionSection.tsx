@@ -2,12 +2,18 @@ import { Flex, Heading, LooksRareIcon, OpenSeaIcon, RaribleIcon, X2Y2Icon } from
 import { Grid, useMediaQuery } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { getAddress } from 'ethers/lib/utils'
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo, useRef } from 'react'
 import { UseQueryResult } from 'react-query'
 import styled from 'styled-components'
 import { NftMetadata, WhitelabelNftItemGql } from 'types/whitelabelNft'
 import { shortenAddress } from 'utils'
-import { getConcealImageUrl } from 'utils/whitelabelNft'
+import {
+  getConcealImageUrl,
+  getLooksRareNftUrl,
+  getOpenSeaNftUrl,
+  getRaribleNftUrl,
+  getX2Y2NftUrl,
+} from 'utils/whitelabelNft'
 import { HelperText } from '../shared/Text'
 import NftImage from './NftImage'
 
@@ -23,9 +29,19 @@ const MarketplaceIconWrapper = styled(Flex)`
   width: 32px;
   height: 32px;
   justify-content: center;
+  cursor: pointer;
+
+  :hover {
+    background-color: ${({ theme }) => theme.colors.primary};
+  }
 `
 
 function IntroductionSection({ metadata, whitelabelNftItem }: IntroductionSectionProps) {
+  const openseaLinkRef = useRef<HTMLAnchorElement>(null)
+  const raribleLinkRef = useRef<HTMLAnchorElement>(null)
+  const looksrareLinkRef = useRef<HTMLAnchorElement>(null)
+  const x2y2LinkRef = useRef<HTMLAnchorElement>(null)
+
   const isMobileView = useMediaQuery('(max-width: 576px)')
   const { account } = useWeb3React()
 
@@ -35,6 +51,10 @@ function IntroductionSection({ metadata, whitelabelNftItem }: IntroductionSectio
     }
     return whitelabelNftItem.data?.owner?.id
   }, [whitelabelNftItem.data?.owner?.id])
+
+  const handleVisitLink = useCallback((ref: React.RefObject<HTMLAnchorElement>) => {
+    ref.current?.click()
+  }, [])
 
   return (
     <Grid container columnSpacing="40px" rowGap="24px">
@@ -56,18 +76,57 @@ function IntroductionSection({ metadata, whitelabelNftItem }: IntroductionSectio
         </HelperText>
         <HelperText marginBottom="16px">{metadata?.description}</HelperText>
         <Flex style={{ columnGap: '8px' }}>
-          <MarketplaceIconWrapper>
+          <MarketplaceIconWrapper onClick={() => handleVisitLink(openseaLinkRef)}>
             <OpenSeaIcon width={24} />
           </MarketplaceIconWrapper>
-          <MarketplaceIconWrapper>
+          <MarketplaceIconWrapper onClick={() => handleVisitLink(raribleLinkRef)}>
             <RaribleIcon />
           </MarketplaceIconWrapper>
-          <MarketplaceIconWrapper>
+          <MarketplaceIconWrapper onClick={() => handleVisitLink(looksrareLinkRef)}>
             <LooksRareIcon />
           </MarketplaceIconWrapper>
-          <MarketplaceIconWrapper>
+          <MarketplaceIconWrapper onClick={() => handleVisitLink(x2y2LinkRef)}>
             <X2Y2Icon />
           </MarketplaceIconWrapper>
+          <a
+            ref={openseaLinkRef}
+            href={getOpenSeaNftUrl(whitelabelNftItem.data?.collection?.id || '', whitelabelNftItem.data?.tokenId || '')}
+            target="_blank"
+            rel="noreferrer"
+            style={{ display: 'none' }}
+          >
+            OpenSea
+          </a>
+          <a
+            ref={raribleLinkRef}
+            href={getRaribleNftUrl(whitelabelNftItem.data?.collection?.id || '', whitelabelNftItem.data?.tokenId || '')}
+            target="_blank"
+            rel="noreferrer"
+            style={{ display: 'none' }}
+          >
+            Rarible
+          </a>
+          <a
+            ref={looksrareLinkRef}
+            href={getLooksRareNftUrl(
+              whitelabelNftItem.data?.collection?.id || '',
+              whitelabelNftItem.data?.tokenId || ''
+            )}
+            target="_blank"
+            rel="noreferrer"
+            style={{ display: 'none' }}
+          >
+            LooksRare
+          </a>
+          <a
+            ref={x2y2LinkRef}
+            href={getX2Y2NftUrl(whitelabelNftItem.data?.collection?.id || '', whitelabelNftItem.data?.tokenId || '')}
+            target="_blank"
+            rel="noreferrer"
+            style={{ display: 'none' }}
+          >
+            X2Y2
+          </a>
         </Flex>
       </Grid>
     </Grid>
