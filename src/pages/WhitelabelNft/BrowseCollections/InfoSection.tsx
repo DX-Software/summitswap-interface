@@ -9,34 +9,29 @@ const Wrapper = styled(Flex)`
   background-color: ${({ theme }) => theme.colors.inputColor};
   border-radius: 16px;
   overflow: hidden;
+  padding: 24px;
+  padding-left: 20%;
+  z-index: 0;
 
-  @media (max-width: 576px) {
+  @media (max-width: 1200px) {
+    padding: 12px 16px;
   }
 `
 
 const InfoImage = styled.img`
-  position: relative;
-  flex-shrink: 0;
+  position: absolute;
+  top: 0px;
+  left: -28px;
+  z-index: -30;
   rotate: 15deg;
-  left: -32px;
-  width: auto;
 
-  @media (max-width: 576px) {
-    width: 140px;
-    position: absolute;
+  @media (max-width: 1200px) {
     opacity: 0.2;
-    left: -24px;
   }
 `
 
 const InfoWrapper = styled(Flex)`
   flex-direction: column;
-  padding: 24px;
-  padding-left: 0;
-
-  @media (max-width: 576px) {
-    padding: 12px 16px;
-  }
 `
 
 const Info = styled(Text)`
