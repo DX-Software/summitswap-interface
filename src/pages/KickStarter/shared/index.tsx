@@ -106,7 +106,11 @@ export const TextInfo = ({ title, description, tooltipText, isLoading = false }:
           </Tooltip>
         )}
       </Flex>
-      {isLoading ? <Skeleton width={180} height={24} /> : <Text>{description}</Text>}
+      {isLoading ? (
+        <Skeleton width={180} height={24} />
+      ) : (
+        <Text style={{ whiteSpace: 'break-spaces' }}>{description}</Text>
+      )}
     </>
   )
 }
