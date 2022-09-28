@@ -1,4 +1,4 @@
-import { useWhitelabelNftItems } from 'api/useWhitelabelNftApi'
+import { useWhitelabelNftItemsByCollection } from 'api/useWhitelabelNftApi'
 import { PER_PAGE } from 'constants/whitelabel'
 import { BigNumber } from 'ethers'
 import { useWhitelabelNftContract } from 'hooks/useContract'
@@ -10,7 +10,7 @@ function TabAllCollection() {
   const [page, setPage] = useState(1)
   const [totalItem, setTotalItem] = useState(0)
   const { whitelabelNftId } = useWhitelabelNftContext()
-  const whitelabelNftItems = useWhitelabelNftItems(whitelabelNftId, page, PER_PAGE)
+  const whitelabelNftItems = useWhitelabelNftItemsByCollection(whitelabelNftId, page, PER_PAGE)
   const whitelabelNftContract = useWhitelabelNftContract(whitelabelNftId)
 
   const getTotalItem = useCallback(async () => {

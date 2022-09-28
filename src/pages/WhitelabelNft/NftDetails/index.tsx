@@ -1,6 +1,6 @@
 import { Box, Text } from '@koda-finance/summitswap-uikit'
 import { Grid, useMediaQuery } from '@mui/material'
-import { useWhitelabelNftItem } from 'api/useWhitelabelNftApi'
+import { useWhitelabelNftItemById } from 'api/useWhitelabelNftApi'
 import axios from 'axios'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { UseQueryResult } from 'react-query'
@@ -68,7 +68,7 @@ function NftDetails({ previousHeaderLevels, whitelabelNft }: NftDetailsProps) {
   const isMobileView = useMediaQuery('(max-width: 576px)')
   const [metadata, setMetadata] = useState<NftMetadata | undefined>()
   const { whitelabelNftId, tokenId, setTokenId } = useWhitelabelNftContext()
-  const whitelabelNftItem = useWhitelabelNftItem(`${whitelabelNftId}-${tokenId}`)
+  const whitelabelNftItem = useWhitelabelNftItemById(`${whitelabelNftId}-${tokenId}`)
 
   const headerLevels: HeaderLevel[] = [
     previousHeaderLevels[0],

@@ -1,5 +1,5 @@
 import { useWeb3React } from '@web3-react/core'
-import { useWhitelabelNftItemsByOwner } from 'api/useWhitelabelNftApi'
+import { useWhitelabelNftItemsByCollectionAndOwner } from 'api/useWhitelabelNftApi'
 import { PER_PAGE } from 'constants/whitelabel'
 import { BigNumber } from 'ethers'
 import { useWhitelabelNftContract } from 'hooks/useContract'
@@ -12,7 +12,7 @@ function TabMyCollection() {
   const [page, setPage] = useState(1)
   const [totalItem, setTotalItem] = useState(0)
   const { whitelabelNftId } = useWhitelabelNftContext()
-  const whitelabelNftItems = useWhitelabelNftItemsByOwner(whitelabelNftId, account || '', page, PER_PAGE)
+  const whitelabelNftItems = useWhitelabelNftItemsByCollectionAndOwner(whitelabelNftId, account || '', page, PER_PAGE)
   const whitelabelNftContract = useWhitelabelNftContract(whitelabelNftId)
 
   const getTotalItem = useCallback(async () => {

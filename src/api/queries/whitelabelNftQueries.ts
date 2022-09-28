@@ -138,8 +138,8 @@ export const WHITELABEL_NFT_ITEMS_GQL = gql`
 `
 
 export const WHITELABEL_NFT_ITEM_GQL = gql`
-  query whitelabelNftItem($nftAddress: Bytes!) {
-    whitelabelNftItem(id: $nftAddress) {
+  query whitelabelNftItem($id: Bytes!) {
+    whitelabelNftItem(id: $id) {
       id
       collection {
         id

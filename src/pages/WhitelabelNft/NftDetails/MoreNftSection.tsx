@@ -1,6 +1,6 @@
 import { Heading } from '@koda-finance/summitswap-uikit'
 import { useMediaQuery } from '@mui/material'
-import { useWhitelabelNftItems } from 'api/useWhitelabelNftApi'
+import { useWhitelabelNftItemsByCollection } from 'api/useWhitelabelNftApi'
 import React from 'react'
 import { UseQueryResult } from 'react-query'
 import { WhitelabelNftItemGql } from 'types/whitelabelNft'
@@ -15,7 +15,7 @@ type MoreNftSectionProps = {
 function MoreNftSection({ whitelabelNftItem }: MoreNftSectionProps) {
   const isMobileView = useMediaQuery('(max-width: 576px)')
   const { whitelabelNftId } = useWhitelabelNftContext()
-  const whitelabelNftItems = useWhitelabelNftItems(whitelabelNftId, 1, 12)
+  const whitelabelNftItems = useWhitelabelNftItemsByCollection(whitelabelNftId, 1, 12)
 
   return (
     <>

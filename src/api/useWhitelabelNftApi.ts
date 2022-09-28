@@ -117,9 +117,9 @@ export function useWhitelabelNftCollectionsByOwner(page = 1, perPage = PER_PAGE,
   )
 }
 
-export function useWhitelabelNftItems(collectionAddress: string, page = 1, perPage = PER_PAGE) {
+export function useWhitelabelNftItemsByCollection(collectionAddress: string, page = 1, perPage = PER_PAGE) {
   return useQuery(
-    ['useWhitelabelNftItems', page, perPage, collectionAddress],
+    ['useWhitelabelNftItemsByCollection', page, perPage, collectionAddress],
     async () => {
       const data = await whitelabelNftClient.request(WHITELABEL_NFT_ITEMS_GQL, {
         first: perPage,
@@ -135,12 +135,12 @@ export function useWhitelabelNftItems(collectionAddress: string, page = 1, perPa
   )
 }
 
-export function useWhitelabelNftItem(nftAddress: string) {
+export function useWhitelabelNftItemById(id: string) {
   return useQuery(
-    ['useWhitelabelNftItem', nftAddress],
+    ['useWhitelabelNftItemById', id],
     async () => {
       const data = await whitelabelNftClient.request(WHITELABEL_NFT_ITEM_GQL, {
-        nftAddress,
+        id,
       })
       const whitelabelNftItem: WhitelabelNftItemGql | undefined = convertToWhitelabelNftItem(data.whitelabelNftItem)
       return whitelabelNftItem
@@ -149,14 +149,14 @@ export function useWhitelabelNftItem(nftAddress: string) {
   )
 }
 
-export function useWhitelabelNftItemsByOwner(
+export function useWhitelabelNftItemsByCollectionAndOwner(
   collectionAddress: string,
   ownerAddress: string,
   page = 1,
   perPage = PER_PAGE
 ) {
   return useQuery(
-    ['useWhitelabelNftItems', page, perPage, ownerAddress, collectionAddress],
+    ['useWhitelabelNftItemsByCollectionAndOwner', page, perPage, ownerAddress, collectionAddress],
     async () => {
       const data = await whitelabelNftClient.request(WHITELABEL_NFT_ITEMS_GQL, {
         first: perPage,
