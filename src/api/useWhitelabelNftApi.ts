@@ -82,7 +82,7 @@ export function useWhitelabelNftCollections(
       const key = searchText ? 'whitelabelNftCollectionSearch' : 'whitelabelNftCollections'
 
       const filter = {
-        text: searchText,
+        text: searchText ? `'${searchText}'` : undefined,
         first: perPage,
         skip: (page - 1) * perPage,
       }
@@ -123,9 +123,7 @@ export function useWhitelabelNftItem(nftAddress: string) {
       const data = await whitelabelNftClient.request(WHITELABEL_NFT_ITEM_GQL, {
         nftAddress,
       })
-      const whitelabelNftItem: WhitelabelNftItemGql | undefined = convertToWhitelabelNftItem(
-        data.whitelabelNftItem
-      )
+      const whitelabelNftItem: WhitelabelNftItemGql | undefined = convertToWhitelabelNftItem(data.whitelabelNftItem)
       return whitelabelNftItem
     },
     { refetchOnWindowFocus: true }

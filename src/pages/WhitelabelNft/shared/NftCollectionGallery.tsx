@@ -34,15 +34,13 @@ function NftCollectionGallery({
 
   return (
     <>
-      {queryResult.data && queryResult.data?.length > 0 && (
-        <Input
-          placeholder="Seach collection by collection name"
-          scale="lg"
-          style={{ marginBottom: '32px' }}
-          value={search}
-          onChange={(event) => onSearchChange(event.target.value)}
-        />
-      )}
+      <Input
+        placeholder="Seach collection by collection name"
+        scale="lg"
+        style={{ marginBottom: '32px' }}
+        value={search}
+        onChange={(event) => onSearchChange(event.target.value)}
+      />
       <Grid container spacing="40px">
         <Grid item xs={12}>
           <Grid container spacing="24px">
