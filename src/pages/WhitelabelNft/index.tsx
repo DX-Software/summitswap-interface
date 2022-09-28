@@ -1,6 +1,5 @@
 import { Box, ButtonMenu, ButtonMenuItem } from '@koda-finance/summitswap-uikit'
-import useParsedQueryString from 'hooks/useParsedQueryString'
-import React, { useEffect, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { NavItem, Tabs } from 'types/whitelabelNft'
 import BrowseCollections from './BrowseCollections'
 import { useWhitelabelNftContext, WhitelabelNftProvider } from './contexts/whitelabel'
@@ -9,7 +8,6 @@ import MintedNfts from './MintedNfts'
 import MyNftCollection from './MyNftCollection'
 
 function WhitelabelNft() {
-  const parsedQs = useParsedQueryString()
   const { activeTab, setActiveTab, setWhitelabelNtId } = useWhitelabelNftContext()
 
   const navItems: NavItem[] = useMemo(
@@ -37,12 +35,6 @@ function WhitelabelNft() {
     ],
     []
   )
-
-  useEffect(() => {
-    if (!parsedQs['whitelabel-nft']) return
-    const browseTabIndex = navItems.findIndex((navItem) => navItem.code === Tabs.BROWSE_COLLECTION)
-    setActiveTab(browseTabIndex)
-  }, [parsedQs, navItems, setActiveTab])
 
   const handleSetActiveTab = (index: number) => {
     setActiveTab(index)
