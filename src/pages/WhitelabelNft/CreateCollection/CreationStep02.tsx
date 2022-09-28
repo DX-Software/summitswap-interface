@@ -97,7 +97,7 @@ function CreationStep02({ setCurrentCreationStep, formik }: Props) {
           <Divider />
 
           <Button
-            variant={isValidateDisabled || formikValidate.isSubmitting ? 'awesome' : 'primary'}
+            variant={isValidateDisabled ? 'awesome' : 'primary'}
             startIcon={
               formikValidate.isSubmitting ? (
                 <AutoRenewIcon spin color="textDisabled" />
