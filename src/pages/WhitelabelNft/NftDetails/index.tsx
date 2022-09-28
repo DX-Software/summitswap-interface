@@ -12,6 +12,7 @@ import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import Header, { HeaderLevel } from '../shared/Header'
 import AboutSection from './AboutSection'
 import IntroductionSection from './IntroductionSection'
+import MoreNftSection from './MoreNftSection'
 import TraitSection from './TraitSection'
 
 const Divider = styled(Box)`
@@ -127,6 +128,9 @@ function NftDetails({ previousHeaderLevels, whitelabelNft }: NftDetailsProps) {
                 before it runs out of stock!
               </StyledText>
             </PersuasionWrapper>
+          </Grid>
+          <Grid item xs={12} spacing="24px">
+            <MoreNftSection whitelabelNftItem={whitelabelNftItem} />
           </Grid>
         </Grid>
       </Grid>

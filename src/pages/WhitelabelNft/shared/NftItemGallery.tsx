@@ -16,10 +16,12 @@ type Props = {
   totalItem: number
   page: number
   onPageChange: React.Dispatch<React.SetStateAction<number>>
+  displayCount?: number | undefined
+  isRandom?: boolean
 }
 
-function NftItemGallery({ queryResult, totalItem, page, onPageChange }: Props) {
-  const { setTokenId } = useWhitelabelNftContext()
+function NftItemGallery({ queryResult, totalItem, page, onPageChange, displayCount, isRandom }: Props) {
+  const { tokenId, setTokenId } = useWhitelabelNftContext()
   const [onPresentConcealModal] = useModal(<NftItemGalleryItemConcealModal />)
 
   const maxPage = useMemo(() => {
@@ -37,6 +39,20 @@ function NftItemGallery({ queryResult, totalItem, page, onPageChange }: Props) {
     [setTokenId, onPresentConcealModal]
   )
 
+  const data = useMemo(() => {
+    let items = [...(queryResult.data || [])]
+    if (isRandom) {
+      items.sort(() => 0.5 - Math.random())
+    }
+    if (tokenId) {
+      items = items.filter((item) => item.tokenId !== tokenId)
+    }
+    if (displayCount) {
+      items = items.slice(0, displayCount)
+    }
+    return items
+  }, [queryResult.data, isRandom, displayCount, tokenId])
+
   return (
     <>
       <Grid container spacing="40px">
@@ -49,7 +65,7 @@ function NftItemGallery({ queryResult, totalItem, page, onPageChange }: Props) {
                 <HelperText>No NFT Collections adopted yet. Let’s adopt one now!</HelperText>
               </Grid>
             ) : (
-              queryResult.data?.map((item) => (
+              data.map((item) => (
                 <Grid item xs={6} sm={6} md={4} lg={3} key={`nft-item-${item.id}`}>
                   <NftItemGalleryItem
                     data={item}
@@ -74,3 +90,8 @@ function NftItemGallery({ queryResult, totalItem, page, onPageChange }: Props) {
 }
 
 export default React.memo(NftItemGallery)
+
+NftItemGallery.defaultProps = {
+  displayCount: undefined,
+  isRandom: false,
+}

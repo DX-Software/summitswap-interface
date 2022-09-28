@@ -21,7 +21,7 @@ const StyledImg = styled.img`
 
 const StyledImgSkeleton = styled(Skeleton)`
   width: 100%;
-  aspect-ratio: 225/190;
+  aspect-ratio: 1/1;
   margin-bottom: 8px;
 `
 
