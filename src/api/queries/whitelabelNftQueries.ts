@@ -5,6 +5,21 @@ export const WHITELABEL_NFT_FACTORY_BY_ID_GQL = gql`
     whitelabelNftFactory(id: $address) {
       id
       totalWhitelabelNft
+      totalWhitelabelNftPausedPhase
+      totalWhitelabelNftPublicPhase
+      totalWhitelabelNftWhitelistPhase
+    }
+  }
+`
+
+export const WHITELABEL_NFT_ACCOUNT_BY_ID_GQL = gql`
+  query account($address: Bytes!) {
+    account(id: $address) {
+      id
+      totalWhitelabelNft
+      totalWhitelabelNftPausedPhase
+      totalWhitelabelNftPublicPhase
+      totalWhitelabelNftWhitelistPhase
     }
   }
 `
@@ -101,7 +116,7 @@ export const WHITELABEL_NFT_COLLECTIONS_SEARCH_GQL = gql`
   }
 `
 
-export const WHITELABEL_NFT_ITEMS_GQL = gql`
+export const WHITELABEL_NFT_ITEMS_BY_COLLECTION_GQL = gql`
   query whitelabelNftItems($first: Int!, $skip: Int!, $collectionAddress: Bytes!) {
     whitelabelNftItems(
       first: $first
@@ -109,6 +124,42 @@ export const WHITELABEL_NFT_ITEMS_GQL = gql`
       orderBy: tokenId
       orderDirection: desc
       where: { collection: $collectionAddress }
+    ) {
+      id
+      collection {
+        id
+        owner {
+          id
+        }
+        name
+        symbol
+        description
+        previewImageUrl
+        baseTokenURI
+        maxSupply
+        whitelistMintPrice
+        publicMintPrice
+        phase
+        isReveal
+        totalOwner
+        createdAt
+      }
+      tokenId
+      owner {
+        id
+      }
+    }
+  }
+`
+
+export const WHITELABEL_NFT_ITEMS_BY_OWNER_GQL = gql`
+  query whitelabelNftItems($first: Int!, $skip: Int!, $ownerAddress: Bytes!) {
+    whitelabelNftItems(
+      first: $first
+      skip: $skip
+      orderBy: tokenId
+      orderDirection: desc
+      where: { owner: $ownerAddress }
     ) {
       id
       collection {

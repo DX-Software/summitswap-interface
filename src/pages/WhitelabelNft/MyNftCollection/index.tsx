@@ -1,6 +1,6 @@
 import { Flex, Heading } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
-import { useWhitelabelNftCollectionsByOwner } from 'api/useWhitelabelNftApi'
+import { useWhitelabelNftAccountById, useWhitelabelNftCollectionsByOwner } from 'api/useWhitelabelNftApi'
 import { PER_PAGE } from 'constants/whitelabel'
 import React, { useState } from 'react'
 import CollectionDetails from '../CollectionDetails'
@@ -14,6 +14,7 @@ function MyNftCollection() {
   const { account } = useWeb3React()
   const { whitelabelNftId, setWhitelabelNtId } = useWhitelabelNftContext()
 
+  const whitelabelNftAccountById = useWhitelabelNftAccountById(account || '')
   const whitelabelNftCollectionsByOwner = useWhitelabelNftCollectionsByOwner(page, PER_PAGE, account || '')
 
   if (whitelabelNftId) {
@@ -31,7 +32,7 @@ function MyNftCollection() {
       ) : (
         <NftCollectionGallery
           queryResult={whitelabelNftCollectionsByOwner}
-          totalItem={10}
+          totalItem={whitelabelNftAccountById.data?.totalWhitelabelNft?.toNumber() || 0}
           page={page}
           onPageChange={setPage}
           handleShowWhitelabelNft={setWhitelabelNtId}

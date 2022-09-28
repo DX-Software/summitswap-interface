@@ -1,6 +1,11 @@
 import BigNumber from 'bignumber.js'
 import { Phase } from 'constants/whitelabel'
-import { WhitelabelNftFactoryGql, WhitelabelNftCollectionGql, WhitelabelNftItemGql } from 'types/whitelabelNft'
+import {
+  WhitelabelNftFactoryGql,
+  WhitelabelNftCollectionGql,
+  WhitelabelNftItemGql,
+  WhitelabelNftAccountGql,
+} from 'types/whitelabelNft'
 
 // eslint-disable-next-line import/prefer-default-export
 export function getDefaultConcealName(name: string) {
@@ -22,7 +27,22 @@ export function convertToWhitelabelNftFactory(
   return {
     id: data.id || '',
     totalWhitelabelNft: data.totalWhitelabelNft ? new BigNumber(data.totalWhitelabelNft) : undefined,
+    totalWhitelabelNftPausedPhase: data.totalWhitelabelNftPausedPhase
+      ? new BigNumber(data.totalWhitelabelNftPausedPhase)
+      : undefined,
+    totalWhitelabelNftPublicPhase: data.totalWhitelabelNftPublicPhase
+      ? new BigNumber(data.totalWhitelabelNftPublicPhase)
+      : undefined,
+    totalWhitelabelNftWhitelistPhase: data.totalWhitelabelNftWhitelistPhase
+      ? new BigNumber(data.totalWhitelabelNftWhitelistPhase)
+      : undefined,
   }
+}
+
+export function convertToWhitelabelNftAccount(
+  data?: { [key: string]: any } | null
+): WhitelabelNftAccountGql | undefined {
+  return convertToWhitelabelNftFactory(data)
 }
 
 export function convertToWhitelabelNftCollection(data?: {
