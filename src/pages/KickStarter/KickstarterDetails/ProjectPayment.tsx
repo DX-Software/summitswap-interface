@@ -310,7 +310,7 @@ function ProjectPayment({
           <Text color="textSubtle" marginBottom="4px">
             Project Reward
           </Text>
-          <Text marginBottom="16px">{kickstarter?.rewardDescription}</Text>
+          <Text marginBottom="16px" style={{ whiteSpace: 'break-spaces' }}>{kickstarter?.rewardDescription}</Text>
           <Text color="textSubtle" marginBottom="4px">
             Reward Distribution
           </Text>

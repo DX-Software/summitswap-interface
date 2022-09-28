@@ -114,7 +114,7 @@ const ProjectDetails = ({ kickstarter, isLoading }: ProjectDetailsProps) => {
           <Skeleton />
         </>
       ) : (
-        <Text>{kickstarter?.projectDescription}</Text>
+        <Text style={{ whiteSpace: 'break-spaces' }}>{kickstarter?.projectDescription}</Text>
       )}
       <br />
       <Grid container spacing="16px">
@@ -190,7 +190,7 @@ const Rewards = ({ kickstarter, backedKickstarter, isLoading }: RewardsProps) =>
           <Skeleton />
         </>
       ) : (
-        <Text>{kickstarter?.rewardDescription}</Text>
+        <Text style={{ whiteSpace: 'break-spaces' }}>{kickstarter?.rewardDescription}</Text>
       )}
       <br />
       <Text color="textSubtle" marginBottom="4px">
