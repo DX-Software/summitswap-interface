@@ -2,15 +2,14 @@ import { Heading, Text } from '@koda-finance/summitswap-uikit'
 import { Grid, useMediaQuery } from '@mui/material'
 import React from 'react'
 import { UseQueryResult } from 'react-query'
-import { NftMetadata, WhitelabelNftItemGql } from 'types/whitelabelNft'
+import { WhitelabelNftItemGql } from 'types/whitelabelNft'
 import { shortenAddress } from 'utils'
 
 type AboutSectionProps = {
-  metadata: NftMetadata | undefined
   whitelabelNftItem: UseQueryResult<WhitelabelNftItemGql | undefined>
 }
 
-function AboutSection({ metadata, whitelabelNftItem }: AboutSectionProps) {
+function AboutSection({ whitelabelNftItem }: AboutSectionProps) {
   const isMobileView = useMediaQuery('(max-width: 576px)')
 
   return (

@@ -74,7 +74,7 @@ function NftDetails({ previousHeaderLevels, whitelabelNft }: NftDetailsProps) {
             <TraitSection metadata={metadata} />
           </Grid>
           <Grid item xs={12} lg={5}>
-            <AboutSection metadata={metadata} whitelabelNftItem={whitelabelNftItem} />
+            <AboutSection whitelabelNftItem={whitelabelNftItem} />
           </Grid>
         </Grid>
       </Grid>
