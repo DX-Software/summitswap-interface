@@ -104,24 +104,26 @@ function CreateCollection() {
     },
   ]
 
-  if (!account) {
-    return <ConnectWalletSection />
-  }
-
   return (
     <Flex flexDirection="column">
-      <Text color="textSubtle" marginBottom="4px">
-        Step{' '}
-        <Text color="linkColor" bold style={{ display: 'inline-block' }}>
-          0{currentCreationStep + 1}
-        </Text>{' '}
-        of 03 - {steps[currentCreationStep].label}
-      </Text>
+      {account && (
+        <Text color="textSubtle" marginBottom="4px">
+          Step{' '}
+          <Text color="linkColor" bold style={{ display: 'inline-block' }}>
+            0{currentCreationStep + 1}
+          </Text>{' '}
+          of 03 - {steps[currentCreationStep].label}
+        </Text>
+      )}
       <Heading size="xl" marginBottom="16px">
         Create NFT Collection
       </Heading>
       <Divider />
-      <FormikProvider value={formik}>{steps[currentCreationStep].component}</FormikProvider>
+      {account ? (
+        <FormikProvider value={formik}>{steps[currentCreationStep].component}</FormikProvider>
+      ) : (
+        <ConnectWalletSection />
+      )}
     </Flex>
   )
 }
