@@ -102,7 +102,6 @@ export const WHITELABEL_NFT_COLLECTIONS_GQL = gql`
 export const WHITELABEL_NFT_COLLECTIONS_SEARCH_GQL = gql`
   query whitelabelNftCollections($first: Int!, $skip: Int!, $phases: [Int!], $text: Bytes!) {
     whitelabelNftCollections(
-      text: $text
       first: $first
       skip: $skip
       orderBy: createdAt
