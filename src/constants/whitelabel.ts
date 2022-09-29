@@ -43,3 +43,18 @@ export const PHASE_OPTIONS = [
     value: Phase.Public.toString(),
   },
 ]
+
+export const REVEAL_RADIO_OPTIONS = [
+  {
+    label: 'All Collections',
+    value: [true, false],
+  },
+  {
+    label: 'Revealed NFTs',
+    value: [true],
+  },
+  {
+    label: 'Unrevealed NFTs',
+    value: [false],
+  },
+]

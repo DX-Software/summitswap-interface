@@ -22,7 +22,15 @@ function TabAllCollection() {
     getTotalItem()
   }, [getTotalItem, whitelabelNftContract])
 
-  return <NftItemGallery queryResult={whitelabelNftItems} totalItem={totalItem} page={page} onPageChange={setPage} />
+  return (
+    <NftItemGallery
+      queryResult={whitelabelNftItems}
+      totalItem={totalItem}
+      page={page}
+      onPageChange={setPage}
+      displayOwner
+    />
+  )
 }
 
 export default React.memo(TabAllCollection)

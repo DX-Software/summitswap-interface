@@ -148,14 +148,15 @@ export function useWhitelabelNftItemsByCollection(collectionAddress: string, pag
   )
 }
 
-export function useWhitelabelNftItemsByOwner(ownerAddress: string, page = 1, perPage = PER_PAGE) {
+export function useWhitelabelNftItemsByOwner(ownerAddress: string, isReveals: boolean[], page = 1, perPage = PER_PAGE) {
   return useQuery(
-    ['useWhitelabelNftItemsByOwner', page, perPage, ownerAddress],
+    ['useWhitelabelNftItemsByOwner', page, perPage, ownerAddress, isReveals],
     async () => {
       const data = await whitelabelNftClient.request(WHITELABEL_NFT_ITEMS_BY_OWNER_GQL, {
         first: perPage,
         skip: (page - 1) * perPage,
-        ownerAddress,
+        ownerAddress: ownerAddress.toLowerCase(),
+        isReveals,
       })
       const whitelabelNftCollections: WhitelabelNftItemGql[] = data.whitelabelNftItems.map((whitelabel) =>
         convertToWhitelabelNftItem(whitelabel)

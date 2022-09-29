@@ -143,11 +143,6 @@ export type WhitelabelNftTxReceipt = {
   transactionHash: string
 }
 
-export type WhitelabelNftAccountGql = {
-  id: string
-  totalWhitelabelNft?: BigNumber
-}
-
 export type WhitelabelNftFactoryGql = {
   id: string
   totalWhitelabelNft?: BigNumber
@@ -155,6 +150,8 @@ export type WhitelabelNftFactoryGql = {
   totalWhitelabelNftPublicPhase?: BigNumber
   totalWhitelabelNftWhitelistPhase?: BigNumber
 }
+
+export type WhitelabelNftAccountGql = WhitelabelNftFactoryGql
 
 export type WhitelabelNftCollectionGql = {
   id: string

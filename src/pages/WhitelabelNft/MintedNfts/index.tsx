@@ -1,7 +1,11 @@
 import { Box, Flex, Heading, NavTab, Text } from '@koda-finance/summitswap-uikit'
+import { useWeb3React } from '@web3-react/core'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { MintedNftTab, NavItem } from 'types/whitelabelNft'
+import ConnectWalletSection from '../shared/ConnectWalletSection'
+import Divider from '../shared/Divider'
+import TabAllCollection from './TabAllCollection'
 
 const NavTabWrapper = styled(Box)`
   margin-bottom: 24px;
@@ -9,13 +13,14 @@ const NavTabWrapper = styled(Box)`
 `
 
 function MintedNfts() {
+  const { account } = useWeb3React()
   const [tabActiveIndex, setTabActiveIndex] = useState(0)
 
   const collectionTabs: NavItem[] = [
     {
       label: 'All Collections',
       code: MintedNftTab.ALL_COLLECTION,
-      component: null,
+      component: <TabAllCollection />,
     },
     {
       label: 'NFT Collection Albums',
@@ -29,14 +34,23 @@ function MintedNfts() {
       <Heading size="xl" marginBottom="16px">
         Minted NFTs
       </Heading>
-      <NavTabWrapper marginBottom="24px">
-        <NavTab activeIndex={tabActiveIndex} onItemClick={(index: number) => setTabActiveIndex(index)}>
-          {collectionTabs.map((item) => {
-            return <Text key={`tab-${item.label}`}>{item.label}</Text>
-          })}
-        </NavTab>
-      </NavTabWrapper>
-      <div>{collectionTabs[tabActiveIndex].component}</div>
+      {!account ? (
+        <>
+          <Divider />
+          <ConnectWalletSection />
+        </>
+      ) : (
+        <>
+          <NavTabWrapper marginBottom="24px">
+            <NavTab activeIndex={tabActiveIndex} onItemClick={(index: number) => setTabActiveIndex(index)}>
+              {collectionTabs.map((item) => {
+                return <Text key={`tab-${item.label}`}>{item.label}</Text>
+              })}
+            </NavTab>
+          </NavTabWrapper>
+          <div>{collectionTabs[tabActiveIndex].component}</div>
+        </>
+      )}
     </Flex>
   )
 }

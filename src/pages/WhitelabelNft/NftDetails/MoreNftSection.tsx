@@ -30,6 +30,7 @@ function MoreNftSection({ whitelabelNftItem }: MoreNftSectionProps) {
         onPageChange={() => null}
         displayCount={4}
         isRandom
+        displayOwner
       />
     </>
   )

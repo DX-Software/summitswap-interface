@@ -18,9 +18,22 @@ type Props = {
   onPageChange: React.Dispatch<React.SetStateAction<number>>
   displayCount?: number | undefined
   isRandom?: boolean
+  disableOwnedTag?: boolean
+  displayOwner?: boolean
+  displayCollectionName?: boolean
 }
 
-function NftItemGallery({ queryResult, totalItem, page, onPageChange, displayCount, isRandom }: Props) {
+function NftItemGallery({
+  queryResult,
+  totalItem,
+  page,
+  onPageChange,
+  displayCount,
+  isRandom,
+  disableOwnedTag = false,
+  displayOwner = false,
+  displayCollectionName = false,
+}: Props) {
   const { tokenId, setTokenId } = useWhitelabelNftContext()
   const [onPresentConcealModal] = useModal(<NftItemGalleryItemConcealModal />)
 
@@ -71,6 +84,9 @@ function NftItemGallery({ queryResult, totalItem, page, onPageChange, displayCou
                     data={item}
                     baseUrl={item.collection?.baseTokenURI || ''}
                     onClick={() => handleItemOnClick(item)}
+                    disableOwnedTag={disableOwnedTag}
+                    displayOwner={displayOwner}
+                    displayCollectionName={displayCollectionName}
                   />
                 </Grid>
               ))

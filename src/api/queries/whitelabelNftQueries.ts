@@ -188,13 +188,13 @@ export const WHITELABEL_NFT_ITEMS_BY_COLLECTION_GQL = gql`
 `
 
 export const WHITELABEL_NFT_ITEMS_BY_OWNER_GQL = gql`
-  query whitelabelNftItems($first: Int!, $skip: Int!, $ownerAddress: Bytes!) {
+  query whitelabelNftItems($first: Int!, $skip: Int!, $ownerAddress: Bytes!, $isReveals: [Boolean!]) {
     whitelabelNftItems(
       first: $first
       skip: $skip
       orderBy: tokenId
       orderDirection: desc
-      where: { owner: $ownerAddress }
+      where: { owner: $ownerAddress, collection_: { isReveal_in: $isReveals } }
     ) {
       id
       collection {

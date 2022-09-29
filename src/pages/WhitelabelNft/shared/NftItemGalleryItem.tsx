@@ -20,18 +20,24 @@ const NameText = styled(Text)`
   text-overflow: ellipsis;
 `
 
-const OwnerText = styled(Text)`
+const DescriptionText = styled(Text)`
   color: ${({ theme }) => theme.colors.primaryDark};
   font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
 type Props = {
   data: WhitelabelNftItemGql
   baseUrl: string
   onClick: () => void
+  disableOwnedTag: boolean
+  displayOwner: boolean
+  displayCollectionName: boolean
 }
 
-function NftItemGalleryItem({ data, baseUrl, onClick }: Props) {
+function NftItemGalleryItem({ data, baseUrl, onClick, disableOwnedTag, displayOwner, displayCollectionName }: Props) {
   const { account } = useWeb3React()
   const [metadata, setMetadata] = useState<NftMetadata | undefined>()
 
@@ -59,7 +65,10 @@ function NftItemGalleryItem({ data, baseUrl, onClick }: Props) {
   return (
     <Card onClick={onClick}>
       <Box marginBottom="8px">
-        <NftImage base64={metadata?.image} isOwner={data.owner?.id.toLowerCase() === account?.toLowerCase()} />
+        <NftImage
+          base64={metadata?.image}
+          isOwner={!disableOwnedTag && data.owner?.id.toLowerCase() === account?.toLowerCase()}
+        />
       </Box>
       <Text color="linkColor" fontSize="12px">
         #{data.tokenId}
@@ -67,7 +76,8 @@ function NftItemGalleryItem({ data, baseUrl, onClick }: Props) {
       <NameText fontSize="14px" fontWeight={700}>
         {metadata?.name || `Unknown ${data.collection?.name}` || ''}
       </NameText>
-      <OwnerText>{truncateHash(data.owner?.id || '', 8, 6)}</OwnerText>
+      {displayOwner && <DescriptionText>{truncateHash(data.owner?.id || '', 8, 6)}</DescriptionText>}
+      {displayCollectionName && <DescriptionText>{data.collection?.name}</DescriptionText>}
     </Card>
   )
 }
