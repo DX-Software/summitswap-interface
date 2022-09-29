@@ -72,7 +72,13 @@ export const WHITELABEL_NFT_COLLECTION_BY_OWNER_GQL = gql`
 
 export const WHITELABEL_NFT_COLLECTIONS_GQL = gql`
   query whitelabelNftCollections($first: Int!, $skip: Int!, $phases: [Int!]) {
-    whitelabelNftCollections(first: $first, skip: $skip, orderBy: createdAt, orderDirection: desc) {
+    whitelabelNftCollections(
+      first: $first
+      skip: $skip
+      orderBy: createdAt
+      orderDirection: desc
+      where: { phase_in: $phases }
+    ) {
       id
       owner {
         id
@@ -94,8 +100,15 @@ export const WHITELABEL_NFT_COLLECTIONS_GQL = gql`
 `
 
 export const WHITELABEL_NFT_COLLECTIONS_SEARCH_GQL = gql`
-  query whitelabelNftCollectionSearch($first: Int!, $skip: Int!, $text: Bytes!) {
-    whitelabelNftCollectionSearch(text: $text, first: $first, skip: $skip, orderBy: createdAt, orderDirection: desc) {
+  query whitelabelNftCollections($first: Int!, $skip: Int!, $phases: [Int!], $text: Bytes!) {
+    whitelabelNftCollections(
+      text: $text
+      first: $first
+      skip: $skip
+      orderBy: createdAt
+      orderDirection: desc
+      where: { phase_in: $phases, name_contains_nocase: $text }
+    ) {
       id
       owner {
         id
@@ -115,6 +128,29 @@ export const WHITELABEL_NFT_COLLECTIONS_SEARCH_GQL = gql`
     }
   }
 `
+
+// export const WHITELABEL_NFT_COLLECTIONS_SEARCH_GQL = gql`
+//   query whitelabelNftCollectionSearch($first: Int!, $skip: Int!, $text: Bytes!) {
+//     whitelabelNftCollectionSearch(text: $text, first: $first, skip: $skip, orderBy: createdAt, orderDirection: desc) {
+//       id
+//       owner {
+//         id
+//       }
+//       name
+//       symbol
+//       description
+//       previewImageUrl
+//       baseTokenURI
+//       maxSupply
+//       whitelistMintPrice
+//       publicMintPrice
+//       phase
+//       isReveal
+//       totalOwner
+//       createdAt
+//     }
+//   }
+// `
 
 export const WHITELABEL_NFT_ITEMS_BY_COLLECTION_GQL = gql`
   query whitelabelNftItems($first: Int!, $skip: Int!, $collectionAddress: Bytes!) {

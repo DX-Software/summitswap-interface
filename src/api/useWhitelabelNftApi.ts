@@ -93,19 +93,19 @@ export function useWhitelabelNftCollections(
     ['useWhitelabelNftCollections', page, perPage, searchText, phases],
     async () => {
       const query = searchText ? WHITELABEL_NFT_COLLECTIONS_SEARCH_GQL : WHITELABEL_NFT_COLLECTIONS_GQL
-      const key = searchText ? 'whitelabelNftCollectionSearch' : 'whitelabelNftCollections'
 
       const filter = {
-        text: searchText ? `'${searchText}'` : undefined,
+        text: searchText,
+        phases,
         first: perPage,
         skip: (page - 1) * perPage,
       }
       if (!searchText) delete filter.text
 
       const data = await whitelabelNftClient.request(query, filter)
-      const whitelabelNftCollections: WhitelabelNftCollectionGql[] = data[key]
-        .map((whitelabel) => convertToWhitelabelNftCollection(whitelabel))
-        .filter((whitelabelNft) => phases.includes(whitelabelNft.phase))
+      const whitelabelNftCollections: WhitelabelNftCollectionGql[] = data.whitelabelNftCollections.map((whitelabel) =>
+        convertToWhitelabelNftCollection(whitelabel)
+      )
       return whitelabelNftCollections
     },
     { refetchOnWindowFocus: true }

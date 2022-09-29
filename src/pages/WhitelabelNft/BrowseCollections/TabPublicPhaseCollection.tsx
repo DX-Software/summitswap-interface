@@ -34,6 +34,7 @@ function TabPublicPhaseCollection({ whitelabelNftFactory }: Props) {
       onSearchChange={setSearch}
       onPageChange={setPage}
       handleShowWhitelabelNft={setWhitelabelNtId}
+      withSearch
     />
   )
 }
