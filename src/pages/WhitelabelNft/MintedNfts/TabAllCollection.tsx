@@ -8,7 +8,7 @@ import styled from 'styled-components'
 import NftItemGallery from '../shared/NftItemGallery'
 
 const StyledWrapper = styled(Flex)`
-  margin-bottom: 16px;
+  margin-bottom: 24px;
   column-gap: 16px;
   width: 100%;
 

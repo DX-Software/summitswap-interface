@@ -35,7 +35,7 @@ function NftItemGallery({
   displayCollectionName = false,
 }: Props) {
   const isMobileView = useMediaQuery('(max-width: 576px)')
-  const { tokenId, setTokenId } = useWhitelabelNftContext()
+  const { whitelabelNftId, setWhitelabelNtId, tokenId, setTokenId } = useWhitelabelNftContext()
   const [onPresentConcealModal] = useModal(<NftItemGalleryItemConcealModal />)
 
   const maxPage = useMemo(() => {
@@ -47,10 +47,11 @@ function NftItemGallery({
       if (!item.collection?.isReveal) {
         onPresentConcealModal()
       } else {
+        if (!whitelabelNftId) setWhitelabelNtId(item.collection.id)
         setTokenId(item.tokenId!)
       }
     },
-    [setTokenId, onPresentConcealModal]
+    [whitelabelNftId, setWhitelabelNtId, setTokenId, onPresentConcealModal]
   )
 
   const data = useMemo(() => {

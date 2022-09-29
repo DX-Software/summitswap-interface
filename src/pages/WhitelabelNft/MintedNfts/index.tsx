@@ -3,6 +3,8 @@ import { useWeb3React } from '@web3-react/core'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { MintedNftTab, NavItem } from 'types/whitelabelNft'
+import CollectionDetails from '../CollectionDetails'
+import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import ConnectWalletSection from '../shared/ConnectWalletSection'
 import Divider from '../shared/Divider'
 import TabAllCollection from './TabAllCollection'
@@ -15,6 +17,7 @@ const NavTabWrapper = styled(Box)`
 function MintedNfts() {
   const { account } = useWeb3React()
   const [tabActiveIndex, setTabActiveIndex] = useState(0)
+  const { whitelabelNftId } = useWhitelabelNftContext()
 
   const collectionTabs: NavItem[] = [
     {
@@ -28,6 +31,10 @@ function MintedNfts() {
       component: null,
     },
   ]
+
+  if (whitelabelNftId) {
+    return <CollectionDetails previousPage="Minted NFTs" />
+  }
 
   return (
     <Flex flexDirection="column">
