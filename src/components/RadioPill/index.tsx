@@ -1,19 +1,17 @@
-import { Box, Tag, TagProps } from '@koda-finance/summitswap-uikit'
+import { Button, ButtonProps } from '@koda-finance/summitswap-uikit'
 import React from 'react'
 
-type Props = TagProps & {
+type Props = ButtonProps & {
   onClick?: () => void
   checked?: boolean
   children: React.ReactNode
 }
 
-function RadioPill({ onClick, checked, children, ...props }: Props) {
+function RadioPill({ onClick, checked, children, variant, ...props }: Props) {
   return (
-    <Box display="inline-block" onClick={onClick} style={{ cursor: 'pointer' }}>
-      <Tag bold {...props} outline={!checked}>
-        {children}
-      </Tag>
-    </Box>
+    <Button scale="sm" variant={!checked ? 'secondary' : variant} {...props} onClick={onClick}>
+      {children}
+    </Button>
   )
 }
 

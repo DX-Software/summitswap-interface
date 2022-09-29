@@ -4,7 +4,26 @@ import { useWhitelabelNftItemsByOwner } from 'api/useWhitelabelNftApi'
 import RadioPill from 'components/RadioPill'
 import { PER_PAGE, REVEAL_RADIO_OPTIONS } from 'constants/whitelabel'
 import React, { useState } from 'react'
+import styled from 'styled-components'
 import NftItemGallery from '../shared/NftItemGallery'
+
+const StyledWrapper = styled(Flex)`
+  margin-bottom: 16px;
+  column-gap: 16px;
+  width: 100%;
+
+  @media (max-width: 576px) {
+    overflow: auto;
+    white-space: nowrap;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+`
 
 function TabAllCollection() {
   const [page, setPage] = useState(1)
@@ -14,7 +33,7 @@ function TabAllCollection() {
 
   return (
     <>
-      <Flex marginBottom="24px" style={{ columnGap: '16px' }}>
+      <StyledWrapper>
         {REVEAL_RADIO_OPTIONS.map((option) => (
           <RadioPill
             key={option.label}
@@ -25,7 +44,7 @@ function TabAllCollection() {
             {option.label}
           </RadioPill>
         ))}
-      </Flex>
+      </StyledWrapper>
       <NftItemGallery
         queryResult={whitelabelNftItems}
         totalItem={5}

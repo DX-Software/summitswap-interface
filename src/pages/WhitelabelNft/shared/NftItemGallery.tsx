@@ -1,5 +1,5 @@
 import { Flex, useModal } from '@koda-finance/summitswap-uikit'
-import { Grid } from '@mui/material'
+import { Grid, useMediaQuery } from '@mui/material'
 import Pagination from 'components/Pagination/Pagination'
 import { PER_PAGE } from 'constants/whitelabel'
 import React, { useCallback, useMemo } from 'react'
@@ -34,6 +34,7 @@ function NftItemGallery({
   displayOwner = false,
   displayCollectionName = false,
 }: Props) {
+  const isMobileView = useMediaQuery('(max-width: 576px)')
   const { tokenId, setTokenId } = useWhitelabelNftContext()
   const [onPresentConcealModal] = useModal(<NftItemGalleryItemConcealModal />)
 
@@ -67,41 +68,39 @@ function NftItemGallery({
   }, [queryResult.data, isRandom, displayCount, tokenId])
 
   return (
-    <>
-      <Grid container spacing="40px">
-        <Grid item xs={12}>
-          <Grid container spacing="24px">
-            {queryResult.isLoading ? (
-              <NftItemGalleryLoadingSection />
-            ) : queryResult.isFetched && queryResult.data?.length === 0 ? (
-              <Grid item xs={12}>
-                <HelperText>No NFT Collections adopted yet. Let’s adopt one now!</HelperText>
+    <Grid container gap="40px">
+      <Grid item xs={12}>
+        <Grid container spacing={isMobileView ? '16px' : '24px'}>
+          {queryResult.isLoading ? (
+            <NftItemGalleryLoadingSection />
+          ) : queryResult.isFetched && queryResult.data?.length === 0 ? (
+            <Grid item xs={12}>
+              <HelperText>No NFT Collections adopted yet. Let’s adopt one now!</HelperText>
+            </Grid>
+          ) : (
+            data.map((item) => (
+              <Grid item xs={6} sm={6} md={4} lg={3} key={`nft-item-${item.id}`}>
+                <NftItemGalleryItem
+                  data={item}
+                  baseUrl={item.collection?.baseTokenURI || ''}
+                  onClick={() => handleItemOnClick(item)}
+                  disableOwnedTag={disableOwnedTag}
+                  displayOwner={displayOwner}
+                  displayCollectionName={displayCollectionName}
+                />
               </Grid>
-            ) : (
-              data.map((item) => (
-                <Grid item xs={6} sm={6} md={4} lg={3} key={`nft-item-${item.id}`}>
-                  <NftItemGalleryItem
-                    data={item}
-                    baseUrl={item.collection?.baseTokenURI || ''}
-                    onClick={() => handleItemOnClick(item)}
-                    disableOwnedTag={disableOwnedTag}
-                    displayOwner={displayOwner}
-                    displayCollectionName={displayCollectionName}
-                  />
-                </Grid>
-              ))
-            )}
-          </Grid>
+            ))
+          )}
         </Grid>
-        {maxPage > 1 && (
-          <Grid item xs={12}>
-            <Flex justifyContent="flex-end" style={{ columnGap: '8px' }}>
-              <Pagination maxPage={maxPage} page={page} onPageChange={onPageChange} />
-            </Flex>
-          </Grid>
-        )}
       </Grid>
-    </>
+      {maxPage > 1 && (
+        <Grid item xs={12}>
+          <Flex justifyContent="flex-end" style={{ columnGap: '8px' }}>
+            <Pagination maxPage={maxPage} page={page} onPageChange={onPageChange} />
+          </Flex>
+        </Grid>
+      )}
+    </Grid>
   )
 }
 
