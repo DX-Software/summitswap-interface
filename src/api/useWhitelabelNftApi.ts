@@ -9,6 +9,7 @@ import {
   WhitelabelMetadataValidateDto,
   WhitelabelNftCollectionGql,
   WhitelabelNftItemGql,
+  WhitelabelNftOwnerGql,
   WhitelabelSignatureResult,
   WhitelabelSignaturesAddDto,
   WhitelabelSignaturesDeleteAllDto,
@@ -22,6 +23,7 @@ import {
   convertToWhitelabelNftCollection,
   convertToWhitelabelNftFactory,
   convertToWhitelabelNftItem,
+  convertToWhitelabelNftOwner,
 } from 'utils/whitelabelNft'
 import httpClient from './http'
 import {
@@ -34,6 +36,7 @@ import {
   WHITELABEL_NFT_ITEMS_BY_COLLECTION_GQL,
   WHITELABEL_NFT_ITEMS_BY_OWNER_GQL,
   WHITELABEL_NFT_ITEM_GQL,
+  WHITELABEL_NFT_OWNER_BY_OWNER_GQL,
 } from './queries/whitelabelNftQueries'
 
 const URL = 'whitelabel-nft'
@@ -183,6 +186,24 @@ export function useWhitelabelNftItemById(id: string) {
       })
       const whitelabelNftItem: WhitelabelNftItemGql | undefined = convertToWhitelabelNftItem(data.whitelabelNftItem)
       return whitelabelNftItem
+    },
+    { refetchOnWindowFocus: true }
+  )
+}
+
+export function useWhitelabelNftOwnerByOwner(owner: string, searchText?: string) {
+  return useQuery(
+    ['useWhitelabelNftOwnerByOwner', owner, searchText],
+    async () => {
+      const data = await whitelabelNftClient.request(WHITELABEL_NFT_OWNER_BY_OWNER_GQL, {
+        owner: owner.toLowerCase(),
+        text: searchText || '',
+      })
+      const whitelabelNftOwners: WhitelabelNftOwnerGql[] = data.nftOwners.map((whitelabel) =>
+        convertToWhitelabelNftOwner(whitelabel)
+      )
+
+      return whitelabelNftOwners
     },
     { refetchOnWindowFocus: true }
   )

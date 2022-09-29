@@ -43,19 +43,20 @@ type Props = {
   isReveal?: boolean
   phase?: Phase
   maxSupply?: BigNumber
+  nftCount?: BigNumber
 }
 
-function NftCollectionGalleryItem({ id, name, previewImageUrl, isReveal, phase, maxSupply }: Props) {
+function NftCollectionGalleryItem({ id, name, previewImageUrl, isReveal, phase, maxSupply, nftCount }: Props) {
   const { setWhitelabelNtId } = useWhitelabelNftContext()
 
   return (
     <Card onClick={() => setWhitelabelNtId(id)}>
       <NftCollectionGalleryItemImage src={previewImageUrl || ''} isReveal={isReveal} />
-      {phase && <PhaseTag phase={phase} />}
+      <PhaseTag phase={phase} />
       <NameText bold>{name}</NameText>
       <InfoText color="textDisabled">
         <InfoText bold color="success" style={{ display: 'inline-block' }}>
-          {maxSupply?.toString()}
+          {maxSupply?.toString() || nftCount?.toString() || 0}
         </InfoText>{' '}
         NFT(s) {maxSupply ? 'Collections' : 'owned'}
       </InfoText>

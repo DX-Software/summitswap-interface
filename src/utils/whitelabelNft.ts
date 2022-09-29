@@ -5,6 +5,7 @@ import {
   WhitelabelNftCollectionGql,
   WhitelabelNftItemGql,
   WhitelabelNftAccountGql,
+  WhitelabelNftOwnerGql,
 } from 'types/whitelabelNft'
 
 // eslint-disable-next-line import/prefer-default-export
@@ -74,6 +75,16 @@ export function convertToWhitelabelNftItem(data?: { [key: string]: any }): White
     collection: data.collection,
     tokenId: data.tokenId,
     owner: data.owner,
+  }
+}
+
+export function convertToWhitelabelNftOwner(data?: { [key: string]: any }): WhitelabelNftOwnerGql | undefined {
+  if (!data) return undefined
+  return {
+    id: data.id,
+    collection: data.collection,
+    owner: data.owner,
+    nftCount: data.nftCount ? new BigNumber(data.nftCount) : undefined,
   }
 }
 

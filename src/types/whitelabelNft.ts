@@ -177,6 +177,13 @@ export type WhitelabelNftItemGql = {
   owner?: WhitelabelNftAccountGql
 }
 
+export type WhitelabelNftOwnerGql = {
+  id: string
+  collection?: WhitelabelNftCollectionGql
+  owner?: WhitelabelNftAccountGql
+  nftCount?: BigNumber
+}
+
 export type TokenInfo = {
   name: string
   symbol: string

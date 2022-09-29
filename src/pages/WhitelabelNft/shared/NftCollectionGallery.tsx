@@ -4,14 +4,13 @@ import Pagination from 'components/Pagination/Pagination'
 import { PER_PAGE } from 'constants/whitelabel'
 import React, { useMemo } from 'react'
 import { UseQueryResult } from 'react-query'
-import { WhitelabelNftCollectionGql } from 'types/whitelabelNft'
+import { WhitelabelNftCollectionGql, WhitelabelNftOwnerGql } from 'types/whitelabelNft'
 import EmptyCollection from '../BrowseCollections/EmptyCollection'
 import NftCollectionGalleryItem from './NftCollectionGalleryItem'
 import NftCollectionGalleryLoadingSection from './NftCollectionGalleryLoadingSection'
 
 type Props = {
-  queryResult: UseQueryResult<WhitelabelNftCollectionGql[], unknown>
-
+  queryResult: UseQueryResult<WhitelabelNftCollectionGql[] | WhitelabelNftOwnerGql[], unknown>
   totalItem: number
   page: number
   search?: string
@@ -52,18 +51,33 @@ function NftCollectionGallery({
             ) : queryResult.isFetched && queryResult.data?.length === 0 ? (
               <EmptyCollection />
             ) : (
-              queryResult.data?.map((item: WhitelabelNftCollectionGql) => (
-                <Grid item xs={6} sm={6} md={4} lg={3} key={`gallery-item-${item.id}`}>
-                  <NftCollectionGalleryItem
-                    id={item.id}
-                    name={item.name}
-                    previewImageUrl={item.previewImageUrl}
-                    isReveal={item.isReveal}
-                    phase={item.phase}
-                    maxSupply={item.maxSupply}
-                  />
-                </Grid>
-              ))
+              queryResult.data?.map((item: WhitelabelNftCollectionGql | WhitelabelNftOwnerGql) => {
+                const collection = item as WhitelabelNftCollectionGql
+                const nftOwner = item as WhitelabelNftOwnerGql
+
+                const key = `gallery-item-${item.id}`
+                const id = nftOwner.collection?.id || collection.id
+                const name = collection.name || nftOwner.collection?.name
+                const previewImageUrl = collection.previewImageUrl || nftOwner.collection?.previewImageUrl
+                const isReveal = collection.isReveal || nftOwner.collection?.isReveal
+                const phase = collection.phase || nftOwner.collection?.phase
+                const { maxSupply } = collection
+                const { nftCount } = nftOwner
+
+                return (
+                  <Grid item xs={6} sm={6} md={4} lg={3} key={key}>
+                    <NftCollectionGalleryItem
+                      id={id}
+                      name={name}
+                      previewImageUrl={previewImageUrl}
+                      isReveal={isReveal}
+                      phase={phase}
+                      maxSupply={maxSupply}
+                      nftCount={nftCount}
+                    />
+                  </Grid>
+                )
+              })
             )}
           </Grid>
         </Grid>

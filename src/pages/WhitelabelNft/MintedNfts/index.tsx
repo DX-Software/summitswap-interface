@@ -8,6 +8,7 @@ import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import ConnectWalletSection from '../shared/ConnectWalletSection'
 import Divider from '../shared/Divider'
 import TabAllCollection from './TabAllCollection'
+import TabNftCollectionAlbum from './TabNftCollectionAlbum'
 
 const NavTabWrapper = styled(Box)`
   margin-bottom: 24px;
@@ -28,7 +29,7 @@ function MintedNfts() {
     {
       label: 'NFT Collection Albums',
       code: MintedNftTab.NFT_COLLECTION_ALBUMS,
-      component: null,
+      component: <TabNftCollectionAlbum />,
     },
   ]
 

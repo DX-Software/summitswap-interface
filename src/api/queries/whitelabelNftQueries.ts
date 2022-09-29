@@ -252,3 +252,37 @@ export const WHITELABEL_NFT_ITEM_GQL = gql`
     }
   }
 `
+
+export const WHITELABEL_NFT_OWNER_BY_OWNER_GQL = gql`
+  query nftOwners($owner: Bytes!, $text: Bytes!) {
+    nftOwners(where: { nftCount_gt: 0, owner: $owner, collection_: { name_contains_nocase: $text } }) {
+      id
+      collection {
+        id
+        owner {
+          id
+        }
+        name
+        symbol
+        description
+        previewImageUrl
+        baseTokenURI
+        maxSupply
+        whitelistMintPrice
+        publicMintPrice
+        phase
+        isReveal
+        totalOwner
+        createdAt
+      }
+      owner {
+        id
+        totalWhitelabelNft
+        totalWhitelabelNftPausedPhase
+        totalWhitelabelNftWhitelistPhase
+        totalWhitelabelNftPublicPhase
+      }
+      nftCount
+    }
+  }
+`
