@@ -12,7 +12,7 @@ import NftCollectionGallery from '../shared/NftCollectionGallery'
 function MyNftCollection() {
   const [page, setPage] = useState(1)
   const { account } = useWeb3React()
-  const { whitelabelNftId, setWhitelabelNtId } = useWhitelabelNftContext()
+  const { whitelabelNftId } = useWhitelabelNftContext()
 
   const whitelabelNftAccountById = useWhitelabelNftAccountById(account || '')
   const whitelabelNftCollectionsByOwner = useWhitelabelNftCollectionsByOwner(page, PER_PAGE, account || '')
@@ -35,7 +35,6 @@ function MyNftCollection() {
           totalItem={whitelabelNftAccountById.data?.totalWhitelabelNft?.toNumber() || 0}
           page={page}
           onPageChange={setPage}
-          handleShowWhitelabelNft={setWhitelabelNtId}
         />
       )}
     </Flex>

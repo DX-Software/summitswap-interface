@@ -4,7 +4,6 @@ import useDebounce from 'hooks/useDebounce'
 import React, { useState } from 'react'
 import { UseQueryResult } from 'react-query'
 import { WhitelabelNftFactoryGql } from 'types/whitelabelNft'
-import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import NftCollectionGallery from '../shared/NftCollectionGallery'
 
 type Props = {
@@ -15,7 +14,6 @@ function TabBrowseAllCollection({ whitelabelNftFactory }: Props) {
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState<string>()
   const debouncedSearch = useDebounce(search, 1000)
-  const { setWhitelabelNtId } = useWhitelabelNftContext()
 
   const whitelabelNftCollections = useWhitelabelNftCollections(page, PER_PAGE, debouncedSearch, [
     Phase.Pause,
@@ -37,7 +35,6 @@ function TabBrowseAllCollection({ whitelabelNftFactory }: Props) {
       search={search}
       onSearchChange={setSearch}
       onPageChange={setPage}
-      handleShowWhitelabelNft={setWhitelabelNtId}
       withSearch
     />
   )

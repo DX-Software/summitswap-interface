@@ -11,13 +11,13 @@ import NftCollectionGalleryLoadingSection from './NftCollectionGalleryLoadingSec
 
 type Props = {
   queryResult: UseQueryResult<WhitelabelNftCollectionGql[], unknown>
+
   totalItem: number
   page: number
   search?: string
   withSearch?: boolean
   onSearchChange?: React.Dispatch<React.SetStateAction<string | undefined>>
   onPageChange: React.Dispatch<React.SetStateAction<number>>
-  handleShowWhitelabelNft: React.Dispatch<React.SetStateAction<string>>
 }
 
 function NftCollectionGallery({
@@ -28,7 +28,6 @@ function NftCollectionGallery({
   withSearch,
   onSearchChange,
   onPageChange,
-  handleShowWhitelabelNft,
 }: Props) {
   const maxPage = useMemo(() => {
     return Math.ceil(totalItem / PER_PAGE)
@@ -53,9 +52,16 @@ function NftCollectionGallery({
             ) : queryResult.isFetched && queryResult.data?.length === 0 ? (
               <EmptyCollection />
             ) : (
-              queryResult.data?.map((item) => (
+              queryResult.data?.map((item: WhitelabelNftCollectionGql) => (
                 <Grid item xs={6} sm={6} md={4} lg={3} key={`gallery-item-${item.id}`}>
-                  <NftCollectionGalleryItem data={item} onClick={() => handleShowWhitelabelNft(item.id)} />
+                  <NftCollectionGalleryItem
+                    id={item.id}
+                    name={item.name}
+                    previewImageUrl={item.previewImageUrl}
+                    isReveal={item.isReveal}
+                    phase={item.phase}
+                    maxSupply={item.maxSupply}
+                  />
                 </Grid>
               ))
             )}

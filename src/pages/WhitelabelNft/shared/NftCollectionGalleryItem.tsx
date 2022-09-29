@@ -1,7 +1,10 @@
 import { Box, Text } from '@koda-finance/summitswap-uikit'
+import BigNumber from 'bignumber.js'
+import { Phase } from 'constants/whitelabel'
 import React from 'react'
 import styled from 'styled-components'
-import { WhitelabelNftCollectionGql } from 'types/whitelabelNft'
+import { WhitelabelNftCollectionGql, WhitelabelNftOwnerGql } from 'types/whitelabelNft'
+import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import { PhaseTag } from './CustomTag'
 import NftCollectionGalleryItemImage from './NftCollectionGalleryItemImage'
 
@@ -34,21 +37,27 @@ const InfoText = styled(Text)`
 `
 
 type Props = {
-  data: WhitelabelNftCollectionGql
-  onClick: () => void
+  id: string
+  name?: string
+  previewImageUrl?: string
+  isReveal?: boolean
+  phase?: Phase
+  maxSupply?: BigNumber
 }
 
-function NftCollectionGalleryItem({ data, onClick }: Props) {
+function NftCollectionGalleryItem({ id, name, previewImageUrl, isReveal, phase, maxSupply }: Props) {
+  const { setWhitelabelNtId } = useWhitelabelNftContext()
+
   return (
-    <Card onClick={onClick}>
-      <NftCollectionGalleryItemImage src={data.previewImageUrl || ''} isReveal={data.isReveal} />
-      <PhaseTag phase={data.phase} />
-      <NameText bold>{data.name}</NameText>
+    <Card onClick={() => setWhitelabelNtId(id)}>
+      <NftCollectionGalleryItemImage src={previewImageUrl || ''} isReveal={isReveal} />
+      {phase && <PhaseTag phase={phase} />}
+      <NameText bold>{name}</NameText>
       <InfoText color="textDisabled">
         <InfoText bold color="success" style={{ display: 'inline-block' }}>
-          {data.maxSupply?.toString()}
+          {maxSupply?.toString()}
         </InfoText>{' '}
-        NFT Collections
+        NFT(s) {maxSupply ? 'Collections' : 'owned'}
       </InfoText>
     </Card>
   )
