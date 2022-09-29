@@ -1,5 +1,5 @@
 import { useWeb3React } from '@web3-react/core'
-import { useWhitelabelNftOwnerByOwner } from 'api/useWhitelabelNftApi'
+import { useWhitelabelNftOwnersByOwner } from 'api/useWhitelabelNftApi'
 import useDebounce from 'hooks/useDebounce'
 import React, { useState } from 'react'
 import NftCollectionGallery from '../shared/NftCollectionGallery'
@@ -9,7 +9,7 @@ function TabNftCollectionAlbum() {
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState<string>()
   const debouncedSearch = useDebounce(search, 1000)
-  const whitelabelNftOwnerByOwner = useWhitelabelNftOwnerByOwner(account || '', debouncedSearch)
+  const whitelabelNftOwnerByOwner = useWhitelabelNftOwnersByOwner(account || '', debouncedSearch)
 
   return (
     <NftCollectionGallery

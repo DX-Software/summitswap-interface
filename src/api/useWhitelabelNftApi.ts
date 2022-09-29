@@ -36,7 +36,8 @@ import {
   WHITELABEL_NFT_ITEMS_BY_COLLECTION_GQL,
   WHITELABEL_NFT_ITEMS_BY_OWNER_GQL,
   WHITELABEL_NFT_ITEM_GQL,
-  WHITELABEL_NFT_OWNER_BY_OWNER_GQL,
+  WHITELABEL_NFT_OWNERS_BY_OWNER_GQL,
+  WHITELABEL_NFT_OWNER_BY_ID_GQL,
 } from './queries/whitelabelNftQueries'
 
 const URL = 'whitelabel-nft'
@@ -191,11 +192,25 @@ export function useWhitelabelNftItemById(id: string) {
   )
 }
 
-export function useWhitelabelNftOwnerByOwner(owner: string, searchText?: string) {
+export function useWhitelabelNftOwnerById(id: string) {
   return useQuery(
-    ['useWhitelabelNftOwnerByOwner', owner, searchText],
+    ['useWhitelabelNftOwnerById', id],
     async () => {
-      const data = await whitelabelNftClient.request(WHITELABEL_NFT_OWNER_BY_OWNER_GQL, {
+      const data = await whitelabelNftClient.request(WHITELABEL_NFT_OWNER_BY_ID_GQL, {
+        id: id.toLowerCase(),
+      })
+      const whitelabelNftOwner: WhitelabelNftOwnerGql | undefined = convertToWhitelabelNftOwner(data.nftOwner)
+      return whitelabelNftOwner
+    },
+    { refetchOnWindowFocus: true }
+  )
+}
+
+export function useWhitelabelNftOwnersByOwner(owner: string, searchText?: string) {
+  return useQuery(
+    ['useWhitelabelNftOwnersByOwner', owner, searchText],
+    async () => {
+      const data = await whitelabelNftClient.request(WHITELABEL_NFT_OWNERS_BY_OWNER_GQL, {
         owner: owner.toLowerCase(),
         text: searchText || '',
       })

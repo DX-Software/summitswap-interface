@@ -192,7 +192,7 @@ export const WHITELABEL_NFT_ITEMS_BY_OWNER_GQL = gql`
     whitelabelNftItems(
       first: $first
       skip: $skip
-      orderBy: tokenId
+      orderBy: createdAt
       orderDirection: desc
       where: { owner: $ownerAddress, collection_: { isReveal_in: $isReveals, name_contains_nocase: $text } }
     ) {
@@ -253,7 +253,41 @@ export const WHITELABEL_NFT_ITEM_GQL = gql`
   }
 `
 
-export const WHITELABEL_NFT_OWNER_BY_OWNER_GQL = gql`
+export const WHITELABEL_NFT_OWNER_BY_ID_GQL = gql`
+  query nftOwner($id: Bytes!) {
+    nftOwner(id: $id) {
+      id
+      collection {
+        id
+        owner {
+          id
+        }
+        name
+        symbol
+        description
+        previewImageUrl
+        baseTokenURI
+        maxSupply
+        whitelistMintPrice
+        publicMintPrice
+        phase
+        isReveal
+        totalOwner
+        createdAt
+      }
+      owner {
+        id
+        totalWhitelabelNft
+        totalWhitelabelNftPausedPhase
+        totalWhitelabelNftWhitelistPhase
+        totalWhitelabelNftPublicPhase
+      }
+      nftCount
+    }
+  }
+`
+
+export const WHITELABEL_NFT_OWNERS_BY_OWNER_GQL = gql`
   query nftOwners($owner: Bytes!, $text: Bytes!) {
     nftOwners(where: { nftCount_gt: 0, owner: $owner, collection_: { name_contains_nocase: $text } }) {
       id
