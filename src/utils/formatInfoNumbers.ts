@@ -63,3 +63,13 @@ export const formatAmount = (
   // toUpperCase is needed cause numeral doesn't have support for capital K M B out of the box
   return numeral(amountWithPrecision).format(format).toUpperCase()
 }
+
+export const formatNumber = (x: string | undefined) => {
+  if (!x) return '-'
+  const parts = x.toString().split(".");
+  const numberPart = parts[0];
+  const decimalPart = parts[1];
+  const thousands = /\B(?=(\d{3})+(?!\d))/g;
+
+  return numberPart.replace(thousands, ",") + (decimalPart ? `.${decimalPart}` : "");
+}

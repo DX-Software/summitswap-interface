@@ -3,6 +3,7 @@ import { getTokenImageBySymbol } from 'connectors'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { Kickstarter } from 'types/kickstarter'
+import { formatNumber } from 'utils/formatInfoNumbers'
 import { getKickstarterStatus, getKickstarterStatusLabel } from 'utils/kickstarter'
 import { ImgCurrency } from '..'
 import ProgressBox from '../ProgressBox'
@@ -70,7 +71,9 @@ function ProjectCard({ kickstarter, onClick }: Props) {
           <Text fontSize="14px">Project Goal</Text>
           <Flex alignItems="center" style={{ columnGap: '8px' }}>
             <ImgCurrency image={getTokenImageBySymbol(kickstarter.tokenSymbol)} />
-            <Text fontSize="14px">{`${kickstarter.projectGoals?.toString()} ${kickstarter.tokenSymbol}`}</Text>
+            <Text fontSize="14px">{`${formatNumber(kickstarter.projectGoals?.toString())} ${
+              kickstarter.tokenSymbol
+            }`}</Text>
           </Flex>
         </Flex>
         <Text marginBottom="8px">

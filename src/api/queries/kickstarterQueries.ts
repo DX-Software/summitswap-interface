@@ -171,7 +171,7 @@ export const KICKSTARTERS_BY_END_TIME_BETWEEN = gql`
     kickstarters(
       first: $first
       skip: $skip
-      where: { endTimestamp_gte: $startTimestamp, endTimestamp_lte: $endTimestamp, approvalStatuses_in: $approvalStatuses }
+      where: { endTimestamp_gte: $startTimestamp, endTimestamp_lte: $endTimestamp, approvalStatus_in: $approvalStatuses }
     ) {
       id
       paymentToken

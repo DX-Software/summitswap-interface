@@ -122,18 +122,23 @@ function CreationStep01({ setCurrentCreationStep, formik }: Props) {
             <img src={URL.createObjectURL(formik.values.image)} alt="Kickstarter" />
           </ImageWrapper>
         ) : (
-          <ImagePlaceholderWrapper
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-            style={{ cursor: 'pointer' }}
-            onClick={handleChooseImage}
-          >
-            <ImageAddIcon width={60} marginBottom="8px" color="menuItemActiveBackground" />
-            <Text color="menuItemActiveBackground" style={{ maxWidth: '150px' }} textAlign="center">
-              Upload Your Project Picture
+          <Flex flexDirection="column" width="270px" style={{ rowGap: '4px' }}>
+            <ImagePlaceholderWrapper
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="center"
+              style={{ cursor: 'pointer' }}
+              onClick={handleChooseImage}
+            >
+              <ImageAddIcon width={60} marginBottom="8px" color="menuItemActiveBackground" />
+              <Text color="menuItemActiveBackground" style={{ maxWidth: '150px' }} textAlign="center">
+                Upload Your Project Picture
+              </Text>
+            </ImagePlaceholderWrapper>
+            <Text color="textSubtle" marginBottom="4px" fontSize="12px">
+              NB: Recommended image dimension would be 272 x 230
             </Text>
-          </ImagePlaceholderWrapper>
+          </Flex>
         )}
         <input
           ref={inputFileElement}

@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { UseQueryResult } from 'react-query'
 import styled from 'styled-components'
 import { Kickstarter, OrderKickstarterBy, OrderDirection } from 'types/kickstarter'
+import { formatNumber } from 'utils/formatInfoNumbers'
 import { getKickstarterApprovalStatusLabel } from 'utils/kickstarter'
 import { StatusText } from '.'
 
@@ -91,10 +92,10 @@ const DataRow: React.FC<{ kickstarter: Kickstarter; handleShowKickstarter: (kick
       <ResponsiveGrid>
         <Text fontWeight={400}>{kickstarter.title}</Text>
         <Text fontWeight={400}>
-          {kickstarter.projectGoals?.toString()} {kickstarter.tokenSymbol?.toString()}
+          {formatNumber(kickstarter.projectGoals?.toString())} {kickstarter.tokenSymbol?.toString()}
         </Text>
         <Text fontWeight={400}>
-          {kickstarter.minContribution?.toString()} {kickstarter.tokenSymbol?.toString()}
+          {formatNumber(kickstarter.minContribution?.toString())} {kickstarter.tokenSymbol?.toString()}
         </Text>
         <Text fontWeight={400}>
           {format(new Date((kickstarter?.endTimestamp?.toNumber() || 0) * 1000), 'yyyy.MM.dd HH:mm O')}
