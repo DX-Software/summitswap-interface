@@ -1,10 +1,10 @@
-import { Box } from '@koda-finance/summitswap-uikit'
+import { Box, Text } from '@koda-finance/summitswap-uikit'
 import { Grid, useMediaQuery } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { useWhitelabelNftApiSignature, useWhitelabelNftCollectionById } from 'api/useWhitelabelNftApi'
 import { BigNumber } from 'ethers'
 import { useWhitelabelNftContract } from 'hooks/useContract'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { useWhitelabelNftContext } from '../contexts/whitelabel'
@@ -21,6 +21,19 @@ const Divider = styled(Box)`
   background-color: ${({ theme }) => theme.colors.inputColor};
 `
 
+const MintMessageWrapper = styled(Box)`
+  margin-top: 24px;
+  font-size: 16px;
+  border-radius: 4px;
+  padding: 12px 16px;
+  background-color: ${({ theme }) => theme.colors.successDark};
+
+  @media (max-width: 576px) {
+    margin-top: 16px;
+    font-size: 14px;
+  }
+`
+
 type WhitelabelNftDetailsProps = {
   previousPage: string
 }
@@ -34,7 +47,13 @@ function CollectionDetails({ previousPage }: WhitelabelNftDetailsProps) {
   const whitelabelNftContract = useWhitelabelNftContract(whitelabelNftId)
 
   const [totalSupply, setTotalSupply] = useState(0)
+  const [mintedMessage, setMintedMessage] = useState('')
   const [isOwner, setIsOwner] = useState(false)
+
+  const mintMessageRef = useRef<null | HTMLDivElement>(null)
+  const scrollToMintMessage = useCallback(() => {
+    mintMessageRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [])
 
   const headerLevel: HeaderLevel[] = [
     { label: previousPage, onBack: () => setWhitelabelNtId('') },
@@ -88,7 +107,12 @@ function CollectionDetails({ previousPage }: WhitelabelNftDetailsProps) {
   return (
     <>
       <Header levels={headerLevel} />
-      <Grid container marginTop="24px">
+      {mintedMessage && (
+        <MintMessageWrapper ref={mintMessageRef}>
+          <Text color="success">{mintedMessage}</Text>
+        </MintMessageWrapper>
+      )}
+      <Grid container marginTop={isMobileView ? '16px' : '24px'}>
         <Grid item xs={12}>
           <MetadataSection isOwner={isOwner} totalSupply={totalSupply} whitelabelNft={whitelabelNft} />
           <Divider marginTop={isMobileView ? '32px' : '44px'} marginBottom={isMobileView ? '32px' : '40px'} />
@@ -105,6 +129,8 @@ function CollectionDetails({ previousPage }: WhitelabelNftDetailsProps) {
             totalSupply={totalSupply}
             whitelabelNft={whitelabelNft}
             whitelabelNftApiSignature={whitelabelNftApiSignature}
+            setMintedMessage={setMintedMessage}
+            scrollToMintMessage={scrollToMintMessage}
           />
           <Divider marginTop={isMobileView ? '32px' : '44px'} marginBottom={isMobileView ? '32px' : '40px'} />
         </Grid>

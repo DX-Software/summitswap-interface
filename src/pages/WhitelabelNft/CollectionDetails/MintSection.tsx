@@ -13,10 +13,8 @@ import {
 import { Grid, useMediaQuery } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { Phase } from 'constants/whitelabel'
-import { BigNumber } from 'ethers'
 import { formatUnits, parseEther } from 'ethers/lib/utils'
 import { FormikProps, FormikProvider, useFormik } from 'formik'
-import { useWhitelabelNftContract } from 'hooks/useContract'
 import React, { useCallback, useMemo } from 'react'
 import { UseQueryResult } from 'react-query'
 import styled from 'styled-components'
@@ -27,7 +25,6 @@ import {
   WhitelabelSignatureResult,
 } from 'types/whitelabelNft'
 import login from 'utils/login'
-import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import { mintCollectionValidationSchema } from '../CreateCollection/validation'
 import InputField from '../shared/InputField'
 import { HelperText, StockText } from '../shared/Text'
@@ -39,6 +36,8 @@ type MintSectionProps = {
   totalSupply: number
   whitelabelNft: UseQueryResult<WhitelabelNftCollectionGql | undefined>
   whitelabelNftApiSignature: UseQueryResult<WhitelabelSignatureResult | undefined>
+  setMintedMessage: React.Dispatch<React.SetStateAction<string>>
+  scrollToMintMessage: () => void
 }
 
 const MinterWrapper = styled(Flex)`
@@ -56,11 +55,16 @@ const ActionButtonWrapper = styled(Flex)`
   }
 `
 
-function MintSection({ isOwner, totalSupply, whitelabelNft, whitelabelNftApiSignature }: MintSectionProps) {
+function MintSection({
+  isOwner,
+  totalSupply,
+  whitelabelNft,
+  whitelabelNftApiSignature,
+  setMintedMessage,
+  scrollToMintMessage,
+}: MintSectionProps) {
   const isMobileView = useMediaQuery('(max-width: 576px)')
   const { account, activate, deactivate } = useWeb3React()
-  const { whitelabelNftId } = useWhitelabelNftContext()
-  const whitelabelNftContract = useWhitelabelNftContract(whitelabelNftId)
 
   const handleLogin = useCallback(
     (connectorId: string) => {
@@ -100,28 +104,7 @@ function MintSection({ isOwner, totalSupply, whitelabelNft, whitelabelNftApiSign
     enableReinitialize: true,
     initialValues: { mintQuantity: 1 },
     validationSchema: mintCollectionValidationSchema,
-    onSubmit: async (values, { setSubmitting }) => {
-      if (!whitelabelNftContract || !account || (!whitelabelNftApiSignature.data && phase === Phase.Whitelist)) {
-        return
-      }
-      setSubmitting(true)
-
-      const tokenInfo = await whitelabelNftContract.tokenInfo()
-      const { phase: tokenInfoPhase, whitelistMintPrice, publicMintPrice } = tokenInfo
-      const nftOwner = await whitelabelNftContract.owner()
-      const price = tokenInfoPhase === Phase.Whitelist ? whitelistMintPrice : publicMintPrice
-      const mintMethod = tokenInfoPhase === Phase.Whitelist ? 'mint(uint256,bytes)' : 'mint(uint256)'
-      const args: (number | string)[] = [values.mintQuantity]
-      if (tokenInfoPhase === Phase.Whitelist) {
-        args.push(whitelabelNftApiSignature.data?.signature || '')
-      }
-
-      await whitelabelNftContract[mintMethod](...args, {
-        value: account === nftOwner ? 0 : BigNumber.from(price).mul(values.mintQuantity),
-      })
-
-      setSubmitting(false)
-    },
+    onSubmit: async () => null,
   })
 
   const handleMintQuantityChanged = useCallback(
@@ -134,7 +117,14 @@ function MintSection({ isOwner, totalSupply, whitelabelNft, whitelabelNftApiSign
   )
 
   const [onPresentMintModal] = useModal(
-    <MintSummaryModal whitelabelNft={whitelabelNft} mintPrice={mintPrice} formik={formik} />
+    <MintSummaryModal
+      whitelabelNft={whitelabelNft}
+      mintPrice={mintPrice}
+      quantity={formik.values.mintQuantity}
+      whitelabelNftApiSignature={whitelabelNftApiSignature}
+      setMintedMessage={setMintedMessage}
+      scrollToMintMessage={scrollToMintMessage}
+    />
   )
   const [onPresentEditMintModal] = useModal(<EditMintPriceModal whitelabelNft={whitelabelNft} />)
 
