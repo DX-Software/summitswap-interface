@@ -81,7 +81,9 @@ function NftItemGallery({
             <NftItemGalleryLoadingSection />
           ) : queryResult.isFetched && queryResult.data?.pages[page].length === 0 ? (
             <Grid item xs={12}>
-              <HelperText>No NFT Collections adopted yet. Let’s adopt one now!</HelperText>
+              <HelperText>
+                {page === 0 ? 'No NFT Collections adopted yet. Let’s adopt one now!' : 'No more data to see.'}
+              </HelperText>
             </Grid>
           ) : (
             data.map((item) => (
