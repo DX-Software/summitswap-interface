@@ -15,7 +15,7 @@ type MoreNftSectionProps = {
 function MoreNftSection({ whitelabelNftItem }: MoreNftSectionProps) {
   const isMobileView = useMediaQuery('(max-width: 576px)')
   const { whitelabelNftId } = useWhitelabelNftContext()
-  const whitelabelNftItems = useWhitelabelNftItemsByCollection(whitelabelNftId, 1, 12)
+  const whitelabelNftItems = useWhitelabelNftItemsByCollection(whitelabelNftId, 12)
 
   return (
     <>
@@ -23,15 +23,7 @@ function MoreNftSection({ whitelabelNftItem }: MoreNftSectionProps) {
         More from {whitelabelNftItem.data?.collection?.name}
       </Heading>
       <Decorator marginBottom="18px" />
-      <NftItemGallery
-        queryResult={whitelabelNftItems}
-        totalItem={whitelabelNftItems.data?.length || 0}
-        page={1}
-        onPageChange={() => null}
-        displayCount={4}
-        isRandom
-        displayOwner
-      />
+      <NftItemGallery queryResult={whitelabelNftItems} displayCount={4} isRandom displayOwner />
     </>
   )
 }

@@ -27,12 +27,11 @@ const StyledWrapper = styled(Flex)`
 `
 
 function TabAllCollection() {
-  const [page, setPage] = useState(1)
   const { account } = useWeb3React()
   const [revealOption, setRevealOption] = useState(REVEAL_RADIO_OPTIONS[0].value)
   const [search, setSearch] = useState<string>('')
   const debouncedSearch = useDebounce(search, 1000)
-  const whitelabelNftItems = useWhitelabelNftItemsByOwner(account || '', revealOption, debouncedSearch, page, PER_PAGE)
+  const whitelabelNftItems = useWhitelabelNftItemsByOwner(account || '', revealOption, debouncedSearch, PER_PAGE)
 
   return (
     <>
@@ -55,14 +54,7 @@ function TabAllCollection() {
           </RadioPill>
         ))}
       </StyledWrapper>
-      <NftItemGallery
-        queryResult={whitelabelNftItems}
-        totalItem={5}
-        page={page}
-        onPageChange={setPage}
-        disableOwnedTag
-        displayCollectionName
-      />
+      <NftItemGallery queryResult={whitelabelNftItems} disableOwnedTag displayCollectionName />
     </>
   )
 }

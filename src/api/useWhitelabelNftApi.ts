@@ -1,6 +1,6 @@
 import { BACKEND_API } from 'constants/index'
 import { PER_PAGE, Phase } from 'constants/whitelabel'
-import { useMutation, useQuery } from 'react-query'
+import { useInfiniteQuery, useMutation, useQuery } from 'react-query'
 import {
   WhitelabelCollectionResult,
   WhitelabelCollectionUpsertDto,
@@ -134,13 +134,13 @@ export function useWhitelabelNftCollectionsByOwner(page = 1, perPage = PER_PAGE,
   )
 }
 
-export function useWhitelabelNftItemsByCollection(collectionAddress: string, page = 1, perPage = PER_PAGE) {
-  return useQuery(
-    ['useWhitelabelNftItemsByCollection', page, perPage, collectionAddress],
-    async () => {
+export function useWhitelabelNftItemsByCollection(collectionAddress: string, perPage = PER_PAGE) {
+  return useInfiniteQuery(
+    ['useWhitelabelNftItemsByCollection', perPage, collectionAddress],
+    async ({ pageParam = 1 }) => {
       const data = await whitelabelNftClient.request(WHITELABEL_NFT_ITEMS_BY_COLLECTION_GQL, {
         first: perPage,
-        skip: (page - 1) * perPage,
+        skip: (pageParam - 1) * perPage,
         collectionAddress,
       })
       const whitelabelNftCollections: WhitelabelNftItemGql[] = data.whitelabelNftItems.map((whitelabel) =>
@@ -148,7 +148,13 @@ export function useWhitelabelNftItemsByCollection(collectionAddress: string, pag
       )
       return whitelabelNftCollections
     },
-    { refetchOnWindowFocus: true }
+    {
+      refetchOnWindowFocus: true,
+      getNextPageParam: (lastPage, pages) => {
+        const nextPage = pages.length + 1
+        return lastPage.length < perPage ? undefined : nextPage
+      },
+    }
   )
 }
 
@@ -156,15 +162,14 @@ export function useWhitelabelNftItemsByOwner(
   ownerAddress: string,
   isReveals: boolean[],
   searchText?: string,
-  page = 1,
   perPage = PER_PAGE
 ) {
-  return useQuery(
-    ['useWhitelabelNftItemsByOwner', page, perPage, ownerAddress, isReveals, searchText],
-    async () => {
+  return useInfiniteQuery(
+    ['useWhitelabelNftItemsByOwner', perPage, ownerAddress, isReveals, searchText],
+    async ({ pageParam = 1 }) => {
       const data = await whitelabelNftClient.request(WHITELABEL_NFT_ITEMS_BY_OWNER_GQL, {
         first: perPage,
-        skip: (page - 1) * perPage,
+        skip: (pageParam - 1) * perPage,
         ownerAddress: ownerAddress.toLowerCase(),
         isReveals,
         text: searchText || '',
@@ -174,7 +179,13 @@ export function useWhitelabelNftItemsByOwner(
       )
       return whitelabelNftCollections
     },
-    { refetchOnWindowFocus: true }
+    {
+      refetchOnWindowFocus: true,
+      getNextPageParam: (lastPage, pages) => {
+        const nextPage = pages.length + 1
+        return lastPage.length < perPage ? undefined : nextPage
+      },
+    }
   )
 }
 
@@ -227,15 +238,14 @@ export function useWhitelabelNftOwnersByOwner(owner: string, searchText?: string
 export function useWhitelabelNftItemsByCollectionAndOwner(
   collectionAddress: string,
   ownerAddress: string,
-  page = 1,
   perPage = PER_PAGE
 ) {
-  return useQuery(
-    ['useWhitelabelNftItemsByCollectionAndOwner', page, perPage, ownerAddress, collectionAddress],
-    async () => {
+  return useInfiniteQuery(
+    ['useWhitelabelNftItemsByCollectionAndOwner', perPage, ownerAddress, collectionAddress],
+    async ({ pageParam = 1 }) => {
       const data = await whitelabelNftClient.request(WHITELABEL_NFT_ITEMS_BY_COLLECTION_GQL, {
         first: perPage,
-        skip: (page - 1) * perPage,
+        skip: (pageParam - 1) * perPage,
         collectionAddress,
       })
       const whitelabelNftCollections: WhitelabelNftItemGql[] = data.whitelabelNftItems
@@ -243,7 +253,13 @@ export function useWhitelabelNftItemsByCollectionAndOwner(
         .filter((item) => item.owner.id === ownerAddress.toLowerCase())
       return whitelabelNftCollections
     },
-    { refetchOnWindowFocus: false }
+    {
+      refetchOnWindowFocus: false,
+      getNextPageParam: (lastPage, pages) => {
+        const nextPage = pages.length + 1
+        return lastPage.length < perPage ? undefined : nextPage
+      },
+    }
   )
 }
 
