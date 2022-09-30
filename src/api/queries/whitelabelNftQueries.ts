@@ -49,7 +49,13 @@ export const WHITELABEL_NFT_COLLECTION_BY_ID_GQL = gql`
 
 export const WHITELABEL_NFT_COLLECTION_BY_OWNER_GQL = gql`
   query whitelabelNftCollections($first: Int!, $skip: Int!, $ownerAddress: Bytes!) {
-    whitelabelNftCollections(first: $first, skip: $skip, where: { owner: $ownerAddress }) {
+    whitelabelNftCollections(
+      first: $first
+      skip: $skip
+      orderBy: createdAt
+      orderDirection: desc
+      where: { owner: $ownerAddress }
+    ) {
       id
       owner {
         id
