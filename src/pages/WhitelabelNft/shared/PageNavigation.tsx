@@ -1,6 +1,6 @@
-import { Button, darkColors, Flex } from '@koda-finance/summitswap-uikit'
+import { ArrowBackIcon, ArrowForwardIcon, Button, darkColors, Flex } from '@koda-finance/summitswap-uikit'
 import { useMediaQuery } from '@mui/material'
-import React from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 
 const StyledButton = styled(Button)`
@@ -27,15 +27,26 @@ type Props = {
 function PageNavigation({ maxPage, page, hasNextPage, handlePrevPage, handleNextPage }: Props) {
   const isMobileView = useMediaQuery('(max-width: 576px)')
 
+  const isPrevDisable = useMemo(() => page === 0, [page])
+  const isNextDisable = useMemo(() => {
+    return hasNextPage === false && page === maxPage - 1
+  }, [hasNextPage, maxPage, page])
+
   return (
     <Flex style={{ columnGap: '8px' }}>
-      <StyledButton scale={isMobileView ? 'xs' : 'sm'} disabled={page === 0} onClick={handlePrevPage}>
+      <StyledButton
+        scale={isMobileView ? 'xs' : 'sm'}
+        disabled={isPrevDisable}
+        onClick={handlePrevPage}
+        startIcon={<ArrowBackIcon color={isPrevDisable ? 'textSubtle' : 'sidebarActiveColor'} />}
+      >
         Previous
       </StyledButton>
       <StyledButton
         scale={isMobileView ? 'xs' : 'sm'}
-        disabled={hasNextPage === false && page === maxPage - 1}
+        disabled={isNextDisable}
         onClick={handleNextPage}
+        endIcon={<ArrowForwardIcon color={isNextDisable ? 'textSubtle' : 'sidebarActiveColor'} />}
       >
         Next
       </StyledButton>
