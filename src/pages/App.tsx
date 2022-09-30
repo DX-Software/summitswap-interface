@@ -40,6 +40,7 @@ import ClaimPage from './Staking/ClaimPage'
 import WhitelabelNft from './WhitelabelNft'
 import PresaleApplication from './PresaleApplication'
 import LaunchPad from './PresaleApplication/LaunchPad'
+import MintWidget from './WhitelabelNft/MintWidget'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -163,6 +164,7 @@ export default function App() {
                 <Route exact strict path={['/', '/send']}>
                   <Redirect to={`/swap${location.search}`} />
                 </Route>
+                <Route exact path="/whitelabel-nft/:nftAddress" component={MintWidget} />
                 <Menu>
                   <BodyWrapper>
                     <AppHeader />
