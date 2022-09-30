@@ -108,7 +108,7 @@ function CreationStep03({ setCurrentCreationStep, formik }: Props) {
             <Grid item xs={6}>
               <SummaryText textAlign="right" color="primary">
                 <EtherIcon />
-                {formik.values.publicMintPrice} ETH
+                {formik.values.whitelistMintPrice} ETH
               </SummaryText>
             </Grid>
             <Grid item xs={6}>
@@ -117,7 +117,7 @@ function CreationStep03({ setCurrentCreationStep, formik }: Props) {
             <Grid item xs={6}>
               <SummaryText textAlign="right" color="primary">
                 <EtherIcon />
-                {formik.values.whitelistMintPrice} ETH
+                {formik.values.publicMintPrice} ETH
               </SummaryText>
             </Grid>
           </Grid>
