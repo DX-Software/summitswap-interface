@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   EtherIcon,
   Flex,
@@ -33,6 +34,19 @@ const Body = styled.div<{ bgColor?: string }>`
   width: 100%;
   height: 100%;
   padding: 24px;
+`
+
+const MintMessageWrapper = styled(Box)`
+  margin-top: 24px;
+  font-size: 16px;
+  border-radius: 4px;
+  padding: 12px 16px;
+  background-color: ${({ theme }) => theme.colors.successDark};
+
+  @media (max-width: 576px) {
+    margin-top: 16px;
+    font-size: 14px;
+  }
 `
 
 const MinterWrapper = styled(Flex)`
@@ -158,6 +172,11 @@ function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
       <Heading color="linkColor" marginBottom={isMobileView ? '8px' : '16px'}>
         Mint {whitelabelNft.data?.name} NFT
       </Heading>
+      {mintedMessage && (
+        <MintMessageWrapper marginBottom="16px">
+          <Text color="success">{mintedMessage}</Text>
+        </MintMessageWrapper>
+      )}
       <Flex flexDirection="row" marginBottom="16px">
         <MinterWrapper>
           <Text fontSize={isMobileView ? '14px' : '16px'} marginRight="24px">
@@ -190,7 +209,7 @@ function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
       ) : (
         <FormikProvider value={formik}>
           <Grid container>
-            <Grid item xs={12} md={5}>
+            <Grid item xs={12} md={3}>
               <InputField
                 label="Mint Quantity"
                 name={WhitelabelNftMintField.mintQuantity}
