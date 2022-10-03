@@ -60,7 +60,7 @@ function NftCollectionGallery({
                 const name = collection.name || nftOwner.collection?.name
                 const previewImageUrl = collection.previewImageUrl || nftOwner.collection?.previewImageUrl
                 const isReveal = collection.isReveal || nftOwner.collection?.isReveal
-                const phase = collection.phase || nftOwner.collection?.phase
+                const phase = collection.phase ?? nftOwner.collection?.phase
                 const { maxSupply } = collection
                 const { nftCount } = nftOwner
 
