@@ -14,8 +14,6 @@ const validateAdminForm = (values: AdminForm) => {
     errors.softcap = 'Softcap should be a positive number'
   } else if (values.softcap > Number(formatUnits(values.presaleInfo?.hardcap || 0, 18))) {
     errors.softcap = 'Softcap <= to hardcap'
-  } else if (values.softcap < Number(formatUnits(values.presaleInfo?.hardcap || 0, 18)) * 0.5) {
-    errors.softcap = 'Softcap >= 50% of hardcap'
   }
 
   if (!values.minBuy) {
