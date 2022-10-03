@@ -10,10 +10,11 @@ import { INITIAL_WHITELABEL_CREATION, Phase } from 'constants/whitelabel'
 import { parseEther } from 'ethers/lib/utils'
 import { FormikProps, FormikProvider, useFormik } from 'formik'
 import { useWhitelabelFactoryContract } from 'hooks/useContract'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { TokenInfo, WhitelabelNft, WhitelabelNftTxReceipt } from 'types/whitelabelNft'
 import { convertImageUrlToFile } from 'utils/converter'
 import { getConcealImageUrl, getDefaultConcealName, getPreviewImageUrl } from 'utils/whitelabelNft'
+import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import ConnectWalletSection from '../shared/ConnectWalletSection'
 import Divider from '../shared/Divider'
 import CreatedNftModal from './CreatedNftModal'
@@ -24,6 +25,7 @@ import { createCollectionValidationSchema } from './validation'
 
 function CreateCollection() {
   const { account } = useWeb3React()
+  const { canCreate, setActiveTab } = useWhitelabelNftContext()
   const [currentCreationStep, setCurrentCreationStep] = useState(0)
 
   const [onPresentCreatedModal] = useModal(<CreatedNftModal />)
@@ -103,6 +105,12 @@ function CreateCollection() {
       component: <CreationStep03 setCurrentCreationStep={setCurrentCreationStep} formik={formik} />,
     },
   ]
+
+  useEffect(() => {
+    if (!canCreate) {
+      setActiveTab(0)
+    }
+  }, [canCreate, setActiveTab])
 
   return (
     <Flex flexDirection="column">

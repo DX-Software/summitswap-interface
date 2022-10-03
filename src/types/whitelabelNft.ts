@@ -29,6 +29,7 @@ export type NavItem = {
   label: string
   code: Tabs | BrowseCollectionTab | NftItemCollectionTab | MintedNftTab
   component: React.ReactNode
+  isHidden?: boolean
 }
 
 export enum WhitelabelNftFormField {
