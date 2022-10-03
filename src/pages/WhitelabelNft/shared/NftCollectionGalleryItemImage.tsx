@@ -1,6 +1,7 @@
 import { Box, darkColors } from '@koda-finance/summitswap-uikit'
 import React from 'react'
 import styled from 'styled-components'
+import { getPreviewImageUrl } from 'utils/whitelabelNft'
 import { CustomTag } from './CustomTag'
 
 const BoxWrapper = styled(Box)`
@@ -68,7 +69,14 @@ function NftCollectionGalleryItemImage({ src, isReveal }: Props) {
     <BoxWrapper>
       <ImageWrapper>
         {isReveal && <RevealTag variant="inverse">REVEALED</RevealTag>}
-        <StyledImage src={src} alt="NFT item" />
+        <StyledImage
+          src={src}
+          onError={({ currentTarget }) => {
+            currentTarget.onerror = null // prevents looping
+            currentTarget.src = getPreviewImageUrl()
+          }}
+          alt="NFT item"
+        />
         <Shadow1 />
         <Shadow2 />
       </ImageWrapper>
