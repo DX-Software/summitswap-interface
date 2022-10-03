@@ -36,7 +36,7 @@ function NftCollectionGallery({
     <>
       {withSearch && (
         <Input
-          placeholder="Seach collection by collection name"
+          placeholder="Search collection by collection name"
           scale="lg"
           style={{ marginBottom: '32px' }}
           value={search}

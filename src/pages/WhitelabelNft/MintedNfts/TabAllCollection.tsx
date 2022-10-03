@@ -36,7 +36,7 @@ function TabAllCollection() {
   return (
     <>
       <Input
-        placeholder="Seach NFT by collection name"
+        placeholder="Search NFT by collection name"
         scale="lg"
         style={{ marginBottom: '24px' }}
         value={search}
