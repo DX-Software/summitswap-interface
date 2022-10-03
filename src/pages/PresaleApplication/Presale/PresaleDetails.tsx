@@ -128,7 +128,7 @@ const PresaleDetails = ({ presaleAddress }: Props) => {
             <StyledText color="textSubtle" marginTop="6px" fontSize="14px">
               Every
               <StyledText fontSize="14px" style={{ display: 'inline' }} color="primaryDark" bold>
-                &nbsp;10%&nbsp;
+                &nbsp;{`${presaleInfo?.maxClaimPercentage.mul(100).div(10 ** FEE_DECIMALS)}%`}&nbsp;
               </StyledText>
               of the total claimable token will be available for redeem on
               <StyledText fontSize="14px" style={{ display: 'inline' }} color="primaryDark" bold>
