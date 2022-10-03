@@ -30,9 +30,8 @@ import InputField from './shared/InputField'
 import { HelperText, StockText } from './shared/Text'
 
 const Body = styled.div<{ bgColor?: string }>`
-  /* background-color: ${({ bgColor }) => (bgColor ? `#${bgColor}` : 'white')}; */
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   padding: 24px;
 `
 
