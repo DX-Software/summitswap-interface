@@ -49,7 +49,7 @@ export const ROUTER_OPTIONS = [
   },
 ]
 
-export const DAY_OPTIONS = [...Array(31).keys()].map((i) => ({
+export const DAY_OPTIONS = [...Array(28).keys()].map((i) => ({
   label: `${i + 1}`,
   value: `${i + 1}`,
 }))
