@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { FormikProps } from 'formik'
 import { formatUnits } from 'ethers/lib/utils'
@@ -97,6 +97,10 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
   const presaleToken = useToken(presaleInfo?.presaleToken)
   const tokenContract = useTokenContract(presaleToken?.address, true)
 
+  const getTokenSymbolByAddress = useCallback((address: string) => {
+    return Object.keys(TOKEN_CHOICES).find((key) => TOKEN_CHOICES[key] === address)
+  }, [])
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => () => cancelEditButtonHandler(false), [])
 
@@ -154,29 +158,37 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
             <StyledText>Token Supply</StyledText>
             <StyledText>{tokenTotalSupply}</StyledText>
           </GridContainer>
-          <Box marginTop="8px">
-            <StyledText marginBottom="8px" fontWeight={700}>
-              Choose Currency
-            </StyledText>
-            <Flex width="180px" flexWrap="wrap" justifyContent="space-between" onChange={formik.handleChange}>
-              {Object.keys(TOKEN_CHOICES)
-                .filter((key) => key !== 'KODA')
-                .map((key) => (
-                  <label key={`${FieldNames.paymentToken}-${key}`} htmlFor={`${FieldNames.paymentToken}-${key}`}>
-                    <RowFixed marginBottom="5px">
-                      <Radio
-                        id={`${FieldNames.paymentToken}-${key}`}
-                        scale="sm"
-                        name={FieldNames.paymentToken}
-                        value={TOKEN_CHOICES[key]}
-                        checked={formik.values?.paymentToken === TOKEN_CHOICES[key]}
-                      />
-                      <StyledText marginLeft="5px">{key}</StyledText>
-                    </RowFixed>
-                  </label>
-                ))}
-            </Flex>
-          </Box>
+          {presaleInfo?.isApproved && (
+            <GridContainer>
+              <StyledText>Currency</StyledText>
+              <StyledText>{getTokenSymbolByAddress(formik.values?.paymentToken || '')}</StyledText>
+            </GridContainer>
+          )}
+          {!presaleInfo?.isApproved && (
+            <Box marginTop="8px">
+              <StyledText marginBottom="8px" fontWeight={700}>
+                Choose Currency
+              </StyledText>
+              <Flex width="180px" flexWrap="wrap" justifyContent="space-between" onChange={formik.handleChange}>
+                {Object.keys(TOKEN_CHOICES)
+                  .filter((key) => key !== 'KODA')
+                  .map((key) => (
+                    <label key={`${FieldNames.paymentToken}-${key}`} htmlFor={`${FieldNames.paymentToken}-${key}`}>
+                      <RowFixed marginBottom="5px">
+                        <Radio
+                          id={`${FieldNames.paymentToken}-${key}`}
+                          scale="sm"
+                          name={FieldNames.paymentToken}
+                          value={TOKEN_CHOICES[key]}
+                          checked={formik.values?.paymentToken === TOKEN_CHOICES[key]}
+                        />
+                        <StyledText marginLeft="5px">{key}</StyledText>
+                      </RowFixed>
+                    </label>
+                  ))}
+              </Flex>
+            </Box>
+          )}
         </GridItem2>
       </ContainerToken>
       <Divider />
@@ -207,6 +219,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
                     name={FieldNames.isWhitelistEnabled}
                     value={`${RADIO_VALUES.WHITELIST_DISABLED}`}
                     checked={`${formik.values.isWhitelistEnabled}` === `${RADIO_VALUES.WHITELIST_DISABLED}`}
+                    disabled={presaleInfo?.isApproved}
                   />
                   <label htmlFor={`${FieldNames.isWhitelistEnabled}-${RADIO_VALUES.WHITELIST_DISABLED}`}>
                     <StyledText
@@ -228,6 +241,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
                     name={FieldNames.isWhitelistEnabled}
                     value={`${RADIO_VALUES.WHITELIST_ENABLED}`}
                     checked={`${formik.values.isWhitelistEnabled}` === `${RADIO_VALUES.WHITELIST_ENABLED}`}
+                    disabled={presaleInfo?.isApproved}
                   />
                   <label htmlFor={`${FieldNames.isWhitelistEnabled}-${RADIO_VALUES.WHITELIST_ENABLED}`}>
                     <StyledText
@@ -262,6 +276,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
                   id={FieldNames.softcap}
                   type="number"
                   isWarning={formik.touched.softcap && !!formik.errors.softcap}
+                  disabled={presaleInfo?.isApproved}
                 />
                 <Caption color="failure">
                   {formik.touched.softcap && formik.errors.softcap ? formik.errors.softcap : ''}
@@ -294,6 +309,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
                   id={FieldNames.minBuy}
                   type="number"
                   isWarning={formik.touched.minBuy && !!formik.errors.minBuy}
+                  disabled={presaleInfo?.isApproved}
                 />
                 <Caption color="failure">
                   {formik.touched.minBuy && formik.errors.minBuy ? formik.errors.minBuy : ''}
@@ -312,6 +328,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
                   id={FieldNames.maxBuy}
                   type="number"
                   isWarning={formik.touched.maxBuy && !!formik.errors.maxBuy}
+                  disabled={presaleInfo?.isApproved}
                 />
                 <Caption color="failure">
                   {formik.touched.maxBuy && formik.errors.maxBuy ? formik.errors.maxBuy : ''}
@@ -330,6 +347,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
                     name={FieldNames.refundType}
                     value={RADIO_VALUES.REFUND_TYPE_REFUND}
                     checked={Number(formik.values.refundType) === RADIO_VALUES.REFUND_TYPE_REFUND}
+                    disabled={presaleInfo?.isApproved}
                   />
                   <label htmlFor={`${FieldNames.refundType}-${RADIO_VALUES.REFUND_TYPE_REFUND}`}>
                     <StyledText
@@ -347,6 +365,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
                     name={FieldNames.refundType}
                     value={RADIO_VALUES.REFUND_TYPE_BURN}
                     checked={Number(formik.values.refundType) === RADIO_VALUES.REFUND_TYPE_BURN}
+                    disabled={presaleInfo?.isApproved}
                   />
                   <label htmlFor={`${FieldNames.refundType}-${RADIO_VALUES.REFUND_TYPE_BURN}`}>
                     <StyledText
@@ -372,13 +391,17 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
               <StyledText marginBottom="4px" small>
                 Router
               </StyledText>
-              <Select
-                id={FieldNames.listingChoice}
-                onValueChanged={(value: any) => formik.setFieldValue(FieldNames.listingChoice, value)}
-                selected={`${formik.values.listingChoice}`}
-                scale="sm"
-                options={ROUTER_OPTIONS}
-              />
+              {presaleInfo?.isApproved ? (
+                <Input scale="sm" disabled value={ROUTER_OPTIONS[formik.values?.listingChoice ?? 0].label} />
+              ) : (
+                <Select
+                  id={FieldNames.listingChoice}
+                  onValueChanged={(value: any) => formik.setFieldValue(FieldNames.listingChoice, value)}
+                  selected={`${formik.values.listingChoice}`}
+                  scale="sm"
+                  options={ROUTER_OPTIONS}
+                />
+              )}
             </Box>
             <Flex justifyContent="space-between" flexWrap="wrap">
               <InputWrapper marginTop="8px">
@@ -417,6 +440,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
                           name={FieldNames.listingToken}
                           value={TOKEN_CHOICES[key]}
                           checked={formik.values.listingToken === TOKEN_CHOICES[key]}
+                          disabled={presaleInfo?.isApproved}
                         />
                       </Box>
                       <label htmlFor={`${FieldNames.listingToken}-${key}`}>
@@ -445,6 +469,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
                   name={FieldNames.isVestingEnabled}
                   value={`${RADIO_VALUES.VESTING_DISABLED}`}
                   checked={`${formik.values.isVestingEnabled}` === `${RADIO_VALUES.VESTING_DISABLED}`}
+                  disabled={presaleInfo?.isClaimPhase}
                 />
                 <label htmlFor={`${FieldNames.isVestingEnabled}-${RADIO_VALUES.VESTING_DISABLED}`}>
                   <StyledText
@@ -464,6 +489,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
                   name={FieldNames.isVestingEnabled}
                   value={`${RADIO_VALUES.VESTING_ENABLED}`}
                   checked={`${formik.values.isVestingEnabled}` === `${RADIO_VALUES.VESTING_ENABLED}`}
+                  disabled={presaleInfo?.isClaimPhase}
                 />
                 <label htmlFor={`${FieldNames.isVestingEnabled}-${RADIO_VALUES.VESTING_ENABLED}`}>
                   <StyledText
@@ -490,6 +516,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
                     id={FieldNames.maxClaimPercentage}
                     type="number"
                     isWarning={formik.touched.maxClaimPercentage && !!formik.errors.maxClaimPercentage}
+                    disabled={presaleInfo?.isClaimPhase}
                   />
                   <Caption color="failure">
                     {formik.touched.maxClaimPercentage && formik.errors.maxClaimPercentage
@@ -502,25 +529,33 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
                     <StyledText marginBottom="4px" small>
                       Interval Day
                     </StyledText>
-                    <Select
-                      scale="sm"
-                      options={DAY_OPTIONS}
-                      id={FieldNames.claimIntervalDay}
-                      onValueChanged={(value: any) => formik.setFieldValue(FieldNames.claimIntervalDay, value)}
-                      selected={`${formik.values.claimIntervalDay}`}
-                    />
+                    {presaleInfo?.isClaimPhase ? (
+                      <Input scale="sm" disabled value={formik.values.claimIntervalDay} />
+                    ) : (
+                      <Select
+                        scale="sm"
+                        options={DAY_OPTIONS}
+                        id={FieldNames.claimIntervalDay}
+                        onValueChanged={(value: any) => formik.setFieldValue(FieldNames.claimIntervalDay, value)}
+                        selected={`${formik.values.claimIntervalDay}`}
+                      />
+                    )}
                   </InputWrapper>
                   <InputWrapper>
                     <StyledText marginBottom="4px" small>
                       Interval Time (UTC)
                     </StyledText>
-                    <Select
-                      scale="sm"
-                      options={HOUR_OPTIONS}
-                      id={FieldNames.claimIntervalHour}
-                      onValueChanged={(value: any) => formik.setFieldValue(FieldNames.claimIntervalHour, value)}
-                      selected={`${formik.values.claimIntervalHour}`}
-                    />
+                    {presaleInfo?.isClaimPhase ? (
+                      <Input scale="sm" disabled value={formik.values.claimIntervalDay} />
+                    ) : (
+                      <Select
+                        scale="sm"
+                        options={HOUR_OPTIONS}
+                        id={FieldNames.claimIntervalHour}
+                        onValueChanged={(value: any) => formik.setFieldValue(FieldNames.claimIntervalHour, value)}
+                        selected={`${formik.values.claimIntervalHour}`}
+                      />
+                    )}
                   </InputWrapper>
                 </Flex>
               </>
@@ -546,6 +581,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
               name={FieldNames.startPresaleDate}
               style={{ fontSize: '14px' }}
               isWarning={formik.touched.startPresaleDate && !!formik.errors.startPresaleDate}
+              disabled={presaleInfo?.isApproved}
             />
             <Caption color="failure">
               {formik.touched.startPresaleDate && formik.errors.startPresaleDate ? formik.errors.startPresaleDate : ''}
@@ -564,6 +600,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
               name={FieldNames.startPresaleTime}
               value={formik.values.startPresaleTime}
               isWarning={!!formik.errors.startPresaleTime}
+              disabled={presaleInfo?.isApproved}
             />
             <Caption color="failure">{formik.errors.startPresaleTime ? formik.errors.startPresaleTime : ''}</Caption>
           </DateTimeWrapper>
@@ -582,6 +619,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
               onBlur={formik.handleBlur}
               name={FieldNames.endPresaleDate}
               isWarning={formik.touched.endPresaleDate && !!formik.errors.endPresaleDate}
+              disabled={presaleInfo?.isClaimPhase}
             />
             <Caption color="failure">
               {formik.touched.endPresaleDate && formik.errors.endPresaleDate ? formik.errors.endPresaleDate : ''}
@@ -600,6 +638,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
               onBlur={formik.handleBlur}
               name={FieldNames.endPresaleTime}
               isWarning={!!formik.errors.endPresaleTime}
+              disabled={presaleInfo?.isClaimPhase}
             />
             <Caption color="failure">{formik.errors.endPresaleTime ? formik.errors.endPresaleTime : ''}</Caption>
           </DateTimeWrapper>
@@ -618,6 +657,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
             id={FieldNames.liquidyLockTimeInMins}
             type="number"
             isWarning={formik.touched.liquidyLockTimeInMins && !!formik.errors.liquidyLockTimeInMins}
+            disabled={presaleInfo?.isApproved}
           />
           <Caption
             color={
@@ -849,6 +889,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
               id={FieldNames.feePaymentToken}
               type="number"
               isWarning={formik.touched.feePaymentToken && !!formik.errors.feePaymentToken}
+              disabled={presaleInfo?.isClaimPhase}
             />
             {formik.touched.feePaymentToken && formik.errors.feePaymentToken ? (
               <Caption color="failure">{formik.errors.feePaymentToken}</Caption>
@@ -890,6 +931,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
               id={FieldNames.emergencyWithdrawFee}
               type="number"
               isWarning={formik.touched.emergencyWithdrawFee && !!formik.errors.emergencyWithdrawFee}
+              disabled={presaleInfo?.isClaimPhase}
             />
             {formik.touched.emergencyWithdrawFee && formik.errors.emergencyWithdrawFee ? (
               <Caption color="failure">{formik.errors.emergencyWithdrawFee}</Caption>
@@ -933,6 +975,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
               id={FieldNames.feePresaleToken}
               type="number"
               isWarning={formik.touched.feePresaleToken && !!formik.errors.feePresaleToken}
+              disabled={presaleInfo?.isClaimPhase}
             />
             {formik.touched.feePresaleToken && formik.errors.feePresaleToken ? (
               <Caption color="failure">{formik.errors.feePresaleToken}</Caption>
@@ -965,7 +1008,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
           endIcon={isLoading && <AutoRenewIcon spin color="currentColor" />}
           disabled={isLoading || !formik.isValid}
         >
-          Change & Approve
+          Change {!presaleInfo?.isApproved && ' & Approve'}
         </Button>
         <Button
           type="button"

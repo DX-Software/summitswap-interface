@@ -437,19 +437,19 @@ const PresaleSummary = ({ presaleAddress, handleEditButtonHandler, onApproveHand
               >
                 Approve Presale
               </Button>
-              {handleEditButtonHandler && (
-                <Button
-                  marginTop="16px"
-                  startIcon={<EditIcon color="currentColor" />}
-                  scale="md"
-                  width="fit-content"
-                  variant="tertiary"
-                  onClick={() => handleEditButtonHandler && handleEditButtonHandler(true)}
-                >
-                  Edit Presale
-                </Button>
-              )}
             </>
+          )}
+          {handleEditButtonHandler && (
+            <Button
+              marginTop="16px"
+              startIcon={<EditIcon color="currentColor" />}
+              scale="md"
+              width="fit-content"
+              variant="tertiary"
+              onClick={() => handleEditButtonHandler && handleEditButtonHandler(true)}
+            >
+              Edit Presale
+            </Button>
           )}
         </>
       )}
