@@ -589,7 +589,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
           </DateTimeWrapper>
           <DateTimeWrapper onlyTime>
             <StyledText marginBottom="4px" small>
-              Start Time
+              Start Time (UTC)
             </StyledText>
             <Input
               scale="sm"
@@ -627,7 +627,7 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
           </DateTimeWrapper>
           <DateTimeWrapper onlyTime>
             <StyledText marginBottom="4px" small>
-              End Time
+              End Time (UTC)
             </StyledText>
             <Input
               scale="sm"

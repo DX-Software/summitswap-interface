@@ -299,10 +299,9 @@ const CreationStep06 = ({
         <GridContainer marginTop="4px">
           <StyledText>Start Time</StyledText>
           <StyledText>
-            {getUtcDate(
-              formikPresale.values.startPresaleDate || '',
-              formikPresale.values.startPresaleTime || ''
-            ).toUTCString()}
+            {getUtcDate(formikPresale.values.startPresaleDate || '', formikPresale.values.startPresaleTime || '')
+              .toUTCString()
+              .replace('GMT', 'UTC')}
             {formikPresale.errors.startPresaleTime && (
               <StyledText color="failure" style={{ display: 'inline' }}>
                 &nbsp;({formikPresale.errors.startPresaleTime})
@@ -313,10 +312,9 @@ const CreationStep06 = ({
         <GridContainer marginTop="4px">
           <StyledText>End Time</StyledText>
           <StyledText>
-            {getUtcDate(
-              formikPresale.values.endPresaleDate || '',
-              formikPresale.values.endPresaleTime || ''
-            ).toUTCString()}
+            {getUtcDate(formikPresale.values.endPresaleDate || '', formikPresale.values.endPresaleTime || '')
+              .toUTCString()
+              .replace('GMT', 'UTC')}
           </StyledText>
         </GridContainer>
         <GridContainer marginTop="4px">
