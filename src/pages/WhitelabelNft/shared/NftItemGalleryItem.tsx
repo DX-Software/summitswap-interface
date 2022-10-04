@@ -50,13 +50,15 @@ function NftItemGalleryItem({ data, baseUrl, onClick, disableOwnedTag, displayOw
     return 'concealed'
   }, [isRevealed, data.tokenId])
 
-  const metadataUrl = uriToHttp(`${baseUrl}${baseUrl.endsWith('/') ? '' : '/'}${tokenId}.json`).pop()
+  const metadataUrls = useMemo(() => {
+    return uriToHttp(`${baseUrl}${baseUrl.endsWith('/') ? '' : '/'}${tokenId}.json`)
+  }, [baseUrl, tokenId])
 
   const getMetadata = useCallback(async () => {
-    if (!metadataUrl) return
-    const result = await axios.get(metadataUrl)
+    if (!metadataUrls) return
+    const result = await Promise.any(metadataUrls.map((url) => axios.get(url)))
     setMetadata(result.data)
-  }, [metadataUrl])
+  }, [metadataUrls])
 
   useEffect(() => {
     getMetadata()
