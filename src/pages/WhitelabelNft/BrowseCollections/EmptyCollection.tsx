@@ -4,10 +4,11 @@ import { Tabs } from 'types/whitelabelNft'
 import { useWhitelabelNftContext } from '../contexts/whitelabel'
 
 function EmptyCollection() {
-  const { setActiveTab } = useWhitelabelNftContext()
+  const { activeTab, setActiveTab } = useWhitelabelNftContext()
 
   const tabs = Object.values(Tabs)
-  const createCollectionTabIndex = tabs.findIndex((tab) => tab === Tabs.CREATE_COLLECTION)
+  const browseCollectionTabIndex = tabs.findIndex((tab) => tab === Tabs.BROWSE_COLLECTION)
+  const mintedNftTabIndex = tabs.findIndex((tab) => tab === Tabs.MINTED_NFTS)
 
   return (
     <Flex
@@ -25,17 +26,24 @@ function EmptyCollection() {
         marginBottom={38}
         textAlign="center"
       >
-        No NFT Collections Available. <br />
-        Click the button below to start to create a collection.
+        No NFT Collections Available.
+        {activeTab === mintedNftTabIndex && (
+          <>
+            <br />
+            Click the button below to browse collections.
+          </>
+        )}
       </Heading>
-      <Button
-        variant="tertiary"
-        endIcon={<ArrowForwardIcon />}
-        style={{ fontFamily: 'Poppins' }}
-        onClick={() => setActiveTab(createCollectionTabIndex)}
-      >
-        Create NFT Collection
-      </Button>
+      {activeTab === mintedNftTabIndex && (
+        <Button
+          variant="tertiary"
+          endIcon={<ArrowForwardIcon />}
+          style={{ fontFamily: 'Poppins' }}
+          onClick={() => setActiveTab(browseCollectionTabIndex)}
+        >
+          Browse NFT Collection
+        </Button>
+      )}
     </Flex>
   )
 }
