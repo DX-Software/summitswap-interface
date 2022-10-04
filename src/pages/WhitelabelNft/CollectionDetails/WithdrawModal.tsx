@@ -45,14 +45,14 @@ type Props = InjectedModalProps & {
 const WithdrawModal: React.FC<Props> = ({ whitelabelNftId, whitelabelNft, collectedFunds, onDismiss }) => {
   const { account } = useWeb3React()
   const [isWithdrew, setIsWithdrew] = useState(false)
-  const [withdrawFee, setWithdrawFee] = useState(0)
+  const [withdrawFee, setWithdrawFee] = useState<BigNumber>(BigNumber.from(0))
   const whitelabelNftContract = useWhitelabelNftContract(whitelabelNftId)
   const whitelabelNftFactoryContract = useWhitelabelFactoryContract()
 
   const getWithdrawFee = useCallback(async () => {
     if (!whitelabelNftFactoryContract) return
     const _withdrawFee = (await whitelabelNftFactoryContract?.withdrawFee()) as BigNumber
-    setWithdrawFee(_withdrawFee.toNumber())
+    setWithdrawFee(_withdrawFee)
   }, [whitelabelNftFactoryContract])
 
   const totalFundsGained = useMemo(() => {
@@ -128,20 +128,32 @@ const WithdrawModal: React.FC<Props> = ({ whitelabelNftId, whitelabelNft, collec
                   </Grid>
                 </Grid>
                 <Box width="100%" marginY="4px" borderBottom={`1px solid ${lightColors.inputColor}`} />
-                <Grid item container>
-                  <Grid item xs={5} lg={6}>
-                    <StyledText color="primary" fontWeight={700}>
-                      Total Funds Gained
-                    </StyledText>
+                {withdrawFee.gt(totalFundsGained) ? (
+                  <Grid item container>
+                    <Grid item xs={12}>
+                      <StyledText color="failure" fontWeight={700}>
+                        Insufficient funds to withdraw
+                      </StyledText>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={7} lg={6}>
-                    <StyledText color="primary">{formatUnits(totalFundsGained, 18)} ETH</StyledText>
+                ) : (
+                  <Grid item container>
+                    <Grid item xs={5} lg={6}>
+                      <StyledText color="primary" fontWeight={700}>
+                        Total Funds Gained
+                      </StyledText>
+                    </Grid>
+                    <Grid item xs={7} lg={6}>
+                      <StyledText color="primary">{formatUnits(totalFundsGained, 18)} ETH</StyledText>
+                    </Grid>
                   </Grid>
-                </Grid>
+                )}
               </Grid>
               <Button
+                variant={withdrawFee.gt(totalFundsGained) ? 'awesome' : 'primary'}
                 onClick={formik.submitForm}
                 isLoading={formik.isSubmitting}
+                disabled={withdrawFee.gt(totalFundsGained)}
                 startIcon={formik.isSubmitting && <AutoRenewIcon spin color="textDisabled" />}
               >
                 Withdraw Fund
