@@ -29,6 +29,7 @@ import InputField from '../shared/InputField'
 import { HelperText } from '../shared/Text'
 import MintWidgetSummaryModal from './MintWidgetSummaryModal'
 import StyledButton from './StyledButton'
+import StyledStockText from './StyledStockText'
 
 const Body = styled.div<{ color: string }>`
   width: 100vw;
@@ -83,18 +84,6 @@ const ActionButtonWrapper = styled(Flex)`
     row-gap: 8px;
   }
 `
-
-function Stock({ color, children }: { color: string; children: React.ReactNode }) {
-  return (
-    <HelperText color="default">
-      Stock of{' '}
-      <HelperText bold color={lighten(color, 0.4)} style={{ display: 'inline-block' }}>
-        {children}
-      </HelperText>{' '}
-      NFT(s) available
-    </HelperText>
-  )
-}
 
 function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
   const {
@@ -237,7 +226,7 @@ function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
           >
             Connect My Wallet
           </StyledButton>
-          <Stock color={color}>{stock}</Stock>
+          <StyledStockText color={color}>{stock}</StyledStockText>
         </>
       ) : (
         <FormikProvider value={formik}>
@@ -249,7 +238,7 @@ function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
                 placeholder="Input how many NFT to mint"
                 formik={formik}
                 onChange={handleMintQuantityChanged}
-                helperText={<Stock color={color}>{stock}</Stock>}
+                helperText={<StyledStockText color={color}>{stock}</StyledStockText>}
                 color={color}
               />
             </Grid>
