@@ -51,7 +51,7 @@ function NftImage({ base64, isOwner }: Props) {
       ) : (
         <>
           {isOwner && <RevealTag variant="default">OWNED</RevealTag>}
-          <StyledImage src={base64 ? `data:image/png;base64,${base64}` : getConcealImageUrl()} alt="NFT item" />
+          <StyledImage src={base64 ?? getConcealImageUrl()} alt="NFT item" />
         </>
       )}
     </ImageWrapper>

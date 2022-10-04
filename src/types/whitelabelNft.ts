@@ -206,7 +206,6 @@ export type WhitelabelMintDto = {
 }
 
 export type NftMetadata = {
-  tokenId: number | string
   name: string
   description: string
   image: string
