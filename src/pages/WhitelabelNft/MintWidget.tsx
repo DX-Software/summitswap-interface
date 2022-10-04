@@ -4,13 +4,14 @@ import {
   EtherIcon,
   Flex,
   Heading,
+  lightColors,
   LockIcon,
   Text,
   useModal,
   useWalletModal,
   WalletIcon,
 } from '@koda-finance/summitswap-uikit'
-import { Grid, useMediaQuery } from '@mui/material'
+import { darken, Grid, lighten, useMediaQuery } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { useWhitelabelNftApiSignature, useWhitelabelNftCollectionById } from 'api/useWhitelabelNftApi'
 import { Phase } from 'constants/whitelabel'
@@ -27,20 +28,31 @@ import login from 'utils/login'
 import MintSummaryModal from './CollectionDetails/MintSummaryModal'
 import { mintCollectionValidationSchema } from './CreateCollection/validation'
 import InputField from './shared/InputField'
-import { HelperText, StockText } from './shared/Text'
+import { HelperText } from './shared/Text'
 
-const Body = styled.div<{ bgColor?: string }>`
+const Body = styled.div<{ color: string }>`
   width: 100vw;
   height: 100vh;
   padding: 24px;
+  background-color: ${({ color }) => darken(color, 0.9)};
 `
 
-const MintMessageWrapper = styled(Box)`
+const Header = styled(Heading)<{ color: string }>`
+  margin-bottom: 16px;
+  color: ${({ color }) => lighten(color, 0.2)};
+
+  @media (max-width: 576px) {
+    margin-bottom: 8px;
+  }
+`
+
+const MintMessageWrapper = styled(Box)<{ color: string }>`
   margin-top: 24px;
+  margin-bottom: 16px;
   font-size: 16px;
   border-radius: 4px;
   padding: 12px 16px;
-  background-color: ${({ theme }) => theme.colors.successDark};
+  background-color: ${({ color }) => darken(color, 0.5)};
 
   @media (max-width: 576px) {
     margin-top: 16px;
@@ -48,10 +60,24 @@ const MintMessageWrapper = styled(Box)`
   }
 `
 
-const MinterWrapper = styled(Flex)`
-  background-color: ${({ theme }) => theme.colors.inputColor};
+const MinterWrapper = styled(Flex)<{ color: string }>`
+  background-color: ${({ color }) => darken(color, 0.65)};
   padding: 8px 16px;
-  border-left: 8px solid ${({ theme }) => theme.colors.linkColor};
+  border-left: 8px solid ${({ color }) => color};
+`
+
+const ButtonWrapper = styled(Button)<{ color: string }>`
+  background: ${({ color }) => darken(color, 0.25)};
+  box-shadow: none;
+`
+
+const StyledInputField = styled(InputField)<{ color: string }>`
+  > input {
+    background: ${({ color }) => darken(color, 0.7)};
+  }
+  > input:focus {
+    box-shadow: 0px 0px 6px ${({ color }) => lighten(color, 0.85)} !important;
+  }
 `
 
 const ActionButtonWrapper = styled(Flex)`
@@ -62,6 +88,18 @@ const ActionButtonWrapper = styled(Flex)`
     row-gap: 8px;
   }
 `
+
+function Stock({ color, children }: { color: string; children: React.ReactNode }) {
+  return (
+    <HelperText color="default">
+      Stock of{' '}
+      <HelperText bold color={lighten(color, 0.4)} style={{ display: 'inline-block' }}>
+        {children}
+      </HelperText>{' '}
+      NFT(s) available
+    </HelperText>
+  )
+}
 
 function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
   const {
@@ -166,23 +204,23 @@ function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
 
   if (!nftAddress) return null
 
+  const color = (parseQs.color as string) || lightColors.primary
+
   return (
-    <Body {...parseQs}>
-      <Heading color="linkColor" marginBottom={isMobileView ? '8px' : '16px'}>
-        Mint {whitelabelNft.data?.name} NFT
-      </Heading>
+    <Body color={color}>
+      <Header color={color}>Mint {whitelabelNft.data?.name} NFT</Header>
       {mintedMessage && (
-        <MintMessageWrapper marginBottom="16px">
-          <Text color="success">{mintedMessage}</Text>
+        <MintMessageWrapper color={color}>
+          <Text color={color}>{mintedMessage}</Text>
         </MintMessageWrapper>
       )}
       <Flex flexDirection="row" marginBottom="16px">
-        <MinterWrapper>
+        <MinterWrapper color={color}>
           <Text fontSize={isMobileView ? '14px' : '16px'} marginRight="24px">
             Mint Price
           </Text>
-          <EtherIcon color="linkColor" />
-          <Text color="linkColor" bold fontSize={isMobileView ? '14px' : '16px'}>
+          <EtherIcon color={color} />
+          <Text color={color} bold fontSize={isMobileView ? '14px' : '16px'}>
             {formatUnits(mintPrice, 18)}
           </Text>
         </MinterWrapper>
@@ -193,42 +231,45 @@ function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
         </HelperText>
       ) : !account ? (
         <>
-          <Button
+          <ButtonWrapper
             scale="sm"
             variant="awesome"
             startIcon={<WalletIcon color="default" />}
             style={{ fontFamily: 'Poppins' }}
             onClick={onPresentConnectModal}
             marginBottom="4px"
+            color={color}
           >
             Connect My Wallet
-          </Button>
-          <StockText>{stock}</StockText>
+          </ButtonWrapper>
+          <Stock color={color}>{stock}</Stock>
         </>
       ) : (
         <FormikProvider value={formik}>
           <Grid container>
             <Grid item xs={12} md={3}>
-              <InputField
+              <StyledInputField
                 label="Mint Quantity"
                 name={WhitelabelNftMintField.mintQuantity}
                 placeholder="Input how many NFT to mint"
                 formik={formik}
                 onChange={handleMintQuantityChanged}
-                helperText={<StockText>{stock}</StockText>}
+                helperText={<Stock color={color}>{stock}</Stock>}
+                color={color}
               />
             </Grid>
           </Grid>
           <ActionButtonWrapper>
-            <Button
+            <ButtonWrapper
               scale="sm"
               startIcon={!canMint && <LockIcon width={12} color="textDisabled" />}
               variant={canMint && stock !== 0 ? 'primary' : 'awesome'}
               disabled={!canMint || stock === 0}
               onClick={onPresentMintModal}
+              color={color}
             >
               {canMint ? 'Mint NFT Collection' : 'You are not in whitelist'}
-            </Button>
+            </ButtonWrapper>
           </ActionButtonWrapper>
         </FormikProvider>
       )}

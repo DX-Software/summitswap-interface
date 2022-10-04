@@ -10,12 +10,13 @@ type Props = {
   helperText?: string | React.ReactNode
   onChange?: (value: string) => void
   formik: FormikProps<any>
+  className?: string
 }
 
-function InputField({ label, name, placeholder, helperText, onChange, formik }: Props) {
+function InputField({ label, name, placeholder, helperText, onChange, formik, className }: Props) {
   return (
-    <Box marginBottom="16px">
-      <Text color="#E2E2E2" fontSize="14px">
+    <Box marginBottom="16px" className={className}>
+      <Text color="#E2E2E2" fontSize="14px" marginBottom="4px">
         {label}
       </Text>
       <Input
