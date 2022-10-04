@@ -15,14 +15,14 @@ import { useWeb3React } from '@web3-react/core'
 import { useWhitelabelNftApiSignature, useWhitelabelNftCollectionById } from 'api/useWhitelabelNftApi'
 import { Phase } from 'constants/whitelabel'
 import { BigNumber } from 'ethers'
-import { formatUnits } from 'ethers/lib/utils'
+import { formatUnits, parseEther } from 'ethers/lib/utils'
 import { FormikProps, FormikProvider, useFormik } from 'formik'
 import { useWhitelabelNftContract } from 'hooks/useContract'
 import useParsedQueryString from 'hooks/useParsedQueryString'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
-import { TokenInfo, WhitelabelMintDto, WhitelabelNftMintField } from 'types/whitelabelNft'
+import { WhitelabelMintDto, WhitelabelNftMintField } from 'types/whitelabelNft'
 import login from 'utils/login'
 import { mintCollectionValidationSchema } from '../CreateCollection/validation'
 import InputField from '../shared/InputField'
@@ -94,7 +94,6 @@ function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
   const parseQs = useParsedQueryString()
   const isMobileView = useMediaQuery('(max-width: 576px)')
   const { account, activate, deactivate } = useWeb3React()
-  const [tokenInfo, setTokenInfo] = useState<TokenInfo>()
   const [totalSupply, setTotalSupply] = useState<BigNumber>(BigNumber.from(0))
   const [mintedMessage, setMintedMessage] = useState('')
   const whitelabelNft = useWhitelabelNftCollectionById(nftAddress)
@@ -123,23 +122,21 @@ function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
   }, [parseQs.color])
 
   const phase = useMemo(() => {
-    return tokenInfo?.phase || Phase.Pause
-  }, [tokenInfo?.phase])
+    return whitelabelNft.data?.phase || Phase.Pause
+  }, [whitelabelNft.data?.phase])
 
   const mintPrice = useMemo(() => {
-    let price = BigNumber.from(tokenInfo?.publicMintPrice || '0')
-    if (tokenInfo?.phase === Phase.Whitelist) {
-      price = BigNumber.from(tokenInfo?.whitelistMintPrice || '0')
+    let price = whitelabelNft.data?.publicMintPrice?.toNumber()
+    if (whitelabelNft.data?.phase === Phase.Whitelist) {
+      price = whitelabelNft.data?.whitelistMintPrice?.toNumber()
     }
-    return price.toString()
-  }, [tokenInfo?.publicMintPrice, tokenInfo?.whitelistMintPrice, tokenInfo?.phase])
+    return parseEther(price ? price.toString() : '0')
+  }, [whitelabelNft.data?.publicMintPrice, whitelabelNft.data?.whitelistMintPrice, whitelabelNft.data?.phase])
 
   const stock = useMemo(() => {
-    if (!tokenInfo?.maxSupply) return 0
-    return BigNumber.from(tokenInfo.maxSupply || '0')
-      .sub(totalSupply)
-      .toNumber()
-  }, [tokenInfo?.maxSupply, totalSupply])
+    if (!whitelabelNft.data?.maxSupply) return 0
+    return whitelabelNft.data.maxSupply.minus(totalSupply.toNumber()).toNumber()
+  }, [whitelabelNft.data?.maxSupply, totalSupply])
 
   const isWhitelisted = useMemo(() => {
     return !!whitelabelNftApiSignature.data?.signature
@@ -148,11 +145,6 @@ function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
   const canMint = useMemo(() => {
     return isWhitelisted || phase === Phase.Public
   }, [isWhitelisted, phase])
-
-  const getTokenInfo = useCallback(async () => {
-    const _tokenInfo = await whitelabelNftContract?.tokenInfo()
-    setTokenInfo(_tokenInfo)
-  }, [whitelabelNftContract])
 
   const getTotalSupply = useCallback(async () => {
     const _totalSupply = await whitelabelNftContract?.totalSupply()
@@ -185,10 +177,6 @@ function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
       color={color}
     />
   )
-
-  useEffect(() => {
-    getTokenInfo()
-  }, [getTokenInfo])
 
   useEffect(() => {
     getTotalSupply()
