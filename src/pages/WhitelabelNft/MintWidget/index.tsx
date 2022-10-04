@@ -114,7 +114,13 @@ function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
 
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
 
-  const color = (parseQs.color as string) || lightColors.primary
+  const color = useMemo(() => {
+    const _color = parseQs.color as string
+    if (_color && _color.match(/^#(?:[0-9a-fA-F]{3}){1,2}$/)) {
+      return _color
+    }
+    return lightColors.primary
+  }, [parseQs.color])
 
   const phase = useMemo(() => {
     return tokenInfo?.phase || Phase.Pause
