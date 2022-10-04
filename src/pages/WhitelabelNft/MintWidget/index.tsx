@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   EtherIcon,
   Flex,
   Heading,
@@ -25,10 +24,11 @@ import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
 import { TokenInfo, WhitelabelMintDto, WhitelabelNftMintField } from 'types/whitelabelNft'
 import login from 'utils/login'
-import MintSummaryModal from './CollectionDetails/MintSummaryModal'
-import { mintCollectionValidationSchema } from './CreateCollection/validation'
-import InputField from './shared/InputField'
-import { HelperText } from './shared/Text'
+import { mintCollectionValidationSchema } from '../CreateCollection/validation'
+import InputField from '../shared/InputField'
+import { HelperText } from '../shared/Text'
+import MintWidgetSummaryModal from './MintWidgetSummaryModal'
+import StyledButton from './StyledButton'
 
 const Body = styled.div<{ color: string }>`
   width: 100vw;
@@ -64,11 +64,6 @@ const MinterWrapper = styled(Flex)<{ color: string }>`
   background-color: ${({ color }) => darken(color, 0.65)};
   padding: 8px 16px;
   border-left: 8px solid ${({ color }) => color};
-`
-
-const ButtonWrapper = styled(Button)<{ color: string }>`
-  background: ${({ color }) => darken(color, 0.25)};
-  box-shadow: none;
 `
 
 const StyledInputField = styled(InputField)<{ color: string }>`
@@ -130,6 +125,8 @@ function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
 
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
 
+  const color = (parseQs.color as string) || lightColors.primary
+
   const phase = useMemo(() => {
     return tokenInfo?.phase || Phase.Pause
   }, [tokenInfo?.phase])
@@ -184,13 +181,13 @@ function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
   )
 
   const [onPresentMintModal] = useModal(
-    <MintSummaryModal
+    <MintWidgetSummaryModal
       whitelabelNft={whitelabelNft}
       mintPrice={mintPrice}
       quantity={formik.values.mintQuantity}
       whitelabelNftApiSignature={whitelabelNftApiSignature}
       setMintedMessage={setMintedMessage}
-      scrollToMintMessage={() => null}
+      color={color}
     />
   )
 
@@ -203,8 +200,6 @@ function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
   }, [getTotalSupply])
 
   if (!nftAddress) return null
-
-  const color = (parseQs.color as string) || lightColors.primary
 
   return (
     <Body color={color}>
@@ -231,7 +226,7 @@ function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
         </HelperText>
       ) : !account ? (
         <>
-          <ButtonWrapper
+          <StyledButton
             scale="sm"
             variant="awesome"
             startIcon={<WalletIcon color="default" />}
@@ -241,7 +236,7 @@ function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
             color={color}
           >
             Connect My Wallet
-          </ButtonWrapper>
+          </StyledButton>
           <Stock color={color}>{stock}</Stock>
         </>
       ) : (
@@ -260,7 +255,7 @@ function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
             </Grid>
           </Grid>
           <ActionButtonWrapper>
-            <ButtonWrapper
+            <StyledButton
               scale="sm"
               startIcon={!canMint && <LockIcon width={12} color="textDisabled" />}
               variant={canMint && stock !== 0 ? 'primary' : 'awesome'}
@@ -269,7 +264,7 @@ function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
               color={color}
             >
               {canMint ? 'Mint NFT Collection' : 'You are not in whitelist'}
-            </ButtonWrapper>
+            </StyledButton>
           </ActionButtonWrapper>
         </FormikProvider>
       )}
