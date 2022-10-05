@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import { Box, Flex } from '@koda-finance/summitswap-uikit'
 import { BigNumber } from 'ethers'
-import styled from 'styled-components'
 import { formatUnits } from 'ethers/lib/utils'
-import { AutoRenewIcon, Button, Box, Flex } from '@koda-finance/summitswap-uikit'
+import React, { useEffect, useState } from 'react'
+import styled from 'styled-components'
 import { checkSalePhase } from 'utils/presale'
+import { PresaleInfo, PresalePhases } from '../types'
 import { StyledText } from './Shared'
-import { PresalePhases, PresaleInfo, LoadingForButton, LoadingButtonTypes } from '../types'
 
 interface Props {
   presaleInfo: PresaleInfo | undefined
@@ -13,9 +13,6 @@ interface Props {
   currency: string
   boughtAmount: BigNumber
   tokenSymbol: string | undefined
-  isMainLoading: boolean
-  isLoadingButton: LoadingForButton
-  openWithdrawModal?: () => void
 }
 
 const ContributionCard = styled(Box)`
@@ -25,16 +22,7 @@ const ContributionCard = styled(Box)`
   margin-bottom: 16px;
 `
 
-const ContributionBox = ({
-  boughtAmount,
-  currency,
-  tokenSymbol,
-  presaleInfo,
-  isMainLoading,
-  paymentDecimals,
-  isLoadingButton,
-  openWithdrawModal,
-}: Props) => {
+const ContributionBox = ({ boughtAmount, currency, tokenSymbol, presaleInfo, paymentDecimals }: Props) => {
   const [presalePhase, setPresalePhase] = useState<string>(PresalePhases.PresalePhase)
   const [currentTime, setCurrentTime] = useState(new Date())
 
@@ -67,33 +55,10 @@ const ContributionBox = ({
           {`${formatUnits(boughtAmount.mul(presaleInfo?.presaleRate || 0), 18 + paymentDecimals)} ${tokenSymbol}`}
         </StyledText>
       </Flex>
-      {presalePhase === PresalePhases.PresalePhase && !presaleInfo?.hardcap.eq(presaleInfo.totalBought) && (
-        <>
-          <Button
-            onClick={openWithdrawModal}
-            disabled={isMainLoading || isLoadingButton.isClicked}
-            endIcon={
-              isLoadingButton.isClicked &&
-              isLoadingButton.type === LoadingButtonTypes.EmergencyWithdraw && (
-                <AutoRenewIcon spin color="currentColor" />
-              )
-            }
-            marginTop="8px"
-            scale="sm"
-            width="100%"
-            variant="tertiary"
-          >
-            Withdraw My Contribution
-          </Button>
-          <StyledText fontSize="10px" marginTop="2px" color="warning">
-            {isLoadingButton.error}
-          </StyledText>
-        </>
-      )}
     </ContributionCard>
   ) : (
     <></>
   )
 }
 
-export default ContributionBox
+export default React.memo(ContributionBox)
