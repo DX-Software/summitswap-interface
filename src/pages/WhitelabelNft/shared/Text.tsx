@@ -38,3 +38,13 @@ export function StockText({ children }: StockTextProps) {
     </HelperText>
   )
 }
+
+export const ReadMore = styled(Text)`
+  font-size: 16px;
+  display: inline-block;
+  cursor: pointer;
+
+  @media (max-width: 576px) {
+    font-size: 14px;
+  }
+`

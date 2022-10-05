@@ -18,7 +18,7 @@ import { Phase, PHASE_OPTIONS } from 'constants/whitelabel'
 import { getAddress } from 'ethers/lib/utils'
 import { FormikProps, FormikProvider, FormikValues, useFormik } from 'formik'
 import { useWhitelabelNftContract } from 'hooks/useContract'
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { UseQueryResult } from 'react-query'
 import { useETHBalances } from 'state/wallet/hooks'
 import styled from 'styled-components'
@@ -28,7 +28,7 @@ import { useWhitelabelNftContext } from '../contexts/whitelabel'
 import { PhaseTag } from '../shared/CustomTag'
 import ImageSkeleton from '../shared/ImageSkeleton'
 import NftCollectionGalleryItemImage from '../shared/NftCollectionGalleryItemImage'
-import { DescriptionText, HelperText } from '../shared/Text'
+import { DescriptionText, HelperText, ReadMore } from '../shared/Text'
 import WithdrawModal from './WithdrawModal'
 
 const ActionWrapper = styled(Flex)`
@@ -73,8 +73,9 @@ function MetadataSection({ isOwner, totalSupply, whitelabelNft }: MetadataProps)
   const { whitelabelNftId } = useWhitelabelNftContext()
   const whitelabelNftContract = useWhitelabelNftContract(whitelabelNftId)
   const whitelabelNftApiCollection = useWhitelabelNftApiCollection(whitelabelNftId)
-
   const contractBalance = useETHBalances([whitelabelNftId])[getAddress(whitelabelNftId)]
+
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const isWithdrawButtonDisabled = useMemo(() => {
     return contractBalance?.toExact() === '0'
@@ -203,7 +204,12 @@ function MetadataSection({ isOwner, totalSupply, whitelabelNft }: MetadataProps)
           </FormikProvider>
         )}
         <DescriptionText color="textSubtle" marginTop="16px">
-          {whitelabelNft.data?.description}
+          {isExpanded ? whitelabelNft.data?.description : `${whitelabelNft.data?.description?.slice(0, 175)}... `}
+          {!isExpanded && (
+            <ReadMore color="linkColor" onClick={() => setIsExpanded(true)}>
+              read more
+            </ReadMore>
+          )}
         </DescriptionText>
         {isOwner && (
           <ActionWrapper>
