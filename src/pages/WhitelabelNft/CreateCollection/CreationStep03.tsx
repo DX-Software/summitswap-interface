@@ -136,7 +136,7 @@ function CreationStep03({ setCurrentCreationStep, formik }: Props) {
                 <SummaryText bold color="linkColor" style={{ display: 'inline-block' }}>
                   {formik.values.nftImages.length}
                 </SummaryText>
-                &nbsp;NFT(s)
+                &nbsp;NFT{formik.values.nftImages.length > 1 ? 's' : ''}
               </SummaryText>
             </Grid>
           </Grid>

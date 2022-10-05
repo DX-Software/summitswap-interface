@@ -24,7 +24,7 @@ export const DescriptionText = styled(Text)`
 `
 
 type StockTextProps = {
-  children: React.ReactNode
+  children: number
 }
 
 export function StockText({ children }: StockTextProps) {
@@ -34,7 +34,7 @@ export function StockText({ children }: StockTextProps) {
       <HelperText bold color="linkColor" style={{ display: 'inline-block' }}>
         {children}
       </HelperText>{' '}
-      NFT(s) available
+      NFT{children > 1 ? 's' : ''} available
     </HelperText>
   )
 }

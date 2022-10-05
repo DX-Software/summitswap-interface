@@ -57,7 +57,7 @@ function NftCollectionGalleryItem({ id, name, previewImageUrl, isReveal, phase, 
         <InfoText bold color="success" style={{ display: 'inline-block' }}>
           {maxSupply?.toString() || nftCount?.toString() || 0}
         </InfoText>{' '}
-        NFT(s) {maxSupply ? 'Collections' : 'owned'}
+        NFT{(maxSupply?.toNumber() || 0) > 1 ? 's' : ''} {maxSupply ? 'Collections' : 'owned'}
       </InfoText>
     </Card>
   )

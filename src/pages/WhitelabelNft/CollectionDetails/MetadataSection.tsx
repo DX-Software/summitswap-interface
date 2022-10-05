@@ -251,7 +251,7 @@ function MetadataSection({ isOwner, totalSupply, whitelabelNft }: MetadataProps)
             <StatsCard label="Owners" value={whitelabelNft.data?.totalOwner?.toNumber()} />
           </Grid>
           <Grid item xs={6} lg={4}>
-            <StatsCard label="NFT(s) minted" value={totalSupply} />
+            <StatsCard label={`NFT${totalSupply > 1 ? 's' : 'NFT'} minted`} value={totalSupply} />
           </Grid>
         </Grid>
       </Grid>
