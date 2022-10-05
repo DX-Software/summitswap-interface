@@ -88,7 +88,7 @@ const EditPresale = ({ presaleAddress, onApproveHandler, handleEditButtonHandler
               `${values.isVestingEnabled}` === 'true' ? values.claimIntervalDay : presaleInfo.claimIntervalDay,
             claimIntervalHour:
               `${values.isVestingEnabled}` === 'true' ? values.claimIntervalHour : presaleInfo.claimIntervalHour,
-            totalBought: '0',
+            totalBought: presaleInfo.totalBought.toString(),
             maxClaimPercentage:
               `${values.isVestingEnabled}` === 'true'
                 ? BigNumber.from(values.maxClaimPercentage)
