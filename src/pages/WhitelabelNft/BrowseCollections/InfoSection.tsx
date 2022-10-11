@@ -47,10 +47,8 @@ function InfoSection() {
   const { hideBrowseInfoSection, setHideBrowseInfoSection } = useWhitelabelNftContext()
   const [isExpanded, setIsExpanded] = useState(false)
 
-  const infoRaw = `Ac in bibendum lectus eget maecenas quis dolor, sociis dignissim. Viverra a elementum vitae elementum, porta
-  gravida elit eu. Tincidunt facilisis integer urna, quam faucibus faucibus. Neque, cursus nibh vitae
-  vestibulum, pharetra justo, at venenatis euismod. Massa at adipiscing egestas auctor. Ac massa nisl nibh
-  egestas sed.`
+  const infoRaw = `Summit Swaps White label NFT helps you develop your own NFT projects, Summit Swap provides technical
+  infrastructure services for you to build a one-stop NFT project that supports diverse functions.`
 
   const infoTruncated = useMemo(() => {
     if (infoRaw.length > 160) {

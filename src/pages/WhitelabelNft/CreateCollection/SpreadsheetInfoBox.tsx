@@ -81,8 +81,17 @@ function SpreadsheetInfoBox() {
       </Grid>
 
       <SpreadSheetDescriptionText marginY="16px">
-        Viverra elementum in egestas consequat est. Nisl est sit ac elit, at dui ornare sapien. Nam ultrices bibendum
-        cursus pretium id mollis. Molestie id tortor, eget eu sed tortor.
+        NFT metadata is the core of an NFT. It is a JSON document that often contains the following:
+        <br />
+        NFT’s name
+        <br />
+        Description of the NFT
+        <br />
+        Link to the hosted image
+        <br />
+        Traits
+        <br />
+        This NFT metadata will be input and paired with your NFT images on the smart contract
       </SpreadSheetDescriptionText>
       <a ref={downloadLinkRef} href={DOWNLOAD_METADATA_URL} style={{ display: 'none' }}>
         Download
