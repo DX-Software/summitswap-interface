@@ -81,6 +81,26 @@ function MetadataSection({ isOwner, totalSupply, whitelabelNft }: MetadataProps)
     return contractBalance?.toExact() === '0'
   }, [contractBalance])
 
+  const descriptionTruncated = useMemo(() => {
+    if (whitelabelNft.data?.description && whitelabelNft.data?.description.length > 175) {
+      return `${whitelabelNft.data.description.slice(0, 176)}...`
+    }
+    return whitelabelNft.data?.description
+  }, [whitelabelNft.data?.description])
+
+  const isTruncated = useMemo(() => {
+    if (whitelabelNft.data?.description && whitelabelNft.data?.description.length < 175) return false
+    if (!isExpanded) return true
+    return false
+  }, [isExpanded, whitelabelNft.data?.description])
+
+  const description = useMemo(() => {
+    if (isTruncated) {
+      return descriptionTruncated
+    }
+    return whitelabelNft.data?.description
+  }, [isTruncated, descriptionTruncated, whitelabelNft.data?.description])
+
   const formikUpdatePhase: FormikProps<WhitelabelNftUpdatePhase> = useFormik<WhitelabelNftUpdatePhase>({
     enableReinitialize: true,
     initialValues: {
@@ -204,8 +224,8 @@ function MetadataSection({ isOwner, totalSupply, whitelabelNft }: MetadataProps)
           </FormikProvider>
         )}
         <DescriptionText color="textSubtle" marginTop="16px">
-          {isExpanded ? whitelabelNft.data?.description : `${whitelabelNft.data?.description?.slice(0, 175)}... `}
-          {!isExpanded && (
+          {description}
+          {isTruncated && (
             <ReadMore color="linkColor" onClick={() => setIsExpanded(true)}>
               read more
             </ReadMore>
