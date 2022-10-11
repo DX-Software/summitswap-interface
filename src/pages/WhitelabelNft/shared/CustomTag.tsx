@@ -1,4 +1,4 @@
-import { Tag } from '@koda-finance/summitswap-uikit'
+import { LockIcon, Tag } from '@koda-finance/summitswap-uikit'
 import { Phase } from 'constants/whitelabel'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
@@ -37,5 +37,10 @@ export function PhaseTag({ phase }: PhaseTagProps) {
     }
   }, [phase])
 
-  return <CustomTag variant={tagVariant}>{phaseString} PHASE</CustomTag>
+  return (
+    <CustomTag variant={tagVariant}>
+      {phase === Phase.Whitelist && <LockIcon color="default" width={8} marginRight="4px" />}
+      {phaseString} PHASE
+    </CustomTag>
+  )
 }
