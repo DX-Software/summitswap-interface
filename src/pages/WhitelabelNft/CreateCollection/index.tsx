@@ -41,10 +41,12 @@ function CreateCollection() {
     initialValues: INITIAL_WHITELABEL_CREATION,
     validationSchema: createCollectionValidationSchema,
     onSubmit: async (values, { setSubmitting }) => {
+      if (!account || !values.spreadsheet) return
+
       const metadataResult = await whitelabelNftApiUpload.mutateAsync({
-        walletAddress: account!,
-        spreadsheet: formik.values.spreadsheet!,
-        nftImages: formik.values.nftImages,
+        walletAddress: account,
+        spreadsheet: values.spreadsheet,
+        nftImages: values.nftImages,
       })
 
       let previewImageUrl = getPreviewImageUrl()
