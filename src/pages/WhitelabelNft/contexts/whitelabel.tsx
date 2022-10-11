@@ -1,4 +1,6 @@
 import { useWeb3React } from '@web3-react/core'
+import { ETH_CHAIN_ID } from 'constants/index'
+import { useActiveWeb3React } from 'hooks'
 import { useWhitelabelFactoryContract } from 'hooks/useContract'
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
@@ -40,6 +42,7 @@ const WhitelabelNftContext = createContext<WhitelabelNftContextProps>({
 export function WhitelabelNftProvider({ children }: { children: React.ReactNode }) {
   const history = useHistory()
   const { account } = useWeb3React()
+  const { chainId } = useActiveWeb3React()
   const whitelabelFactoryContract = useWhitelabelFactoryContract()
 
   const [activeTab, setActiveTab] = useState<number>(0)
@@ -49,7 +52,7 @@ export function WhitelabelNftProvider({ children }: { children: React.ReactNode 
   const [canCreate, setCanCreate] = useState(false)
 
   const fetchCanCreate = useCallback(async () => {
-    if (!account || !whitelabelFactoryContract) return
+    if (!account || !whitelabelFactoryContract || chainId !== ETH_CHAIN_ID) return
     const [owner, isAdmin, canAnyoneCreate] = await Promise.all([
       whitelabelFactoryContract.owner(),
       whitelabelFactoryContract.isAdmin(account),
@@ -60,7 +63,7 @@ export function WhitelabelNftProvider({ children }: { children: React.ReactNode 
     } else {
       setCanCreate(false)
     }
-  }, [account, whitelabelFactoryContract])
+  }, [account, whitelabelFactoryContract, chainId])
 
   useEffect(() => {
     if (whitelabelNftId === '' && tokenId !== '') {

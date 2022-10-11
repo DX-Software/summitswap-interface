@@ -4,10 +4,12 @@ import { connectorLocalStorageKey } from '@koda-finance/summitswap-uikit'
 import { injected, bsc, walletconnect, setupNetwork } from 'connectors'
 import { NoBscProviderError } from 'connectors/bsc/bscConnector'
 import { AbstractConnector } from '@web3-react/abstract-connector'
+import { CHAIN_ID } from 'constants/index'
 
 export default async function login(
   connectorId: string,
-  activate: (connector: AbstractConnector, onError?: (error: Error) => void, throwErrors?: boolean) => Promise<void>
+  activate: (connector: AbstractConnector, onError?: (error: Error) => void, throwErrors?: boolean) => Promise<void>,
+  chainId = CHAIN_ID
 ) {
   if (connectorId === 'walletconnect') {
     await activate(walletconnect())
@@ -16,7 +18,7 @@ export default async function login(
   } else {
     await activate(injected, async (error: Error) => {
       if (error instanceof UnsupportedChainIdError) {
-        const hasSetup = await setupNetwork()
+        const hasSetup = await setupNetwork(chainId)
         if (hasSetup) {
           activate(injected)
         }

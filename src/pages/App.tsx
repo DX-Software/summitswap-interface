@@ -41,6 +41,7 @@ import WhitelabelNft from './WhitelabelNft'
 import PresaleApplication from './PresaleApplication'
 import LaunchPad from './PresaleApplication/LaunchPad'
 import MintWidget from './WhitelabelNft/MintWidget'
+import UnsupportedNetwork from './UnsupportedNetwork'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -169,36 +170,38 @@ export default function App() {
                   <BodyWrapper>
                     <AppHeader />
                     <Banner />
-                    <Route exact path="/swap" component={Swap} />
-                    <Route exact path="/create-token" component={CreateToken} />
-                    <Route exact path="/cross-chain-swap" component={CrossChainSwap} />
-                    <Route exact path="/swap?ref=:ref" component={Referral} />
-                    <Route exact path="/referral" component={Referral} />
-                    <Route exact path="/onboarding" component={Onboarding} />
-                    <Route exact strict path="/find" component={PoolFinder} />
-                    <Route exact strict path="/pool" component={Pool} />
-                    <Route exact path="/add" component={AddLiquidity} />
-                    <Route exact path="/info" component={SummitInfoOverview} />
-                    <Route exact path="/info/pools" component={SummitInfoPools} />
-                    <Route exact path="/info/tokens" component={SummitInfoTokens} />
-                    <Route exact path="/info/token/:address" component={SummitInfoToken} />
-                    <Route exact path="/info/pool/:address" component={SummitInfoPool} />
-                    <Route exact path="/staking/deposit" component={DepositPage} />
-                    <Route exact path="/staking/claim" component={ClaimPage} />
-                    <Route exact path="/staking/withdraw" component={WithdrawPage} />
-                    <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
-                    <Route exact path="/presale-application" component={PresaleApplication} />
-                    <Route exact path="/launchpad" component={LaunchPad} />
-                    <Route exact path="/kickstarter" component={KickStarter} />
-                    <Route exact path="/whitelabel-nft" component={WhitelabelNft} />
+                    <UnsupportedNetwork>
+                      <Route exact path="/swap" component={Swap} />
+                      <Route exact path="/create-token" component={CreateToken} />
+                      <Route exact path="/cross-chain-swap" component={CrossChainSwap} />
+                      <Route exact path="/swap?ref=:ref" component={Referral} />
+                      <Route exact path="/referral" component={Referral} />
+                      <Route exact path="/onboarding" component={Onboarding} />
+                      <Route exact strict path="/find" component={PoolFinder} />
+                      <Route exact strict path="/pool" component={Pool} />
+                      <Route exact path="/add" component={AddLiquidity} />
+                      <Route exact path="/info" component={SummitInfoOverview} />
+                      <Route exact path="/info/pools" component={SummitInfoPools} />
+                      <Route exact path="/info/tokens" component={SummitInfoTokens} />
+                      <Route exact path="/info/token/:address" component={SummitInfoToken} />
+                      <Route exact path="/info/pool/:address" component={SummitInfoPool} />
+                      <Route exact path="/staking/deposit" component={DepositPage} />
+                      <Route exact path="/staking/claim" component={ClaimPage} />
+                      <Route exact path="/staking/withdraw" component={WithdrawPage} />
+                      <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
+                      <Route exact path="/presale-application" component={PresaleApplication} />
+                      <Route exact path="/launchpad" component={LaunchPad} />
+                      <Route exact path="/kickstarter" component={KickStarter} />
+                      <Route exact path="/whitelabel-nft" component={WhitelabelNft} />
 
-                    {/* Redirection: These old routes are still used in the code base */}
-                    <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
-                    <Route exact path="/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
-                    <Route exact strict path="/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
-                    <Route exact path="/summitcheck" component={SummitCheck} />
+                      {/* Redirection: These old routes are still used in the code base */}
+                      <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
+                      <Route exact path="/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
+                      <Route exact strict path="/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
+                      <Route exact path="/summitcheck" component={SummitCheck} />
 
-                    {/* <Route component={RedirectPathToSwapOnly} /> */}
+                      {/* <Route component={RedirectPathToSwapOnly} /> */}
+                    </UnsupportedNetwork>
                   </BodyWrapper>
                 </Menu>
               </Switch>

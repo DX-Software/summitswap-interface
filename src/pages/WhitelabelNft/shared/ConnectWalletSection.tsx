@@ -1,5 +1,6 @@
 import { Button, Flex, Heading, useWalletModal, WalletIcon } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
+import { ETH_CHAIN_ID } from 'constants/index'
 import React, { useCallback } from 'react'
 import login from 'utils/login'
 
@@ -8,7 +9,7 @@ function ConnectWalletSection() {
 
   const handleLogin = useCallback(
     (connectorId: string) => {
-      login(connectorId, activate)
+      login(connectorId, activate, ETH_CHAIN_ID)
     },
     [activate]
   )

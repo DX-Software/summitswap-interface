@@ -3,57 +3,116 @@ import { ChainId, Token } from '@koda-finance/summitswap-sdk'
 import { InjectedConnector } from '@web3-react/injected-connector'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
-import { CHAIN_ID, NETWORK_URL } from '../constants'
+import { CHAIN_ID, BSC_NETWORK_URL, ETH_NETWORK_URL, BSC_CHAIN_ID, ETH_CHAIN_ID } from '../constants'
 import { BscConnector } from './bsc/bscConnector'
 import { NetworkConnector } from './NetworkConnector'
 
-export const nodes = [process.env.REACT_APP_NODE_1, process.env.REACT_APP_NODE_2, process.env.REACT_APP_NODE_3]
-
-export const BASE_BSC_SCAN_URLS = {
-  [ChainId.MAINNET]: 'https://bscscan.com',
-  [ChainId.BSCTESTNET]: 'https://testnet.bscscan.com',
+const ChainIds = {
+  BSCMAINNET: ChainId.MAINNET,
+  BSCTESTNET: ChainId.BSCTESTNET,
+  ETHEREUM: 1,
+  GOERLI: 5,
 }
 
-export const BASE_BSC_SCAN_URL = BASE_BSC_SCAN_URLS[process.env.REACT_APP_CHAIN_ID as string]
+const CHAIN_PARAMS = {
+  [ChainIds.BSCMAINNET]: {
+    chainId: `0x${ChainId.MAINNET.toString(16)}`,
+    chainName: `Binance Smart Chain Mainnet`,
+    nativeCurrency: {
+      name: 'BNB',
+      symbol: 'bnb',
+      decimals: 18,
+    },
+    rpcUrls: [BSC_NETWORK_URL],
+    blockExplorerUrls: ['https://bscscan.com/'],
+  },
+  [ChainIds.BSCTESTNET]: {
+    chainId: `0x${ChainId.BSCTESTNET.toString(16)}`,
+    chainName: `Binance Smart Chain Testnet`,
+    nativeCurrency: {
+      name: 'BNB',
+      symbol: 'bnb',
+      decimals: 18,
+    },
+    rpcUrls: [BSC_NETWORK_URL],
+    blockExplorerUrls: ['https://testnet.bscscan.com/'],
+  },
+  [ChainIds.ETHEREUM]: {
+    chainId: `0x${ChainIds.ETHEREUM.toString(16)}`,
+    chainName: `Ethereum Mainnet`,
+    nativeCurrency: {
+      name: 'Ether',
+      symbol: 'eth',
+      decimals: 18,
+    },
+    rpcUrls: ['https://mainnet.infura.io/v3/'],
+    blockExplorerUrls: ['https://etherscan.io/'],
+  },
+  [ChainIds.GOERLI]: {
+    chainId: `0x${ChainIds.GOERLI.toString(16)}`,
+    chainName: `Goerli Testnet`,
+    nativeCurrency: {
+      name: 'GoerliETH',
+      symbol: 'GoerliETH',
+      decimals: 18,
+    },
+    rpcUrls: ['https://goerli.infura.io/v3/'],
+    blockExplorerUrls: ['https://goerli.etherscan.io/'],
+  },
+}
 
-export const setupNetwork = async () => {
+export const addNetwork = async (chainId: number) => {
+  const provider = window.ethereum
+  try {
+    await (provider as any).request({
+      method: 'wallet_addEthereumChain',
+      params: [CHAIN_PARAMS[chainId]],
+    })
+  } catch (error) {
+    console.error('Failed to setup the network in Metamask:', error)
+    return false
+  }
+  return true
+}
+
+export const switchNetwork = async (chainId: number) => {
   const provider = window.ethereum
   if (provider) {
-    const chainId = parseInt(process.env.REACT_APP_CHAIN_ID as string, 10)
+    await (provider as any).request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: `0x${chainId.toString(16)}` }],
+    })
+  }
+}
+
+export const setupNetwork = async (chainId = CHAIN_ID) => {
+  const provider = window.ethereum
+  if (provider) {
     try {
-      await (provider as any).request({
-        method: 'wallet_addEthereumChain',
-        params: [
-          {
-            chainId: `0x${chainId.toString(16)}`,
-            chainName: `Binance Smart Chain ${process.env.REACT_APP_CHAIN_ID === '56' ? 'Mainnet' : 'Testnet'}`,
-            nativeCurrency: {
-              name: 'BNB',
-              symbol: 'bnb',
-              decimals: 18,
-            },
-            rpcUrls: nodes,
-            blockExplorerUrls: [`${BASE_BSC_SCAN_URL}/`],
-          },
-        ],
-      })
-      return true
-    } catch (error) {
-      console.error('Failed to setup the network in Metamask:', error)
-      return false
+      await switchNetwork(chainId)
+    } catch (err: any) {
+      if (err.code === 4902) {
+        return addNetwork(chainId)
+      }
     }
   } else {
     console.error("Can't setup the BSC network on metamask because window.ethereum is undefined")
     return false
   }
+  return true
 }
 
-if (typeof NETWORK_URL === 'undefined') {
-  throw new Error(`REACT_APP_NETWORK_URL must be a defined environment variable`)
+if (typeof BSC_NETWORK_URL === 'undefined') {
+  throw new Error(`REACT_APP_BSC_NETWORK_URL must be a defined environment variable`)
+}
+
+if (typeof ETH_NETWORK_URL === 'undefined') {
+  throw new Error(`REACT_APP_ETH_NETWORK_URL must be a defined environment variable`)
 }
 
 export const network = new NetworkConnector({
-  urls: { [CHAIN_ID]: NETWORK_URL },
+  urls: { [BSC_CHAIN_ID]: BSC_NETWORK_URL, [ETH_CHAIN_ID]: ETH_NETWORK_URL },
+  defaultChainId: BSC_CHAIN_ID,
 })
 
 let networkLibrary: Web3Provider | undefined
@@ -63,7 +122,7 @@ export function getNetworkLibrary(): Web3Provider {
 }
 
 export const injected = new InjectedConnector({
-  supportedChainIds: [CHAIN_ID],
+  supportedChainIds: [BSC_CHAIN_ID, ETH_CHAIN_ID],
 })
 
 export const bsc = new BscConnector({ supportedChainIds: [56] })
@@ -71,12 +130,12 @@ export const bsc = new BscConnector({ supportedChainIds: [56] })
 // mainnet only
 export const walletconnect = () =>
   new WalletConnectConnector({
-    rpc: { [CHAIN_ID]: NETWORK_URL },
+    rpc: { [BSC_CHAIN_ID]: BSC_NETWORK_URL, [ETH_CHAIN_ID]: ETH_NETWORK_URL },
   })
 
 // mainnet only
 export const walletlink = new WalletLinkConnector({
-  url: NETWORK_URL,
+  url: BSC_NETWORK_URL,
   appName: 'Summitswap',
   appLogoUrl:
     'https://mpng.pngfly.com/20181202/bex/kisspng-emoji-domain-unicorn-pin-badges-sticker-unicorn-tumblr-emoji-unicorn-iphoneemoji-5c046729264a77.5671679315437924251569.jpg',

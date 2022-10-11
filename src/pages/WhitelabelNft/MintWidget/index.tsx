@@ -13,6 +13,7 @@ import {
 import { darken, Grid, lighten, useMediaQuery } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
 import { useWhitelabelNftApiSignature, useWhitelabelNftCollectionById } from 'api/useWhitelabelNftApi'
+import { ETH_CHAIN_ID } from 'constants/index'
 import { Phase } from 'constants/whitelabel'
 import { BigNumber } from 'ethers'
 import { formatUnits, parseEther } from 'ethers/lib/utils'
@@ -93,7 +94,7 @@ function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
   } = props
   const parseQs = useParsedQueryString()
   const isMobileView = useMediaQuery('(max-width: 576px)')
-  const { account, activate, deactivate } = useWeb3React()
+  const { account, activate, deactivate, chainId } = useWeb3React()
   const [totalSupply, setTotalSupply] = useState<BigNumber>(BigNumber.from(0))
   const [mintedMessage, setMintedMessage] = useState('')
   const whitelabelNft = useWhitelabelNftCollectionById(nftAddress)
@@ -106,7 +107,7 @@ function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
 
   const handleLogin = useCallback(
     (connectorId: string) => {
-      login(connectorId, activate)
+      login(connectorId, activate, ETH_CHAIN_ID)
     },
     [activate]
   )
@@ -147,8 +148,12 @@ function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
   }, [isWhitelisted, phase])
 
   const getTotalSupply = useCallback(async () => {
-    const _totalSupply = await whitelabelNftContract?.totalSupply()
-    setTotalSupply(BigNumber.from(_totalSupply))
+    try {
+      const _totalSupply = await whitelabelNftContract?.totalSupply()
+      setTotalSupply(BigNumber.from(_totalSupply))
+    } catch (err) {
+      //
+    }
   }, [whitelabelNftContract])
 
   const formik: FormikProps<WhitelabelMintDto> = useFormik<WhitelabelMintDto>({
@@ -207,7 +212,7 @@ function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
         <HelperText fontSize={isMobileView ? '12px' : '14px'}>
           This NFT Collection is still on paused phase. Please wait for minting phase
         </HelperText>
-      ) : !account ? (
+      ) : !account || chainId !== ETH_CHAIN_ID ? (
         <>
           <StyledButton
             scale="sm"
@@ -220,7 +225,7 @@ function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
           >
             Connect My Wallet
           </StyledButton>
-          <StyledStockText color={color}>{stock}</StyledStockText>
+          {chainId === ETH_CHAIN_ID && <StyledStockText color={color}>{stock}</StyledStockText>}
         </>
       ) : (
         <FormikProvider value={formik}>
