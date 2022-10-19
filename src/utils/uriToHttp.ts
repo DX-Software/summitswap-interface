@@ -21,7 +21,7 @@ export default function uriToHttp(uri: string): string[] {
       return [
         `https://cloudflare-ipfs.com/ipns/${name}/`,
         `https://ipfs.io/ipns/${name}/`,
-        `https://w3s.link/ipfs/${hash}`,
+        `https://w3s.link/ipfs/${name}`,
       ]
     default:
       return []
