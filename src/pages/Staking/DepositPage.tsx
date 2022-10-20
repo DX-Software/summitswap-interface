@@ -20,7 +20,7 @@ import {
   STAKING_POOL_ADDRESS,
 } from '../../constants/staking'
 import NavBar from './Navbar'
-import { DEAD_ADDRESS, KAPEX, KODA, MAX_UINT256 } from '../../constants'
+import { DEAD_ADDRESS, KODA, MAX_UINT256 } from '../../constants'
 import './styles.css'
 
 const RadioContainer = styled.div`
@@ -125,7 +125,6 @@ export default function DepositPage() {
   const [userSixMonthsStakedAmount, setUserSixMonthsStakedAmount] = useState<string>()
   const [userYearStakedAmount, setUserYearStakedAmount] = useState<string>()
   const [totalKodaEarned, setTotalKodaEarned] = useState<string>()
-  const [totalKapexEarned, setTotalKapexEarned] = useState<string>()
 
   const kodaPrice = useKodaPrice()
 
@@ -408,19 +407,14 @@ export default function DepositPage() {
   useEffect(() => {
     async function fetchTotalEarned() {
       setTotalKodaEarned(undefined)
-      setTotalKapexEarned(undefined)
 
       if (!stakingContract || !account) {
         setTotalKodaEarned('...')
-        setTotalKapexEarned('...')
         return
       }
 
       const fetchedTotalKodaEarned = (await stakingContract.tokensEarned(KODA.address, account)) as BigNumber
       setTotalKodaEarned(utils.formatUnits(fetchedTotalKodaEarned, KODA.decimals))
-
-      const fetchedTotalKapexEarned = (await stakingContract.tokensEarned(KAPEX.address, account)) as BigNumber
-      setTotalKapexEarned(utils.formatUnits(fetchedTotalKapexEarned, KAPEX.decimals))
     }
 
     fetchTotalEarned()
@@ -515,7 +509,7 @@ export default function DepositPage() {
       </LockingPeriod>
       <InfoContainer>
         <p>
-          Current APY: <b>{currentApy}% + KAPEX BONUSES</b>
+          Current APY: <b>{currentApy}%</b>
         </p>
         {!currentApy && (
           <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
@@ -543,7 +537,6 @@ export default function DepositPage() {
             userThreeMonthsStakedAmount &&
             userSixMonthsStakedAmount &&
             totalKodaEarned &&
-            totalKapexEarned &&
             userYearStakedAmount &&
             combinedApy ? (
               <>
@@ -568,9 +561,6 @@ export default function DepositPage() {
                 </p>
                 <p>
                   KODA Earned: <b> {totalKodaEarned?.split('.')[0]} KODA</b>
-                </p>
-                <p>
-                  KAPEX Earned: <b> {totalKapexEarned?.split('.')[0]} KAPEX</b>
                 </p>
               </>
             ) : (
