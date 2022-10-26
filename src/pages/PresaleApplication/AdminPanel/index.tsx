@@ -96,8 +96,8 @@ const AdminPanel = () => {
   const changeApprovedPageHandler = (_: React.ChangeEvent<unknown>, value: number) => setPageApprovedPresales(value)
   const selectPresaleHandler = (presaleAddress: string) => setSelectedPresale(presaleAddress)
   const onApproveHandler = (presaleAddress: string) => {
-    setPendingPresales((addresses) => addresses.filter((add) => add !== presaleAddress))
-    setApprovedPresales((addresses) => [presaleAddress, ...addresses])
+    setPendingPresales((addresses) => [...new Set(addresses.filter((add) => add !== presaleAddress))])
+    setApprovedPresales((addresses) => [...new Set([presaleAddress, ...addresses])])
   }
 
   const getSlicedAddress = useCallback((addresses: string[], pageNum: number) => {

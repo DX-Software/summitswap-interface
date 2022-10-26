@@ -122,7 +122,7 @@ const TimeDetails = ({ presaleInfo }: Props) => {
           Presale Start Time
         </StyledText>
         <StyledText fontWeight={700}>
-          {new Date(presaleInfo?.startPresaleTime.mul(1000).toNumber() || 0).toUTCString()}
+          {new Date(presaleInfo?.startPresaleTime.mul(1000).toNumber() || 0).toUTCString().replace('GMT', 'UTC')}
         </StyledText>
       </Box>
       <Box marginTop="16px">
@@ -130,7 +130,7 @@ const TimeDetails = ({ presaleInfo }: Props) => {
           Presale End Time
         </StyledText>
         <StyledText fontWeight={700}>
-          {new Date(presaleInfo?.endPresaleTime.mul(1000).toNumber() || 0).toUTCString()}
+          {new Date(presaleInfo?.endPresaleTime.mul(1000).toNumber() || 0).toUTCString().replace('GMT', 'UTC')}
         </StyledText>
       </Box>
     </Card>

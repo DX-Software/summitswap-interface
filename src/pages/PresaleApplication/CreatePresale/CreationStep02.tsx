@@ -165,7 +165,7 @@ const CreationStep02 = ({ formik, changeStepNumber, currency, selectedToken }: P
               <Caption color={formik.touched.softcap && !!formik.errors.softcap ? 'failure' : 'textDisabled'}>
                 {formik.touched.softcap && formik.errors.softcap
                   ? formik.errors.softcap
-                  : 'Softcap must be less or equal to 50% of Hardcap!'}
+                  : 'Softcap must be less than or equal to Hardcap!'}
               </Caption>
             </StyledInputWrapper>
             <StyledInputWrapper>

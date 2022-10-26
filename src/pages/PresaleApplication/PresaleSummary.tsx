@@ -309,11 +309,11 @@ const PresaleSummary = ({ presaleAddress, handleEditButtonHandler, onApproveHand
         </StyledText>
         <GridContainer marginTop="4px">
           <StyledText>Start Time</StyledText>
-          <StyledText>{new Date(presaleInfo?.startPresaleTime.mul(1000).toNumber() || 0).toUTCString()}</StyledText>
+          <StyledText>{new Date(presaleInfo?.startPresaleTime.mul(1000).toNumber() || 0).toUTCString().replace("GMT", "UTC")}</StyledText>
         </GridContainer>
         <GridContainer marginTop="4px">
           <StyledText>End Time</StyledText>
-          <StyledText>{new Date(presaleInfo?.endPresaleTime.mul(1000).toNumber() || 0).toUTCString()}</StyledText>
+          <StyledText>{new Date(presaleInfo?.endPresaleTime.mul(1000).toNumber() || 0).toUTCString().replace("GMT", "UTC")}</StyledText>
         </GridContainer>
         <GridContainer marginTop="4px">
           <StyledText>Liquidity Lockup</StyledText>
@@ -437,19 +437,19 @@ const PresaleSummary = ({ presaleAddress, handleEditButtonHandler, onApproveHand
               >
                 Approve Presale
               </Button>
-              {handleEditButtonHandler && (
-                <Button
-                  marginTop="16px"
-                  startIcon={<EditIcon color="currentColor" />}
-                  scale="md"
-                  width="fit-content"
-                  variant="tertiary"
-                  onClick={() => handleEditButtonHandler && handleEditButtonHandler(true)}
-                >
-                  Edit Presale
-                </Button>
-              )}
             </>
+          )}
+          {handleEditButtonHandler && (
+            <Button
+              marginTop="16px"
+              startIcon={<EditIcon color="currentColor" />}
+              scale="md"
+              width="fit-content"
+              variant="tertiary"
+              onClick={() => handleEditButtonHandler && handleEditButtonHandler(true)}
+            >
+              Edit Presale
+            </Button>
           )}
         </>
       )}
