@@ -117,16 +117,6 @@ const validateAdminForm = (values: AdminForm) => {
     }
   }
 
-  if (!values.emergencyWithdrawFee) {
-    errors.emergencyWithdrawFee = 'Required*'
-  } else if (values.emergencyWithdrawFee < 0) {
-    errors.emergencyWithdrawFee = 'Emergency withdraw fee should be a positive number'
-  } else if (!Number.isInteger(values.emergencyWithdrawFee)) {
-    errors.emergencyWithdrawFee = 'Emergency withdraw fee should be an Integer'
-  } else if (values.emergencyWithdrawFee >= 100) {
-    errors.emergencyWithdrawFee = 'Emergency withdraw fee should be less than 100%'
-  }
-
   if (!values.projectName) {
     errors.projectName = 'Required*'
   }

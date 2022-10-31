@@ -112,9 +112,6 @@ const EditPresale = ({ presaleAddress, onApproveHandler, handleEditButtonHandler
             feePresaleToken: BigNumber.from(values.feePresaleToken || 0)
               .mul(10 ** FEE_DECIMALS)
               .div(100),
-            feeEmergencyWithdraw: BigNumber.from(values.emergencyWithdrawFee)
-              .mul(10 ** FEE_DECIMALS)
-              .div(100),
           },
           [
             values.logoUrl,
@@ -176,10 +173,6 @@ const EditPresale = ({ presaleAddress, onApproveHandler, handleEditButtonHandler
           .div(10 ** FEE_DECIMALS)
           .toNumber(),
         [FieldNames.feePaymentToken]: presaleFeeInfo.feePaymentToken
-          .mul(100)
-          .div(10 ** FEE_DECIMALS)
-          .toNumber(),
-        [FieldNames.emergencyWithdrawFee]: presaleFeeInfo.emergencyWithdrawFee
           .mul(100)
           .div(10 ** FEE_DECIMALS)
           .toNumber(),

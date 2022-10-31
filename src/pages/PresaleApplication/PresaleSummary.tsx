@@ -409,18 +409,6 @@ const PresaleSummary = ({ presaleAddress, handleEditButtonHandler, onApproveHand
               </Flex>
               <StyledText>{`${presaleFeeInfo?.feePresaleToken.mul(100).div(10 ** FEE_DECIMALS)}%`}</StyledText>
             </ContainerInformation>
-            <ContainerInformation marginTop="4px">
-              <Flex alignItems="baseline" justifyContent="start">
-                <StyledText marginRight="4px">Emergency Withdraw Fee</StyledText>
-                <MouseoverTooltip
-                  size="11px"
-                  text={`Emergency Withdraw fee is how much ${currency} will be given to summitswap when the user want to suddenly withdraw all of their funds`}
-                >
-                  <InfoIcon width="13px" color="linkColor" />
-                </MouseoverTooltip>
-              </Flex>
-              <StyledText>{`${presaleFeeInfo?.emergencyWithdrawFee.mul(100).div(10 ** FEE_DECIMALS)}%`}</StyledText>
-            </ContainerInformation>
           </Box>
           {!presaleInfo?.isApproved && (
             <>

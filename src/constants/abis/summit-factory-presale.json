@@ -268,11 +268,6 @@
             "internalType": "uint256",
             "name": "feePresaleToken",
             "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "feeEmergencyWithdraw",
-            "type": "uint256"
           }
         ],
         "internalType": "struct PresaleFeeInfo",
@@ -737,11 +732,6 @@
             "internalType": "uint256",
             "name": "feePresaleToken",
             "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "feeEmergencyWithdraw",
-            "type": "uint256"
           }
         ],
         "internalType": "struct PresaleFeeInfo",
@@ -918,11 +908,6 @@
           {
             "internalType": "uint256",
             "name": "feePresaleToken",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "feeEmergencyWithdraw",
             "type": "uint256"
           }
         ],

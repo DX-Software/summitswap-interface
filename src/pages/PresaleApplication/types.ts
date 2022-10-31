@@ -48,7 +48,6 @@ export enum FieldNames {
   isApproved = 'isApproved',
   feePaymentToken = 'feePaymentToken',
   feePresaleToken = 'feePresaleToken',
-  emergencyWithdrawFee = 'emergencyWithdrawFee',
   presaleInfo = 'presaleInfo',
   feeInfo = 'feeInfo',
   ProjectDetails = 'ProjectDetails',
@@ -75,7 +74,6 @@ export interface FeeInfo {
   [FieldNames.paymentToken]: string;
   [FieldNames.feePaymentToken]: BigNumber;
   [FieldNames.feePresaleToken]: BigNumber;
-  [FieldNames.emergencyWithdrawFee]: BigNumber;
 }
 
 
@@ -136,7 +134,6 @@ export interface PresaleDetails {
   [FieldNames.accountBalance]?: number;
   [FieldNames.feePaymentToken]?: number;
   [FieldNames.feePresaleToken]?: number;
-  [FieldNames.emergencyWithdrawFee]?: number;
 }
 
 export interface PresaleDetailsErrors {
@@ -158,7 +155,6 @@ export interface PresaleDetailsErrors {
   [FieldNames.claimIntervalHour]?: string;
   [FieldNames.feePaymentToken]?: string;
   [FieldNames.feePresaleToken]?: string;
-  [FieldNames.emergencyWithdrawFee]?: string;
 }
 
 export interface AdminForm extends PresaleDetails, ProjectDetails {
@@ -179,7 +175,6 @@ export enum PresalePhases {
 export enum LoadingButtonTypes {
   NotSelected,
   Withdraw,
-  EmergencyWithdraw,
   Claim,
   ChangeSaleType,
   Finalize,
