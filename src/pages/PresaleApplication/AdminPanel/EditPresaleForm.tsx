@@ -908,48 +908,6 @@ const EditPresaleForm = ({ formik, cancelEditButtonHandler, isLoading }: Props) 
               </Caption>
             )}
           </Box>
-          <StyledText marginTop="24px" bold color="primaryDark">
-            Emergency Withdraw Fee
-          </StyledText>
-          <Box width="100%" marginTop="8px">
-            <StyledText marginBottom="4px" small>
-              Emergency Withdraw fee is how much
-              <StyledText fontWeight={700} style={{ display: 'inline' }} small>
-                &nbsp;{currency}&nbsp;
-              </StyledText>
-              will be given to summitswap when the user want to suddenly withdraw all of their funds
-            </StyledText>
-            <StyledText marginTop="8px" marginBottom="4px" small>
-              Enter Fee Percentage (%)
-            </StyledText>
-            <Input
-              scale="sm"
-              value={formik.values.emergencyWithdrawFee}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              name={FieldNames.emergencyWithdrawFee}
-              id={FieldNames.emergencyWithdrawFee}
-              type="number"
-              isWarning={formik.touched.emergencyWithdrawFee && !!formik.errors.emergencyWithdrawFee}
-              disabled={presaleInfo?.isClaimPhase}
-            />
-            {formik.touched.emergencyWithdrawFee && formik.errors.emergencyWithdrawFee ? (
-              <Caption color="failure">{formik.errors.emergencyWithdrawFee}</Caption>
-            ) : (
-              <Caption style={{ maxWidth: '100%' }} color="textDisabled">
-                If someone has joined the presale for
-                <Caption bold color="primary">
-                  &nbsp;10 {currency}&nbsp;
-                </Caption>
-                and wanted to withdraw back their money, they have to pay
-                <Caption bold color="primary">
-                  &nbsp; {Number(formik.values.emergencyWithdrawFee) / 10 || '0.5'} {currency} (
-                  {formik.values.emergencyWithdrawFee || 5}%)&nbsp;
-                </Caption>
-                for the emergency withdraw fee
-              </Caption>
-            )}
-          </Box>
         </ColumnWrapper>
         <ColumnWrapper width="48%" marginBottom="25px">
           <StyledText bold color="primaryDark">

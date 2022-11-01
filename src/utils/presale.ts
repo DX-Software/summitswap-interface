@@ -51,7 +51,6 @@ export async function fetchFeeInfo(presaleContract: Contract | null) {
     FieldNames.paymentToken,
     FieldNames.feePaymentToken,
     FieldNames.feePresaleToken,
-    FieldNames.emergencyWithdrawFee,
   ]
   const feeInfo: FeeInfo = info.reduce((acc: any, cur: string | BigNumber, i: number) => {
     acc[obKeys[i]] = cur
