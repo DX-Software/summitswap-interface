@@ -14,11 +14,8 @@ export const Fees = {
 export function useClaimingFeeModal({ symbol, onConfirm }: ClaimingFeeProps): [() => void, () => void] {
   const modalHandlers = useModal(
     <Modal title="Claiming Fee">
-      <Text>
+      <Text marginBottom="30px">
         You are claiming in {symbol}! Claiming fee is {Fees[symbol]}%.
-      </Text>
-      <Text marginBottom="30px" textAlign="center">
-        Claim in KAPEX to avoid paying for fees.
       </Text>
       <Button scale="md" onClick={onConfirm} style={{ fontWeight: 800, fontSize: 18 }}>
         CONFIRM

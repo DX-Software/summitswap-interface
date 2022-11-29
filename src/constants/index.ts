@@ -64,11 +64,6 @@ export const USDT = {
   [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0x337610d27c682E347C9cD60BD4b3b107C9d34dDd', 18, 'USDT', 'Tether USD'),
 }[CHAIN_ID] as Token;
 
-export const KAPEX = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0x11441AFb1D10E3Ce4E39666FC4F4A2A5d6d8C0Da', 18, 'KAPEX', 'KAPEX Token'),
-  [ChainId.BSCTESTNET]: new Token(ChainId.BSCTESTNET, '0x8df2813ED24d1c27a9299226c812CfD7217eb99b', 18, 'KAPEX', 'KAPEX Token'),
-}[CHAIN_ID] as Token;
-
 const WETH_ONLY: ChainTokenList = {
   [ChainId.MAINNET]: [WETH[ChainId.MAINNET]],
   [ChainId.BSCTESTNET]: [WETH[ChainId.BSCTESTNET]],
@@ -110,8 +105,6 @@ export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } 
     [DAI, USDT],
   ],
 }
-
-export const KAPEX_TO_BUSD_ROUTE = [KAPEX.address, WETH[CHAIN_ID].address, BUSD.address]
 
 export const NetworkContextName = 'NETWORK'
 

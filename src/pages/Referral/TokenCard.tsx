@@ -8,7 +8,7 @@ import CurrencyLogo from 'components/CurrencyLogo'
 import { Token, WETH } from '@koda-finance/summitswap-sdk'
 import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
 import { useToken } from 'hooks/Tokens'
-import { REFERRAL_ADDRESS, BUSD, CHAIN_ID, KAPEX } from '../../constants'
+import { REFERRAL_ADDRESS, BUSD, CHAIN_ID, KODA } from '../../constants'
 import { useClaimingFeeModal } from './useClaimingFeeModal'
 
 interface Props {
@@ -70,7 +70,7 @@ const TokenCard: React.FC<Props> = ({ tokenAddress, hasClaimedAll, isLoading, se
     if (!outputToken) return
     if (!rewardToken) return
 
-    const tokenList: Token[] = [BUSD, KAPEX, outputToken, rewardToken].filter(o => !!o);
+    const tokenList: Token[] = [BUSD, KODA, outputToken, rewardToken].filter(o => !!o);
     const uniqueTokenAddresses = [...new Set(tokenList.map((o) => o.address))]
     const uniqueTokenList = uniqueTokenAddresses.map((o) => tokenList.find((oo) => oo.address === o)) as Token[]
 
