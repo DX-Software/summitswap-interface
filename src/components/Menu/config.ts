@@ -32,16 +32,16 @@ const config: MenuEntry[] = [
     icon: 'InfoIcon',
     href: '/info',
   },
-  {
-    label: 'Launchpad',
-    icon: 'LaunchpadIcon',
-    href: '/launchpad',
-  },
-  {
-    label: 'Presale-App',
-    icon: 'CoinBagIcon',
-    href: '/presale-application',
-  },
+  // {
+  //   label: 'Launchpad',
+  //   icon: 'LaunchpadIcon',
+  //   href: '/launchpad',
+  // },
+  // {
+  //   label: 'Presale-App',
+  //   icon: 'CoinBagIcon',
+  //   href: '/presale-application',
+  // },
   {
     label: 'Kick Starter',
     icon: 'KickStarterIcon',
