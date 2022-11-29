@@ -14,8 +14,6 @@ const validateAdminForm = (values: AdminForm) => {
     errors.softcap = 'Softcap should be a positive number'
   } else if (values.softcap > Number(formatUnits(values.presaleInfo?.hardcap || 0, 18))) {
     errors.softcap = 'Softcap <= to hardcap'
-  } else if (values.softcap < Number(formatUnits(values.presaleInfo?.hardcap || 0, 18)) * 0.5) {
-    errors.softcap = 'Softcap >= 50% of hardcap'
   }
 
   if (!values.minBuy) {
@@ -117,16 +115,6 @@ const validateAdminForm = (values: AdminForm) => {
     ) {
       errors.feePaymentToken = 'PaymentToken fee should be less than liquidity%'
     }
-  }
-
-  if (!values.emergencyWithdrawFee) {
-    errors.emergencyWithdrawFee = 'Required*'
-  } else if (values.emergencyWithdrawFee < 0) {
-    errors.emergencyWithdrawFee = 'Emergency withdraw fee should be a positive number'
-  } else if (!Number.isInteger(values.emergencyWithdrawFee)) {
-    errors.emergencyWithdrawFee = 'Emergency withdraw fee should be an Integer'
-  } else if (values.emergencyWithdrawFee >= 100) {
-    errors.emergencyWithdrawFee = 'Emergency withdraw fee should be less than 100%'
   }
 
   if (!values.projectName) {

@@ -1,3 +1,4 @@
+import { TOKEN_BLACKLIST } from 'constants/info'
 import { gql } from 'graphql-request'
 import { mapBurns, mapMints, mapSwaps } from 'state/info/queries/helpers'
 import { BurnResponse, MintResponse, SwapResponse } from 'state/info/queries/types'
@@ -8,8 +9,8 @@ import { infoClient } from 'utils/graphql'
  * Transactions for Transaction table on the Home page
  */
 const GLOBAL_TRANSACTIONS = gql`
-  query overviewTransactions {
-    mints: mints(first: 33, orderBy: timestamp, orderDirection: desc) {
+  query overviewTransactions($blacklist: [String!]) {
+    mints: mints(first: 33, orderBy: timestamp, orderDirection: desc, where: { token0_not_in: $blacklist, token1_not_in: $blacklist }) {
       id
       timestamp
       pair {
@@ -27,7 +28,7 @@ const GLOBAL_TRANSACTIONS = gql`
       amount1
       amountUSD
     }
-    swaps: swaps(first: 33, orderBy: timestamp, orderDirection: desc) {
+    swaps: swaps(first: 33, orderBy: timestamp, orderDirection: desc, where: { token0_not_in: $blacklist, token1_not_in: $blacklist }) {
       id
       timestamp
       pair {
@@ -47,7 +48,7 @@ const GLOBAL_TRANSACTIONS = gql`
       amount1Out
       amountUSD
     }
-    burns: burns(first: 33, orderBy: timestamp, orderDirection: desc) {
+    burns: burns(first: 33, orderBy: timestamp, orderDirection: desc, where: { token0_not_in: $blacklist, token1_not_in: $blacklist }) {
       id
       timestamp
       pair {
@@ -75,7 +76,9 @@ interface TransactionResults {
 
 const fetchTopTransactions = async (): Promise<Transaction[] | undefined> => {
   try {
-    const data = await infoClient.request<TransactionResults>(GLOBAL_TRANSACTIONS)
+    const data = await infoClient.request<TransactionResults>(GLOBAL_TRANSACTIONS, {
+      blacklist: TOKEN_BLACKLIST
+    })
 
     if (!data) {
       return undefined

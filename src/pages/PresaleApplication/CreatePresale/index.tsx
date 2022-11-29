@@ -13,7 +13,6 @@ import {
   FEE_DECIMALS,
   FEE_PAYMENT_TOKEN,
   FEE_PRESALE_TOKEN,
-  FEE_EMERGENCY_WITHDRAW,
   CONTACT_INFO_DELIMITER,
 } from 'constants/presale'
 import { useToken } from 'hooks/Tokens'
@@ -198,9 +197,6 @@ const CreatePresale = ({ setHomeButtonIndex }: Props) => {
               .mul(10 ** FEE_DECIMALS)
               .div(100),
             feePresaleToken: BigNumber.from(FEE_PRESALE_TOKEN)
-              .mul(10 ** FEE_DECIMALS)
-              .div(100),
-            feeEmergencyWithdraw: BigNumber.from(FEE_EMERGENCY_WITHDRAW)
               .mul(10 ** FEE_DECIMALS)
               .div(100),
           },

@@ -1,3 +1,4 @@
+import { TOKEN_BLACKLIST } from 'constants/info'
 import { gql } from 'graphql-request'
 import { mapBurns, mapMints, mapSwaps } from 'state/info/queries/helpers'
 import { BurnResponse, MintResponse, SwapResponse } from 'state/info/queries/types'
@@ -8,8 +9,8 @@ import { infoClient } from 'utils/graphql'
  * Data to display transaction table on Token page
  */
 const TOKEN_TRANSACTIONS = gql`
-  query tokenTransactions($address: Bytes!) {
-    mintsAs0: mints(first: 10, orderBy: timestamp, orderDirection: desc, where: { token0: $address }) {
+  query tokenTransactions($address: Bytes!, $blacklist: [String!]) {
+    mintsAs0: mints(first: 10, orderBy: timestamp, orderDirection: desc, where: { token0: $address, token0_not_in: $blacklist, token1_not_in: $blacklist }) {
       id
       timestamp
       pair {
@@ -27,7 +28,7 @@ const TOKEN_TRANSACTIONS = gql`
       amount1
       amountUSD
     }
-    mintsAs1: mints(first: 10, orderBy: timestamp, orderDirection: desc, where: { token0: $address }) {
+    mintsAs1: mints(first: 10, orderBy: timestamp, orderDirection: desc, where: { token0: $address, token0_not_in: $blacklist, token1_not_in: $blacklist }) {
       id
       timestamp
       pair {
@@ -45,7 +46,7 @@ const TOKEN_TRANSACTIONS = gql`
       amount1
       amountUSD
     }
-    swapsAs0: swaps(first: 10, orderBy: timestamp, orderDirection: desc, where: { token0: $address }) {
+    swapsAs0: swaps(first: 10, orderBy: timestamp, orderDirection: desc, where: { token0: $address, token0_not_in: $blacklist, token1_not_in: $blacklist }) {
       id
       timestamp
       pair {
@@ -65,7 +66,7 @@ const TOKEN_TRANSACTIONS = gql`
       amount1Out
       amountUSD
     }
-    swapsAs1: swaps(first: 10, orderBy: timestamp, orderDirection: desc, where: { token1: $address }) {
+    swapsAs1: swaps(first: 10, orderBy: timestamp, orderDirection: desc, where: { token1: $address, token0_not_in: $blacklist, token1_not_in: $blacklist }) {
       id
       timestamp
       pair {
@@ -85,7 +86,7 @@ const TOKEN_TRANSACTIONS = gql`
       amount1Out
       amountUSD
     }
-    burnsAs0: burns(first: 10, orderBy: timestamp, orderDirection: desc, where: { token0: $address }) {
+    burnsAs0: burns(first: 10, orderBy: timestamp, orderDirection: desc, where: { token0: $address, token0_not_in: $blacklist, token1_not_in: $blacklist}) {
       id
       timestamp
       pair {
@@ -103,7 +104,7 @@ const TOKEN_TRANSACTIONS = gql`
       amount1
       amountUSD
     }
-    burnsAs1: burns(first: 10, orderBy: timestamp, orderDirection: desc, where: { token1: $address }) {
+    burnsAs1: burns(first: 10, orderBy: timestamp, orderDirection: desc, where: { token1: $address, token0_not_in: $blacklist, token1_not_in: $blacklist }) {
       id
       timestamp
       pair {
@@ -137,6 +138,7 @@ const fetchTokenTransactions = async (address: string): Promise<{ data?: Transac
   try {
     const data = await infoClient.request<TransactionResults>(TOKEN_TRANSACTIONS, {
       address,
+      blacklist: TOKEN_BLACKLIST
     })
     const mints0 = data.mintsAs0.map(mapMints)
     const mints1 = data.mintsAs1.map(mapMints)

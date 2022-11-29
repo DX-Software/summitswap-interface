@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers'
-import { KODA, KAPEX } from '.'
+import { KODA } from '.'
 
 export const STAKING_ADDRESS = `${process.env.REACT_APP_STAKING_ADDRESS}`
 export const STAKING_POOL_ADDRESS = `${process.env.REACT_APP_STAKING_POOL_ADDRESS}`
@@ -15,12 +15,6 @@ export const LOCKING_PERIODS = {
 export const APYS = {
   [KODA.address]: {
     [LOCKING_PERIODS._0Months]: BigNumber.from(55),
-    [LOCKING_PERIODS._3Months]: BigNumber.from(80),
-    [LOCKING_PERIODS._6Months]: BigNumber.from(105),
-    [LOCKING_PERIODS._12Months]: BigNumber.from(150),
-  },
-  [KAPEX.address]: {
-    [LOCKING_PERIODS._0Months]: BigNumber.from(0),
     [LOCKING_PERIODS._3Months]: BigNumber.from(80),
     [LOCKING_PERIODS._6Months]: BigNumber.from(105),
     [LOCKING_PERIODS._12Months]: BigNumber.from(150),

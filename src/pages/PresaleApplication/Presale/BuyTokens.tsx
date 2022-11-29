@@ -1,34 +1,32 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import React, { useCallback, useEffect, useState } from 'react'
-import styled from 'styled-components'
-import { BigNumber } from 'ethers'
-import { useWeb3React } from '@web3-react/core'
-import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import {
   AutoRenewIcon,
-  Button,
   Box,
-  LockIcon,
+  Button,
   CoinBagIcon,
+  darkColors,
   Flex,
   Input,
-  darkColors,
-  useModal,
-  WalletIcon,
+  LockIcon,
   useWalletModal,
+  WalletIcon,
 } from '@koda-finance/summitswap-uikit'
-import { usePresaleContract, useTokenContract } from 'hooks/useContract'
-import { useETHBalances } from 'state/wallet/hooks'
+import { useWeb3React } from '@web3-react/core'
+import { MAX_UINT256, NULL_ADDRESS } from 'constants/index'
+import { TOKEN_CHOICES } from 'constants/presale'
+import { BigNumber } from 'ethers'
+import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { useToken } from 'hooks/Tokens'
+import { usePresaleContract, useTokenContract } from 'hooks/useContract'
+import React, { useCallback, useEffect, useState } from 'react'
+import { useETHBalances } from 'state/wallet/hooks'
+import styled from 'styled-components'
 import login from 'utils/login'
 import { fetchFeeInfo } from 'utils/presale'
-import { NULL_ADDRESS, MAX_UINT256 } from 'constants/index'
-import { TOKEN_CHOICES, FEE_DECIMALS } from 'constants/presale'
-import { PresaleInfo, FeeInfo, FieldProps, LoadingForButton, LoadingButtonTypes } from '../types'
-import { StyledText } from './Shared'
+import { FeeInfo, FieldProps, LoadingButtonTypes, LoadingForButton, PresaleInfo } from '../types'
 import ContributionBox from './ContributionBox'
-import EmergencyWithdrawModal from './EmergencyWithdrawModal'
 import PresaleGoals from './PresaleGoals'
+import { StyledText } from './Shared'
 
 interface Props {
   presaleAddress: string
@@ -240,51 +238,6 @@ const BuyTokens = ({
     }
   }
 
-  const withdrawPaymentHandler = async () => {
-    if (!presaleContract || !account || boughtAmount?.eq(0) || presaleInfo?.isClaimPhase) {
-      return
-    }
-    try {
-      setIsLoadingButton({ type: LoadingButtonTypes.EmergencyWithdraw, error: '', isClicked: true })
-      setIsMainLoading(true)
-      const result = await presaleContract?.emergencyWithdrawPaymentToken()
-      closeModal()
-      await result.wait()
-      const prevBoughtAmount = boughtAmount
-      setBoughtAmount(BigNumber.from(0))
-      setPresaleInfo((prevState) =>
-        prevState && prevBoughtAmount
-          ? {
-              ...prevState,
-              totalBought: prevState.totalBought.sub(prevBoughtAmount),
-            }
-          : prevState
-      )
-      setIsLoadingButton({ type: LoadingButtonTypes.NotSelected, error: '', isClicked: false })
-      setIsMainLoading(false)
-    } catch (err) {
-      closeModal()
-      setIsMainLoading(false)
-      setIsLoadingButton({ type: LoadingButtonTypes.EmergencyWithdraw, error: 'Withdrawal Failed.', isClicked: false })
-      console.error(err)
-    }
-  }
-
-  const closeModalHandler = () => {
-    closeModal()
-  }
-
-  const [openWithdrawModal, closeModal] = useModal(
-    <EmergencyWithdrawModal
-      onDismiss={closeModalHandler}
-      withdrawHandler={withdrawPaymentHandler}
-      fee={`${formatUnits(
-        boughtAmount.mul(presaleFeeInfo?.emergencyWithdrawFee || 0).div(10 ** FEE_DECIMALS),
-        paymentToken?.decimals || 18
-      )} ${currency}`}
-    />
-  )
-
   const handleLogin = useCallback(
     (connectorId: string) => {
       login(connectorId, activate)
@@ -298,13 +251,10 @@ const BuyTokens = ({
     <Box>
       <ContributionBox
         paymentDecimals={paymentToken?.decimals || 18}
-        openWithdrawModal={openWithdrawModal}
         currency={currency}
         boughtAmount={boughtAmount}
         presaleInfo={presaleInfo}
         tokenSymbol={presaleToken?.symbol}
-        isMainLoading={isMainLoading}
-        isLoadingButton={isLoadingButton}
       />
       <Card>
         <PresaleGoals presaleAddress={presaleAddress} presaleInfo={presaleInfo} presaleFeeInfo={presaleFeeInfo} />
