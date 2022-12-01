@@ -9,7 +9,7 @@ import config from './config'
 import login from '../../utils/login'
 
 const Menu: React.FC = (props) => {
-  const { account, activate, deactivate, chainId } = useWeb3React()
+  const { account, activate, deactivate } = useWeb3React()
   const { toggleTheme } = useTheme()
 
   const location = useLocation()
@@ -37,7 +37,7 @@ const Menu: React.FC = (props) => {
       showConnectButton={showConnectButton}
       links={config}
       account={account as string}
-      login={(connectorId: string) => login(connectorId, activate, chainId)}
+      login={(connectorId: string) => login(connectorId, activate)}
       logout={deactivate}
       isDark
       toggleTheme={toggleTheme}

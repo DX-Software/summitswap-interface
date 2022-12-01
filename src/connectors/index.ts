@@ -1,7 +1,5 @@
 import { Web3Provider } from '@ethersproject/providers'
 import { ChainId, Token } from '@koda-finance/summitswap-sdk'
-import { InjectedConnector } from '@web3-react/injected-connector'
-import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 import { CHAIN_ID, BSC_NETWORK_URL, ETH_NETWORK_URL, BSC_CHAIN_ID, ETH_CHAIN_ID } from '../constants'
 import { BscConnector } from './bsc/bscConnector'
@@ -121,17 +119,7 @@ export function getNetworkLibrary(): Web3Provider {
   return (networkLibrary = networkLibrary ?? new Web3Provider(network.provider as any))
 }
 
-export const injected = new InjectedConnector({
-  supportedChainIds: [BSC_CHAIN_ID, ETH_CHAIN_ID],
-})
-
 export const bsc = new BscConnector({ supportedChainIds: [56] })
-
-// mainnet only
-export const walletconnect = () =>
-  new WalletConnectConnector({
-    rpc: { [BSC_CHAIN_ID]: BSC_NETWORK_URL, [ETH_CHAIN_ID]: ETH_NETWORK_URL },
-  })
 
 // mainnet only
 export const walletlink = new WalletLinkConnector({

@@ -8,7 +8,7 @@ import {
   Text,
   useModal,
   useWalletModal,
-  WalletIcon,
+  WalletIcon
 } from '@koda-finance/summitswap-uikit'
 import { darken, Grid, lighten, useMediaQuery } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
@@ -107,7 +107,7 @@ function MintWidget(props: RouteComponentProps<{ nftAddress: string }>) {
 
   const handleLogin = useCallback(
     (connectorId: string) => {
-      login(connectorId, activate, ETH_CHAIN_ID)
+      login(connectorId, activate)
     },
     [activate]
   )

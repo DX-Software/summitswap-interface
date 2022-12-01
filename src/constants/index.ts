@@ -26,6 +26,11 @@ export const BSC_CHAIN_ID = parseInt(process.env.REACT_APP_CHAIN_ID ?? '56')
 export const ETH_CHAIN_ID = parseInt(process.env.REACT_APP_ETH_CHAIN_ID ?? '1')
 export const CHAIN_ID = BSC_CHAIN_ID
 
+export const NETWORK_URLS = {
+  [BSC_CHAIN_ID]: BSC_NETWORK_URL,
+  [CHAIN_ID]: ETH_NETWORK_URL,
+}
+
 export const SUMMITSWAP_CURRENCY_LINK = 'https://summitswap.finance/#/swap?output='
 export const PANKCAKESWAP_CURRENCY_LINK = 'https://pancakeswap.finance/swap?outputCurrency='
 
