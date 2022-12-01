@@ -289,11 +289,13 @@ const PairInfo = ({ setIsMainLoading, isMainLoading, presaleAddress, presaleInfo
               </Flex>
               <Flex marginTop="4px" justifyContent="space-between">
                 <DetailText>Lock Date</DetailText>
-                <DetailTextValue>{new Date((liquidityLockDate || 0) * 1000).toUTCString()}</DetailTextValue>
+                <DetailTextValue>
+                  {new Date((liquidityLockDate || 0) * 1000).toUTCString().replace('GMT', 'UTC')}
+                </DetailTextValue>
               </Flex>
               <Flex marginTop="4px" justifyContent="space-between">
                 <DetailText>Unlock Date</DetailText>
-                <DetailTextValue>{unLockDate.toUTCString()}</DetailTextValue>
+                <DetailTextValue>{unLockDate.toUTCString().replace('GMT', 'UTC')}</DetailTextValue>
               </Flex>
               <Flex justifyContent="end">
                 {differenceInSeconds(unLockDate, new Date()) > 0 ? (

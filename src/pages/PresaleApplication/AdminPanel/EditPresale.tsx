@@ -58,7 +58,7 @@ const EditPresale = ({ presaleAddress, onApproveHandler, handleEditButtonHandler
     } as IAdminForm,
     validate: validations,
     onSubmit: async (values: IAdminForm) => {
-      if (!presaleContract || !factoryContract || !presaleInfo || presaleInfo?.isApproved || !account) {
+      if (!presaleContract || !factoryContract || !presaleInfo || !account) {
         return
       }
       const combinedSocialIds = [values.websiteUrl, values.discordId, values.twitterId, values.telegramId].join(
@@ -67,7 +67,8 @@ const EditPresale = ({ presaleAddress, onApproveHandler, handleEditButtonHandler
 
       try {
         setIsLoading(true)
-        const receipt = await factoryContract.updatePresaleAndApprove(
+        const methodName = presaleInfo?.isApproved ? 'updatePresale' : 'updatePresaleAndApprove'
+        const receipt = await factoryContract[methodName](
           {
             presaleToken: presaleInfo.presaleToken,
             router0: presaleInfo.router0,
@@ -87,7 +88,7 @@ const EditPresale = ({ presaleAddress, onApproveHandler, handleEditButtonHandler
               `${values.isVestingEnabled}` === 'true' ? values.claimIntervalDay : presaleInfo.claimIntervalDay,
             claimIntervalHour:
               `${values.isVestingEnabled}` === 'true' ? values.claimIntervalHour : presaleInfo.claimIntervalHour,
-            totalBought: '0',
+            totalBought: presaleInfo.totalBought.toString(),
             maxClaimPercentage:
               `${values.isVestingEnabled}` === 'true'
                 ? BigNumber.from(values.maxClaimPercentage)
@@ -97,11 +98,11 @@ const EditPresale = ({ presaleAddress, onApproveHandler, handleEditButtonHandler
             refundType: values.refundType,
             listingChoice: values.listingChoice,
             isWhiteListPhase: `${values.isWhitelistEnabled}` === 'true',
-            isClaimPhase: false,
-            isPresaleCancelled: false,
-            isWithdrawCancelledTokens: false,
+            isClaimPhase: presaleInfo.isClaimPhase,
+            isPresaleCancelled: presaleInfo.isPresaleCancelled,
+            isWithdrawCancelledTokens: presaleInfo.isWithdrawCancelledTokens,
             isVestingEnabled: `${values.isVestingEnabled}` === 'true',
-            isApproved: false,
+            isApproved: presaleInfo.isApproved,
           },
           {
             paymentToken: values.paymentToken,
@@ -109,9 +110,6 @@ const EditPresale = ({ presaleAddress, onApproveHandler, handleEditButtonHandler
               .mul(10 ** FEE_DECIMALS)
               .div(100),
             feePresaleToken: BigNumber.from(values.feePresaleToken || 0)
-              .mul(10 ** FEE_DECIMALS)
-              .div(100),
-            feeEmergencyWithdraw: BigNumber.from(values.emergencyWithdrawFee)
               .mul(10 ** FEE_DECIMALS)
               .div(100),
           },
@@ -175,10 +173,6 @@ const EditPresale = ({ presaleAddress, onApproveHandler, handleEditButtonHandler
           .div(10 ** FEE_DECIMALS)
           .toNumber(),
         [FieldNames.feePaymentToken]: presaleFeeInfo.feePaymentToken
-          .mul(100)
-          .div(10 ** FEE_DECIMALS)
-          .toNumber(),
-        [FieldNames.emergencyWithdrawFee]: presaleFeeInfo.emergencyWithdrawFee
           .mul(100)
           .div(10 ** FEE_DECIMALS)
           .toNumber(),

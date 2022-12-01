@@ -18,8 +18,6 @@ export const validatePresaleDetails = (values: PresaleDetails) => {
     errors.softcap = 'Softcap should be a positive number'
   } else if (values.hardcap && values.softcap > values.hardcap) {
     errors.softcap = 'Softcap <= Hardcap'
-  } else if (values.hardcap && values.softcap < values.hardcap * 0.5) {
-    errors.softcap = 'Softcap >= 50% of hardcap'
   }
 
   if (!values.hardcap) {

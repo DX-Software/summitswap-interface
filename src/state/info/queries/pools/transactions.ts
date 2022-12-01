@@ -1,3 +1,4 @@
+import { TOKEN_BLACKLIST } from 'constants/info'
 import { gql } from 'graphql-request'
 import { mapBurns, mapMints, mapSwaps } from 'state/info/queries/helpers'
 import { BurnResponse, MintResponse, SwapResponse } from 'state/info/queries/types'
@@ -7,8 +8,8 @@ import { infoClient } from 'utils/graphql'
  * Transactions of the given pool, used on Pool page
  */
 const POOL_TRANSACTIONS = gql`
-  query poolTransactions($address: Bytes!) {
-    mints(first: 35, orderBy: timestamp, orderDirection: desc, where: { pair: $address }) {
+  query poolTransactions($address: Bytes!, $blacklist: [String!]) {
+    mints(first: 35, orderBy: timestamp, orderDirection: desc, where: { pair: $address, token0_not_in: $blacklist, token1_not_in: $blacklist }) {
       id
       timestamp
       pair {
@@ -26,7 +27,7 @@ const POOL_TRANSACTIONS = gql`
       amount1
       amountUSD
     }
-    swaps(first: 35, orderBy: timestamp, orderDirection: desc, where: { pair: $address }) {
+    swaps(first: 35, orderBy: timestamp, orderDirection: desc, where: { pair: $address, token0_not_in: $blacklist, token1_not_in: $blacklist }) {
       id
       timestamp
       pair {
@@ -46,7 +47,7 @@ const POOL_TRANSACTIONS = gql`
       amount1Out
       amountUSD
     }
-    burns(first: 35, orderBy: timestamp, orderDirection: desc, where: { pair: $address }) {
+    burns(first: 35, orderBy: timestamp, orderDirection: desc, where: { pair: $address, token0_not_in: $blacklist, token1_not_in: $blacklist }) {
       id
       timestamp
       pair {
@@ -77,6 +78,7 @@ const fetchPoolTransactions = async (address: string): Promise<{ data?: Transact
   try {
     const data = await infoClient.request<TransactionResults>(POOL_TRANSACTIONS, {
       address,
+      blacklist: TOKEN_BLACKLIST
     })
     const mints = data.mints.map(mapMints)
     const burns = data.burns.map(mapBurns)

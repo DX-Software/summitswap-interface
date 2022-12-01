@@ -4,7 +4,6 @@ export const PRESALE_FACTORY_ADDRESS = `${process.env.REACT_APP_PRESALE_FACTORY_
 
 export const FEE_PAYMENT_TOKEN = 2 // 2%
 export const FEE_PRESALE_TOKEN = 2 // 2%
-export const FEE_EMERGENCY_WITHDRAW = 10 // 2%
 
 export const FEE_DECIMALS = 9
 
@@ -49,7 +48,7 @@ export const ROUTER_OPTIONS = [
   },
 ]
 
-export const DAY_OPTIONS = [...Array(31).keys()].map((i) => ({
+export const DAY_OPTIONS = [...Array(28).keys()].map((i) => ({
   label: `${i + 1}`,
   value: `${i + 1}`,
 }))

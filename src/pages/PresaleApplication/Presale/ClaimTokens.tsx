@@ -157,8 +157,6 @@ const ClaimTokens = ({ presaleAddress, isMainLoading, setIsMainLoading }: Props)
         boughtAmount={boughtAmount}
         presaleInfo={presaleInfo}
         tokenSymbol={presaleToken?.symbol}
-        isMainLoading={isMainLoading}
-        isLoadingButton={isLoadingButton}
       />
       <Card>
         <PresaleGoals presaleAddress={presaleAddress} presaleInfo={presaleInfo} presaleFeeInfo={presaleFeeInfo} />
