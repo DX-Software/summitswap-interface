@@ -1,3 +1,4 @@
+import { WALLET_LOGIN_ACCESS_TOKEN_KEY } from 'constants/walletLogin'
 import decode from 'jwt-decode'
 import { useMutation } from 'react-query'
 import { WalletLogin, WalletLoginResponse, WalletVerifyResponse } from 'types/walletLogin'
@@ -19,21 +20,21 @@ async function signAndGetToken(walletLogin: WalletLogin) {
     signature,
   })
   const accessToken = (verifyResponse.data as WalletVerifyResponse).access_token
-  localStorage.setItem('summitWalletToken', accessToken)
+  localStorage.setItem(WALLET_LOGIN_ACCESS_TOKEN_KEY, accessToken)
 }
 
 export default function useWalletLogin() {
   return useMutation(async (walletLogin: WalletLogin) => {
-    const summitWalletToken = localStorage.getItem('summitWalletToken')
+    const summitWalletToken = localStorage.getItem(WALLET_LOGIN_ACCESS_TOKEN_KEY)
     if (!summitWalletToken) {
       await signAndGetToken(walletLogin)
-      return localStorage.getItem('summitWalletToken')
+      return localStorage.getItem(WALLET_LOGIN_ACCESS_TOKEN_KEY)
     }
 
     const { exp } = decode<any>(summitWalletToken)
     if (exp * 1000 <= Date.now()) {
       await signAndGetToken(walletLogin)
     }
-    return localStorage.getItem('summitWalletToken')
+    return localStorage.getItem(WALLET_LOGIN_ACCESS_TOKEN_KEY)
   })
 }
