@@ -1,4 +1,5 @@
 import { BACKEND_API } from 'constants/index'
+import { WALLET_LOGIN_ACCESS_TOKEN_KEY } from 'constants/walletLogin'
 import { PER_PAGE, Phase } from 'constants/whitelabel'
 import { useInfiniteQuery, useMutation, useQuery } from 'react-query'
 import {
@@ -307,7 +308,11 @@ export function useWhitelabelNftApiCollection(whitelabelNftAddress: string) {
 
 export function useWhitelabelNftApiCollectionUpsert() {
   return useMutation(async (data: WhitelabelCollectionUpsertDto) => {
-    const res = await httpClient.post(COLLECTION_UPSERT_URL, data)
+    const res = await httpClient.post(COLLECTION_UPSERT_URL, data, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem(WALLET_LOGIN_ACCESS_TOKEN_KEY)}`,
+      },
+    })
     return res
   })
 }
@@ -349,7 +354,11 @@ export function useWhitelabelNftApiSignatures(
 // store
 export function useWhitelabelNftApiStoreSignatures() {
   return useMutation(async (data: WhitelabelSignaturesAddDto) => {
-    const res = await httpClient.post(SIGNATURES_STORE_URL, data)
+    const res = await httpClient.post(SIGNATURES_STORE_URL, data, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem(WALLET_LOGIN_ACCESS_TOKEN_KEY)}`,
+      },
+    })
     return res
   })
 }
@@ -359,6 +368,9 @@ export function useWhitelabelNftApiDeleteSignatures() {
   return useMutation(async (data: WhitelabelSignaturesDeleteDto) => {
     const res = await httpClient.delete(SIGNATURES_DELETE_URL, {
       data,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem(WALLET_LOGIN_ACCESS_TOKEN_KEY)}`,
+      },
     })
     return res
   })
@@ -369,6 +381,9 @@ export function useWhitelabelNftApiDeleteAllSignatures() {
   return useMutation(async (data: WhitelabelSignaturesDeleteAllDto) => {
     const res = await httpClient.delete(SIGNATURES_DELETE_ALL_URL, {
       data,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem(WALLET_LOGIN_ACCESS_TOKEN_KEY)}`,
+      },
     })
     return res
   })

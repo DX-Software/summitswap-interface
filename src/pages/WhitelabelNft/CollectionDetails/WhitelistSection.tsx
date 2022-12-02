@@ -12,6 +12,7 @@ import {
 } from '@koda-finance/summitswap-uikit'
 import { useMediaQuery } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
+import useWalletLogin from 'api/useWalletLoginApi'
 import {
   useWhitelabelNftApiDeleteAllSignatures,
   useWhitelabelNftApiDeleteSignatures,
@@ -114,12 +115,13 @@ type WhitelistSectionProps = {
 
 function WhitelistSection({ whitelabelNftApiSignature }: WhitelistSectionProps) {
   const isMobileView = useMediaQuery('(max-width: 576px)')
-  const { account } = useWeb3React()
+  const { account, library } = useWeb3React()
   const { whitelabelNftId } = useWhitelabelNftContext()
   const [page, setPage] = useState(1)
   const [selectedWhitelistAddress, setSelectedWhitelistAddress] = useState<string[]>([])
 
   const whitelist = useWhitelabelNftApiSignatures(account || '', whitelabelNftId, page, PER_PAGE)
+  const walletLogin = useWalletLogin()
   const whitelabelNftApiDeleteSignatures = useWhitelabelNftApiDeleteSignatures()
   const whitelabelNftApiDeleteAllSignatures = useWhitelabelNftApiDeleteAllSignatures()
 
@@ -136,6 +138,12 @@ function WhitelistSection({ whitelabelNftApiSignature }: WhitelistSectionProps) 
   const handleRemoveAll = async () => {
     if (!whitelabelNftId || !account) return
 
+    const accessToken = await walletLogin.mutateAsync({
+      account,
+      library,
+    })
+    if (!accessToken) return
+
     await whitelabelNftApiDeleteAllSignatures.mutateAsync({
       contractAddress: whitelabelNftId,
       ownerAddress: account,
@@ -147,6 +155,12 @@ function WhitelistSection({ whitelabelNftApiSignature }: WhitelistSectionProps) 
 
   const handleRemoveWhitelist = async (whitelistAddresses: string[]) => {
     if (!whitelabelNftId || !account || whitelistAddresses.length === 0) return
+
+    const accessToken = await walletLogin.mutateAsync({
+      account,
+      library,
+    })
+    if (!accessToken) return
 
     await whitelabelNftApiDeleteSignatures.mutateAsync({
       contractAddress: whitelabelNftId,

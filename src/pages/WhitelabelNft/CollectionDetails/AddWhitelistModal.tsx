@@ -1,5 +1,6 @@
 import { Box, Button, Flex, Heading, InjectedModalProps, Modal } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
+import useWalletLogin from 'api/useWalletLoginApi'
 import { useWhitelabelNftApiStoreSignatures } from 'api/useWhitelabelNftApi'
 import { FormikProps, FormikProvider, useFormik } from 'formik'
 import React from 'react'
@@ -13,7 +14,8 @@ type AddWhitelistModalProps = InjectedModalProps & {
 }
 
 function AddWhitelistModal({ whitelabelNftId, onRefresh, onDismiss }: AddWhitelistModalProps) {
-  const { account } = useWeb3React()
+  const { account, library } = useWeb3React()
+  const walletLogin = useWalletLogin()
   const whitelabelNftApiStoreSignatures = useWhitelabelNftApiStoreSignatures()
 
   const formik: FormikProps<WhitelabelSignaturesAddDto> = useFormik<WhitelabelSignaturesAddDto>({
@@ -25,6 +27,12 @@ function AddWhitelistModal({ whitelabelNftId, onRefresh, onDismiss }: AddWhiteli
     },
     validationSchema: whitelistValidationSchema,
     onSubmit: async (values, { setSubmitting }) => {
+      const accessToken = await walletLogin.mutateAsync({
+        account: account!,
+        library,
+      })
+      if (!accessToken) return
+
       await whitelabelNftApiStoreSignatures.mutateAsync({
         ownerAddress: values.ownerAddress,
         contractAddress: values.contractAddress,

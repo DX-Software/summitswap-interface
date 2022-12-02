@@ -1,6 +1,7 @@
 import { Flex, Heading, Text, useModal } from '@koda-finance/summitswap-uikit'
 import { useWeb3React } from '@web3-react/core'
 import { useUploadImageApi } from 'api/useUploadImageApi'
+import useWalletLogin from 'api/useWalletLoginApi'
 import {
   useWhitelabelNftApiCollectionUpsert,
   useWhitelabelNftApiUploadConceal,
@@ -24,12 +25,13 @@ import CreationStep03 from './CreationStep03'
 import { createCollectionValidationSchema } from './validation'
 
 function CreateCollection() {
-  const { account } = useWeb3React()
+  const { account, library } = useWeb3React()
   const { canCreate, setActiveTab } = useWhitelabelNftContext()
   const [currentCreationStep, setCurrentCreationStep] = useState(0)
 
   const [onPresentCreatedModal] = useModal(<CreatedNftModal />)
 
+  const walletLogin = useWalletLogin()
   const whitelabelNftApiUpload = useWhitelabelNftApiUploadMetadata()
   const whitelabelNftApiUploadConceal = useWhitelabelNftApiUploadConceal()
   const whitelabelFactoryContract = useWhitelabelFactoryContract()
@@ -42,6 +44,12 @@ function CreateCollection() {
     validationSchema: createCollectionValidationSchema,
     onSubmit: async (values, { setSubmitting }) => {
       if (!account || !values.spreadsheet) return
+
+      const accessToken = await walletLogin.mutateAsync({
+        account: account!,
+        library,
+      })
+      if (!accessToken) return
 
       const metadataResult = await whitelabelNftApiUpload.mutateAsync({
         walletAddress: account,
