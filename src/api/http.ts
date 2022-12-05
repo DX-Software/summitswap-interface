@@ -16,7 +16,9 @@ httpClient.interceptors.response.use(
   (error) => {
     // eslint-disable-next-line no-console
     console.log(error)
-    localStorage.removeItem(WALLET_LOGIN_ACCESS_TOKEN_KEY)
+    if (error.response?.status === 401) {
+      localStorage.removeItem(WALLET_LOGIN_ACCESS_TOKEN_KEY)
+    }
     return Promise.reject(error)
   }
 )
