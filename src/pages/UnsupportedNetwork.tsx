@@ -1,6 +1,7 @@
 import { useWeb3React } from '@web3-react/core'
 import config from 'components/Menu/config'
-import React, { useEffect, useMemo } from 'react'
+import { WALLET_LOGIN_ACCESS_TOKEN_KEY } from 'constants/walletLogin'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
 type Props = {
@@ -8,8 +9,9 @@ type Props = {
 }
 
 function UnsupportedNetwork({ children }: Props) {
-  const { chainId: connectedChainId, active, deactivate } = useWeb3React()
+  const { chainId: connectedChainId, active, deactivate, account } = useWeb3React()
   const location = useLocation()
+  const [currentWallet, setCurrentWallet] = useState(account)
 
   const supportedChainId = useMemo(() => {
     const menu = config.find((entry) => `${location.pathname}`.startsWith(`${entry.href}`))
@@ -27,6 +29,13 @@ function UnsupportedNetwork({ children }: Props) {
       deactivate()
     }
   }, [active, isUnsupportedChainId, deactivate])
+
+  useEffect(() => {
+    if (currentWallet !== account) {
+      localStorage.removeItem(WALLET_LOGIN_ACCESS_TOKEN_KEY)
+      setCurrentWallet(currentWallet)
+    }
+  }, [account, currentWallet, setCurrentWallet])
 
   return <>{children}</>
 }
