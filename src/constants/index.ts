@@ -28,7 +28,7 @@ export const CHAIN_ID = BSC_CHAIN_ID
 
 export const NETWORK_URLS = {
   [BSC_CHAIN_ID]: BSC_NETWORK_URL,
-  [CHAIN_ID]: ETH_NETWORK_URL,
+  [ETH_CHAIN_ID]: ETH_NETWORK_URL,
 }
 
 export const SUMMITSWAP_CURRENCY_LINK = 'https://summitswap.finance/#/swap?output='

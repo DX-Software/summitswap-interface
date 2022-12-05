@@ -108,13 +108,8 @@ if (typeof ETH_NETWORK_URL === 'undefined') {
   throw new Error(`REACT_APP_ETH_NETWORK_URL must be a defined environment variable`)
 }
 
-export const network = new NetworkConnector({
-  urls: { [BSC_CHAIN_ID]: BSC_NETWORK_URL, [ETH_CHAIN_ID]: ETH_NETWORK_URL },
-  defaultChainId: BSC_CHAIN_ID,
-})
-
 let networkLibrary: Web3Provider | undefined
-export function getNetworkLibrary(): Web3Provider {
+export function getNetworkLibrary(network: NetworkConnector): Web3Provider {
   // eslint-disable-next-line no-return-assign
   return (networkLibrary = networkLibrary ?? new Web3Provider(network.provider as any))
 }
