@@ -252,15 +252,17 @@ function MetadataSection({ isOwner, totalSupply, whitelabelNft }: MetadataProps)
                 collected
               </HelperText>
             </Box>
-            <Button
-              variant="tertiary"
-              startIcon={formikReveal.isSubmitting && <AutoRenewIcon spin color="default" />}
-              isLoading={formikReveal.isSubmitting}
-              disabled={whitelabelNft.data?.isReveal || false}
-              onClick={formikReveal.submitForm}
-            >
-              <b>Reveal Collection</b>
-            </Button>
+            {!whitelabelNft.data?.isReveal && (
+              <Button
+                variant="tertiary"
+                startIcon={formikReveal.isSubmitting && <AutoRenewIcon spin color="default" />}
+                isLoading={formikReveal.isSubmitting}
+                disabled={whitelabelNft.data?.isReveal || false}
+                onClick={formikReveal.submitForm}
+              >
+                <b>Reveal Collection</b>
+              </Button>
+            )}
           </ActionWrapper>
         )}
         <Grid container spacing={isMobileView ? '8px' : '16px'}>
