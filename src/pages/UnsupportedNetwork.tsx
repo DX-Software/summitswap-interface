@@ -1,5 +1,6 @@
 import { useWeb3React } from '@web3-react/core'
 import config from 'components/Menu/config'
+import { setupNetwork } from 'connectors'
 import { WALLET_LOGIN_ACCESS_TOKEN_KEY } from 'constants/walletLogin'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
@@ -27,8 +28,9 @@ function UnsupportedNetwork({ children }: Props) {
   useEffect(() => {
     if (active && isUnsupportedChainId) {
       deactivate()
+      setupNetwork(supportedChainId)
     }
-  }, [active, isUnsupportedChainId, deactivate])
+  }, [active, supportedChainId, isUnsupportedChainId, deactivate])
 
   useEffect(() => {
     if (currentWallet !== account) {
