@@ -3,6 +3,7 @@ import { ChainId, FACTORY_ADDRESS, WETH } from '@koda-finance/summitswap-sdk'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { useMemo } from 'react'
 import { STAKING_ADDRESS } from 'constants/staking'
+import { WHITELABEL_FACTORY_ADDRESS } from 'constants/whitelabel'
 import { KICKSTARTER_FACTORY_ADDRESS } from 'constants/kickstarter'
 import ENS_ABI from '../constants/abis/ens-registrar.json'
 import ENS_PUBLIC_RESOLVER_ABI from '../constants/abis/ens-public-resolver.json'
@@ -24,6 +25,8 @@ import STAKING_ABI from '../constants/abis/kodaStaking.json'
 import ROUTER_ABI from '../constants/abis/summitswap-router.json'
 import PRESALE_FACOTRY_ABI from '../constants/abis/summit-factory-presale.json'
 import PRESALE_ABI from '../constants/abis/summit-custom-presale.json'
+import WHITELABEL_FACTORY_ABI from '../constants/abis/summitWhitelabelNftFactory.json'
+import WHITELABEL_ABI from '../constants/abis/summitWhitelabelNft.json'
 import SUMMIT_KICKSTARTER_ABI from '../constants/abis/summitKickstarter.json'
 import SUMMIT_KICKSTARTER_FACTORY_ABI from '../constants/abis/summitKickstarterFactory.json'
 
@@ -94,7 +97,11 @@ export function useTokenContract(tokenAddress?: string, withSignerIfPossible?: b
 
 export function useWETHContract(withSignerIfPossible?: boolean): Contract | null {
   const { chainId } = useActiveWeb3React()
-  return useContract(chainId ? WETH[chainId].address : undefined, WETH_ABI, withSignerIfPossible)
+  return useContract(
+    chainId && [ChainId.MAINNET, ChainId.BSCTESTNET].includes(chainId) ? WETH[chainId].address : undefined,
+    WETH_ABI,
+    withSignerIfPossible
+  )
 }
 
 export function useENSRegistrarContract(withSignerIfPossible?: boolean): Contract | null {
@@ -153,4 +160,12 @@ export function usePresaleContract(presaleAddress: string): Contract | null {
 
 export function usePresaleContracts(presaleAddresses: string[]): (Contract | null)[] {
   return useContracts(presaleAddresses, PRESALE_ABI)
+}
+
+export function useWhitelabelFactoryContract() {
+  return useContract(WHITELABEL_FACTORY_ADDRESS, WHITELABEL_FACTORY_ABI)
+}
+
+export function useWhitelabelNftContract(whitelabelNftAddress: string): Contract | null {
+  return useContract(whitelabelNftAddress, WHITELABEL_ABI)
 }

@@ -1,4 +1,5 @@
 import { MenuEntry } from '@koda-finance/summitswap-uikit'
+import { BSC_CHAIN_ID, ETH_CHAIN_ID } from 'constants/index'
 
 const config: MenuEntry[] = [
   // {
@@ -10,16 +11,68 @@ const config: MenuEntry[] = [
     label: 'Trade',
     icon: 'TradeIcon',
     href: '/swap',
+    supportedChainId: BSC_CHAIN_ID,
+  },
+  {
+    label: 'pool',
+    icon: 'pool',
+    href: '/pool',
+    supportedChainId: BSC_CHAIN_ID,
+    isHidden: true,
+  },
+  {
+    label: 'add',
+    icon: 'add',
+    href: '/add',
+    supportedChainId: BSC_CHAIN_ID,
+    isHidden: true,
+  },
+  {
+    label: 'find',
+    icon: 'find',
+    href: '/find',
+    supportedChainId: BSC_CHAIN_ID,
+    isHidden: true,
   },
   {
     label: 'Referral',
     icon: 'ReferralIcon',
     href: '/referral',
+    supportedChainId: BSC_CHAIN_ID,
   },
   {
     label: 'Staking',
     icon: 'StakingIcon',
     href: '/staking/deposit',
+    supportedChainId: BSC_CHAIN_ID,
+  },
+  {
+    label: 'Staking',
+    icon: 'StakingIcon',
+    href: '/staking/claim',
+    supportedChainId: BSC_CHAIN_ID,
+    isHidden: true,
+  },
+  {
+    label: 'Staking',
+    icon: 'StakingIcon',
+    href: '/staking/withdraw',
+    supportedChainId: BSC_CHAIN_ID,
+    isHidden: true,
+  },
+  {
+    label: 'onboarding',
+    icon: 'onboarding',
+    href: '/onboarding',
+    supportedChainId: BSC_CHAIN_ID,
+    isHidden: true,
+  },
+  {
+    label: 'remove',
+    icon: 'remove',
+    href: '/remove',
+    supportedChainId: BSC_CHAIN_ID,
+    isHidden: true,
   },
   {
     label: 'Cross-Chain',
@@ -32,26 +85,46 @@ const config: MenuEntry[] = [
     icon: 'InfoIcon',
     href: '/info',
   },
-  // {
-  //   label: 'Launchpad',
-  //   icon: 'LaunchpadIcon',
-  //   href: '/launchpad',
-  // },
-  // {
-  //   label: 'Presale-App',
-  //   icon: 'CoinBagIcon',
-  //   href: '/presale-application',
-  // },
+  {
+    label: 'Launchpad',
+    icon: 'LaunchpadIcon',
+    href: '/launchpad',
+    supportedChainId: BSC_CHAIN_ID,
+    isHidden: true,
+  },
+  {
+    label: 'Presale-App',
+    icon: 'CoinBagIcon',
+    href: '/presale-application',
+    supportedChainId: BSC_CHAIN_ID,
+    isHidden: true,
+  },
   {
     label: 'Kick Starter',
     icon: 'KickStarterIcon',
     href: '/kickstarter',
-  }
-  // {
-  //  label: 'Create Token',
-  //   icon: 'SunIcon',
-  //   href: '/create-token',
-  // },
+    supportedChainId: BSC_CHAIN_ID,
+  },
+  {
+    label: 'Whitelabel NFT',
+    icon: 'WhitelabelNftIcon',
+    href: '/whitelabel-nft',
+    supportedChainId: ETH_CHAIN_ID,
+  },
+  {
+    label: 'summitcheck',
+    icon: 'summitcheck',
+    href: '/summitcheck',
+    supportedChainId: BSC_CHAIN_ID,
+    isHidden: true,
+  },
+  {
+   label: 'Create Token',
+    icon: 'SunIcon',
+    href: '/create-token',
+    supportedChainId: BSC_CHAIN_ID,
+    isHidden: true,
+  },
   // {
   // {
   //   label: "Onboarding",
