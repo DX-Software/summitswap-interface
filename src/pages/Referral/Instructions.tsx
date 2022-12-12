@@ -60,8 +60,7 @@ const Instructions: React.FC<InstructionsProps> = ({ referalLinkImage: ReferalLi
 			<p>
 				<br />
 				A) The projects tokens <br />
-				B) Convert it to KODA without fee <br />
-				C) Convert it to BNB or BUSD (10% - 15% fees respectively)
+				B) Convert it to BNB or BUSD (10% - 15% fees respectively)
 			</p>
 		</div>
 
