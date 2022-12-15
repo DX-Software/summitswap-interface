@@ -40,7 +40,7 @@ const RewardedTokens: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [rewardTokens, setRewardTokens] = useState<string[]>([])
   const [canClaimAll, setCanClaimAll] = useState(true)
-  const [claimToken, setClaimToken] = useState<Token>(KODA)
+  const [claimToken, setClaimToken] = useState<Token>(BUSD)
   const [claimableTokens, setClaimableTokens] = useState<Token[]>([])
   const [modalOpen, setModalOpen] = useState(false)
 

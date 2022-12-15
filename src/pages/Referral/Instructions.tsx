@@ -102,13 +102,12 @@ const Instructions: React.FC<InstructionsProps> = ({ referalLinkImage: ReferalLi
 		</p>
 
 		<p className="paragraph">
-      The project can either fund the rewards with KODA our native token, or they can feed their own token to the reward pool.
-      This means the referrer can earn either KODA or TOKEN-EG.
+      The project can feed their own token to the reward pool, so referrer can earn TOKEN-EG.
 		</p>
 
 		<p className="paragraph">
       The project may choose to remove fees from the reward pool contract so that rewards are paid in full to thier loyal community.
-      Although our native investment token KODA does this, please note that every project will have their own set up and may choose to keep the transactions with fees included.
+      Please note that every project will have their own set up and may choose to keep the transactions with fees included.
       You can find out this information on their whitelisting project profile through SummitCheck.
 		</p>
 	</>
