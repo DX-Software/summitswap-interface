@@ -72,10 +72,12 @@ export type WhitelabelNftUpdatePhase = {
 
 export type WhitelabelMetadataValidateDto = {
   spreadsheet: File
-  nftImages: File[]
+  nftImages: string[]
 }
 
-export type WhitelabelMetadataUploadDto = WhitelabelMetadataValidateDto & {
+export type WhitelabelMetadataUploadDto = {
+  spreadsheet: File
+  nftImages: File[]
   walletAddress: string
 }
 

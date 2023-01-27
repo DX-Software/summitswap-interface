@@ -292,7 +292,7 @@ export function useWhitelabelNftApiValidate() {
     const formData = new FormData()
     formData.append('spreadsheet', data.spreadsheet)
     data.nftImages.forEach((nftImage) => {
-      formData.append('images', nftImage)
+      formData.append('imageFilenames', nftImage)
     })
     const res = await httpClient.post(METADATA_VALIDATE_URL, formData)
     return res

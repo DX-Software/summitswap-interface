@@ -56,7 +56,7 @@ function CreationStep02({ setCurrentCreationStep, formik }: Props) {
 
         const res = await whitelabelNftApiValidate.mutateAsync({
           spreadsheet: formik.values.spreadsheet!,
-          nftImages: formik.values.nftImages,
+          nftImages: formik.values.nftImages.map((image) => image.name),
         })
         if (res.status === 201) {
           setValidatedMessage(res.data.message)
