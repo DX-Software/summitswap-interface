@@ -76,9 +76,9 @@ function MintSection({
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
 
   const mintPrice = useMemo(() => {
-    let price = whitelabelNft.data?.publicMintPrice?.toNumber()
+    let price = whitelabelNft.data?.publicMintPrice?.toString()
     if (whitelabelNft.data?.phase === Phase.Whitelist) {
-      price = whitelabelNft.data?.whitelistMintPrice?.toNumber()
+      price = whitelabelNft.data?.whitelistMintPrice?.toString()
     }
     return parseEther(price ? price.toString() : '0')
   }, [whitelabelNft.data?.publicMintPrice, whitelabelNft.data?.whitelistMintPrice, whitelabelNft.data?.phase])
