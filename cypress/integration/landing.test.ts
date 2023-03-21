@@ -2,17 +2,12 @@ import { TEST_ADDRESS_NEVER_USE_SHORTENED } from '../support/commands'
 
 describe('Landing Page', () => {
   beforeEach(() => cy.visit('/'))
-  it('loads swap page', () => {
-    cy.get('#swap-page')
+  it('loads staking deposit page', () => {
+    cy.get('#staking-deposit-page')
   })
 
-  it('redirects to url /swap', () => {
-    cy.url().should('include', '/swap')
-  })
-
-  it('allows navigation to pool', () => {
-    cy.get('#pool-nav-link').click()
-    cy.url().should('include', '/pool')
+  it('redirects to url /staking/deposit', () => {
+    cy.url().should('include', '/staking/deposit')
   })
 
   // Wallet not connected - test will not pass.

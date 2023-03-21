@@ -18,8 +18,10 @@ const TopLogo = styled.img`
 
 const StyledContainer = styled(Box)<{ theme: any }>`
   margin-top: 135px;
+  margin-bottom: 32px;
   @media (min-width: 440px) {
     margin-top: 85px;
+    margin-bottom: 48px;
   }
   ${({ theme }) => theme.mediaQueries.nav} {
     margin-top: 0px;
@@ -59,6 +61,7 @@ export default function AppHeader() {
         {location.pathname === '/presale-application' && 'Presale Application'}
         {location.pathname === '/launchpad' && 'Launchpad'}
         {location.pathname === '/kickstarter' && 'Kick Starter'}
+        {location.pathname === '/whitelabel-nft' && 'Whitelabel NFT'}
         {location.pathname.search('/info') !== -1 && 'SummitSwap Info & Analytics'}
       </StyledBox>
       <TopLogo src={TopLogoIcon} alt="" />

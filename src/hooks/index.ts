@@ -5,8 +5,8 @@ import { useWeb3React as useWeb3ReactCore } from '@web3-react/core'
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types'
 import { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
-import { injected } from '../connectors'
 import { NetworkContextName } from '../constants'
+import useInjected from './useInjected'
 
 export function useActiveWeb3React(): Web3ReactContextInterface<Web3Provider> & { chainId?: ChainId } {
   const context = useWeb3ReactCore<Web3Provider>()
@@ -17,6 +17,7 @@ export function useActiveWeb3React(): Web3ReactContextInterface<Web3Provider> & 
 export function useEagerConnect() {
   const { activate, active } = useWeb3ReactCore() // specifically using useWeb3ReactCore because of what this hook does
   const [tried, setTried] = useState(false)
+  const injected = useInjected()
 
   useEffect(() => {
     injected.isAuthorized().then((isAuthorized) => {
@@ -33,7 +34,7 @@ export function useEagerConnect() {
         setTried(true)
       }
     })
-  }, [activate]) // intentionally only running on mount (make sure it's only mounted once :))
+  }, [activate, injected]) // intentionally only running on mount (make sure it's only mounted once :))
 
   // if the connection worked, wait until we get confirmation of that to flip the flag
   useEffect(() => {
@@ -51,6 +52,7 @@ export function useEagerConnect() {
  */
 export function useInactiveListener(suppress = false) {
   const { active, error, activate } = useWeb3ReactCore() // specifically using useWeb3React because of what this hook does
+  const injected = useInjected()
 
   useEffect(() => {
     const { ethereum } = window
@@ -83,5 +85,5 @@ export function useInactiveListener(suppress = false) {
       }
     }
     return undefined
-  }, [active, error, suppress, activate])
+  }, [active, error, suppress, activate, injected])
 }

@@ -10,16 +10,19 @@ import getTokenList from '../utils/getTokenList'
 import resolveENSContentHash from '../utils/resolveENSContentHash'
 import { useActiveWeb3React } from './index'
 import { CHAIN_ID } from '../constants'
+import useNetwork from './useNetwork'
+import useChainId from './useChainId'
 
 export function useFetchListCallback(): (listUrl: string) => Promise<TokenList> {
   const { chainId, library } = useActiveWeb3React()
   const dispatch = useDispatch<AppDispatch>()
+  const network = useNetwork(useChainId())
 
   const ensResolver = useCallback(
     (ensName: string) => {
       if (!library || chainId !== ChainId.MAINNET) {
         if (CHAIN_ID === ChainId.MAINNET) {
-          const networkLibrary = getNetworkLibrary()
+          const networkLibrary = getNetworkLibrary(network)
           if (networkLibrary) {
             return resolveENSContentHash(ensName, networkLibrary)
           }
@@ -28,7 +31,7 @@ export function useFetchListCallback(): (listUrl: string) => Promise<TokenList> 
       }
       return resolveENSContentHash(ensName, library)
     },
-    [chainId, library]
+    [chainId, library, network]
   )
 
   return useCallback(

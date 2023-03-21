@@ -4,12 +4,21 @@ import { Provider } from 'react-redux'
 import { ModalProvider } from '@koda-finance/summitswap-uikit'
 import AdapterDateFns from '@mui/lab/AdapterDateFns'
 import { LocalizationProvider } from '@mui/lab'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import { NetworkContextName } from './constants'
 import store from './state'
 import getLibrary from './utils/getLibrary'
 import { ThemeContextProvider } from './ThemeContext'
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+})
 
 const Providers: React.FC = ({ children }) => {
   return (
@@ -18,7 +27,9 @@ const Providers: React.FC = ({ children }) => {
         <Provider store={store}>
           <ThemeContextProvider>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <ModalProvider>{children}</ModalProvider>
+              <QueryClientProvider client={queryClient}>
+                <ModalProvider>{children}</ModalProvider>
+              </QueryClientProvider>
             </LocalizationProvider>
           </ThemeContextProvider>
         </Provider>

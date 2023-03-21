@@ -65,10 +65,7 @@ function KickStarter() {
         setIsFactoryAdmin(false)
         return
       }
-      const [owner, isAdmin] = await Promise.all([
-        factoryContract.owner(),
-        factoryContract.isAdmin(account)
-      ])
+      const [owner, isAdmin] = await Promise.all([factoryContract.owner(), factoryContract.isAdmin(account)])
 
       const isFactoryAdminTemp = account.toLowerCase() === owner.toLowerCase() || isAdmin
       setIsFactoryAdmin(isFactoryAdminTemp)
@@ -78,7 +75,7 @@ function KickStarter() {
 
   return (
     <KickstarterProvider>
-      <Box marginTop="30px">
+      <Box marginTop="30px" width="100%">
         <ButtonMenu activeIndex={buttonIndex} onItemClick={(index) => setButtonIndex(index)}>
           {navItems.map((item) => (
             <ButtonMenuItem key={item.code}>{item.label}</ButtonMenuItem>

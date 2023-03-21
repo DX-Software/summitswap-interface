@@ -5,7 +5,6 @@ import { useWalletModal } from '@koda-finance/summitswap-uikit'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import InvalidReferralLinkModal from 'components/InvalidReferralLinkModal'
 import { utils } from 'ethers'
-import { QueryClient, QueryClientProvider } from 'react-query'
 import login from '../utils/login'
 import Banner from '../components/Banner'
 import Popups from '../components/Popups'
@@ -38,8 +37,11 @@ import CreateToken from './CreateToken'
 import DepositPage from './Staking/DepositPage'
 import WithdrawPage from './Staking/WithdrawPage'
 import ClaimPage from './Staking/ClaimPage'
+import WhitelabelNft from './WhitelabelNft'
 import PresaleApplication from './PresaleApplication'
 import LaunchPad from './PresaleApplication/LaunchPad'
+import MintWidget from './WhitelabelNft/MintWidget'
+import UnsupportedNetwork from './UnsupportedNetwork'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -76,14 +78,6 @@ const BodyWrapper = styled.div`
 const Marginer = styled.div`
   margin-top: 5rem;
 `
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-    },
-  },
-})
 
 export default function App() {
   const { account, deactivate, activate, error } = useWeb3React()
@@ -167,15 +161,15 @@ export default function App() {
             <SupportChatWidget />
             <Popups />
             <Web3ReactManager>
-              <QueryClientProvider client={queryClient}>
-                <Switch>
-                  <Route exact strict path={['/', '/send']}>
-                    <Redirect to={`/swap${location.search}`} />
-                  </Route>
-                  <Menu>
-                    <BodyWrapper>
-                      <AppHeader />
-                      <Banner />
+              <Switch>
+                <Route exact strict path={['/']}>
+                  <Redirect to='/staking/deposit' />
+                </Route>
+                <Route exact path="/whitelabel-nft/:nftAddress" component={MintWidget} />
+                <Menu>
+                  <BodyWrapper>
+                    <AppHeader />
+                    <UnsupportedNetwork>
                       <Route exact path="/swap" component={Swap} />
                       <Route exact path="/create-token" component={CreateToken} />
                       <Route exact path="/cross-chain-swap" component={CrossChainSwap} />
@@ -197,6 +191,7 @@ export default function App() {
                       <Route exact path="/presale-application" component={PresaleApplication} />
                       <Route exact path="/launchpad" component={LaunchPad} />
                       <Route exact path="/kickstarter" component={KickStarter} />
+                      <Route exact path="/whitelabel-nft" component={WhitelabelNft} />
 
                       {/* Redirection: These old routes are still used in the code base */}
                       <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
@@ -205,10 +200,10 @@ export default function App() {
                       <Route exact path="/summitcheck" component={SummitCheck} />
 
                       {/* <Route component={RedirectPathToSwapOnly} /> */}
-                    </BodyWrapper>
-                  </Menu>
-                </Switch>
-              </QueryClientProvider>
+                    </UnsupportedNetwork>
+                  </BodyWrapper>
+                </Menu>
+              </Switch>
             </Web3ReactManager>
             <Marginer />
           </TranslationsContext.Provider>
