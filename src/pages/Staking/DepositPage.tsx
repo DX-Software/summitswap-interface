@@ -476,7 +476,7 @@ export default function DepositPage() {
               value={LOCKING_PERIODS._0Months}
               checked={+lockDuration === LOCKING_PERIODS._0Months}
             />{' '}
-            No locking (Lowest APY)
+            No locking
           </label>
           <label>
             <Radio
@@ -503,13 +503,13 @@ export default function DepositPage() {
               value={LOCKING_PERIODS._12Months}
               checked={+lockDuration === LOCKING_PERIODS._12Months}
             />{' '}
-            365 Days (~12 Months) (Highest APY)
+            365 Days (~12 Months)
           </label>
         </RadioContainer>
       </LockingPeriod>
       <InfoContainer>
         <p>
-          Current APY: <b>{currentApy}%</b>
+          Current: <b>{currentApy}%</b>
         </p>
         {!currentApy && (
           <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
@@ -517,8 +517,6 @@ export default function DepositPage() {
           </div>
         )}
       </InfoContainer>
-      <Text fontSize="14px">*APY is variable and based on the overall staking statistics</Text>
-      <Text fontSize="14px">*APY will reduce as more of the supply is staked</Text>
       <Text fontSize="14px">*Any rewards you have accrued will be claimed with deposit</Text>
       <ButtonsContainer>
         <Button disabled={!amount || isLoading || !needsToApprove || !isAmountValid} onClick={approve}>
@@ -557,7 +555,7 @@ export default function DepositPage() {
                   {Math.floor(+userYearStakedAmount * kodaPrice).toLocaleString('en')})
                 </p>
                 <p>
-                  Combined APY: <b>{combinedApy}%</b>
+                  Combined: <b>{combinedApy}%</b>
                 </p>
                 <p>
                   KODA Earned: <b> {totalKodaEarned?.split('.')[0]} KODA</b>
