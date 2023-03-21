@@ -2,8 +2,8 @@ import { TEST_ADDRESS_NEVER_USE_SHORTENED } from '../support/commands'
 
 describe('Landing Page', () => {
   beforeEach(() => cy.visit('/'))
-  it('loads staking page', () => {
-    cy.get('#staking-page')
+  it('loads staking deposit page', () => {
+    cy.get('#staking-deposit-page')
   })
 
   it('redirects to url /staking/deposit', () => {
