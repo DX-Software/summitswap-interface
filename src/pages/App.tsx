@@ -169,7 +169,6 @@ export default function App() {
                 <Menu>
                   <BodyWrapper>
                     <AppHeader />
-                    <Banner />
                     <UnsupportedNetwork>
                       <Route exact path="/swap" component={Swap} />
                       <Route exact path="/create-token" component={CreateToken} />
