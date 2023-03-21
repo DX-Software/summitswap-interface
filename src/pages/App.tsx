@@ -162,14 +162,13 @@ export default function App() {
             <Popups />
             <Web3ReactManager>
               <Switch>
-                <Route exact strict path={['/', '/send']}>
-                  <Redirect to={`/swap${location.search}`} />
+                <Route exact strict path={['/']}>
+                  <Redirect to='/staking/deposit' />
                 </Route>
                 <Route exact path="/whitelabel-nft/:nftAddress" component={MintWidget} />
                 <Menu>
                   <BodyWrapper>
                     <AppHeader />
-                    <Banner />
                     <UnsupportedNetwork>
                       <Route exact path="/swap" component={Swap} />
                       <Route exact path="/create-token" component={CreateToken} />

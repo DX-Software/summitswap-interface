@@ -18,8 +18,10 @@ const TopLogo = styled.img`
 
 const StyledContainer = styled(Box)<{ theme: any }>`
   margin-top: 135px;
+  margin-bottom: 32px;
   @media (min-width: 440px) {
     margin-top: 85px;
+    margin-bottom: 48px;
   }
   ${({ theme }) => theme.mediaQueries.nav} {
     margin-top: 0px;

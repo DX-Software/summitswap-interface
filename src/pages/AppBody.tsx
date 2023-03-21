@@ -5,7 +5,7 @@ import { Card } from '@koda-finance/summitswap-uikit'
 export const BodyWrapper = styled(Card)`
   position: relative;
   width: 85%;
-  @media (min-width:500px) {
+  @media (min-width: 500px) {
     width: 436px;
   }
   // height: 100%;
@@ -15,9 +15,13 @@ export const BodyWrapper = styled(Card)`
   overflow: visible;
 `
 
+interface AppBodyProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode
+}
+
 /**
  * The styled container element that wraps the content of most pages and the tabs.
  */
-export default function AppBody({ children }: { children: React.ReactNode }) {
-  return <BodyWrapper>{children}</BodyWrapper>
+export default function AppBody({ children, ...props }: AppBodyProps) {
+  return <BodyWrapper {...props}>{children}</BodyWrapper>
 }

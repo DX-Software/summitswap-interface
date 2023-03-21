@@ -445,7 +445,7 @@ export default function DepositPage() {
   }, [stakingTokenBalance])
 
   return (
-    <AppBody>
+    <AppBody id="staking-deposit-page">
       <br />
       <NavBar activeIndex={0} />
       <p>Amount</p>
